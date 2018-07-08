@@ -34,6 +34,6 @@ class Problem56:
 
 
 if __name__ == "__main__":
-    a = Problem56(100)
-    sol = a.solve()
+    obj = Problem56(100)
+    sol = obj.solve()
     print(sol)
