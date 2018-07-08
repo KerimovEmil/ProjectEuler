@@ -6,13 +6,15 @@
 # ANSWER
 # 427337
 
+import copy
+
 
 class Problem81:
     def __init__(self, data_path):
         self.problem_data = []
         self.load_data(data_path)
         self.n = len(self.problem_data)
-        self.working_matrix = self.problem_data.copy()
+        self.working_matrix = copy.deepcopy(self.problem_data)
 
     def load_data(self, data_path):
         f = open(data_path, 'r')
