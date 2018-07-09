@@ -3,6 +3,7 @@
 
 import functools
 
+
 def memoize(obj):
     cache = obj.cache = {}
 
@@ -11,10 +12,12 @@ def memoize(obj):
         if args not in cache:
             cache[args] = obj(*args, **kwargs)
         return cache[args]
+
     return memoizer
 
+
 def euler345():
-   A="""7  53 183 439 863 497 383 563  79 973 287  63 343 169 583
+    A = """7  53 183 439 863 497 383 563  79 973 287  63 343 169 583
 627 343 773 959 943 767 473 103 699 303 957 703 583 639 913
 447 283 463  29  23 487 463 993 119 883 327 493 423 159 743
 217 623   3 399 853 407 103 983  89 463 290 516 212 462 350
@@ -29,14 +32,17 @@ def euler345():
  34 124   4 878 450 476 712 914 838 669 875 299 823 329 699
 815 559 813 459 522 788 168 586 966 232 308 833 251 631 107
 813 883 451 509 615  77 281 613 459 205 380 274 302  35 805"""
-   B=A.split('\n')
-   C=[list(map(int,b.split())) for b in B]
-   @memoize
-   def f(A,B):
-      """Maximum using rows A and columns B"""
-      if len(A)==0: return 0
-      return max(C[A[0]][b]+f(A[1:],B[:j]+B[j+1:]) for j,b in enumerate(B))      
-   print(f(tuple(range(len(C))),tuple(range(len(C[0])))))
-  
+    B = A.split('\n')
+    C = [list(map(int, b.split())) for b in B]
+
+    @memoize
+    def f(A, B):
+        """Maximum using rows A and columns B"""
+        if len(A) == 0: return 0
+        return max(C[A[0]][b] + f(A[1:], B[:j] + B[j + 1:]) for j, b in enumerate(B))
+
+    print(f(tuple(range(len(C))), tuple(range(len(C[0])))))
+
+
 if __name__ == '__main__':
-	euler345()
+    euler345()
