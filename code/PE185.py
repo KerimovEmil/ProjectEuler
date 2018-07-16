@@ -15,6 +15,8 @@
 # Try digit with least number of corrects.
 # rescursive call
 
+import itertools
+
 
 def test_solution_can_work(pos_sol, guess, correct):
     return sum([x == y for (x, y) in zip(pos_sol, guess)]) == correct
@@ -30,6 +32,7 @@ def consistency_check(ls_attempts, digits):
         return False
 
     n_digit_correct = [x for x in ls_attempts if x[1] == digits]
+
     # If none are correct, ensure not all numbers have been checked
     if len(n_digit_correct) == 0:
         if len(set([x[0] for x in ls_attempts])) == 10:
@@ -49,6 +52,14 @@ def consistency_check(ls_attempts, digits):
             consistent_bool = test_solution_can_work(possible_sol, guess, num_corr)
             if consistent_bool is False:
                 return False
+
+    for i in range(int(digits/2), digits):
+        num_possible_wrong = min(2*digits - 2*i, digits)
+        i_digit_correct = [x for x in ls_attempts if x[1] == i]
+        for attempt1, attempt2 in itertools.combinations(i_digit_correct, r=2):
+            if sum([x != y for (x, y) in zip(attempt1[0], attempt2[0])]) > num_possible_wrong:
+                return False
+
     return True
 
 
@@ -105,15 +116,17 @@ class Problem185:
         return recursive_search(self.ls_attempts)
 
 
-if __name__ == "__main__":
-    # test_list = [90342, 70794, 39458, 34109, 51545, 12531]
-    # test_list = [str(x) for x in test_list]
-    # correct_list = [2, 0, 2, 1, 2, 1]
-    # ls_attempts = list(zip(test_list, correct_list))
-    # a = Problem185(ls_attempts)
-    # sol = a.solve()
-    # print(sol)
+def main1():
+    test_list = [90342, 70794, 39458, 34109, 51545, 12531]
+    test_list = [str(x) for x in test_list]
+    correct_list = [2, 0, 2, 1, 2, 1]
+    ls_attempts = list(zip(test_list, correct_list))
+    a = Problem185(ls_attempts)
+    sol = a.solve()
+    print(sol)
 
+
+def main2():
     ls_attempts = [
         (5616185650518293, 2),
         (3847439647293047, 1),
@@ -143,3 +156,9 @@ if __name__ == "__main__":
     a = Problem185(ls_attempts)
     sol = a.solve()
     print(sol)
+
+
+if __name__ == "__main__":
+    # main1()
+    main2()
+
