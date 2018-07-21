@@ -18,6 +18,20 @@
 import itertools
 
 
+def probability_sort(ls_possible, ls_attempts):
+    digits = len(ls_attempts[0][0])
+
+    dc_prob = {x: 0 for x in ls_possible}  # If 0 correct guesses, it is already removed from ls_possible
+    for attempt in ls_attempts:
+        num = int(attempt[0][0])
+        prob = attempt[1]/digits
+        if num in dc_prob.keys():
+            dc_prob[num] += prob
+
+    return sorted(ls_possible, key=lambda guess: dc_prob[guess], reverse=True)
+    # return sorted(ls_possible, key=lambda guess: dc_prob[guess])
+
+
 def test_solution_can_work(pos_sol, guess, correct):
     return sum([x == y for (x, y) in zip(pos_sol, guess)]) == correct
 
@@ -28,23 +42,24 @@ def test_solution_can_work(pos_sol, guess, correct):
 def consistency_check(ls_attempts, digits):
     """For 1 digit choices, checks the consistency"""
     # If two corrects, then False
-    if len([x for x in ls_attempts if x[1] > digits]) > 0:
+    # if len([x for x in ls_attempts if x[1] > digits]) > 0:
+    if any([x[1] > digits for x in ls_attempts]):
         return False
 
-    n_digit_correct = [x for x in ls_attempts if x[1] == digits]
+    ls_correct_n_digit = [x[0] for x in ls_attempts if x[1] == digits]
 
-    # If none are correct, ensure not all numbers have been checked
-    if len(n_digit_correct) == 0:
-        if len(set([x[0] for x in ls_attempts])) == 10:
-            return False
+    # # If none are correct, ensure not all numbers have been checked
+    # if len(ls_correct_n_digit) == 0:  # todo consider if needed
+    #     if len(set([x[0] for x in ls_attempts])) == 10:
+    #         return False
 
-    ls_correct_n_digit = [x[0] for x in n_digit_correct]
     # If more than 1 has n correct, and not the same, return false
-    if len(set(ls_correct_n_digit)) > 1:
+    num_unique_correct_n_digit = len(set(ls_correct_n_digit))
+    if num_unique_correct_n_digit > 1:
         return False
 
     # If only 1 has n(=2) correct, ensure that the other ones are consistent
-    if len(set(ls_correct_n_digit)) == 1:
+    if num_unique_correct_n_digit == 1:
         possible_sol = ls_correct_n_digit[0]
         for attempt in ls_attempts:
             guess = attempt[0]
@@ -53,7 +68,7 @@ def consistency_check(ls_attempts, digits):
             if consistent_bool is False:
                 return False
 
-    for i in range(int(digits/2), digits):
+    for i in range(int(digits/2), digits)[::-1]:
         num_possible_wrong = min(2*digits - 2*i, digits)
         i_digit_correct = [x for x in ls_attempts if x[1] == i]
         for attempt1, attempt2 in itertools.combinations(i_digit_correct, r=2):
@@ -64,47 +79,48 @@ def consistency_check(ls_attempts, digits):
 
 
 def recursive_search(ls_attempts):
-    digits = len(str(ls_attempts[0][0]))
+    digits = len(ls_attempts[0][0])
 
-    consistent = consistency_check(ls_attempts, digits=digits)
-    if consistent is False:
+    if consistency_check(ls_attempts, digits=digits) is False:
         return False
 
     # Check for correct sequence
     # if number or correct matches length of guess, returns string of guess
     for attempt in ls_attempts:
-        if digits == attempt[1]:
+        if attempt[1] == digits:
             return attempt[0]
-    # if more
-    ls_possible = set(range(10))
+
+    # possible values
+    ls_possible = list(range(10))
 
     # Remove the possible from the 0 correct guesses
     for attempt in ls_attempts:
-        if attempt[1] == 0:
-            ls_possible = ls_possible - {int(attempt[0][0])}
+        num = int(attempt[0][0])
+        if attempt[1] == 0 and num in ls_possible:
+            ls_possible.remove(num)
     # Create new game with one less digit
-    # print(ls_possible)
     new_guesses = [attempt[0][1:] for attempt in ls_attempts]
-    for possible_first_digit in ls_possible:  # loop over possible digits
-        ls_new_correct = []
-        # Change the number of correct in each guess, based on the guess
-        for attempt in ls_attempts:
-            if attempt[0][0] == str(possible_first_digit):
-                new_correct_counter = attempt[1] - 1
-            else:
-                new_correct_counter = attempt[1]
-            ls_new_correct.append(new_correct_counter)
+    # sort the possible values by most likely
+    ls_possible = probability_sort(ls_possible, ls_attempts)
 
+    for possible_first_digit in ls_possible:  # loop over possible digits
+        # Change the number of correct in each guess, based on the guess
+        ls_new_correct = [attempt[1] - 1 if attempt[0][0] == str(possible_first_digit) else attempt[1]
+                          for attempt in ls_attempts]
+
+        # Create new attempts list
         ls_new_attempts = list(zip(new_guesses, ls_new_correct))
         # Call new problem
-        print("attempts: ", ls_attempts)
-        print("Guess: ", possible_first_digit)
-        print("New Attempts: ", ls_new_attempts)
+        # print("attempts: ", ls_attempts)
+        # print("Guess: ", possible_first_digit)
+        # print("New Attempts: ", ls_new_attempts)
         solution = recursive_search(ls_new_attempts)
         if solution is not False:
             print(solution)
             return str(possible_first_digit) + solution
-
+    if digits == 13:
+        print("attempts: ", ls_attempts)
+        print(digits, "EVERY POSSIBILITY WAS WRONG!", ls_possible)
     return False
 
 
