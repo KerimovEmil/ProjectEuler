@@ -27,15 +27,6 @@ def check_all_guesses(ls_attempts, possible_sol):
     return dist
 
 
-# def mutate_guess(old_guess):
-#     """randomly mutate single element in string"""
-#     ls_old_guess = list(old_guess)
-#     rand_index = random.randint(0, len(ls_old_guess) - 1)
-#     rand_value = str(random.randint(0, 9))
-#     ls_old_guess[rand_index] = rand_value
-#     return ''.join(ls_old_guess)
-
-
 def mutate_guess(old_guess):
     rand_index = random.randint(0, len(old_guess) - 1)
     return mutate_guess_i(old_guess, rand_index)
@@ -55,28 +46,7 @@ class Problem185:
         self.max_try_wo_improvement = 10
         self.digits = len(self.ls_attempts[0][0])
 
-    def solve_attempt1(self):
-        best_guess = ''.join([str(random.randint(0, 9)) for _ in range(self.digits)])
-        min_dist = check_all_guesses(self.ls_attempts, best_guess)
-        if min_dist == 0:
-            return best_guess, min_dist
-        w = self.max_try_wo_improvement
-        # print("Trying new seed")
-        while w > 0:
-            w -= 1
-            possible_sol = mutate_guess(best_guess)
-            dist = check_all_guesses(self.ls_attempts, possible_sol)
-            if dist < min_dist:
-                min_dist = dist
-                w = self.max_try_wo_improvement
-                best_guess = possible_sol
-                # print(best_guess, dist)
-                if min_dist == 0:
-                    return best_guess, min_dist
-
-        return best_guess, min_dist
-
-    def solve_attempt2(self):
+    def solve_attempt(self):
         best_guess = ''.join([str(random.randint(0, 9)) for _ in range(self.digits)])
         min_dist = check_all_guesses(self.ls_attempts, best_guess)
         if min_dist == 0:
@@ -104,40 +74,12 @@ class Problem185:
         min_dist = self.digits*len(self.ls_attempts)
         is_solved = False
         while is_solved is False:
-            # best_guess, dist = self.solve_attempt1()
-            best_guess, dist = self.solve_attempt2()
+            best_guess, dist = self.solve_attempt()
             if dist < min_dist:
                 min_dist = dist
                 print(min_dist, best_guess)
             if dist == 0:
                 return best_guess
-
-    # def solve(self):
-    #     best_guess = ''.join([str(random.randint(0, 9)) for _ in range(self.digits)])
-    #     min_dist = check_all_guesses(self.ls_attempts, best_guess)
-    #     if min_dist == 0:
-    #         return best_guess
-    #     w = self.max_try_wo_improvement
-    #     print("Trying new seed")
-    #     while True:
-    #         while w > 0:
-    #             w -= 1
-    #             possible_sol = mutate_guess(best_guess)
-    #             dist = check_all_guesses(self.ls_attempts, possible_sol)
-    #             if dist < min_dist:
-    #                 min_dist = dist
-    #                 w = self.max_try_wo_improvement
-    #                 best_guess = possible_sol
-    #
-    #                 if min_dist == 0:
-    #                     return best_guess
-    #         print(best_guess, min_dist)
-    #         best_guess = mutate_guess(best_guess)
-    #         min_dist = check_all_guesses(self.ls_attempts, best_guess)
-    #         if min_dist == 0:
-    #             return best_guess
-    #         w = self.max_try_wo_improvement
-
 
 
 def main1():
