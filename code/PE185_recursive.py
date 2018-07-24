@@ -40,7 +40,7 @@ def test_solution_can_work(pos_sol, guess, correct):
 
 
 def consistency_check(ls_attempts, digits):
-    """For 1 digit choices, checks the consistency"""
+    """For n digit choices, checks the consistency"""
     # If two corrects, then False
     # if len([x for x in ls_attempts if x[1] > digits]) > 0:
     if any([x[1] > digits for x in ls_attempts]):
@@ -52,6 +52,18 @@ def consistency_check(ls_attempts, digits):
     # if len(ls_correct_n_digit) == 0:  # todo consider if needed
     #     if len(set([x[0] for x in ls_attempts])) == 10:
     #         return False
+
+    # large number of guesses with 0 correct
+    ls_no_correct = [x[0] for x in ls_attempts if x[1] == 0]
+    # if len(ls_no_correct) >= 3:
+    for attempt in ls_attempts:
+        poss_corr = digits
+        for dig in range(digits):
+            wrong_sol = {i[dig] for i in ls_no_correct}
+            if attempt[0][dig] in wrong_sol:
+                poss_corr -= 1
+        if poss_corr < attempt[1]:
+            return False
 
     # If more than 1 has n correct, and not the same, return false
     num_unique_correct_n_digit = len(set(ls_correct_n_digit))
@@ -68,12 +80,24 @@ def consistency_check(ls_attempts, digits):
             if consistent_bool is False:
                 return False
 
-    for i in range(int(digits/2), digits)[::-1]:
-        num_possible_wrong = min(2*digits - 2*i, digits)
-        i_digit_correct = [x for x in ls_attempts if x[1] == i]
-        for attempt1, attempt2 in itertools.combinations(i_digit_correct, r=2):
-            if sum([x != y for (x, y) in zip(attempt1[0], attempt2[0])]) > num_possible_wrong:
-                return False
+    # # lots of large correct number of guesses
+    # for i in range(int(digits/2), digits)[::-1]:
+    #     num_possible_wrong = min(2*digits - 2*i, digits)
+    #     i_digit_correct = [x for x in ls_attempts if x[1] == i]
+    #     for attempt1, attempt2 in itertools.combinations(i_digit_correct, r=2):
+    #         if sum([x != y for (x, y) in zip(attempt1[0], attempt2[0])]) > num_possible_wrong:
+    #             return False
+
+    # lots of large correct number of guesses
+    # max_corr = max([x[1] for x in ls_attempts])
+    # for i in range(2, max_corr+1)[::-1]:
+    for i in range(3, 1, -1):
+        i_digit_correct = [x[0] for x in ls_attempts if x[1] == i]
+        total_num_correct = i * len(i_digit_correct)
+        ls_digits_of_i_correct = [[x[j] for x in i_digit_correct] for j in range(digits)]
+        num_non_unique = sum([len(ls) - len(set(ls)) for ls in ls_digits_of_i_correct])
+        if total_num_correct - num_non_unique > digits:
+            return False
 
     return True
 
@@ -118,7 +142,7 @@ def recursive_search(ls_attempts):
         if solution is not False:
             print(solution)
             return str(possible_first_digit) + solution
-    if digits == 13:
+    if digits == 14:
         print("attempts: ", ls_attempts)
         print(digits, "EVERY POSSIBILITY WAS WRONG!", ls_possible)
     return False
