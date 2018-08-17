@@ -31,15 +31,28 @@ def pandigital(a, b):
         return 1
 
 
-t = []
-sum = 0
-for i in range(100):
-    for j in range(10000):
-        if pandigital(i, j):
-            if i * j in t:
-                pass
-            else:
-                t.append(i * j)
-                sum += i * j
+class Problem32:
+    def __init__(self, max_x, max_y):
+        self.max_x = max_x
+        self.max_y = max_y
+        self.sum = 0
 
-print(sum)
+    def solve(self):
+        t = []
+        for i in range(self.max_x):
+            for j in range(self.max_y):
+                if pandigital(i, j):
+                    if i * j in t:
+                        pass
+                    else:
+                        t.append(i * j)
+                        self.sum += i * j
+
+        return self.sum
+
+
+if __name__ == "__main__":
+    obj = Problem32(max_x=100, max_y=10000)
+    sol = obj.solve()
+    print(sol)
+
