@@ -415,3 +415,12 @@ class CoverZeros:
         shuffle(row_indices)
         column_index, = np.where(self._choices[row_indices[0]])
         return row_indices[0], column_index[0]
+
+
+def basic_factorial(x):
+    """Returns the factorial of the integer x."""
+    ans = 1
+    while x:
+        ans *= x
+        x -= 1
+    return ans
