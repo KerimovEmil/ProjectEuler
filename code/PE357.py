@@ -1,6 +1,8 @@
 # ANSWER
 # 1739023853137
 
+from util.utils import sieve
+
 max_int = int(1e8)
 
 
@@ -37,18 +39,6 @@ def divisors(n):
     # in python3, `yield from generate(0)` would also work
     for factor in generate(0):
         yield factor
-
-
-def sieve(n):
-    "Return all primes <= n."
-    np1 = n + 1
-    s = list(range(np1))
-    s[1] = 0
-    sqrtn = int(round(n ** 0.5))
-    for i in range(2, sqrtn + 1):
-        if s[i]:
-            s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
-    return filter(None, s)
 
 
 print("Calculating Primes")

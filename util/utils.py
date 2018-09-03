@@ -607,3 +607,15 @@ class ChineseRemainderTheorem:
             (x, last_x) = (last_x - q * x, x)
             (y, last_y) = (last_y - q * y, y)
         return (last_x, last_y)
+
+
+def sieve(n):  # TODO move to utils
+    "Return all primes <= n."
+    np1 = n + 1
+    s = list(range(np1))
+    s[1] = 0
+    sqrtn = int(round(n ** 0.5))
+    for i in range(2, sqrtn + 1):
+        if s[i]:
+            s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
+    return filter(None, s)
