@@ -88,6 +88,7 @@ class Problem43:
 
         # looping over divisor criteria to reduce space
         for condition in range(self.n_criteria)[::-1]:
+            print("Condition: {} has {} starting solution space".format(condition, len(ls_possible)))
             q = ls_possible
             ls_possible = []
             for tup in q:
