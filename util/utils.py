@@ -609,7 +609,7 @@ class ChineseRemainderTheorem:
         return (last_x, last_y)
 
 
-def sieve(n):  # TODO move to utils
+def sieve(n):
     "Return all primes <= n."
     np1 = n + 1
     s = list(range(np1))
