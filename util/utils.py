@@ -630,3 +630,15 @@ def timeit(method):
         print('{} took: {:.3f} seconds'.format(method.__name__, (te - ts)))
         return result
     return timed
+
+
+def is_pandigital(num):
+    """Return true if integer num uses all of the digits from 1 to n exactly once. False otherwise."""
+    str_num = str(num)
+    if str_num.count('0') > 0:
+        return False
+    n_digits = len(str_num)
+    for i in range(1, n_digits+1):
+        if str_num.count(str(i)) != 1:
+            return False
+    return True
