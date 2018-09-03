@@ -642,3 +642,84 @@ def is_pandigital(num):
         if str_num.count(str(i)) != 1:
             return False
     return True
+
+
+def new_mod(str_a, m):  # todo: test for bugs
+    """
+    Returns a mod m.
+    Works well for m=0,1,2,3,4,5,8,9,10,11
+    Args:
+        str_a: <str>
+        m: <num>
+    Returns: a mod m
+    """
+    int_a = int(str_a)
+    if len(str_a) > 2:
+
+        if m == 0 or m == 1:
+            return 0
+
+        if int_a == m:
+            return 0
+
+        if m == 2:
+            last = str_a[-1:]
+            return new_mod(last, m)
+
+        if m == 3 or m == 9:
+            sum_of_digits = sum([int(d) for d in str_a])
+            return new_mod(str(sum_of_digits), m)
+
+        if m == 4:
+            last = int(str_a[-1])
+            second_last = int(str_a[-2:-1])
+            answer = 2 * second_last + last
+            return new_mod(str(answer), m)
+
+        if m == 5:
+            last = str_a[-1]
+            return new_mod(last, m)
+
+        if m == 7:
+            last = int(str_a[-1:])
+            first = int(str_a[:-1])
+            answer = new_mod(str(first - 2 * last), m)
+            if answer == 0:
+                return 0
+            else:
+                return int_a % m
+
+        if m == 8:
+            last = int(str_a[-1:])
+            second_last = int(str_a[-2:-1])
+            third_last = int(str_a[-3:-2])
+            answer = 4 * third_last + 2 * second_last + last
+            return new_mod(str(answer), m)
+
+        if m == 10:
+            last = int(str_a[-1:])
+            return last
+
+        if m == 11:
+            new_a = 0
+            for i, digit in enumerate(str_a):
+                if not i % 2:
+                    new_a += int(digit)
+                else:
+                    new_a -= int(digit)
+            return new_mod(str(new_a), m)
+
+        if m == 13:
+            last = int(str_a[-1:])
+            first = int(str_a[:-1])
+            answer = new_mod(str(first - 9 * last), m)
+            if answer == 0:
+                return 0
+            else:
+                return int_a % m
+
+        return int_a % m
+
+    else:
+
+        return int_a % m
