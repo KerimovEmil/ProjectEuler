@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 
 class Hungarian:
@@ -610,7 +611,7 @@ class ChineseRemainderTheorem:
 
 
 def sieve(n):
-    "Return all primes <= n."
+    """Return all primes <= n."""
     np1 = n + 1
     s = list(range(np1))
     s[1] = 0
@@ -619,3 +620,13 @@ def sieve(n):
         if s[i]:
             s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
     return filter(None, s)
+
+
+def timeit(method):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        print('{} took: {:.3f} seconds'.format(method.__name__, (te - ts)))
+        return result
+    return timed
