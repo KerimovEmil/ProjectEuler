@@ -15,9 +15,10 @@
 
 from util.utils import sieve
 from util.utils import timeit
+from itertools import count
 
 
-class Problem47:
+class DumbProblem47:  # slower ~ 30 seconds
     @timeit
     def __init__(self, max_prime, consec_n, min_int, max_int):
         self.consec_n = consec_n
@@ -63,8 +64,44 @@ class Problem47:
         return self.ans
 
 
+class Problem47:
+    @timeit
+    def __init__(self, consec_n):
+        self.consec_n = consec_n
+        self.ans = None
+
+    @timeit
+    def solve(self):
+
+        sieve = {}  # {(x = multiple of prime p) >= i: [p, known factor count in x]}
+        for i in count(2):  # count from 2 upwards
+            if i not in sieve:  # if i is prime:
+                want = self.consec_n  # want 4 consecutive integers
+                p = i
+            else:
+                p, factors = sieve.pop(i)  # have now noted all factors of i
+                if factors < self.consec_n:  # non-prime i has less than 4 prime factors
+                    want = self.consec_n
+                else:
+                    want -= 1
+                    if want == 0:
+                        self.ans = i - self.consec_n + 1
+                        return self.ans
+            # p divides i; find next unoccupied multiple of p in sieve
+            while True:
+                i += p
+                if i not in sieve:
+                    break
+                sieve[i][1] += 1  # found one more factor (p) of i
+            sieve[i] = [p, 1]  # so far, i has 1 known factor (p)
+
+    def get_solution(self):
+        return self.ans
+
+
 if __name__ == "__main__":
-    obj = Problem47(max_prime=100000, consec_n=4, min_int=100000, max_int=150000)
+    # obj = DumbProblem47(max_prime=100000, consec_n=4, min_int=100000, max_int=150000)
+    obj = Problem47(consec_n=4)
     sol = obj.solve()
     print(sol)
 
