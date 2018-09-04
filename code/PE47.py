@@ -14,36 +14,57 @@
 # Answer = 134043
 
 from util.utils import sieve
+from util.utils import timeit
 
 
-P = list(sieve(100000))
-T = set(P)
+class Problem47:
+    @timeit
+    def __init__(self, max_prime, consec_n, min_int, max_int):
+        self.consec_n = consec_n
+        self.min_int = min_int
+        self.max_int = max_int
+        self.P = list(sieve(max_prime))
 
+        self.ans = None
 
-def div(num, D):
-    count = 0
-    for prime in P:
-        if prime > num:
-            return False
-        if num % prime == 0:
-            count += 1
-        while num % prime == 0:
-            num = num / prime
-        if count > D:
-            return False
-        if count == D and num == 1:
-            return True
-    if count == D:
-        return True
-    else:
-        return False
+    def div(self, num, d_primes):
+        """Returns True if the input number (num) has exactly D unique prime divisors."""
+        count = 0
+        # if num in self.P:
+        #     return False
+        for prime in self.P:
+            if prime > num:
+                return count == d_primes
+            if num % prime == 0:
+                count += 1
+                if count > d_primes:
+                    return False
+            while num % prime == 0:
+                num /= prime
+            if num == 1:
+                return count == d_primes
 
+        return count == d_primes
 
-R = list(set(range(100000, 150000)).difference(T))
-for num in R:
-    if div(num, 4):
-        if div(num + 1, 4):
-            if div(num + 2, 4):
-                if div(num + 3, 4):
-                    print(num)
+    @timeit
+    def solve(self):
+        counter = 0
+        for num in range(self.min_int, self.max_int):
+            if self.div(num, self.consec_n):
+                counter += 1
+                if counter == self.consec_n:
+                    self.ans = num - self.consec_n + 1
                     break
+            else:
+                counter = 0
+        return self.ans
+
+    def get_solution(self):
+        return self.ans
+
+
+if __name__ == "__main__":
+    obj = Problem47(max_prime=100000, consec_n=4, min_int=100000, max_int=150000)
+    sol = obj.solve()
+    print(sol)
+
