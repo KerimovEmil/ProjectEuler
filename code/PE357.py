@@ -20,8 +20,6 @@
 
 
 from util.utils import sieve
-from util.utils import square_primes_sieve
-from util.utils import square_free_sieve
 from util.utils import primes_of_n
 from util.utils import timeit
 
@@ -30,18 +28,14 @@ class Problem357:
     @timeit
     def __init__(self, max_int, debug=False):
         self.max_int = max_int
-        self.ans = 0
+        self.ans = 1  # for the first number 1.
         self.debug = debug
 
         if self.debug:
             print("Calculating Primes")
-        # self.ls_primes = list(sieve(max_int))
         self.set_primes = set(sieve(max_int))
-        # self.square_primes = square_primes_sieve(max_int, self.ls_primes)
         if self.debug:
             print("Calculating square free sieve")
-        # self.square_free = set(square_free_sieve(int(max_int)))
-        # self.primes = sieve(max_int)
         if self.debug:
             print("Finished Calculating Primes")
             print("{} is the total number of primes to check".format(len(self.set_primes)))
@@ -115,6 +109,6 @@ class Problem357:
 
 
 if __name__ == "__main__":
-    obj = Problem357(max_int=int(1e8), debug=True)
+    obj = Problem357(max_int=int(1e8), debug=False)
     sol = obj.solve()
     print(sol)
