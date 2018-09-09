@@ -737,3 +737,44 @@ def combin(n, r):
         return ntok // rtok  # bit-wise operation
     else:
         return 0
+
+
+def square_free_sieve(limit):
+    """Generator that yields all square free numbers less than limit"""
+    a = [True] * limit
+    # Needed so we don't mark off multiples of 1^2
+    yield 1
+    a[0] = a[1] = False
+    for i, is_square_free in enumerate(a):
+        if is_square_free:
+            yield i
+            i2 = i * i
+            for n in range(i2, limit, i2):
+                a[n] = False
+
+
+def square_primes_sieve(limit, primes=None):
+    """Returns a list all prime squares less than limit"""
+    if primes is None:
+        primes = sieve(int(limit))
+    return [i**2 for i in primes]
+
+
+def primes_of_n(n):
+    """
+    Given an integer n, return a dictionary of prime factors with the keys being the prime number, and the values
+    being the multiplicity of that factor.
+    """
+    factors = {}
+    nn = n
+    i = 2
+    while i * i <= nn:
+        while nn % i == 0:
+            if i not in factors:
+                factors[i] = 0
+            factors[i] += 1
+            nn //= i
+        i += 1
+    if nn > 1:
+        factors[nn] = 1
+    return factors
