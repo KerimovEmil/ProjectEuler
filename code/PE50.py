@@ -15,31 +15,42 @@
 # 997651
 
 from util.utils import sieve
+from util.utils import timeit
 
 
-def pe50(ls_prime, max_int):
-    max_len = 1
-    max_consec_prime = 2
-    num_primes = len(ls_prime)
-    primes = set(ls_prime)  # this speeds up the prime check
+class Problem50:
+    @timeit
+    def __init__(self, max_int):
+        self.max_int = max_int
+        self.ls_primes = list(sieve(max_int))
+        self.ans = 2
+        self.max_len = 1
 
-    for i in range(num_primes):
-        for j in range(i, num_primes):
-            prime_sum = sum(ls_prime[i:j + 1])
-            if prime_sum < max_int:
-                if prime_sum in primes:
-                    size = len(ls_prime[i:j + 1])
-                    if size > max_len:
-                        max_len = size
-                        max_consec_prime = prime_sum
-            else:
-                break
+    @timeit
+    def solve(self):
+        num_primes = len(self.ls_primes)
+        primes = set(self.ls_primes)  # this speeds up the prime check
 
-    return max_consec_prime
+        for i in range(num_primes):
+            for j in range(i, num_primes - self.max_len):
+                prime_sum = sum(self.ls_primes[i:j + 1 + self.max_len])
+                if prime_sum < self.max_int:
+                    if prime_sum in primes:
+                        size = j+1-i
+                        if size > self.max_len:
+                            self.max_len = size
+                            self.ans = prime_sum
+                else:
+                    break
+
+        return self.ans
+
+    def get_solution(self):
+        return self.ans
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     max_int = 1000000
-    list_of_primes = list(sieve(max_int))
-
-    print(pe50(list_of_primes, max_int))
+    obj = Problem50(max_int=max_int)
+    sol = obj.solve()
+    print(sol)
