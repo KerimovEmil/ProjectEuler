@@ -61,7 +61,6 @@ class Problem101:
 
 
 if __name__ == "__main__":
-    max_power = 10
-    obj = Problem101(max_power=max_power)
+    obj = Problem101(max_power=10)
     sol = obj.solve()
     print(sol)
