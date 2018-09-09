@@ -6,28 +6,32 @@
 
 # ANSWER
 # 9110846700
+from util.utils import timeit
 
 
-def pe48(max_int, mod):
-    """
-    PE48 answer.
-    Args:
-        max_int: the max int of the sum
-        mod: how many last digits to keep
+class Problem48:
+    @timeit
+    def __init__(self, n, last_n_digits):
+        self.n = n
+        self.mod_div = int(10**last_n_digits)
+        self.ans = 0
 
-    Returns: the PE48 answer.
-    """
-    answer = 0
-    for i in range(1, max_int + 1):
-        temp = (i % mod) ** i
-        temp = temp % mod
-        answer += temp
-        answer = answer % mod
-    return answer
+    @timeit
+    def solve(self):
+        for i in range(1, self.n + 1):
+            temp = (i % self.mod_div) ** i
+            temp = temp % self.mod_div
+            self.ans += temp
+            self.ans = self.ans % self.mod_div
+        return self.ans
+
+    def get_solution(self):
+        return self.ans
 
 
-if __name__ == '__main__':
-
-    last_ten_digits = int(1e10)
-    up_to = 1000
-    print(pe48(up_to, last_ten_digits))
+if __name__ == "__main__":
+    last_n_digits = 10
+    n = 1000
+    obj = Problem48(n=n, last_n_digits=last_n_digits)
+    sol = obj.solve()
+    print(sol)
