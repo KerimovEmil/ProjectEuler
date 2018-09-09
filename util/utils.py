@@ -723,3 +723,17 @@ def new_mod(str_a, m):  # todo: test for bugs
     else:
 
         return int_a % m
+
+
+def combin(n, r):
+    """A fast way to calculate binomial coefficients by Andrew Dalke (contrib)."""
+    if 0 <= r <= n:
+        ntok = 1
+        rtok = 1
+        for t in range(1, min(r, n - r) + 1):
+            ntok *= n
+            rtok *= t
+            n -= 1
+        return ntok // rtok  # bit-wise operation
+    else:
+        return 0

@@ -4,24 +4,33 @@
 
 # Answer = 4075
 
-def combin(n, r):
-    """A fast way to calculate binomial coefficients by Andrew Dalke (contrib)."""
-    if 0 <= r <= n:
-        ntok = 1
-        rtok = 1
-        for t in range(1, min(r, n - r) + 1):
-            ntok *= n
-            rtok *= t
-            n -= 1
-        return ntok // rtok
-    else:
-        return 0
+from util.utils import timeit
+from util.utils import combin
 
 
-count = 0
-for n in range(0, 101):
-    for r in range(0, int(n / 2 + 1)):
-        if combin(n, r) > 1000000:
-            count += n - 2 * r + 1
-            break
-print(count)
+class Problem53:
+    def __init__(self, max_int, max_n):
+        self.max_int = max_int
+        self.max_n = max_n
+        self.count = 0
+
+    @timeit
+    def solve(self):
+        for n in range(0, self.max_n + 1):
+            for r in range(0, int(n / 2 + 1)):
+                if combin(n, r) > self.max_int:
+                    self.count += n - 2 * r + 1
+                    break
+
+        return self.count
+
+    def get_solution(self):
+        return self.count
+
+
+if __name__ == "__main__":
+    max_int = 1000000
+    max_n = 100
+    obj = Problem53(max_int=max_int, max_n=max_n)
+    sol = obj.solve()
+    print(sol)
