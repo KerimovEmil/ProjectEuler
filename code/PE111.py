@@ -41,6 +41,8 @@ class Problem111:
         self.debug = debug
         self.ans = 0
 
+        self.ls_combin = [''.join(x) for x in itertools.product('0123456789', repeat=2)]
+
         max_int = int(10 ** (self.n / 2))
         if self.debug:
             print("Calculating Primes")
@@ -86,9 +88,8 @@ class Problem111:
         return total_sum
 
     def helper_s(self, base):  # Only works for 0
-        ls_combin = [''.join(x) for x in itertools.product('0123456789', repeat=2)]
         total_sum = 0
-        for pair in ls_combin:
+        for pair in self.ls_combin:
             for i in range(len(base) - 1):
                 for j in range(i + 1, len(base)):
                     temp = base.copy()
