@@ -1,73 +1,112 @@
-"By solving all fifty puzzles find the sum of the 3-digit numbers found in the top left corner of each solution grid; for example, 483 is the 3-digit number found in the top left corner of the solution grid above."
-
-temp = open(r'../problem_data/p096_sudoku.txt')
-raw_file = temp.read().splitlines()
-
-sud = []
-for i in range(50):
-    sud.append(raw_file[1 + 10 * i:10 * (i + 1)])
-
-# def sudoku_solver(x):
-#	"""Inputs list of strings which when vertically stacked make a sudoku. Outputs the solution."""
-#	r = set(x[0])
-#	poss = []
-#	j = x[0].find('0')
-#	for j in xrange(9):
-#		for i in xrange(9):
-#			if x[j][i] != '0':
-#				poss.append()
+# By solving all fifty puzzles find the sum of the 3-digit numbers found in the top left corner
+# of each solution grid; for example, 483 is the 3-digit number found in the top left corner of
+# the solution grid above.
+from util.utils import timeit
+from util.dlx import DancingLinks, LeftIterator
+import unittest
 
 
-# Boris Borcic 2006
-# Quick and concise Python 2.5 sudoku solver
-# TODO: NEED TO CONVERT TO PYTHON 3 syntax
+class Problem96:
+    def __init__(self, filename):
+        self.filename = filename
+        pass
 
-w2q = [[n / 9, n / 81 * 9 + n % 9 + 81, n % 81 + 162, n % 9 * 9 + n / 243 * 3 + n / 27 % 3 + 243] for n in range(729)]
-q2w = (z[1] for z in sorted((x, y) for y, s in enumerate(w2q) for x in s))
-q2w = map(set, zip(*9 * [q2w]))
-w2q2w = [set(w for q in qL for w in q2w[q]) for qL in w2q]
+    def load_sudoku(self):
+        with open(self.filename, 'r') as f:
+            lines = f.read().splitlines()
+            sudokus = []
+            for i in range(0, len(lines), 10):
+                sudoku = lines[i + 1: i + 10]
+                sudokus.append(sudoku)
+        return sudokus
+
+    @staticmethod
+    def gen_row(row_id, col_id, value):
+        # each box filled once
+        # only once in row,
+        # only once in column,
+        # only one in group,
+        constraints = [False for _ in range(81*4)]
+        eid = value - 1
+
+        # box(i,j) is filled
+        constraints[row_id * 9 + col_id] = True
+        # value only exists in row-i once
+        constraints[81 + eid * 9 + row_id] = True
+        # value only exists in col-j once
+        constraints[2*81 + eid*9 + col_id] = True
+        # value only exists in group-k once
+        group_row = row_id // 3
+        group_col = col_id // 3
+
+        idx = group_row * 3 + group_col
+        constraints[3*81 + eid * 9 + idx] = True
+        return tuple(constraints)
+
+    @staticmethod
+    def to_exact_cover(sudoku_matrix):
+        existing_rows = []
+        other_rows = []
+        mat_ref = {}
+
+        for row_id in range(len(sudoku_matrix)):
+            row = sudoku_matrix[row_id]
+            for col_id in range(len(row)):
+                e = int(row[col_id])
+                for value in range(1, 10):
+                    constraint_row = Problem96.gen_row(row_id, col_id, value)
+                    mat_ref[constraint_row] = (row_id, col_id, value)
+                    if (value == e):
+                        existing_rows.append(constraint_row)
+                    else:
+                        other_rows.append(constraint_row)
+        return existing_rows, other_rows, mat_ref
+
+    @staticmethod
+    def solve_sudoku(sudoku_matrix):
+        sudoku = [['0' for _ in range(9)] for _ in range(9)]
+
+        existing_rows, other_rows, mat_ref = Problem96.to_exact_cover(
+            sudoku_matrix)
+        solver = DancingLinks(other_rows)
+
+        cols_to_cover = set()
+        for row in existing_rows:
+            for col_id in range(len(row)):
+                if (row[col_id]):
+                    cols_to_cover.add(col_id)
+
+        for head in LeftIterator(solver.smat.ghead):
+            if (head.col_idx in cols_to_cover):
+                solver._cover(head)
+
+        solving_nodes = solver.solve()
+        solving_rows = set(other_rows[node.row_idx] for node in solving_nodes)
+        overall_rows = list(solving_rows) + existing_rows
+
+        for row in overall_rows:
+            row_id, col_id, value = mat_ref[row]
+            sudoku[row_id][col_id] = str(value)
+        return sudoku
+
+    @timeit
+    def solve(self):
+        moving_sum = 0
+        for sudoku in self.load_sudoku():
+            solved_sudoku = self.solve_sudoku(sudoku)
+            val = int(''.join(solved_sudoku[0][:3]))
+            moving_sum += val
+        return moving_sum
 
 
-class Completed(Exception): pass
+class Solution96(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem96('./problem_data/p096_sudoku.txt')
 
+    def test_solution(self):
+        self.assertEqual(24702, self.problem.solve())
 
-def sudoku99(problem):
-    givens = list(9 * j + int(k) - 1 for j, k in enumerate(problem[:81]) if '0' < k)
-    try:
-        search(givens, [9] * len(q2w), set(), set())
-    except Completed as ws:
-        return ''.join([str(w % 9 + 1) for w in sorted(ws.message)])
-
-
-def search(w0s, q2nw, takens, ws):
-    while 1:
-        while w0s:
-            w0 = w0s.pop()
-            takens.add(w0)
-            ws.add(w0)
-            for q in w2q[w0]: q2nw[q] += 100
-            for w in w2q2w[w0] - takens:
-                takens.add(w)
-                for q in w2q[w]:
-                    n = q2nw[q] = q2nw[q] - 1
-                    if n < 2:
-                        w0s.append((q2w[q] - takens).pop())
-        if len(ws) > 80:
-            raise Completed(ws)
-        w1, w0 = q2w[q2nw.index(2)] - takens
-        try:
-            search([w1], q2nw[:], takens.copy(), ws.copy())
-        except KeyError:
-            w0s.append(w0)
-
-
-ans = 0
 
 if __name__ == '__main__':
-    for n in range(len(sud)):
-        line = ''
-        for i in range(9):
-            line = line + sud[n][i]
-        ans += int(sudoku99(line)[0:3])
-print(ans)
-
+    unittest.main()
+    print('Success!!')
