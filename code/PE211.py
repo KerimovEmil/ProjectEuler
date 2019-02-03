@@ -3,7 +3,7 @@
 # σ2(10) = 1 + 4 + 25 + 100 = 130.
 # Find the sum of all n, 0 < n < 64,000,000 such that σ2(n) is a perfect square.
 
-# Answer = ???
+# Answer = 1922364685
 
 # n = p1^x p2^y p3^z
 # σ2(n) = (1 + p1^2 + p1^4 + ... + p1^2x) * (1 + p2^2 + p2^4 + ... + p2^2y) * (1 + p3^2 + p3^4 + ... + p3^2z)
@@ -17,9 +17,9 @@
 
 import unittest
 from util.utils import timeit
-from util.utils import primes_of_n, primes_of_n_with_ls_prime
+from util.utils import primes_of_n_with_ls_prime
 from util.utils import sieve
-import math
+# import math
 
 
 class Problem211:
@@ -29,24 +29,10 @@ class Problem211:
         self.dc_sq_sum = {}
         self.dc_prime_factor_sq_sum = {}
 
-    # @timeit
-    # def solve(self):
-    #     ls_primes = list(sieve(int(self.max_int**0.5)))
-    #     max_lg = math.log2(self.max_int)
-    #     dc_max_factors = {p: int(max_lg/math.log2(p)) for p in ls_primes}
-    #
-    #     # Load all sigma2's
-    #     for p, max_m in dc_max_factors.items():
-    #         for i in range(1, max_m):
-    #             self.dc_sq_sum[(p, i)] = int((p ** (2 * i + 2) - 1) / (p ** 2 - 1))
-    #             self.dc_prime_factor_sq_sum[(p, i)] = primes_of_n(self.dc_sq_sum[(p, i)])
-    #     print(self.dc_sq_sum)
-    #     print(self.dc_prime_factor_sq_sum)
-
     @timeit
     def solve(self):
 
-        ls_primes = list(sieve(int(self.max_int**0.5)))
+        ls_primes = list(sieve(int(self.max_int)))
         # max_lg = math.log2(self.max_int)
         # dc_max_factors = {p: int(max_lg/math.log2(p)) for p in ls_primes}
         #
@@ -54,6 +40,7 @@ class Problem211:
         # for p, max_m in dc_max_factors.items():
         #     for i in range(1, max_m + 1):
         #         self.dc_sq_sum[(p, i)] = int((p ** (2 * i + 2) - 1) / (p ** 2 - 1))
+        #         self.dc_prime_factor_sq_sum[(p, i)] = primes_of_n(self.dc_sq_sum[(p, i)])
 
         for i in range(self.max_int):
             dc_factors = primes_of_n_with_ls_prime(i, ls_primes)
@@ -82,28 +69,17 @@ class Problem211:
             sum_sq *= self.sum_sq_divisors_prime(p, m)
         return sum_sq
 
-    # @staticmethod
-    # def sum_sq_divisors(dc_primes):
-    #     sum_sq = 1
-    #     for p, m in dc_primes.items():
-    #         sum_sq *= (p**(2*m+2) - 1) / (p**2 - 1)
-    #     return sum_sq
-
     def get_solution(self):
         return self.sum_n
 
 
-# class Solution1(unittest.TestCase):
-#     def setUp(self):
-#         self.problem = Problem211(max_int=64000000)
-#
-#     # def test_solution(self):
-#     #     self.assertEqual(None, self.problem.solve())
+class Solution221(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem211(max_int=64000000)
+
+    def test_solution(self):
+        self.assertEqual(1922364685, self.problem.solve())
 
 
 if __name__ == '__main__':
-    # unittest.main()
-
-    obj = Problem211(max_int=64000000)
-    sol = obj.solve()
-    print(sol)
+    unittest.main()
