@@ -778,3 +778,25 @@ def primes_of_n(n):
     if nn > 1:
         factors[nn] = 1
     return factors
+
+
+def primes_of_n_with_ls_prime(n, ls_prime):
+    """
+    Given an integer n and a list of primes, return a dictionary of prime factors with the keys being the prime number,
+    and the values being the multiplicity of that factor.
+    """
+    factors = {}
+    nn = n
+    i = 0
+    p = ls_prime[i]
+    while p * p <= nn:
+        while nn % p == 0:
+            if p not in factors:
+                factors[p] = 0
+            factors[p] += 1
+            nn //= p
+        i += 1
+        p = ls_prime[i]
+    if nn > 1:
+        factors[nn] = 1
+    return factors
