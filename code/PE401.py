@@ -8,15 +8,20 @@
 # Find SIGMA2(10^15) modulo 10^9.
 
 # Answer = 281632621
+# solve time ~ 1 min
 
-# p(n) = sum_k=1^n k^2 = n*(n+1)*(2n+1)/6
 # the divisor i appears exactly floor(n/i) times for all integers below or equal to n
 # so in total we should get sum_i  floor(n/i)*i^2
 # but this is too slow.
 
-# we can use the sum of squares formula
+# The idea is to do this for all of the numbers that have a unique floor(n/i), i.e. i < sqrt(n)
+# then for the other numbers group them into the remaining sqrt(n) buckets, and sum up those buckets all at once
+# using the sum of squares formula.
+
+# p(n) = sum_k=1^n k^2 = n*(n+1)*(2n+1)/6
 # the sum of squares of all integers which appear exactly m-times is p(floor(n/m)) - p(floor(n/(m+1)))
 
+# todo: consider ways to speed this up
 
 import unittest
 from util.utils import timeit
