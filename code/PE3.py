@@ -1,4 +1,16 @@
-from util.utils import timeit
+"""
+PROBLEM
+
+The prime factors of 13195 are 5, 7, 13 and 29.
+
+What is the largest prime factor of the number 600851475143 ?
+
+ANSWER:
+6857
+Solve time ~ 0.001 seconds
+"""
+
+from util.utils import timeit, primes_of_n
 import unittest
 
 
@@ -6,25 +18,9 @@ class Problem3:
     def __init__(self, num):
         self.num = num
 
-    @staticmethod
-    def prime_factors(num):
-        n = num
-        factors = []
-        while not n % 2:
-            n /= 2
-            factors.append(2)
-
-        sqrt = int(n ** 0.5 // 1)
-        for i in range(3, sqrt + 1, 2):
-            while not n % i:
-                n /= i
-                factors.append(i)
-
-        return factors
-
     @timeit
     def solve(self):
-        pf = self.prime_factors(self.num)
+        pf = primes_of_n(self.num).keys()
         return max(pf)
 
 

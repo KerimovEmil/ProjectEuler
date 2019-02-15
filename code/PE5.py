@@ -1,3 +1,15 @@
+"""
+PROBLEM
+
+2520 is the smallest number that can be divided by each of the numbers from 1 to 10 without any remainder.
+
+What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?
+
+ANSWER:
+232792560
+Solve time ~ 0.003 seconds
+"""
+
 from util.utils import timeit, primes_of_n
 import unittest
 from collections import defaultdict
@@ -37,7 +49,6 @@ class Solution5(unittest.TestCase):
         self.problem = Problem5(list(range(2, 21)))
 
     def test_solution(self):
-        # Fill this in once you've got a working solution!
         self.assertEqual(232792560, self.problem.solve())
 
 
