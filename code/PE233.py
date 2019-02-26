@@ -13,7 +13,7 @@ ANSWER:
 Solve time ~  seconds
 """
 
-from util.utils import timeit
+from util.utils import timeit, sieve
 import unittest
 
 
@@ -68,24 +68,93 @@ import unittest
 
 
 class Problem233:
-    def __init__(self, n, limit):
-        self.n = n
-        self.limit = limit
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def calculate_options(chosen_n, sub_options, sofar):
+        if not len(sub_options):
+            return sofar
+        head = sub_options[0] ** 2
+        new_chosen_n = head * chosen_n
+        if (new_chosen_n <= 1e11):
+            sofar.add(new_chosen_n)
+            # grow the chosen n using head more times if desired
+            Problem233.calculate_options(new_chosen_n, sub_options, sofar)
+        # grow the chosen n without using head at all, and only using other factors
+        Problem233.calculate_options(chosen_n, sub_options[1:], sofar)
+
+    @staticmethod
+    def get_variants(p1, p2, p3, others, options):
+        n_max = 1e11
+        chosen_n = 2 * (p1 ** 1) * (p2 ** 2) * (p3 ** 3)
+        # max multiplicative limit
+        limit = n_max / chosen_n
+        sub_others = [x for x in others if x <= limit]
+
+        fac_2 = 0
+        while True:
+            cn = (2 ** fac_2) * chosen_n
+            if cn > n_max:
+                break
+            else:
+                options.add(cn)
+                Problem233.calculate_options(cn, sub_others, options)
+                fac_2 += 1
+
+    @staticmethod
+    def compute_numbers(p1s, p2s, p3s, others):
+        options = set()
+        for p3 in p3s:
+            for p2 in p2s:
+                if (2 * p3 ** 3 * p2 ** 2) > 1e11:
+                    break
+                if (p2 == p3):
+                    continue
+
+                for p1 in p1s:
+                    if (2 * p3 ** 3 * p2 ** 2 * p1 ** 1) > 1e11:
+                        break
+                    if (p1 == p2):
+                        continue
+                    if (p1 == p3):
+                        continue
+
+                    Problem233.get_variants(p1, p2, p3, others, options)
+        return sum(options)
 
     @timeit
     def solve(self):
-        if self.n % 4 == 0:
-            pass
-        else:
-            return 0
+        max_p1 = 2366864
+        max_p2 = 5547
+        max_p3 = 535
+
+        available_primes = sieve(max_p1)
+        modded_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
+
+        p1s = [x for x in modded_primes if x < max_p1]
+        p2s = [x for x in modded_primes if x < max_p2]
+        p3s = [x for x in modded_primes if x < max_p3]
+        # for multiplying by even powers of primes
+        others = [x for x in sieve(400) if Problem233.is_3mod4(x)]
+
+        return self.compute_numbers(p1s, p2s, p3s, others)
+
+    @staticmethod
+    def is_1mod4(prime):
+        return prime % 4 == 1
+
+    @staticmethod
+    def is_3mod4(prime):
+        return prime % 4 == 3
 
 
 class Solution1(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem233(n=420, limit=int(1e11))
+        self.problem = Problem233()
 
-    # def test_solution(self):
-        # self.assertEqual(420, self.problem.solve())
+    def test_solution(self):
+        self.assertEqual(0, self.problem.solve())
 
 
 if __name__ == '__main__':
