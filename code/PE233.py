@@ -49,6 +49,8 @@ import unittest
 # 1) N must be even. Otherwise N^2/2 is not an integer.
 # 2) N^2 must have exactly 3 primes of 1 mod 4, with exponents 2,4,6. (420/4 = 105 = 3*5*7)
 # This implies that N must exactly 3 primes of 1 mod 4, with exponents 1,2,3.
+# Note if only 2 prime factors made up the 105 multiples then N would be bigger than 10^11, since
+# 5**10 * 13**10 = 1346274334462890625
 
 # Since there is an infinite amount of ways to construct this, we must use the 3rd condition in the problem
 # 3) N ≤ 10^11
