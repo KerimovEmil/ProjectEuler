@@ -47,10 +47,19 @@ import unittest
 
 # therefore N such that f(N) = 420 implies that
 # 1) N must be even
-# 2) N must have exactly 3 primes of 1 mod 4, with exponents 2,4,6. (420/4 = 105 = 3*5*7)
+# 2) N^2 must have exactly 3 primes of 1 mod 4, with exponents 2,4,6. (420/4 = 105 = 3*5*7)
+# This implies that N must exactly 3 primes of 1 mod 4, with exponents 1,2,3.
 
 # Since there is an infinite amount of ways to construct this, we must use the 3rd condition in the problem
 # 3) N ≤ 10^11
+
+# Note the first few primes with 1 mod 4 are 5, 13, 17, 29, 37, 41, 53, ...
+# therefore the smallest possible N would be 2 * 5^3 * 13^2 * 17^1 = 718250
+# The largest possible prime 1 mod 4 to consider would be 2366809 since 2 * 5^3 * 13^2 * 2366809^1 = 99997680250
+
+# There are only 86929 primes less then or equal to 2366809 which are 1 mod 4.
+# For each combination we need to also count multiples of every other prime number that keep N below 10^11.
+
 
 class Problem233:
     def __init__(self, n, limit):
