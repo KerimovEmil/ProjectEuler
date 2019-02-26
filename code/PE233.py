@@ -53,21 +53,24 @@ import unittest
 # 3) N ≤ 10^11
 
 class Problem233:
-    def __init__(self, limit):
+    def __init__(self, n, limit):
+        self.n = n
         self.limit = limit
 
     @timeit
     def solve(self):
-        gen = (i for i in range(1, self.limit) if not (i % 3 and i % 5))
-        return sum(gen)
+        if self.n % 4 == 0:
+            pass
+        else:
+            return 0
 
 
 class Solution1(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem233(1000)
+        self.problem = Problem233(n=420, limit=int(1e11))
 
-    def test_solution(self):
-        self.assertEqual(233168, self.problem.solve())
+    # def test_solution(self):
+        # self.assertEqual(420, self.problem.solve())
 
 
 if __name__ == '__main__':
