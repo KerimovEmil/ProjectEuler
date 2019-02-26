@@ -46,7 +46,7 @@ import unittest
 # hence f(10,000) = 9*4 = 36
 
 # therefore N such that f(N) = 420 implies that
-# 1) N must be even. Otherwise N^2/2 is not an integer.
+# 1) N must be even. Otherwise N^2/2 is not an integer.  # todo, on second thought, I don't think this is true.
 # 2) N^2 must have exactly 3 primes of 1 mod 4, with exponents 2,4,6. (420/4 = 105 = 3*5*7)
 # This implies that N must exactly 3 primes of 1 mod 4, with exponents 1,2,3.
 # Note if only 2 prime factors made up the 105 multiples then N would be bigger than 10^11, since
