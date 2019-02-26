@@ -46,7 +46,7 @@ import unittest
 # hence f(10,000) = 9*4 = 36
 
 # therefore N such that f(N) = 420 implies that
-# 1) N must be even
+# 1) N must be even. Otherwise N^2/2 is not an integer.
 # 2) N^2 must have exactly 3 primes of 1 mod 4, with exponents 2,4,6. (420/4 = 105 = 3*5*7)
 # This implies that N must exactly 3 primes of 1 mod 4, with exponents 1,2,3.
 
@@ -59,6 +59,10 @@ import unittest
 
 # There are only 86929 primes less then or equal to 2366809 which are 1 mod 4.
 # For each combination we need to also count multiples of every other prime number that keep N below 10^11.
+
+# The largest prime that can be cubed is 521, since 2 * 5^2 * 13^1 * 521^3 = 91923494650
+# The largest prime that can be squared is 5521, since 2 * 5^3 * 13^1 * 5521^2 = 99064683250
+# The largest prime that can be raised to the 1st power is 2366809, since 2 * 5^3 * 13^2 * 2366809^1 = 99997680250.
 
 
 class Problem233:
