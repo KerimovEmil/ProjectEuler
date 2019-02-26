@@ -15,6 +15,7 @@ Solve time ~  seconds
 
 from util.utils import timeit
 import unittest
+import math
 
 
 # Using:
@@ -35,13 +36,19 @@ class Problem235:
         self.n = n
         self.limit = limit
 
+    @staticmethod
+    def s(r):
+        r_5000 = math.pow(r, 5000)
+        return (14100**r_5000*r - 14103*r_5000 + 900*r - 897)/math.pow(r - 1, 2)
+
     @timeit
     def solve(self):
         pass
-#
-# class Solution1(unittest.TestCase):
-#     def setUp(self):
-#         self.problem = Problem235(n=420, limit=int(1e11))
+
+
+class Solution235(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem235(n=5000, limit=int(- 6*1e11))
 
     # def test_solution(self):
         # self.assertEqual(420, self.problem.solve())
