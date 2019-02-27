@@ -47,7 +47,7 @@ import unittest
 # hence f(10,000) = 9*4 = 36
 
 # therefore N such that f(N) = 420 implies that
-# 1) N^2 must have exactly 3 primes of 1 mod 4, with exponents 2,4,6. (420/4 = 105 = 3*5*7)
+# 1) 2* N^2 must have exactly 3 primes of 1 mod 4, with exponents 2,4,6. (420/4 = 105 = 3*5*7)
 # This implies that N must exactly 3 primes of 1 mod 4, with exponents 1,2,3.
 # Note if only 2 prime factors made up the 105 multiples then N would be bigger than 10^11, since
 # 5**10 * 13**10 = 1346274334462890625
@@ -56,7 +56,7 @@ import unittest
 # 2) N ≤ 10^11
 
 # Note the first few primes with 1 mod 4 are 5, 13, 17, 29, 37, 41, 53, ...
-# therefore the smallest possible N would be 5^3 * 13^2 * 17^1 = 718250
+# therefore the smallest possible N would be 5^3 * 13^2 * 17^1 = 359125
 
 # For each combination we need to also count multiples of every other prime number that keep N below 10^11.
 
@@ -139,7 +139,9 @@ class Problem233:
         p3s = [x for x in modded_primes if x < max_p3]
         # for multiplying by even powers of primes
         others = [x for x in sieve(400) if Problem233.is_3mod4(x)]
-        # others = [x for x in sieve(int(1e11 / 718250)) if Problem233.is_3mod4(x)]
+        # others = [x for x in sieve(int(1e11 / 359125)) if Problem233.is_3mod4(x)]
+        # int(1e11 / 359125) = 278454
+        # example: 5^3 * 13^2 * 17^1 * 278387 = 99975731375 <= 1e11
 
         return self.compute_numbers(p1s, p2s, p3s, others)
 
