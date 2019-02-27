@@ -62,9 +62,9 @@ import unittest
 # There are only 86929 primes less then or equal to 2366809 which are 1 mod 4.
 # For each combination we need to also count multiples of every other prime number that keep N below 10^11.
 
-# The largest prime that can be cubed is 521, since 2 * 5^2 * 13^1 * 521^3 = 91923494650
-# The largest prime that can be squared is 5521, since 2 * 5^3 * 13^1 * 5521^2 = 99064683250
-# The largest prime that can be raised to the 1st power is 2366809, since 2 * 5^3 * 13^2 * 2366809^1 = 99997680250.
+# The largest prime that can be cubed is 521, since 5^2 * 13^1 * 677^3 = 100843838225
+# The largest prime that can be squared is 5521, since 5^3 * 13^1 * 7853^2 = 100213114625
+# The largest prime that can be raised to the 1st power is 2366809, since 5^3 * 13^2 * 4733753^1 = 100000532125.
 
 
 class Problem233:
@@ -125,9 +125,9 @@ class Problem233:
 
     @timeit
     def solve(self):
-        max_p1 = 2366864
-        max_p2 = 5547
-        max_p3 = 535
+        max_p1 = 4733753
+        max_p2 = 7853
+        max_p3 = 677
 
         available_primes = sieve(max_p1)
         modded_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
