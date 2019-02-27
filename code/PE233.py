@@ -139,6 +139,7 @@ class Problem233:
         p3s = [x for x in modded_primes if x < max_p3]
         # for multiplying by even powers of primes
         others = [x for x in sieve(400) if Problem233.is_3mod4(x)]
+        # others = [x for x in sieve(int(1e11 / 718250)) if Problem233.is_3mod4(x)]
 
         return self.compute_numbers(p1s, p2s, p3s, others)
 
@@ -151,7 +152,7 @@ class Problem233:
         return prime % 4 == 3
 
 
-class Solution1(unittest.TestCase):
+class Solution233(unittest.TestCase):
     def setUp(self):
         self.problem = Problem233()
 
