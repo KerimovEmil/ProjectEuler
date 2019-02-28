@@ -145,8 +145,9 @@ class Problem233:
         mod4_1_primes = set(mod4_1_primes)
 
         really_bad_nums = set(range(max_bad_prime))
-        print(len(really_bad_nums))
+        print("{} is the number of (2/3 mod 4) prime candidates".format(len(really_bad_nums)))
 
+        # TODO: explain what this is doing and how it works
         for factor in mod4_1_primes:
             num = factor
             while True:
@@ -155,7 +156,7 @@ class Problem233:
                 if num > max_bad_prime:
                     break
 
-        print(len(really_bad_nums))
+        print("{} is the number of (2/3 mod 4) prime candidates left".format(len(really_bad_nums)))
 
         print('starting calc')
         sofar = set()
