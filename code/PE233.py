@@ -130,7 +130,7 @@ class Problem233:
         opts = [(3, 2, 1), (7, 3), (10, 2), (52,), (17, 1)]
         mins = (5, 13, 17)
         true_opts = [x for x in opts if Problem233.compute(mins, x) <= self.n]
-        print(true_opts)
+        print("{} are the only possible (1 mod 4) prime powers.".format(true_opts))
 
         min_good_option = min([Problem233.compute(mins, x) for x in true_opts])
         max_bad_prime = int(self.n / min_good_option) + 1
@@ -140,8 +140,7 @@ class Problem233:
         available_primes = list(sieve(max(max_good_prime, max_bad_prime)))
 
         mod4_1_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
-        good_primes = [
-            x for x in mod4_1_primes if x <= max_good_prime]
+        good_primes = [x for x in mod4_1_primes if x <= max_good_prime]
 
         mod4_1_primes = set(mod4_1_primes)
 
