@@ -8,14 +8,16 @@ It can be shown that f(10000) = 36.
 
 What is the sum of all positive integers N ≤ 10^11 such that f(N) = 420 ?
 
-ANSWER:
+ANSWER: 271204031455541309
 
-Solve time ~  seconds
+Solve time ~9 seconds
 """
 
 from util.utils import timeit, sieve
 import unittest
+import sys
 
+sys.setrecursionlimit(15000)
 
 # Examining f(N)
 # Define G(N) = number of lattice points on circle with radius sqrt(N)
@@ -64,26 +66,22 @@ import unittest
 # The largest prime that can be squared is 5521, since 5^3 * 13^1 * 7853^2 = 100213114625
 # The largest prime that can be raised to the 1st power is 2366809, since 5^3 * 13^2 * 4733753^1 = 100000532125.
 
-MAX = 38000000
+MAX = int(1e11)
 
 
 class Problem233:
+
     def __init__(self):
         pass
 
     @staticmethod
     def calculate_options(chosen_n, sub_options, sofar):
-        if not len(sub_options):
-            return
-        # N^2 is getting factored into squares, not N -> we only need `head`, not `head^2`
-        head = sub_options[0]
-        new_chosen_n = head * chosen_n
-        if (new_chosen_n <= MAX):
-            sofar.add(new_chosen_n)
-            # grow the chosen n using head more times if desired
-            Problem233.calculate_options(new_chosen_n, sub_options, sofar)
-        # grow the chosen n without using head at all, and only using other factors
-        Problem233.calculate_options(chosen_n, sub_options[1:], sofar)
+        for opt in sub_options:
+            new_chosen_n = opt * chosen_n
+            if new_chosen_n > MAX:
+                break
+            else:
+                sofar.add(new_chosen_n)
 
     @staticmethod
     def calc(pow, good_primes, prev=1):
@@ -134,35 +132,56 @@ class Problem233:
             base *= b ** e
         return base
 
+    @staticmethod
+    def find_max_good(true_opts, mins):
+        gg = []
+        for opt in true_opts:
+            val = Problem233.compute(mins, opt[:-1])
+            gg.append(val)
+        return int(MAX / min(gg)) + 1
+
     @timeit
     def solve(self):
-        max_p1 = 4733753
-        max_p2 = 7853
-        max_p3 = 677
         opts = [(3, 2, 1), (7, 3), (10, 2), (52,), (17, 1)]
         mins = (5, 13, 17)
         true_opts = [x for x in opts if Problem233.compute(mins, x) <= MAX]
         print(true_opts)
 
-        min_option = min([Problem233.compute(mins, x) for x in true_opts])
-        max_option = int(MAX / min_option) + 1
-        # super_max = int(MAX ** 0.5) + 1
-        # trying to figure out the largest max that we could have
-        super_max = int(MAX/5/5/5/13/13)
+        min_good_option = min([Problem233.compute(mins, x) for x in true_opts])
+        max_bad_prime = int(MAX / min_good_option) + 1
+        max_good_prime = Problem233.find_max_good(true_opts, mins)
+        print(max_bad_prime, max_good_prime)
 
-        available_primes = list(sieve(super_max))
-        good_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
-        bad_primes = [
-            x for x in available_primes if x <= max_option and not Problem233.is_1mod4(x)]
-        # int(1e11 / 359125) = 278454
-        # example: 5^3 * 13^2 * 17^1 * 278387 = 99975731375 <= 1e11
+        available_primes = list(sieve(max(max_good_prime, max_bad_prime)))
 
+        mod4_1_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
+        good_primes = [
+            x for x in mod4_1_primes if x <= max_good_prime]
+
+        mod4_1_primes = set(mod4_1_primes)
+
+        really_bad_nums = set(range(max_bad_prime))
+        print(len(really_bad_nums))
+
+        for factor in mod4_1_primes:
+            num = factor
+            while True:
+                really_bad_nums.discard(num)
+                num += factor
+                if num > max_bad_prime:
+                    break
+
+        print(len(really_bad_nums))
+
+        print('starting calc')
         sofar = set()
         for opt in true_opts:
             if len(opt) == 2:
-                Problem233.calc2(opt, good_primes, bad_primes, sofar)
+                Problem233.calc2(opt, good_primes, really_bad_nums, sofar)
+                print('done calc2 for ', opt)
             if len(opt) == 3:
-                Problem233.calc3(opt, good_primes, bad_primes, sofar)
+                Problem233.calc3(opt, good_primes, really_bad_nums, sofar)
+                print('done calc3 for ', opt)
         return sum(sofar)
 
     @staticmethod
@@ -175,7 +194,8 @@ class Solution233(unittest.TestCase):
         self.problem = Problem233()
 
     def test_solution(self):
-        self.assertEqual(30875234922, self.problem.solve())
+        # self.assertEqual(30875234922, self.problem.solve())
+        self.assertEqual(271204031455541309, self.problem.solve())
 
 
 if __name__ == '__main__':
