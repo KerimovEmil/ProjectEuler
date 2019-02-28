@@ -66,64 +66,50 @@ sys.setrecursionlimit(15000)
 # The largest prime that can be squared is 5521, since 5^3 * 13^1 * 7853^2 = 100213114625
 # The largest prime that can be raised to the 1st power is 2366809, since 5^3 * 13^2 * 4733753^1 = 100000532125.
 
-MAX = int(1e11)
-
 
 class Problem233:
 
-    def __init__(self):
-        pass
+    def __init__(self, n):
+        self.n = n
 
-    @staticmethod
-    def calculate_options(chosen_n, sub_options, sofar):
+    def calculate_options(self, chosen_n, sub_options, sofar):
         for opt in sub_options:
             new_chosen_n = opt * chosen_n
-            if new_chosen_n > MAX:
+            if new_chosen_n > self.n:
                 break
             else:
                 sofar.add(new_chosen_n)
 
-    @staticmethod
-    def calc(pow, good_primes, prev=1):
+    def calc3(self, opt, good_primes, bad_primes, sofar):
         for a in good_primes:
-            if (a ** pow) * prev > MAX:
-                break
-            yield a
-
-    @staticmethod
-    def calc3(opt, good_primes, bad_primes, sofar):
-        for a in good_primes:
-            if (a ** opt[0]) > MAX:
+            if (a ** opt[0]) > self.n:
                 break
             for b in good_primes:
-                if (a ** opt[0] * b ** opt[1]) > MAX:
+                if (a ** opt[0] * b ** opt[1]) > self.n:
                     break
                 if (a != b):
                     for c in good_primes:
                         if (b != c and a != c):
-                            if (a ** opt[0] * b ** opt[1] * c * opt[2]) > MAX:
+                            if (a ** opt[0] * b ** opt[1] * c * opt[2]) > self.n:
                                 break
 
                             chosen_n = Problem233.compute((a, b, c), opt)
-                            if chosen_n <= MAX:
+                            if chosen_n <= self.n:
                                 sofar.add(chosen_n)
-                                Problem233.calculate_options(
-                                    chosen_n, bad_primes, sofar)
+                                self.calculate_options(chosen_n, bad_primes, sofar)
 
-    @staticmethod
-    def calc2(opt, good_primes, bad_primes, sofar):
+    def calc2(self, opt, good_primes, bad_primes, sofar):
         for a in good_primes:
-            if (a ** opt[0]) > MAX:
+            if (a ** opt[0]) > self.n:
                 break
             for b in good_primes:
-                if (a ** opt[0] * b ** opt[1]) > MAX:
+                if (a ** opt[0] * b ** opt[1]) > self.n:
                     break
                 if (a != b):
                     chosen_n = Problem233.compute((a, b), opt)
-                    if chosen_n <= MAX:
+                    if chosen_n <= self.n:
                         sofar.add(chosen_n)
-                        Problem233.calculate_options(
-                            chosen_n, bad_primes, sofar)
+                        self.calculate_options(chosen_n, bad_primes, sofar)
 
     @staticmethod
     def compute(vals, pows):
@@ -132,24 +118,23 @@ class Problem233:
             base *= b ** e
         return base
 
-    @staticmethod
-    def find_max_good(true_opts, mins):
+    def find_max_good(self, true_opts, mins):
         gg = []
         for opt in true_opts:
             val = Problem233.compute(mins, opt[:-1])
             gg.append(val)
-        return int(MAX / min(gg)) + 1
+        return int(self.n / min(gg)) + 1
 
     @timeit
     def solve(self):
         opts = [(3, 2, 1), (7, 3), (10, 2), (52,), (17, 1)]
         mins = (5, 13, 17)
-        true_opts = [x for x in opts if Problem233.compute(mins, x) <= MAX]
+        true_opts = [x for x in opts if Problem233.compute(mins, x) <= self.n]
         print(true_opts)
 
         min_good_option = min([Problem233.compute(mins, x) for x in true_opts])
-        max_bad_prime = int(MAX / min_good_option) + 1
-        max_good_prime = Problem233.find_max_good(true_opts, mins)
+        max_bad_prime = int(self.n / min_good_option) + 1
+        max_good_prime = self.find_max_good(true_opts, mins)
         print(max_bad_prime, max_good_prime)
 
         available_primes = list(sieve(max(max_good_prime, max_bad_prime)))
@@ -177,10 +162,10 @@ class Problem233:
         sofar = set()
         for opt in true_opts:
             if len(opt) == 2:
-                Problem233.calc2(opt, good_primes, really_bad_nums, sofar)
+                self.calc2(opt, good_primes, really_bad_nums, sofar)
                 print('done calc2 for ', opt)
             if len(opt) == 3:
-                Problem233.calc3(opt, good_primes, really_bad_nums, sofar)
+                self.calc3(opt, good_primes, really_bad_nums, sofar)
                 print('done calc3 for ', opt)
         return sum(sofar)
 
@@ -191,10 +176,13 @@ class Problem233:
 
 class Solution233(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem233()
+        self.small_problem = Problem233(n=38000000)
+        self.problem = Problem233(n=int(1e11))
+
+    def test_small_solution(self):
+        self.assertEqual(30875234922, self.small_problem.solve())
 
     def test_solution(self):
-        # self.assertEqual(30875234922, self.problem.solve())
         self.assertEqual(271204031455541309, self.problem.solve())
 
 
