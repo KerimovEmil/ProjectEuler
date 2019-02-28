@@ -64,6 +64,8 @@ import unittest
 # The largest prime that can be squared is 5521, since 5^3 * 13^1 * 7853^2 = 100213114625
 # The largest prime that can be raised to the 1st power is 2366809, since 5^3 * 13^2 * 4733753^1 = 100000532125.
 
+MAX = 38000000
+
 
 class Problem233:
     def __init__(self):
@@ -72,11 +74,11 @@ class Problem233:
     @staticmethod
     def calculate_options(chosen_n, sub_options, sofar):
         if not len(sub_options):
-            return sofar
-        # head = sub_options[0] ** 2
+            return
+        # N^2 is getting factored into squares, not N -> we only need `head`, not `head^2`
         head = sub_options[0]
         new_chosen_n = head * chosen_n
-        if (new_chosen_n <= 1e11):
+        if (new_chosen_n <= MAX):
             sofar.add(new_chosen_n)
             # grow the chosen n using head more times if desired
             Problem233.calculate_options(new_chosen_n, sub_options, sofar)
@@ -84,74 +86,88 @@ class Problem233:
         Problem233.calculate_options(chosen_n, sub_options[1:], sofar)
 
     @staticmethod
-    def get_variants(p1, p2, p3, others, options):
-        n_max = 1e11
-        # chosen_n = 2 * (p1 ** 1) * (p2 ** 2) * (p3 ** 3)
-        chosen_n = (p1 ** 1) * (p2 ** 2) * (p3 ** 3)
-        # max multiplicative limit
-        limit = n_max / chosen_n
-        sub_others = [x for x in others if x <= limit]
-
-        # fac_2 = 0
-        fac_2 = 1
-        while True:
-            cn = (2 ** fac_2) * chosen_n
-            if cn > n_max:
+    def calc(pow, good_primes, prev=1):
+        for a in good_primes:
+            if (a ** pow) * prev > MAX:
                 break
-            else:
-                options.add(cn)
-                Problem233.calculate_options(cn, sub_others, options)
-                fac_2 += 1
+            yield a
 
     @staticmethod
-    def compute_numbers(p1s, p2s, p3s, others):
-        options = set()
-        for p3 in p3s:
-            for p2 in p2s:
-                if (2 * p3 ** 3 * p2 ** 2) > 1e11:
+    def calc3(opt, good_primes, bad_primes, sofar):
+        for a in good_primes:
+            if (a ** opt[0]) > MAX:
+                break
+            for b in good_primes:
+                if (a ** opt[0] * b ** opt[1]) > MAX:
                     break
-                if (p2 == p3):
-                    continue
+                if (a != b):
+                    for c in good_primes:
+                        if (b != c and a != c):
+                            if (a ** opt[0] * b ** opt[1] * c * opt[2]) > MAX:
+                                break
 
-                for p1 in p1s:
-                    # if (2 * p3 ** 3 * p2 ** 2 * p1 ** 1) > 1e11:
-                    if (p3 ** 3 * p2 ** 2 * p1 ** 1) > 1e11:
-                        break
-                    if (p1 == p2):
-                        continue
-                    if (p1 == p3):
-                        continue
+                            chosen_n = Problem233.compute((a, b, c), opt)
+                            if chosen_n <= MAX:
+                                sofar.add(chosen_n)
+                                Problem233.calculate_options(
+                                    chosen_n, bad_primes, sofar)
 
-                    Problem233.get_variants(p1, p2, p3, others, options)
-        return sum(options)
+    @staticmethod
+    def calc2(opt, good_primes, bad_primes, sofar):
+        for a in good_primes:
+            if (a ** opt[0]) > MAX:
+                break
+            for b in good_primes:
+                if (a ** opt[0] * b ** opt[1]) > MAX:
+                    break
+                if (a != b):
+                    chosen_n = Problem233.compute((a, b), opt)
+                    if chosen_n <= MAX:
+                        sofar.add(chosen_n)
+                        Problem233.calculate_options(
+                            chosen_n, bad_primes, sofar)
+
+    @staticmethod
+    def compute(vals, pows):
+        base = 1
+        for (b, e) in zip(vals, pows):
+            base *= b ** e
+        return base
 
     @timeit
     def solve(self):
         max_p1 = 4733753
         max_p2 = 7853
         max_p3 = 677
+        opts = [(3, 2, 1), (7, 3), (10, 2), (52,), (17, 1)]
+        mins = (5, 13, 17)
+        true_opts = [x for x in opts if Problem233.compute(mins, x) <= MAX]
+        print(true_opts)
 
-        available_primes = sieve(max_p1)
-        modded_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
+        min_option = min([Problem233.compute(mins, x) for x in true_opts])
+        max_option = int(MAX / min_option) + 1
+        # super_max = int(MAX ** 0.5) + 1
+        # trying to figure out the largest max that we could have
+        super_max = int(MAX/5/5/5/13/13)
 
-        p1s = [x for x in modded_primes if x < max_p1]
-        p2s = [x for x in modded_primes if x < max_p2]
-        p3s = [x for x in modded_primes if x < max_p3]
-        # for multiplying by even powers of primes
-        others = [x for x in sieve(400) if Problem233.is_3mod4(x)]
-        # others = [x for x in sieve(int(1e11 / 359125)) if Problem233.is_3mod4(x)]
+        available_primes = list(sieve(super_max))
+        good_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
+        bad_primes = [
+            x for x in available_primes if x <= max_option and not Problem233.is_1mod4(x)]
         # int(1e11 / 359125) = 278454
         # example: 5^3 * 13^2 * 17^1 * 278387 = 99975731375 <= 1e11
 
-        return self.compute_numbers(p1s, p2s, p3s, others)
+        sofar = set()
+        for opt in true_opts:
+            if len(opt) == 2:
+                Problem233.calc2(opt, good_primes, bad_primes, sofar)
+            if len(opt) == 3:
+                Problem233.calc3(opt, good_primes, bad_primes, sofar)
+        return sum(sofar)
 
     @staticmethod
     def is_1mod4(prime):
         return prime % 4 == 1
-
-    @staticmethod
-    def is_3mod4(prime):
-        return prime % 4 == 3
 
 
 class Solution233(unittest.TestCase):
@@ -159,7 +175,7 @@ class Solution233(unittest.TestCase):
         self.problem = Problem233()
 
     def test_solution(self):
-        self.assertEqual(0, self.problem.solve())
+        self.assertEqual(30875234922, self.problem.solve())
 
 
 if __name__ == '__main__':
