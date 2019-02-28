@@ -162,6 +162,7 @@ class Problem233:
         sofar = set()
         for opt in true_opts:
             if len(opt) == 2:
+                # todo: why not just make opt[2] = 0, that way you don't need two functions?
                 self.calc2(opt, good_primes, really_bad_nums, sofar)
                 print('done calc2 for ', opt)
             if len(opt) == 3:
