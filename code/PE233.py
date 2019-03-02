@@ -70,6 +70,7 @@ class Problem233:
         self.n = n
         self.ans_sum = 0
         self.available_multiples = None
+        self.ls_1mod4_primes = None
 
     def calculate_options(self, chosen_n):
         limit = self.n // chosen_n
@@ -83,19 +84,19 @@ class Problem233:
 
         self.ans_sum += chosen_n * mult_sum
 
-    def calc(self, opt, ls_1mod4_primes, test_num=1, ls_prime=None):
+    def calc(self, opt, test_num=1, ls_prime=None):
 
         if ls_prime is None:
             ls_prime = []
 
         if len(opt) > 0 and opt[0] != 0:
-            for prime in ls_1mod4_primes:
+            for prime in self.ls_1mod4_primes:
                 if prime not in ls_prime:
                     ls_new_prime = ls_prime + [prime]
                     new_test_num = test_num * prime ** opt[0]
                     if new_test_num > self.n:
                         break
-                    self.calc(opt[1:], ls_1mod4_primes, new_test_num, ls_new_prime)
+                    self.calc(opt[1:], new_test_num, ls_new_prime)
         else:
             self.calculate_options(test_num)
 
@@ -113,11 +114,9 @@ class Problem233:
             gg.append(val)
         return int(self.n / min(gg)) + 1
 
-    @staticmethod
-    def generate_ls_all_possible_multiples(ls_1mod4_primes, largest_3mod4_prime):
+    def generate_ls_all_possible_multiples(self, largest_3mod4_prime):
         """
         Args:
-            ls_1mod4_primes: list of 1mod4 primes
             largest_3mod4_prime: largest 3mod4 prime to consider
         Returns: a set of all possible multiples
         """
@@ -126,7 +125,7 @@ class Problem233:
         print("{} is the number of available multiples".format(len(all_multiples)))
 
         # Get list of ALL numbers which are not multiples of 1mod4 primes
-        for prime in ls_1mod4_primes:
+        for prime in self.ls_1mod4_primes:
             num = prime
             while num < largest_3mod4_prime:
                 all_multiples.discard(num)
@@ -158,13 +157,13 @@ class Problem233:
         available_primes = list(sieve(max(largest_1mod4_prime, largest_3mod4_prime)))
 
         # Filter to get the list of relevant 1mod4 primes
-        ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]
+        self.ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]
 
-        self.available_multiples = self.generate_ls_all_possible_multiples(ls_1mod4_primes, largest_3mod4_prime)
+        self.available_multiples = self.generate_ls_all_possible_multiples(largest_3mod4_prime)
 
         print('Starting looping over every combination')
         for opt in true_opts:
-            self.calc(opt, ls_1mod4_primes)
+            self.calc(opt)
         return self.ans_sum
 
     @staticmethod
