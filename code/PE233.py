@@ -69,30 +69,30 @@ class Problem233:
     def __init__(self, n):
         self.n = n
 
-    def calculate_options(self, chosen_n, sub_options, sofar):
-        for opt in sub_options:
-            new_chosen_n = opt * chosen_n
+    def calculate_options(self, chosen_n, available_multiples, all_n):
+        for mult in available_multiples:
+            new_chosen_n = mult * chosen_n
             if new_chosen_n > self.n:
                 break
             else:
-                sofar.add(new_chosen_n)
+                all_n.add(new_chosen_n)
 
-    def calc(self, opt, good_primes, bad_primes, sofar, test_num=1, ls_prime=None):
+    def calc(self, opt, ls_1mod4_primes, available_multiples, all_n, test_num=1, ls_prime=None):
 
         if ls_prime is None:
             ls_prime = []
 
         if len(opt) > 0 and opt[0] != 0:
-            for prime in good_primes:
+            for prime in ls_1mod4_primes:
                 if prime not in ls_prime:
                     ls_new_prime = ls_prime + [prime]
                     new_test_num = test_num * prime ** opt[0]
                     if new_test_num > self.n:
                         break
-                    self.calc(opt[1:], good_primes, bad_primes, sofar, new_test_num, ls_new_prime)
+                    self.calc(opt[1:], ls_1mod4_primes, available_multiples, all_n, new_test_num, ls_new_prime)
         else:
-            sofar.add(test_num)
-            self.calculate_options(test_num, bad_primes, sofar)
+            all_n.add(test_num)
+            self.calculate_options(test_num, available_multiples, all_n)
 
     @staticmethod
     def compute(vals, pows):
@@ -158,10 +158,10 @@ class Problem233:
         all_multiples = self.generate_ls_all_possible_multiples(ls_1mod4_primes, largest_3mod4_prime)
 
         print('Starting looping over every combination')
-        sofar = set()
+        all_n = set()
         for opt in true_opts:
-            self.calc(opt, ls_1mod4_primes, all_multiples, sofar)
-        return sum(sofar)
+            self.calc(opt, ls_1mod4_primes, all_multiples, all_n)
+        return sum(all_n)
 
     @staticmethod
     def is_1mod4(prime):
