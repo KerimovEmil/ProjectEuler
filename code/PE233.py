@@ -108,6 +108,29 @@ class Problem233:
             gg.append(val)
         return int(self.n / min(gg)) + 1
 
+    @staticmethod
+    def generate_ls_all_possible_multiples(ls_1mod4_primes, largest_3mod4_prime):
+        """
+        Args:
+            ls_1mod4_primes: list of 1mod4 primes
+            largest_3mod4_prime: largest 3mod4 prime to consider
+        Returns: a set of all possible multiples
+        """
+
+        all_multiples = set(range(largest_3mod4_prime))
+        print("{} is the number of available multiples".format(len(all_multiples)))
+
+        # Get list of ALL numbers which are not multiples of 1mod4 primes
+        for prime in ls_1mod4_primes:
+            num = prime
+            while num < largest_3mod4_prime:
+                all_multiples.discard(num)
+                num += prime
+
+        print("{} is the number of available multiples left".format(len(all_multiples)))
+
+        return all_multiples
+
     @timeit
     def solve(self):
         opts = [(3, 2, 1), (7, 3), (10, 2), (52,), (17, 1)]
@@ -132,25 +155,12 @@ class Problem233:
         # Filter to get the list of relevant 1mod4 primes
         ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]
 
-        really_bad_nums = set(range(largest_3mod4_prime))
-        print("{} is the number of available multiples".format(len(really_bad_nums)))
-
-        # Get list of ALL numbers which are not multiples of 1mod4 primes
-        # for factor in mod4_1_primes:
-        for factor in ls_1mod4_primes:
-            num = factor
-            while True:
-                really_bad_nums.discard(num)
-                num += factor
-                if num > largest_3mod4_prime:
-                    break
-
-        print("{} is the number of available multiples left".format(len(really_bad_nums)))
+        all_multiples = self.generate_ls_all_possible_multiples(ls_1mod4_primes, largest_3mod4_prime)
 
         print('Starting looping over every combination')
         sofar = set()
         for opt in true_opts:
-            self.calc(opt, ls_1mod4_primes, really_bad_nums, sofar)
+            self.calc(opt, ls_1mod4_primes, all_multiples, sofar)
         return sum(sofar)
 
     @staticmethod
