@@ -87,7 +87,7 @@ class Problem233:
                 if (a != b):
                     for c in good_primes:
                         if (b != c and a != c):
-                            if (a ** opt[0] * b ** opt[1] * c * opt[2]) > self.n:
+                            if (a ** opt[0] * b ** opt[1] * c ** opt[2]) > self.n:
                                 break
 
                             chosen_n = Problem233.compute((a, b, c), opt)
