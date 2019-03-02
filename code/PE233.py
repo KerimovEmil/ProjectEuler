@@ -77,36 +77,25 @@ class Problem233:
             else:
                 sofar.add(new_chosen_n)
 
-    def calc3(self, opt, good_primes, bad_primes, sofar):
-        for a in good_primes:
-            if (a ** opt[0]) > self.n:
-                break
-            for b in good_primes:
-                if (a ** opt[0] * b ** opt[1]) > self.n:
-                    break
-                if (a != b):
-                    for c in good_primes:
-                        if (b != c and a != c):
-                            if (a ** opt[0] * b ** opt[1] * c ** opt[2]) > self.n:
-                                break
+    def calc(self, opt, good_primes, bad_primes, sofar, old_test_num=1, ls_prime=None):
 
-                            chosen_n = Problem233.compute((a, b, c), opt)
-                            if chosen_n <= self.n:
-                                sofar.add(chosen_n)
-                                self.calculate_options(chosen_n, bad_primes, sofar)
+        num_prime_factors = len(opt)
+        if ls_prime is None:
+            ls_prime = []
 
-    def calc2(self, opt, good_primes, bad_primes, sofar):
-        for a in good_primes:
-            if (a ** opt[0]) > self.n:
-                break
-            for b in good_primes:
-                if (a ** opt[0] * b ** opt[1]) > self.n:
-                    break
-                if (a != b):
-                    chosen_n = Problem233.compute((a, b), opt)
-                    if chosen_n <= self.n:
-                        sofar.add(chosen_n)
-                        self.calculate_options(chosen_n, bad_primes, sofar)
+        if num_prime_factors > 0 and opt[0] != 0:
+            for prime in good_primes:
+                if prime not in ls_prime:
+                    ls_new_prime = ls_prime + [prime]
+                    new_test_num = old_test_num * prime ** opt[0]
+                    if new_test_num > self.n:
+                        break
+                    self.calc(opt[1:], good_primes, bad_primes, sofar, new_test_num, ls_new_prime)
+        else:
+            chosen_n = old_test_num
+            if chosen_n <= self.n:
+                sofar.add(chosen_n)
+                self.calculate_options(chosen_n, bad_primes, sofar)
 
     @staticmethod
     def compute(vals, pows):
@@ -158,13 +147,7 @@ class Problem233:
         print('starting calc')
         sofar = set()
         for opt in true_opts:
-            if len(opt) == 2:
-                # todo: why not just make opt[2] = 0, that way you don't need two functions?
-                self.calc2(opt, good_primes, really_bad_nums, sofar)
-                print('done calc2 for ', opt)
-            if len(opt) == 3:
-                self.calc3(opt, good_primes, really_bad_nums, sofar)
-                print('done calc3 for ', opt)
+            self.calc(opt, good_primes, really_bad_nums, sofar)
         return sum(sofar)
 
     @staticmethod
