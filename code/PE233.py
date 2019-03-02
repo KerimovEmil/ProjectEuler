@@ -10,7 +10,7 @@ What is the sum of all positive integers N ≤ 10^11 such that f(N) = 42
 
 ANSWER: 271204031455541309
 
-Solve time ~7 seconds
+Solve time ~6.5 seconds
 """
 
 from util.utils import timeit, sieve
@@ -77,7 +77,7 @@ class Problem233:
             else:
                 sofar.add(new_chosen_n)
 
-    def calc(self, opt, good_primes, bad_primes, sofar, old_test_num=1, ls_prime=None):
+    def calc(self, opt, good_primes, bad_primes, sofar, test_num=1, ls_prime=None):
 
         if ls_prime is None:
             ls_prime = []
@@ -86,13 +86,13 @@ class Problem233:
             for prime in good_primes:
                 if prime not in ls_prime:
                     ls_new_prime = ls_prime + [prime]
-                    new_test_num = old_test_num * prime ** opt[0]
+                    new_test_num = test_num * prime ** opt[0]
                     if new_test_num > self.n:
                         break
                     self.calc(opt[1:], good_primes, bad_primes, sofar, new_test_num, ls_new_prime)
         else:
-            sofar.add(old_test_num)
-            self.calculate_options(old_test_num, bad_primes, sofar)
+            sofar.add(test_num)
+            self.calculate_options(test_num, bad_primes, sofar)
 
     @staticmethod
     def compute(vals, pows):
@@ -112,39 +112,45 @@ class Problem233:
     def solve(self):
         opts = [(3, 2, 1), (7, 3), (10, 2), (52,), (17, 1)]
         mins = (5, 13, 17)
+
+        # filter the options by the minimum possible factor being less than N
         true_opts = [x for x in opts if Problem233.compute(mins, x) <= self.n]
         print("{} are the only possible (1 mod 4) prime powers.".format(true_opts))
 
-        min_good_option = min([Problem233.compute(mins, x) for x in true_opts])
-        max_bad_prime = int(self.n / min_good_option) + 1
-        max_good_prime = self.find_max_good(true_opts, mins)
-        print(max_bad_prime, max_good_prime)
+        # Compute the largest 3 mod 4 prime to consider
+        min_factor_option = min([Problem233.compute(mins, x) for x in true_opts])
+        largest_3mod4_prime = int(self.n / min_factor_option) + 1
+        print("Largest 3mod4 prime to consider is: {}".format(largest_3mod4_prime))
 
-        available_primes = list(sieve(max(max_good_prime, max_bad_prime)))
+        # Compute the largest 1 mod 4 prime to consider
+        largest_1mod4_prime = self.find_max_good(true_opts, mins)
+        print("Largest 1mod4 prime to consider is: {}".format(largest_1mod4_prime))
 
-        mod4_1_primes = [x for x in available_primes if Problem233.is_1mod4(x)]
-        good_primes = [x for x in mod4_1_primes if x <= max_good_prime]
+        # Generate list of primes
+        available_primes = list(sieve(max(largest_1mod4_prime, largest_3mod4_prime)))
 
-        mod4_1_primes = set(mod4_1_primes)
+        # Filter to get the list of relevant 1mod4 primes
+        ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]
 
-        really_bad_nums = set(range(max_bad_prime))
-        print("{} is the number of (2/3 mod 4) prime candidates".format(len(really_bad_nums)))
+        really_bad_nums = set(range(largest_3mod4_prime))
+        print("{} is the number of available multiples".format(len(really_bad_nums)))
 
-        # TODO: explain what this is doing and how it works
-        for factor in mod4_1_primes:
+        # Get list of ALL numbers which are not multiples of 1mod4 primes
+        # for factor in mod4_1_primes:
+        for factor in ls_1mod4_primes:
             num = factor
             while True:
                 really_bad_nums.discard(num)
                 num += factor
-                if num > max_bad_prime:
+                if num > largest_3mod4_prime:
                     break
 
-        print("{} is the number of (2/3 mod 4) prime candidates left".format(len(really_bad_nums)))
+        print("{} is the number of available multiples left".format(len(really_bad_nums)))
 
-        print('starting calc')
+        print('Starting looping over every combination')
         sofar = set()
         for opt in true_opts:
-            self.calc(opt, good_primes, really_bad_nums, sofar)
+            self.calc(opt, ls_1mod4_primes, really_bad_nums, sofar)
         return sum(sofar)
 
     @staticmethod
