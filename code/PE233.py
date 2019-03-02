@@ -10,7 +10,7 @@ What is the sum of all positive integers N ≤ 10^11 such that f(N) = 42
 
 ANSWER: 271204031455541309
 
-Solve time ~6.5 seconds
+Solve time ~3.5 seconds
 """
 
 from util.utils import timeit, sieve
@@ -68,16 +68,22 @@ class Problem233:
 
     def __init__(self, n):
         self.n = n
+        self.ans_sum = 0
+        self.available_multiples = None
 
-    def calculate_options(self, chosen_n, available_multiples, all_n):
-        for mult in available_multiples:
-            new_chosen_n = mult * chosen_n
-            if new_chosen_n > self.n:
+    def calculate_options(self, chosen_n):
+        limit = self.n // chosen_n
+
+        mult_sum = 0
+        for mult in self.available_multiples:
+            if mult > limit:
                 break
             else:
-                all_n.add(new_chosen_n)
+                mult_sum += mult
 
-    def calc(self, opt, ls_1mod4_primes, available_multiples, all_n, test_num=1, ls_prime=None):
+        self.ans_sum += chosen_n * mult_sum
+
+    def calc(self, opt, ls_1mod4_primes, test_num=1, ls_prime=None):
 
         if ls_prime is None:
             ls_prime = []
@@ -89,10 +95,9 @@ class Problem233:
                     new_test_num = test_num * prime ** opt[0]
                     if new_test_num > self.n:
                         break
-                    self.calc(opt[1:], ls_1mod4_primes, available_multiples, all_n, new_test_num, ls_new_prime)
+                    self.calc(opt[1:], ls_1mod4_primes, new_test_num, ls_new_prime)
         else:
-            all_n.add(test_num)
-            self.calculate_options(test_num, available_multiples, all_n)
+            self.calculate_options(test_num)
 
     @staticmethod
     def compute(vals, pows):
@@ -155,13 +160,12 @@ class Problem233:
         # Filter to get the list of relevant 1mod4 primes
         ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]
 
-        all_multiples = self.generate_ls_all_possible_multiples(ls_1mod4_primes, largest_3mod4_prime)
+        self.available_multiples = self.generate_ls_all_possible_multiples(ls_1mod4_primes, largest_3mod4_prime)
 
         print('Starting looping over every combination')
-        all_n = set()
         for opt in true_opts:
-            self.calc(opt, ls_1mod4_primes, all_multiples, all_n)
-        return sum(all_n)
+            self.calc(opt, ls_1mod4_primes)
+        return self.ans_sum
 
     @staticmethod
     def is_1mod4(prime):
