@@ -10,7 +10,7 @@ What is the sum of all positive integers N ≤ 10^11 such that f(N) = 42
 
 ANSWER: 271204031455541309
 
-Solve time ~9 seconds
+Solve time ~7 seconds
 """
 
 from util.utils import timeit, sieve
@@ -79,11 +79,10 @@ class Problem233:
 
     def calc(self, opt, good_primes, bad_primes, sofar, old_test_num=1, ls_prime=None):
 
-        num_prime_factors = len(opt)
         if ls_prime is None:
             ls_prime = []
 
-        if num_prime_factors > 0 and opt[0] != 0:
+        if len(opt) > 0 and opt[0] != 0:
             for prime in good_primes:
                 if prime not in ls_prime:
                     ls_new_prime = ls_prime + [prime]
@@ -92,10 +91,8 @@ class Problem233:
                         break
                     self.calc(opt[1:], good_primes, bad_primes, sofar, new_test_num, ls_new_prime)
         else:
-            chosen_n = old_test_num
-            if chosen_n <= self.n:
-                sofar.add(chosen_n)
-                self.calculate_options(chosen_n, bad_primes, sofar)
+            sofar.add(old_test_num)
+            self.calculate_options(old_test_num, bad_primes, sofar)
 
     @staticmethod
     def compute(vals, pows):
