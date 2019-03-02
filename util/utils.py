@@ -1,5 +1,4 @@
-# Commented because I don't have numpy
-# import numpy as np
+import numpy as np
 import time
 
 
