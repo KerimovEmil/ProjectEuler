@@ -1,5 +1,6 @@
 import numpy as np
 import time
+from itertools import accumulate
 
 
 class Hungarian:
@@ -799,3 +800,13 @@ def primes_of_n(n, ls_prime=None):
     if n > 1:
         factors[n] = 1
     return factors
+
+
+def cumsum(ls):
+    """
+    Given a list, return the cumulative sum of the list
+    Args:
+        ls: list of numbers
+    Returns: <list>
+    """
+    return list(accumulate(ls))

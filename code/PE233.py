@@ -160,6 +160,7 @@ class Problem233:
         self.ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]
 
         self.available_multiples = self.generate_ls_all_possible_multiples(largest_3mod4_prime)
+        self.available_multiples = sorted(self.available_multiples)  # to ensure the order
 
         print('Starting looping over every combination')
         for opt in true_opts:
