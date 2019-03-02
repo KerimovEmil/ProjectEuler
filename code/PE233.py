@@ -15,9 +15,6 @@ Solve time ~9 seconds
 
 from util.utils import timeit, sieve
 import unittest
-import sys
-
-sys.setrecursionlimit(15000)
 
 # Examining f(N)
 # Define G(N) = number of lattice points on circle with radius sqrt(N)
