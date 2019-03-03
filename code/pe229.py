@@ -67,6 +67,35 @@ import unittest
 # Example 88201:
 # 88201 % 4 = 1, 88201 % 3 = 1, 88201 % 8 = 1, 88201 % 7 = 1
 
+# 3600 = 2^4 3^2 5^2 works
+# 1800 = 2^3 3^2 5^2 fails for d = 3
+# 900 = 2^2 3^2 5^2 fails for d = 7
+# 450 = 2 3^2 5^2 fails for d = 3 and 7
+# 225 = 3^2 5^2 fails for d = 3 and 7
+# 75 = 3 5^2 fails for d = 1, 3 and 7
+# 25 = 5^2 fails for d = 2, 3 and 7
+
+# 1200 = 2^4 3 5^2 fails for d = 1 and 7
+# 400 = 2^4 5^2 fails for d = 2
+# 200 = 2^3 5^2 fails for d = 2 and 3
+# 100 = 2^2 5^2 fails for d = 2 and 7
+# 50 = 2^1 5^2 fails for d = 2, 3 and 7
+
+
+# RULES
+# For D = -1:
+# Ignore powers of 2. 3 mod 4 primes must be even power. 1 mod 4 primes must exist.
+
+# For D = -2:
+# Ignore powers of 2. 1,3 mod 8 primes must exist. (all others) mod 8 primes must be even power.
+
+# For D = -3:
+# Ignore powers of 3. 2 mod 3 primes must be even power. 1 mod 3 primes must exist.
+
+# For D = -7:
+# Ignore powers of 7. 1,2,4 mod 7 primes must exist. (all others) mod 7 primes must be even power.
+
+
 class Problem229:
     def __init__(self, max_n):
         self.max_n = max_n
@@ -79,16 +108,17 @@ class Problem229:
         elif n % 4 == 3:
             return -1
         else:
-            return 1
+            return 0
 
 
     @timeit
     def solve(self):
         # for i in range(1, self.max_n + 1, 2):  # only looping odd numbers
         for i in range(1, self.max_n + 1):
-            highest_multiple_of_2 = i & -i
+            highest_multiple_of_2 = i & -i  # bitwise operation
 
-            k = i // highest_multiple_of_2
+            # k = i // highest_multiple_of_2
+            k = i
 
             cond1 = k % 4 == 1  # not needed
 
