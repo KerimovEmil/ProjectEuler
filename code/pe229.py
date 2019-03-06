@@ -84,17 +84,18 @@ import unittest
 
 # RULES
 # For D = -1:
-# Ignore powers of 2. 3 mod 4 primes must be even power. 1 mod 4 primes must exist.
+# Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power.
 
 # For D = -2:
 # Ignore powers of 2. 1,3 mod 8 primes must exist. (all others) mod 8 primes must be even power.
 
 # For D = -3:
-# Ignore powers of 3. 2 mod 3 primes must be even power. 1 mod 3 primes must exist.
+# Ignore powers of 3. 1 mod 3 primes must exist. 2 mod 3 primes must be even power.
 
 # For D = -7:
 # Ignore powers of 7. 1,2,4 mod 7 primes must exist. (all others) mod 7 primes must be even power.
 
+# The smallest value that satisfies all of these conditions is 193, which is a prime number.
 
 class Problem229:
     def __init__(self, max_n):
@@ -156,8 +157,6 @@ class Problem229:
         # for i in range(1, self.max_n + 1, 2):  # only looping odd numbers
         ls_primes = list(sieve(self.max_n))
         for i in range(2, self.max_n + 1):
-            if i % 100 == 0:
-                print(i)
             dc_prime = primes_of_n(i, ls_primes)
             # highest_multiple_of_2 = i & -i  # bitwise operation
 
@@ -171,14 +170,19 @@ class Problem229:
             # cond3 = (k % 3 == 1)
             # # cond4 = (i % 7 == 1) or i % 7 == 0
             # cond4 = (k % 7 == 1)
-            cond1 = self.cond_d_1(dc_prime)
-            cond2 = self.cond_d_2(dc_prime)
-            cond3 = self.cond_d_3(dc_prime)
-            cond4 = self.cond_d_7(dc_prime)
+            cond = True
+            if cond:
+                cond = cond and self.cond_d_1(dc_prime)
+            if cond:
+                cond = cond and self.cond_d_2(dc_prime)
+            if cond:
+                cond = cond and self.cond_d_3(dc_prime)
+            if cond:
+                cond = cond and self.cond_d_7(dc_prime)
 
-            if cond1 and cond2 and cond3 and cond4:
+            if cond:
                 self.count += 1
-                print("Running count is: {}".format(self.count))
+                print("Running count is: {}. With new number: {}".format(self.count, i))
         return self.count
 
 
@@ -188,7 +192,7 @@ class Solution229(unittest.TestCase):
         # self.problem = Problem229(max_n=2*int(1e9))
 
     def test_solution(self):
-        self.assertEqual(75373, self.problem_small.solve())
+        self.assertEqual(75373, self.problem_small.solve())  # takes 9 mins to run
         # AssertionError: 75373 != 75257
         # ARGGG SO CLOSE. Missing 116 cases.
 
