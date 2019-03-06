@@ -84,7 +84,7 @@ import unittest
 
 # RULES
 # For D = -1:
-# Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power.
+# Ignore powers of 2. 1 mod 4 primes must exist or odd power of 2. 3 mod 4 primes must be even power.
 
 # For D = -2:
 # Ignore powers of 2. 1,3 mod 8 primes must exist. (all others) mod 8 primes must be even power.
@@ -113,12 +113,20 @@ class Problem229:
 
     @staticmethod
     def cond_d_1(dc_prime):
-        # At least one 1mod4 prime must exist
-        if sum([x % 4 == 1 for x in dc_prime.keys()]) < 1:
-            return False
+        """Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power."""
+        # NOTE: THIS EXCLUDES 0, SO NO 2^2 + 0^2 = 4.
+        # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p ≡ 3 (mod 4)
         # 3 mod 4 primes must all be even powers
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 4 == 3]):
             return False
+        # At least one 1mod4 prime must exist
+        if sum([x % 4 == 1 for x in dc_prime.keys()]) == 0:
+            # if at least one 1mod4 prime does not exist then the power of 2 must be odd
+            # if 2 in dc_prime.keys():
+            if dc_prime.get(2, 0) % 2 == 1:
+                return True
+            else:
+                return False
         return True
 
     @staticmethod
@@ -134,12 +142,17 @@ class Problem229:
 
     @staticmethod
     def cond_d_3(dc_prime):
-        # At least one 1 mod3 prime must exist
-        if sum([x % 3 == 1 for x in dc_prime.keys()]) < 1:
-            return False
+        """Ignore powers of 3. 1 mod 3 primes must exist. 2 mod 3 primes must be even power."""
         # 2 mod 3 primes must all be even powers
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 3 == 2]):
             return False
+        # At least one 1 mod3 prime must exist
+        if sum([x % 3 == 1 for x in dc_prime.keys()]) == 0:
+            # if at least one 1mod3 prime does not exist then the power of 2 must be even
+            if 2 in dc_prime.keys():
+                return True
+            else:
+                return False
         return True
 
     @staticmethod
@@ -172,18 +185,74 @@ class Problem229:
             # cond4 = (k % 7 == 1)
             cond = True
             if cond:
-                cond = cond and self.cond_d_1(dc_prime)
-            if cond:
-                cond = cond and self.cond_d_2(dc_prime)
+                cond = cond and self.cond_d_7(dc_prime)
             if cond:
                 cond = cond and self.cond_d_3(dc_prime)
             if cond:
-                cond = cond and self.cond_d_7(dc_prime)
+                cond = cond and self.cond_d_1(dc_prime)
+            if cond:
+                cond = cond and self.cond_d_2(dc_prime)
 
             if cond:
                 self.count += 1
                 print("Running count is: {}. With new number: {}".format(self.count, i))
         return self.count
+
+    @staticmethod
+    def g1(n):
+        s = set()
+        for a in range(1, n):
+            for b in range(1, n):
+                t = a ** 2 + b ** 2
+                if t > n:
+                    break
+                else:
+                    s.add(t)
+        return s
+
+    @staticmethod
+    def g2(n):
+        s = set()
+        for a in range(1, n):
+            for b in range(1, n):
+                t = a ** 2 + 2 * b ** 2
+                if t > n:
+                    break
+                else:
+                    s.add(t)
+        return s
+
+    @staticmethod
+    def g3(n):
+        s = set()
+        for a in range(1, n):
+            for b in range(1, n):
+                t = a ** 2 + 3 * b ** 2
+                if t > n:
+                    break
+                else:
+                    s.add(t)
+        return s
+
+    @staticmethod
+    def g7(n):
+        s = set()
+        for a in range(1, n):
+            for b in range(1, n):
+                t = a ** 2 + 7 * b ** 2
+                if t > n:
+                    break
+                else:
+                    s.add(t)
+        return s
+
+    @timeit
+    def solve_dumb(self):
+        s1 = self.g1(self.max_n)
+        s2 = self.g2(self.max_n)
+        s3 = self.g3(self.max_n)
+        s4 = self.g7(self.max_n)
+        return len(s1.intersection(s2).intersection(s3).intersection(s4))
 
 
 class Solution229(unittest.TestCase):
@@ -196,6 +265,87 @@ class Solution229(unittest.TestCase):
         # AssertionError: 75373 != 75257
         # ARGGG SO CLOSE. Missing 116 cases.
 
+        # ARG AGAIN: now: AssertionError: 75373 != 75554. Counting 181 more cases.
+
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def G1(n):
+    s = set()
+    for a in range(1, n):
+        for b in range(1, n):
+            t = a ** 2 + b ** 2
+            if t > n:
+                break
+            else:
+                s.add(t)
+    return len(s)
+
+
+def G2(n):
+    s = set()
+    for a in range(1, n):
+        for b in range(1, n):
+            t = a ** 2 + 2*b ** 2
+            if t > n:
+                break
+            else:
+                s.add(t)
+    return len(s)
+
+
+
+def g1(n):
+    s = set()
+    for a in range(1, n):
+        for b in range(1, n):
+            t = a ** 2 + b ** 2
+            if t > n:
+                break
+            else:
+                s.add(t)
+    return s
+
+
+def g2(n):
+    s = set()
+    for a in range(1, n):
+        for b in range(1, n):
+            t = a ** 2 + 2*b ** 2
+            if t > n:
+                break
+            else:
+                s.add(t)
+    return s
+
+def g3(n):
+    s = set()
+    for a in range(1, n):
+        for b in range(1, n):
+            t = a ** 2 + 3*b ** 2
+            if t > n:
+                break
+            else:
+                s.add(t)
+    return s
+
+def g7(n):
+    s = set()
+    for a in range(1, n):
+        for b in range(1, n):
+            t = a ** 2 + 7*b ** 2
+            if t > n:
+                break
+            else:
+                s.add(t)
+    return s
+
+N = int(1e7)
+
+s1 = g1(N)
+s2 = g2(N)
+s3 = g3(N)
+s4 = g7(N)
+print(len(s1.intersection(s2).intersection(s3).intersection(s4)))
