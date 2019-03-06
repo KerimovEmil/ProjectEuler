@@ -27,7 +27,7 @@ ANSWER:
 Solve time ~  seconds
 """
 
-from util.utils import timeit
+from util.utils import timeit, primes_of_n, sieve
 import unittest
 
 
@@ -110,34 +110,87 @@ class Problem229:
         else:
             return 0
 
+    @staticmethod
+    def cond_d_1(dc_prime):
+        # At least one 1mod4 prime must exist
+        if sum([x % 4 == 1 for x in dc_prime.keys()]) < 1:
+            return False
+        # 3 mod 4 primes must all be even powers
+        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 4 == 3]):
+            return False
+        return True
+
+    @staticmethod
+    def cond_d_2(dc_prime):
+        # At least one (1/3) mod8 prime must exist
+        if sum([x % 8 in [1, 3] for x in dc_prime.keys()]) < 1:
+            return False
+        # 0,4,5,6,7 mod 8 primes must all be even powers
+        # if any([x % 2 != 0 for p, x in dc_prime.items() if p % 8 in [0, 4, 5, 6, 7]]):
+        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 8 in [5, 7]]):
+            return False
+        return True
+
+    @staticmethod
+    def cond_d_3(dc_prime):
+        # At least one 1 mod3 prime must exist
+        if sum([x % 3 == 1 for x in dc_prime.keys()]) < 1:
+            return False
+        # 2 mod 3 primes must all be even powers
+        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 3 == 2]):
+            return False
+        return True
+
+    @staticmethod
+    def cond_d_7(dc_prime):
+        # At least one 1/2/4 mod7 prime must exist
+        if sum([x % 7 in [1, 2, 4] for x in dc_prime.keys()]) < 1:
+            return False
+        # 3/5/6 mod 7 primes must all be even powers
+        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 7 in [3, 5, 6]]):
+            return False
+        return True
 
     @timeit
     def solve(self):
         # for i in range(1, self.max_n + 1, 2):  # only looping odd numbers
-        for i in range(1, self.max_n + 1):
-            highest_multiple_of_2 = i & -i  # bitwise operation
+        ls_primes = list(sieve(self.max_n))
+        for i in range(2, self.max_n + 1):
+            if i % 100 == 0:
+                print(i)
+            dc_prime = primes_of_n(i, ls_primes)
+            # highest_multiple_of_2 = i & -i  # bitwise operation
 
-            # k = i // highest_multiple_of_2
-            k = i
+            # # k = i // highest_multiple_of_2
+            # k = i
+            #
+            # cond1 = k % 4 == 1  # not needed
+            #
+            # cond2 = k % 8 == 1
+            # # cond3 = (i % 3 == 1) or i % 3 == 0
+            # cond3 = (k % 3 == 1)
+            # # cond4 = (i % 7 == 1) or i % 7 == 0
+            # cond4 = (k % 7 == 1)
+            cond1 = self.cond_d_1(dc_prime)
+            cond2 = self.cond_d_2(dc_prime)
+            cond3 = self.cond_d_3(dc_prime)
+            cond4 = self.cond_d_7(dc_prime)
 
-            cond1 = k % 4 == 1  # not needed
-
-            cond2 = k % 8 == 1
-            # cond3 = (i % 3 == 1) or i % 3 == 0
-            cond3 = (k % 3 == 1)
-            # cond4 = (i % 7 == 1) or i % 7 == 0
-            cond4 = (k % 7 == 1)
             if cond1 and cond2 and cond3 and cond4:
                 self.count += 1
+                print("Running count is: {}".format(self.count))
         return self.count
 
 
 class Solution229(unittest.TestCase):
     def setUp(self):
         self.problem_small = Problem229(max_n=int(1e7))
+        # self.problem = Problem229(max_n=2*int(1e9))
 
     def test_solution(self):
         self.assertEqual(75373, self.problem_small.solve())
+        # AssertionError: 75373 != 75257
+        # ARGGG SO CLOSE. Missing 116 cases.
 
 
 if __name__ == '__main__':
