@@ -209,11 +209,11 @@ class Problem229:
         return self.count
 
     @staticmethod
-    def g1(n):
+    def g1(n, ls_sq):
         s = set()
-        for a in range(1, n):
-            for b in range(1, n):
-                t = a ** 2 + b ** 2
+        for a2 in ls_sq:
+            for b2 in ls_sq:
+                t = a2 + b2
                 if t > n:
                     break
                 else:
@@ -221,11 +221,11 @@ class Problem229:
         return s
 
     @staticmethod
-    def g2(n):
+    def g2(n, ls_sq):
         s = set()
-        for a in range(1, n):
-            for b in range(1, n):
-                t = a ** 2 + 2 * b ** 2
+        for a2 in ls_sq:
+            for b2 in ls_sq:
+                t = a2 + 2 * b2
                 if t > n:
                     break
                 else:
@@ -233,11 +233,11 @@ class Problem229:
         return s
 
     @staticmethod
-    def g3(n):
+    def g3(n, ls_sq):
         s = set()
-        for a in range(1, n):
-            for b in range(1, n):
-                t = a ** 2 + 3 * b ** 2
+        for a2 in ls_sq:
+            for b2 in ls_sq:
+                t = a2 + 3 * b2
                 if t > n:
                     break
                 else:
@@ -245,11 +245,11 @@ class Problem229:
         return s
 
     @staticmethod
-    def g7(n):
+    def g7(n, ls_sq):
         s = set()
-        for a in range(1, n):
-            for b in range(1, n):
-                t = a ** 2 + 7 * b ** 2
+        for a2 in ls_sq:
+            for b2 in ls_sq:
+                t = a2 + 7 * b2
                 if t > n:
                     break
                 else:
@@ -258,10 +258,11 @@ class Problem229:
 
     @timeit
     def solve_dumb(self):
-        s1 = self.g1(self.max_n)
-        s2 = self.g2(self.max_n)
-        s3 = self.g3(self.max_n)
-        s4 = self.g7(self.max_n)
+        ls_sq = [x**2 for x in range(1, self.max_n)]
+        s1 = self.g1(self.max_n, ls_sq)
+        s2 = self.g2(self.max_n, ls_sq)
+        s3 = self.g3(self.max_n, ls_sq)
+        s4 = self.g7(self.max_n, ls_sq)
         full_s = s1.intersection(s2).intersection(s3).intersection(s4)
         return len(full_s)
 
@@ -279,7 +280,7 @@ class Solution229(unittest.TestCase):
 
     def test_solution_dumb(self):
         # self.assertEqual(5, self.problem_small.solve_dumb())
-        self.assertEqual(75373, self.problem_small.solve_dumb())  # takes under 2 mins to run
+        self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
 
 
 if __name__ == '__main__':
