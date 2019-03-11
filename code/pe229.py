@@ -54,6 +54,7 @@ import unittest
 # -2 has quadratic residues if p == 1,3 mod 8
 # -3 has quadratic residues if p == 1 mod 3
 # -7 has quadratic residues if p == 1,2,4 mod 7
+# see here: https://en.wikipedia.org/wiki/Quadratic_residue
 
 # Therefore if p == 1 mod 4 AND p == 1,3 mod 8 AND p == 1 mod 3 AND p == 1,2,4 mod 7
 # then x^2 == -1, -2, -3, -7  mod p has a solution.
@@ -156,18 +157,36 @@ class Problem229:
         return True
 
     @staticmethod
-    def cond_d_7(dc_prime):
-        # At least one 1/2/4 mod7 prime must exist
-        if sum([x % 7 in [1, 2, 4] for x in dc_prime.keys()]) < 1:
-            return False
+    def cond_d_7(dc_prime):  # 900 should return False, but returns True
+        # TODO: first few wrong values (i.e. should be False but returns True)
+        # 2 = {2: 1}
+        # 4 = {2: 2}
+        # 14 = {2: 1, 7: 1}  - 7 ignored, 2 good
+        # 18 = {2: 1, 3: 2} - 2 good, 3 bad
+        # 22 = {2: 1, 11: 1} - 2,11, good
+        # 28 = {2: 2, 7: 1} - 7 ignored, 2 good
+        # 36 = {2: 2, 3: 2} - 2 good, 3 bad
+        # 46 = {2: 2, 23: 1} - 2,23 good
+        # 50 = {2: 2, 5: 2} - 2 good, 5 bad
+        # 58 = {2: 1, 29: 1} - 2, 29 good
+        # 74 = {2: 1, 37: 1} - 3, 37 good
+
+        # 450 = 2^1 3^2 5^2 should return False
+        # 900 = 2^2 3^2 5^2 should return False
+        # 1800 = 2^3 3^2 5^2 should return True
+        # 3600 = 2^4 3^2 5^2 should return True
+        # 7200 = 2^5 3^2 5^2 should return True
+
         # 3/5/6 mod 7 primes must all be even powers
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 7 in [3, 5, 6]]):
+            return False
+        # At least one 1/2/4 mod7 prime must exist
+        if sum([x % 7 in [1, 2, 4] for x in dc_prime.keys()]) == 0:
             return False
         return True
 
     @timeit
     def solve(self):
-        # for i in range(1, self.max_n + 1, 2):  # only looping odd numbers
         ls_primes = list(sieve(self.max_n))
         for i in range(2, self.max_n + 1):
             dc_prime = primes_of_n(i, ls_primes)
@@ -252,100 +271,32 @@ class Problem229:
         s2 = self.g2(self.max_n)
         s3 = self.g3(self.max_n)
         s4 = self.g7(self.max_n)
-        return len(s1.intersection(s2).intersection(s3).intersection(s4))
+        full_s = s1.intersection(s2).intersection(s3).intersection(s4)
+        print(full_s)
+        return len(full_s)
 
 
 class Solution229(unittest.TestCase):
     def setUp(self):
-        self.problem_small = Problem229(max_n=int(1e7))
+        self.problem_small = Problem229(max_n=1000)
+        # self.problem_small = Problem229(max_n=int(1e7))
         # self.problem = Problem229(max_n=2*int(1e9))
 
     def test_solution(self):
-        self.assertEqual(75373, self.problem_small.solve())  # takes 9 mins to run
+        self.assertEqual(5, self.problem_small.solve())  # solution 900 is wrong in G7!
+        # self.assertEqual(75373, self.problem_small.solve())  # takes 9 mins to run
+        # self.assertEqual(75373, self.problem_small.solve_dumb())
+        # self.assertEqual(None, self.problem.solve_dumb())
+
         # AssertionError: 75373 != 75257
         # ARGGG SO CLOSE. Missing 116 cases.
 
         # ARG AGAIN: now: AssertionError: 75373 != 75554. Counting 181 more cases.
 
+    def test_solution_dumb(self):
+        self.assertEqual(5, self.problem_small.solve_dumb())
+        # self.assertEqual(75373, self.problem_small.solve_dumb())
+
 
 if __name__ == '__main__':
     unittest.main()
-
-
-def G1(n):
-    s = set()
-    for a in range(1, n):
-        for b in range(1, n):
-            t = a ** 2 + b ** 2
-            if t > n:
-                break
-            else:
-                s.add(t)
-    return len(s)
-
-
-def G2(n):
-    s = set()
-    for a in range(1, n):
-        for b in range(1, n):
-            t = a ** 2 + 2*b ** 2
-            if t > n:
-                break
-            else:
-                s.add(t)
-    return len(s)
-
-
-
-def g1(n):
-    s = set()
-    for a in range(1, n):
-        for b in range(1, n):
-            t = a ** 2 + b ** 2
-            if t > n:
-                break
-            else:
-                s.add(t)
-    return s
-
-
-def g2(n):
-    s = set()
-    for a in range(1, n):
-        for b in range(1, n):
-            t = a ** 2 + 2*b ** 2
-            if t > n:
-                break
-            else:
-                s.add(t)
-    return s
-
-def g3(n):
-    s = set()
-    for a in range(1, n):
-        for b in range(1, n):
-            t = a ** 2 + 3*b ** 2
-            if t > n:
-                break
-            else:
-                s.add(t)
-    return s
-
-def g7(n):
-    s = set()
-    for a in range(1, n):
-        for b in range(1, n):
-            t = a ** 2 + 7*b ** 2
-            if t > n:
-                break
-            else:
-                s.add(t)
-    return s
-
-N = int(1e7)
-
-s1 = g1(N)
-s2 = g2(N)
-s3 = g3(N)
-s4 = g7(N)
-print(len(s1.intersection(s2).intersection(s3).intersection(s4)))
