@@ -113,7 +113,7 @@ class Problem229:
             return 0
 
     @staticmethod
-    def cond_d_1(dc_prime):
+    def cond_d_1(dc_prime):  # Accurate!
         """Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power."""
         # NOTE: THIS EXCLUDES 0, SO NO 2^2 + 0^2 = 4.
         # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p ≡ 3 (mod 4)
@@ -131,7 +131,7 @@ class Problem229:
         return True
 
     @staticmethod
-    def cond_d_2(dc_prime):
+    def cond_d_2(dc_prime):  # Accurate!
         # At least one (1/3) mod8 prime must exist
         if sum([x % 8 in [1, 3] for x in dc_prime.keys()]) < 1:
             return False
@@ -142,7 +142,7 @@ class Problem229:
         return True
 
     @staticmethod
-    def cond_d_3(dc_prime):
+    def cond_d_3(dc_prime):  # Accurate!
         """Ignore powers of 3. 1 mod 3 primes must exist. 2 mod 3 primes must be even power."""
         # 2 mod 3 primes must all be even powers
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 3 == 2]):
@@ -157,7 +157,7 @@ class Problem229:
         return True
 
     @staticmethod
-    def cond_d_7(dc_prime):  # 900 should return False, but returns True
+    def cond_d_7(dc_prime):  # All True's are accurate, but not all False's !
         # TODO: first few wrong values (i.e. should be False but returns True)
         # 2 = {2: 1}
         # 4 = {2: 2}
