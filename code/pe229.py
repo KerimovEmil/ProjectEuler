@@ -61,6 +61,22 @@ import unittest
 
 # Note through all of this we assumed p was an odd prime.
 
+# RULES
+# For D = -1:
+# Ignore powers of 2. 3 mod 4 primes must be even power. 1 mod 4 primes must exist OR odd power of 2.
+
+# For D = -2:
+# Ignore powers of 2. 5,7 mod 8 primes must be even power. 1,3 mod 8 primes must exist.
+
+# For D = -3:
+# Ignore powers of 3. 2 mod 3 primes must be even power. 1 mod 3 primes must exist OR even power of 2.
+
+# For D = -7:
+# Ignore powers of 7. 3,5,6 mod 7 primes must be even power. 1,2,4 mod 7 primes must exist AND 2 cannot be raised to 1.
+
+# The smallest value that satisfies all of these conditions is 193, which is a prime number.
+
+# EXAMPLES # TODO: redo all examples.
 # Example 3600: Divide out all of the powers of 2 and we get: 3600/16 = 225.
 # 225 mod 4 = 1, 225 mod 8 = 1, 225 mod 7 = 1
 # 225 mod 3 = 0 is a special case since 3 divides 225, and the legendre symbol arithmetic assumes they are coprime
@@ -82,21 +98,6 @@ import unittest
 # 100 = 2^2 5^2 fails for d = 2 and 7
 # 50 = 2^1 5^2 fails for d = 2, 3 and 7
 
-
-# RULES
-# For D = -1:
-# Ignore powers of 2. 1 mod 4 primes must exist or odd power of 2. 3 mod 4 primes must be even power.
-
-# For D = -2:
-# Ignore powers of 2. 1,3 mod 8 primes must exist. (all others) mod 8 primes must be even power.
-
-# For D = -3:
-# Ignore powers of 3. 1 mod 3 primes must exist. 2 mod 3 primes must be even power.
-
-# For D = -7:
-# Ignore powers of 7. 1,2,4 mod 7 primes must exist. (all others) mod 7 primes must be even power.
-
-# The smallest value that satisfies all of these conditions is 193, which is a prime number.
 
 class Problem229:
     def __init__(self, max_n):
@@ -135,7 +136,7 @@ class Problem229:
         # At least one (1/3) mod8 prime must exist
         if sum([x % 8 in [1, 3] for x in dc_prime.keys()]) < 1:
             return False
-        # 0,4,5,6,7 mod 8 primes must all be even powers
+        # 0, 4, 6 can never be values of p%2 :
         # if any([x % 2 != 0 for p, x in dc_prime.items() if p % 8 in [0, 4, 5, 6, 7]]):
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 8 in [5, 7]]):
             return False
@@ -157,32 +158,22 @@ class Problem229:
         return True
 
     @staticmethod
-    def cond_d_7(dc_prime):  # All True's are accurate, but not all False's !
-        # TODO: first few wrong values (i.e. should be False but returns True)
-        # 2 = {2: 1}
-        # 4 = {2: 2}
-        # 14 = {2: 1, 7: 1}  - 7 ignored, 2 good
-        # 18 = {2: 1, 3: 2} - 2 good, 3 bad
-        # 22 = {2: 1, 11: 1} - 2,11, good
-        # 28 = {2: 2, 7: 1} - 7 ignored, 2 good
-        # 36 = {2: 2, 3: 2} - 2 good, 3 bad
-        # 46 = {2: 2, 23: 1} - 2,23 good
-        # 50 = {2: 2, 5: 2} - 2 good, 5 bad
-        # 58 = {2: 1, 29: 1} - 2, 29 good
-        # 74 = {2: 1, 37: 1} - 3, 37 good
-
-        # 450 = 2^1 3^2 5^2 should return False
-        # 900 = 2^2 3^2 5^2 should return False
-        # 1800 = 2^3 3^2 5^2 should return True
-        # 3600 = 2^4 3^2 5^2 should return True
-        # 7200 = 2^5 3^2 5^2 should return True
-
+    def cond_d_7(dc_prime):  # Accurate!
         # 3/5/6 mod 7 primes must all be even powers
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 7 in [3, 5, 6]]):
             return False
         # At least one 1/2/4 mod7 prime must exist
-        if sum([x % 7 in [1, 2, 4] for x in dc_prime.keys()]) == 0:
+        good_primes = [(p, x) for p, x in dc_prime.items() if p % 7 in [1, 2, 4]]
+        if len(good_primes) == 0:
             return False
+        if len(good_primes) == 1:
+            if good_primes[0][0] == 2:
+                if good_primes[0][1] < 3:
+                    return False
+        ls_2 = [(p, x) for p, x in good_primes if p == 2]
+        if len(ls_2) == 1:
+            if ls_2[0][1] == 1:
+                return False
         return True
 
     @timeit
@@ -272,30 +263,23 @@ class Problem229:
         s3 = self.g3(self.max_n)
         s4 = self.g7(self.max_n)
         full_s = s1.intersection(s2).intersection(s3).intersection(s4)
-        print(full_s)
         return len(full_s)
 
 
 class Solution229(unittest.TestCase):
     def setUp(self):
-        self.problem_small = Problem229(max_n=1000)
-        # self.problem_small = Problem229(max_n=int(1e7))
+        # self.problem_small = Problem229(max_n=1000)
+        self.problem_small = Problem229(max_n=int(1e7))
         # self.problem = Problem229(max_n=2*int(1e9))
 
     def test_solution(self):
-        self.assertEqual(5, self.problem_small.solve())  # solution 900 is wrong in G7!
-        # self.assertEqual(75373, self.problem_small.solve())  # takes 9 mins to run
-        # self.assertEqual(75373, self.problem_small.solve_dumb())
-        # self.assertEqual(None, self.problem.solve_dumb())
-
-        # AssertionError: 75373 != 75257
-        # ARGGG SO CLOSE. Missing 116 cases.
-
-        # ARG AGAIN: now: AssertionError: 75373 != 75554. Counting 181 more cases.
+        # self.assertEqual(5, self.problem_small.solve())
+        self.assertEqual(75373, self.problem_small.solve())  # takes 11 mins to run
+        # self.assertEqual(None, self.problem.solve())  # not done yet
 
     def test_solution_dumb(self):
-        self.assertEqual(5, self.problem_small.solve_dumb())
-        # self.assertEqual(75373, self.problem_small.solve_dumb())
+        # self.assertEqual(5, self.problem_small.solve_dumb())
+        self.assertEqual(75373, self.problem_small.solve_dumb())  # takes under 2 mins to run
 
 
 if __name__ == '__main__':
