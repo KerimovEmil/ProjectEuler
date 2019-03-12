@@ -72,7 +72,8 @@ import unittest
 # Ignore powers of 3. 2 mod 3 primes must be even power. 1 mod 3 primes must exist OR even power of 2.
 
 # For D = -7:
-# Ignore powers of 7. 3,5,6 mod 7 primes must be even power. 1,2,4 mod 7 primes must exist AND 2 cannot be raised to 1.
+# Ignore powers of 7. 3,5,6 mod 7 primes must be even power. 1,2,4 mod 7 primes must exist AND 2 cannot be raised to 1
+# (if other primes exist). If only 2 exists then 2 cannot be raised to 1 or 2.
 
 # The smallest value that satisfies all of these conditions is 193, which is a prime number.
 
@@ -191,36 +192,20 @@ class Problem229:
 
         return True
 
-    @staticmethod
-    def cond_d_1237(dc_prime):
-        """
-        (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-        AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
-        OR
-        (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-        AND (2^even) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
-        OR
-        (2^odd) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-        AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
-        """
-        # 2 mod 3 primes must all be even powers
-        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 3 == 2]):
-            return False
-        # At least one 1 mod3 prime must exist
-        if sum([x % 3 == 1 for x in dc_prime.keys()]) == 0:
-            # if at least one 1mod3 prime does not exist then the power of 2 must be even
-            if 2 in dc_prime.keys():
-                return True
-            else:
-                return False
-        return True
-
     @timeit
     def solve(self):
         ls_primes = list(sieve(self.max_n))
         ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
 
+        # [i for i in range(1, 168) if i**2 % 168 in [1,25,121]]
+        # [1, 5, 11, 13, 17, 19, 23, 25, 29, 31, 37, 41, 43, 47, 53, 55, 59, 61, 65, 67, 71, 73, 79, 83, 85, 89,
+        # 95, 97, 101, 103, 107, 109, 113, 115, 121, 125, 127, 131, 137, 139, 143, 145, 149, 151, 155, 157, 163, 167]
+
+        # todo: add base of 4624 = 2**4 * 17**2 and 3600 = 2^4 3^2 5^2
+        # todo: include all possible multiplications of good_primes within each other
+
+        # todo include
         # 3600 = 2^4 3^2 5^2  # 5^2 mod 168 = 25
         # 4624 = 2^4 17^2  # 17^2 mod 168 = 121 (extra 2^4)
         # 12100 = 2^2 11^2 5^2  # 11^2 * 5^2 mod 168 = 121 * 25 mod 168 = 1  (extra 2^2)
@@ -238,7 +223,7 @@ class Problem229:
         # 48400= 2^4 11^2 5^2  # 11^2 mod 168 = 121
         # 49284= 2^2 3^2 37^2  # 37^2 mod 168 = 25
         # 51076= 113^2 2^2  # 113^2 mod 168 = 1
-        # 57600= 2^8 3^2 5^2  # 5^2 mod 168 = 25
+        # 57600= 2^8 3^2 5^2  # 5^2 mod 168 = 25 (3600 * 4^2)
         # 65041= 193^1 337^1  25 * 1 mod 168 = 25
         # 73984= 2^8 17^2  # 17^2 mod 168 = 121
         # 75076= 137^2 2^2  # 137^2 mod 168 = 121
@@ -248,7 +233,7 @@ class Problem229:
         # 90000= 2^4 3^2 5^4  # 5^4 mod 168 = 121
         # 97344= 2^6 3^2 13^2  # 13^2 mod 168 = 1
 
-        for p in ls_good_primes:  # missing values of {4624, 3600}
+        for p in ls_good_primes:
             max_possible_sq = self.max_n / p
             max_count = int(max_possible_sq**0.5)
 
