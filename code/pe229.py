@@ -81,8 +81,13 @@ import unittest
 # D = -1: 3 mod 4 is even power. 1 mod 4 prime exists.
 # D = -2: 5 mod 8 is even power. 3 mod 8 prime exists.
 # D = -3: 2 mod 3 is even power. 1 mod 3 prime does not exist, but even power of 2 does.
-# D = -7: 3,5 mod 8 is even power. 2 mod 7 prime exists AND 2 is raised to the power greater than 1.
+# D = -7: 3,5 mod 7 is even power. 2 mod 7 prime exists AND 2 is raised to the power greater than 1.
 
+# 193 = 193
+# D = -1: 193 mod 4 = 1.
+# D = -2: 193 mod 8 = 1.
+# D = -3: 193 mod 3 = 1.
+# D = -7: 193 mod 7 = 4 and no single power of 2.
 
 class Problem229:
     def __init__(self, max_n):
@@ -155,7 +160,7 @@ class Problem229:
     def solve(self):
         ls_primes = list(sieve(self.max_n))
         for i in range(2, self.max_n + 1):
-            dc_prime = primes_of_n(i, ls_primes)
+            # dc_prime = primes_of_n(i, ls_primes)
             # highest_multiple_of_2 = i & -i  # bitwise operation
 
             # # k = i // highest_multiple_of_2
@@ -168,8 +173,10 @@ class Problem229:
             # cond3 = (k % 3 == 1)
             # # cond4 = (i % 7 == 1) or i % 7 == 0
             # cond4 = (k % 7 == 1)
-            cond = True
+            cond = (i & -i) != 2
+            # cond = True
             if cond:
+                dc_prime = primes_of_n(i, ls_primes)
                 cond = cond and self.cond_d_7(dc_prime)
             if cond:
                 cond = cond and self.cond_d_3(dc_prime)
