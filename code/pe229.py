@@ -89,6 +89,34 @@ import unittest
 # D = -3: 193 mod 3 = 1.
 # D = -7: 193 mod 7 = 4 and no single power of 2.
 
+# Solving with some of the mandatory conditions.
+# 3 mod 4 primes must be even power and 5,7 mod 8 primes must be even power
+# and 2 mod 3 primes must be even power and 3,5,6 mod 7 primes must be even power
+
+# Notice that 3 mod 4 primes must be even power is a weaker condition than 7 mod 8 primes must be even power.
+# therefore we can eliminate that condition:
+
+# 5,7 mod 8 primes must be even power
+# and 2 mod 3 primes must be even power and 3,5,6 mod 7 primes must be even power
+
+# since 8, 3, and 7 are all co-prime: 8*3*7 = 168
+# (5 or 7) * 2 * (3 or 5 or 6) mod 168 must be an even power.
+# i.e. 30, 42, 50, 60, 70, 84 mod 168 must be an even power
+
+# [(1 mod 4)^(x>1) or 2^odd] AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
+# AND [(1 mod 3)^even or 2^even] AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+
+# Expanding the or's:
+# (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
+# AND (1 mod 3)^even AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+# OR
+# (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
+# AND (2^even) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+# OR
+# (2^odd) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
+# AND (1 mod 3)^even AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+
+
 class Problem229:
     def __init__(self, max_n):
         self.max_n = max_n
