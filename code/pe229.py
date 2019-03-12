@@ -89,6 +89,13 @@ import unittest
 # D = -3: 193 mod 3 = 1.
 # D = -7: 193 mod 7 = 4 and no single power of 2.
 
+# Therefore
+# 193 * [all squares] are all in this form.
+# 337 * [all squares] are all in this form.
+# 457 * [all squares] are all in this form.
+# this holds true for all primes of the 1,25,121 mod 168
+
+
 # Solving with some of the mandatory conditions.
 # 3 mod 4 primes must be even power and 5,7 mod 8 primes must be even power
 # and 2 mod 3 primes must be even power and 3,5,6 mod 7 primes must be even power
@@ -104,17 +111,17 @@ import unittest
 # i.e. 30, 42, 50, 60, 70, 84 mod 168 must be an even power
 
 # [(1 mod 4)^(x>1) or 2^odd] AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-# AND [(1 mod 3)^even or 2^even] AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+# AND [(1 mod 3)^(x>1) or 2^even] AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
 
 # Expanding the or's:
 # (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-# AND (1 mod 3)^even AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+# AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
 # OR
 # (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
 # AND (2^even) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
 # OR
 # (2^odd) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-# AND (1 mod 3)^even AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+# AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
 
 
 class Problem229:
@@ -184,8 +191,71 @@ class Problem229:
 
         return True
 
+    @staticmethod
+    def cond_d_1237(dc_prime):
+        """
+        (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
+        AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+        OR
+        (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
+        AND (2^even) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+        OR
+        (2^odd) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
+        AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
+        """
+        # 2 mod 3 primes must all be even powers
+        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 3 == 2]):
+            return False
+        # At least one 1 mod3 prime must exist
+        if sum([x % 3 == 1 for x in dc_prime.keys()]) == 0:
+            # if at least one 1mod3 prime does not exist then the power of 2 must be even
+            if 2 in dc_prime.keys():
+                return True
+            else:
+                return False
+        return True
+
     @timeit
     def solve(self):
+        ls_primes = list(sieve(self.max_n))
+        ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]
+
+        # 4624 = 2^4 17^2   # 17^2 mod 168 = 121
+        # 3600 = 2^4 3^2 5^2
+        # 12100 = 2^2 11^2 5^2
+        # 12321 = 3^2 37^2  # 37^2 mod 168 = 25
+        # 14400= 2^6 3^2 5^2
+        # 18496= 17^2 2^6
+        # 20449= 11^2 13^2
+        # 24336= 2^4 3^2 13^2
+        # 26896= 41^2 2^4
+        # 30276= 2^2 3^2 29^2
+        # 32400= 2^4 3^4 5^2
+        # 37249= 193^2
+        # 41616= 17^2 2^4 3^2
+        # 46225= 43^2 5^2
+        # 48400= 2^4 11^2 5^2
+        # 49284= 2^2 3^2 37^2
+        # 51076= 113^2 2^2
+        # 57600= 2^8 3^2 5^2
+        # 65041= 193^1 337^1
+        # 73984= 17^2 2^8
+        # 75076= 137^2 2^2
+        # 81796= 2^2 11^2 13^2
+        # 85264= 73^2 2^4
+        # 88201= 193^1 457^1
+        # 90000= 2^4 3^2 5^4
+        # 97344= 2^6 3^2 13^2
+
+        for p in ls_good_primes:  # missing values of {4624, 3600}
+            max_possible_sq = self.max_n / p
+            max_count = int(max_possible_sq**0.5)
+
+            self.count += max_count
+        return self.count
+
+    @timeit
+    def solve_basic(self):
         ls_primes = list(sieve(self.max_n))
         for i in range(2, self.max_n + 1):
             # dc_prime = primes_of_n(i, ls_primes)
@@ -258,6 +328,7 @@ class Solution229(unittest.TestCase):
         # self.assertEqual(5, self.problem_small.solve_dumb())
         self.assertEqual(96, self.problem_small.solve_dumb())
         # self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
+        # self.assertEqual(1, self.problem.solve_dumb())  #
 
 
 if __name__ == '__main__':
