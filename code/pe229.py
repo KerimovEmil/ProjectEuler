@@ -76,42 +76,18 @@ import unittest
 
 # The smallest value that satisfies all of these conditions is 193, which is a prime number.
 
-# EXAMPLES # TODO: redo all examples.
-# Example 3600: Divide out all of the powers of 2 and we get: 3600/16 = 225.
-# 225 mod 4 = 1, 225 mod 8 = 1, 225 mod 7 = 1
-# 225 mod 3 = 0 is a special case since 3 divides 225, and the legendre symbol arithmetic assumes they are coprime
-
-# Example 88201:
-# 88201 % 4 = 1, 88201 % 3 = 1, 88201 % 8 = 1, 88201 % 7 = 1
-
-# 3600 = 2^4 3^2 5^2 works
-# 1800 = 2^3 3^2 5^2 fails for d = 3
-# 900 = 2^2 3^2 5^2 fails for d = 7
-# 450 = 2 3^2 5^2 fails for d = 3 and 7
-# 225 = 3^2 5^2 fails for d = 3 and 7
-# 75 = 3 5^2 fails for d = 1, 3 and 7
-# 25 = 5^2 fails for d = 2, 3 and 7
-
-# 1200 = 2^4 3 5^2 fails for d = 1 and 7
-# 400 = 2^4 5^2 fails for d = 2
-# 200 = 2^3 5^2 fails for d = 2 and 3
-# 100 = 2^2 5^2 fails for d = 2 and 7
-# 50 = 2^1 5^2 fails for d = 2, 3 and 7
+# EXAMPLES
+# 3600 = 2^4 3^2 5^2
+# D = -1: 3 mod 4 is even power. 1 mod 4 prime exists.
+# D = -2: 5 mod 8 is even power. 3 mod 8 prime exists.
+# D = -3: 2 mod 3 is even power. 1 mod 3 prime does not exist, but even power of 2 does.
+# D = -7: 3,5 mod 8 is even power. 2 mod 7 prime exists AND 2 is raised to the power greater than 1.
 
 
 class Problem229:
     def __init__(self, max_n):
         self.max_n = max_n
         self.count = 0
-
-    @staticmethod
-    def legendre_neg1(n):
-        if n % 4 == 1:
-            return 1
-        elif n % 4 == 3:
-            return -1
-        else:
-            return 0
 
     @staticmethod
     def cond_d_1(dc_prime):  # Accurate!
@@ -134,10 +110,9 @@ class Problem229:
     @staticmethod
     def cond_d_2(dc_prime):  # Accurate!
         # At least one (1/3) mod8 prime must exist
-        if sum([x % 8 in [1, 3] for x in dc_prime.keys()]) < 1:
+        if sum([x % 8 in [1, 3] for x in dc_prime.keys()]) == 0:
             return False
         # 0, 4, 6 can never be values of p%2 :
-        # if any([x % 2 != 0 for p, x in dc_prime.items() if p % 8 in [0, 4, 5, 6, 7]]):
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 8 in [5, 7]]):
             return False
         return True
@@ -159,6 +134,10 @@ class Problem229:
 
     @staticmethod
     def cond_d_7(dc_prime):  # Accurate!
+        # if divisible by 2 only once, then return False
+        if dc_prime.get(2, 0) == 1:
+            return False
+
         # 3/5/6 mod 7 primes must all be even powers
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 7 in [3, 5, 6]]):
             return False
@@ -167,13 +146,9 @@ class Problem229:
         if len(good_primes) == 0:
             return False
         if len(good_primes) == 1:
-            if good_primes[0][0] == 2:
-                if good_primes[0][1] < 3:
-                    return False
-        ls_2 = [(p, x) for p, x in good_primes if p == 2]
-        if len(ls_2) == 1:
-            if ls_2[0][1] == 1:
+            if dc_prime.get(2, 0) in [1, 2]:
                 return False
+
         return True
 
     @timeit
@@ -209,47 +184,11 @@ class Problem229:
         return self.count
 
     @staticmethod
-    def g1(n, ls_sq):
+    def gx(n, ls_sq, x):
         s = set()
         for a2 in ls_sq:
             for b2 in ls_sq:
-                t = a2 + b2
-                if t > n:
-                    break
-                else:
-                    s.add(t)
-        return s
-
-    @staticmethod
-    def g2(n, ls_sq):
-        s = set()
-        for a2 in ls_sq:
-            for b2 in ls_sq:
-                t = a2 + 2 * b2
-                if t > n:
-                    break
-                else:
-                    s.add(t)
-        return s
-
-    @staticmethod
-    def g3(n, ls_sq):
-        s = set()
-        for a2 in ls_sq:
-            for b2 in ls_sq:
-                t = a2 + 3 * b2
-                if t > n:
-                    break
-                else:
-                    s.add(t)
-        return s
-
-    @staticmethod
-    def g7(n, ls_sq):
-        s = set()
-        for a2 in ls_sq:
-            for b2 in ls_sq:
-                t = a2 + 7 * b2
+                t = a2 + x*b2
                 if t > n:
                     break
                 else:
@@ -259,10 +198,10 @@ class Problem229:
     @timeit
     def solve_dumb(self):
         ls_sq = [x**2 for x in range(1, self.max_n)]
-        s1 = self.g1(self.max_n, ls_sq)
-        s2 = self.g2(self.max_n, ls_sq)
-        s3 = self.g3(self.max_n, ls_sq)
-        s4 = self.g7(self.max_n, ls_sq)
+        s1 = self.gx(self.max_n, ls_sq, 1)
+        s2 = self.gx(self.max_n, ls_sq, 2)
+        s3 = self.gx(self.max_n, ls_sq, 3)
+        s4 = self.gx(self.max_n, ls_sq, 7)
         full_s = s1.intersection(s2).intersection(s3).intersection(s4)
         return len(full_s)
 
@@ -270,17 +209,20 @@ class Problem229:
 class Solution229(unittest.TestCase):
     def setUp(self):
         # self.problem_small = Problem229(max_n=1000)
-        self.problem_small = Problem229(max_n=int(1e7))
+        self.problem_small = Problem229(max_n=10000)
+        # self.problem_small = Problem229(max_n=int(1e7))
         # self.problem = Problem229(max_n=2*int(1e9))
 
     def test_solution(self):
         # self.assertEqual(5, self.problem_small.solve())
-        self.assertEqual(75373, self.problem_small.solve())  # takes 11 mins to run
+        self.assertEqual(96, self.problem_small.solve())
+        # self.assertEqual(75373, self.problem_small.solve())  # takes 11 mins to run
         # self.assertEqual(None, self.problem.solve())  # not done yet
 
     def test_solution_dumb(self):
         # self.assertEqual(5, self.problem_small.solve_dumb())
-        self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
+        self.assertEqual(96, self.problem_small.solve_dumb())
+        # self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
 
 
 if __name__ == '__main__':
