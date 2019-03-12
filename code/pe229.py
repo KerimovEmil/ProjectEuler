@@ -195,7 +195,7 @@ class Problem229:
     @timeit
     def solve(self):
         ls_primes = list(sieve(self.max_n))
-        ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]
+        ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]  # 1 = 1^2, 25=5^2, 121=11^2
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
 
         # [i for i in range(1, 168) if i**2 % 168 in [1,25,121]]
@@ -203,7 +203,26 @@ class Problem229:
         # 95, 97, 101, 103, 107, 109, 113, 115, 121, 125, 127, 131, 137, 139, 143, 145, 149, 151, 155, 157, 163, 167]
 
         # todo: add base of 4624 = 2**4 * 17**2 and 3600 = 2^4 3^2 5^2
+        ls_good_primes.append(3600)
+        ls_good_primes.append(4624)
+        ls_good_primes.sort()
         # todo: include all possible multiplications of good_primes within each other
+        print("finished adding good primes")
+
+        ls_good_comp = []
+        sq_n = int(self.max_n**0.5)
+        for i, p1 in enumerate(ls_good_primes):
+            if p1 > sq_n:
+                break
+            for p2 in ls_good_primes[i:]:
+                c = p1*p2
+                if c > self.max_n:
+                    break
+                else:
+                    ls_good_comp.append(c)
+
+        ls_good_primes = ls_good_comp + ls_good_primes
+        print("finished adding composites")
 
         # todo include
         # 3600 = 2^4 3^2 5^2  # 5^2 mod 168 = 25
@@ -238,6 +257,7 @@ class Problem229:
             max_count = int(max_possible_sq**0.5)
 
             self.count += max_count
+
         return self.count
 
     @timeit
@@ -300,20 +320,20 @@ class Problem229:
 class Solution229(unittest.TestCase):
     def setUp(self):
         # self.problem_small = Problem229(max_n=1000)
-        self.problem_small = Problem229(max_n=10000)
-        # self.problem_small = Problem229(max_n=int(1e7))
+        # self.problem_small = Problem229(max_n=10000)
+        self.problem_small = Problem229(max_n=int(1e7))
         # self.problem = Problem229(max_n=2*int(1e9))
 
     def test_solution(self):
         # self.assertEqual(5, self.problem_small.solve())
-        self.assertEqual(96, self.problem_small.solve())
-        # self.assertEqual(75373, self.problem_small.solve())  # takes 11 mins to run
+        # self.assertEqual(96, self.problem_small.solve())
+        self.assertEqual(75373, self.problem_small.solve())  # takes 1 second to run. 74960 != 75373
         # self.assertEqual(None, self.problem.solve())  # not done yet
 
     def test_solution_dumb(self):
         # self.assertEqual(5, self.problem_small.solve_dumb())
-        self.assertEqual(96, self.problem_small.solve_dumb())
-        # self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
+        # self.assertEqual(96, self.problem_small.solve_dumb())
+        self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
         # self.assertEqual(1, self.problem.solve_dumb())  #
 
 
