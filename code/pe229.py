@@ -124,6 +124,11 @@ import unittest
 # (2^odd) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
 # AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
 
+# if number to consider is already a square then the criteria simplifies to:
+# (1 mod 4)^(x>1) AND (1,3 mod 8)^(x>1) AND (1 mod 3)^(x>1) AND (1,2,4 mod 7)^(x>1)
+# OR
+# (1 mod 4)^(x>1) AND (1,3 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
+
 
 class Problem229:
     def __init__(self, max_n):
@@ -203,8 +208,13 @@ class Problem229:
         # 95, 97, 101, 103, 107, 109, 113, 115, 121, 125, 127, 131, 137, 139, 143, 145, 149, 151, 155, 157, 163, 167]
 
         # todo: add base of 4624 = 2**4 * 17**2 and 3600 = 2^4 3^2 5^2
-        ls_good_primes.append(3600)
-        ls_good_primes.append(4624)
+        # todo fix this, this slightly over-counts the result.
+        ls_good_primes.append(3600)  # 2^4 3^2 5^2
+        ls_good_primes.append(4624)  # 2^4 17^2 (* 2^2
+        ls_good_primes.append(12100)  # 2^2 5^2 11^2  (* 2^2
+        ls_good_primes.append(12321)  # 3^2 37^2  (* 2^2
+        ls_good_primes.append(75076)  # 2^2 137^2
+
         ls_good_primes.sort()
         # todo: include all possible multiplications of good_primes within each other
         print("finished adding good primes")
@@ -221,38 +231,21 @@ class Problem229:
                 else:
                     ls_good_comp.append(c)
 
-        ls_good_primes = ls_good_comp + ls_good_primes
+        ls_good_nums = ls_good_comp + ls_good_primes
         print("finished adding composites")
 
         # todo include
-        # 3600 = 2^4 3^2 5^2  # 5^2 mod 168 = 25
-        # 4624 = 2^4 17^2  # 17^2 mod 168 = 121 (extra 2^4)
-        # 12100 = 2^2 11^2 5^2  # 11^2 * 5^2 mod 168 = 121 * 25 mod 168 = 1  (extra 2^2)
-        # 12321 = 3^2 37^2  # 37^2 mod 168 = 25 (extra 3^2)
-        # 14400= 2^6 3^2 5^2  # 5^2 mod 168 = 25 (3600 * 2^2)
-        # 18496= 2^6 17^2  # 17^2 mod 168 = 121 (extra 2^6)
-        # 20449= 11^2 13^2  # 11^2 13^2 mod 168 = 121*1 mod 168 = 121
-        # 24336= 2^4 3^2 13^2  # 13^2 mod 168 = 1
+        # 20449= 11^2 13^2  # 11^2 13^2 mod 168 = 121*1 mod 168 = 121  # 13^2 * 11^2
+        # 24336= 2^4 3^2 13^2  # 13^2 mod 168 = 1  13^2 * 12^2
         # 26896= 41^2 2^4  # 41^2 mod 168 = 1
         # 30276= 2^2 3^2 29^2  # 29^2 mod 168 = 1
-        # 32400= 2^4 3^4 5^2  # 5^2 mod 168 = 25  (3600 * 3^2)
-        # 37249= 193^2  # 193^2 mod 168 = 121
-        # 41616= 2^4 3^2 17^2  # 17^2 mod 168 = 121
         # 46225= 43^2 5^2  # 43^2 mod 168 = 1
-        # 48400= 2^4 11^2 5^2  # 11^2 mod 168 = 121
-        # 49284= 2^2 3^2 37^2  # 37^2 mod 168 = 25
         # 51076= 113^2 2^2  # 113^2 mod 168 = 1
-        # 57600= 2^8 3^2 5^2  # 5^2 mod 168 = 25 (3600 * 4^2)
-        # 65041= 193^1 337^1  25 * 1 mod 168 = 25
-        # 73984= 2^8 17^2  # 17^2 mod 168 = 121
-        # 75076= 137^2 2^2  # 137^2 mod 168 = 121
         # 81796= 2^2 11^2 13^2  # 121 * 1 mod 168 = 121
         # 85264= 73^2 2^4  # 73^2 mod 168 = 121
-        # 88201= 193^1 457^1  # 25*121 mod 168 = 1
-        # 90000= 2^4 3^2 5^4  # 5^4 mod 168 = 121
         # 97344= 2^6 3^2 13^2  # 13^2 mod 168 = 1
 
-        for p in ls_good_primes:
+        for p in ls_good_nums:
             max_possible_sq = self.max_n / p
             max_count = int(max_possible_sq**0.5)
 
@@ -339,3 +332,79 @@ class Solution229(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+# todo include
+# 3600 = 2^4 3^2 5^2  # 5^2 mod 168 = 25
+# 4624 = 2^4 17^2  # 17^2 mod 168 = 121 (extra 2^4)
+# 12100 = 2^2 11^2 5^2  # 11^2 * 5^2 mod 168 = 121 * 25 mod 168 = 1  (extra 2^2)
+# 12321 = 3^2 37^2  # 37^2 mod 168 = 25 (extra 3^2)
+# 14400= 2^6 3^2 5^2  # 5^2 mod 168 = 25 (3600 * 2^2)
+# 18496= 2^6 17^2  # 17^2 mod 168 = 121 (extra 2^6)
+# 20449= 11^2 13^2  # 11^2 13^2 mod 168 = 121*1 mod 168 = 121
+# 24336= 2^4 3^2 13^2  # 13^2 mod 168 = 1
+# 26896= 41^2 2^4  # 41^2 mod 168 = 1
+# 30276= 2^2 3^2 29^2  # 29^2 mod 168 = 1
+# 32400= 2^4 3^4 5^2  # 5^2 mod 168 = 25  (3600 * 3^2)
+# 37249= 193^2  # 193^2 mod 168 = 121
+# 41616= 2^4 3^2 17^2  # 17^2 mod 168 = 121
+# 46225= 43^2 5^2  # 43^2 mod 168 = 1
+# 48400= 2^4 11^2 5^2  # 11^2 mod 168 = 121
+# 49284= 2^2 3^2 37^2  # 37^2 mod 168 = 25
+# 51076= 113^2 2^2  # 113^2 mod 168 = 1
+# 57600= 2^8 3^2 5^2  # 5^2 mod 168 = 25 (3600 * 4^2)
+# 65041= 193^1 337^1  25 * 1 mod 168 = 25
+# 73984= 2^8 17^2  # 17^2 mod 168 = 121
+# 75076= 137^2 2^2  # 137^2 mod 168 = 121
+# 81796= 2^2 11^2 13^2  # 121 * 1 mod 168 = 121
+# 85264= 73^2 2^4  # 73^2 mod 168 = 121
+# 88201= 193^1 457^1  # 25*121 mod 168 = 1
+# 90000= 2^4 3^2 5^4  # 5^4 mod 168 = 121
+# 97344= 2^6 3^2 13^2  # 13^2 mod 168 = 1
+
+
+#
+# N = int(1e7)
+# ls_sq = [x ** 2 for x in range(1, N)]
+# s1 = gx(N, ls_sq, 1)
+# s2 = gx(N, ls_sq, 2)
+# s3 = gx(N, ls_sq, 3)
+# s4 = gx(N, ls_sq, 7)
+# full_s = s1.intersection(s2).intersection(s3).intersection(s4)
+#
+# def sieve(n):
+#     """Return all primes <= n."""
+#     np1 = n + 1
+#     s = list(range(np1))
+#     s[1] = 0
+#     sqrtn = int(round(n ** 0.5))
+#     for i in range(2, sqrtn + 1):
+#         if s[i]:
+#             s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
+#     return filter(None, s)
+# ls_primes = list(sieve(N))
+# ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]
+# ls_good_primes.append(3600)
+# ls_good_primes.append(4624)
+# ls_good_primes.sort()
+# ls_good_comp = []
+# sq_n = int(N ** 0.5)
+# for i, p1 in enumerate(ls_good_primes):
+#     if p1 > sq_n:
+#         break
+#     for p2 in ls_good_primes[i:]:
+#         c = p1 * p2
+#         if c > N:
+#             break
+#         else:
+#             ls_good_comp.append(c)
+# ls_good_nums = ls_good_comp + ls_good_primes
+#
+# GOOD = set()
+# for p in ls_good_nums:
+#     max_possible_sq = N / p
+#     max_count = int(max_possible_sq ** 0.5)
+#     for i in range(1, max_count + 1):
+#         GOOD.add(p * (i ** 2))
+# print(GOOD - full_s)
+# X = list(full_s - GOOD)
+# X.sort()
