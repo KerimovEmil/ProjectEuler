@@ -22,13 +22,14 @@ where the a_k and b_k are positive integers.
 There are 75373 such numbers that do not exceed 10^7.
 How many such numbers are there that do not exceed 2×10^9?
 
-ANSWER:
+ANSWER: 11325263
 
-Solve time ~  seconds
+Solve time ~231 seconds
 """
 
 from util.utils import timeit, primes_of_n, sieve
 import unittest
+import primesieve
 
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
@@ -129,6 +130,16 @@ import unittest
 # OR
 # (1 mod 4)^(x>1) AND (1,3 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
 
+# expanding
+# if number to consider is already a square then the criteria simplifies to:
+# (1 mod 8)^(x>1) AND (1 mod 3)^(x>1) AND (1,2,4 mod 7)^(x>1)
+# OR
+# (1 mod 4)^(x>1) AND (3 mod 8)^(x>1) AND (1 mod 3)^(x>1) AND (1,2,4 mod 7)^(x>1)
+# OR
+# (1 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
+# OR
+# (1 mod 4)^(x>1) AND (3 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
+
 
 class Problem229:
     def __init__(self, max_n):
@@ -199,7 +210,11 @@ class Problem229:
 
     @timeit
     def solve(self):
-        ls_primes = list(sieve(self.max_n))
+        # ls_primes = list(sieve(self.max_n))
+        # ls_primes = sieve(self.max_n)
+        print("generating primes")
+        ls_primes = primesieve.primes(self.max_n)
+        print("finsihed generating primes")
         ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]  # 1 = 1^2, 25=5^2, 121=11^2
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
 
@@ -207,13 +222,13 @@ class Problem229:
         # [1, 5, 11, 13, 17, 19, 23, 25, 29, 31, 37, 41, 43, 47, 53, 55, 59, 61, 65, 67, 71, 73, 79, 83, 85, 89,
         # 95, 97, 101, 103, 107, 109, 113, 115, 121, 125, 127, 131, 137, 139, 143, 145, 149, 151, 155, 157, 163, 167]
 
-        # todo: add base of 4624 = 2**4 * 17**2 and 3600 = 2^4 3^2 5^2
-        # todo fix this, this slightly over-counts the result.
-        ls_good_primes.append(3600)  # 2^4 3^2 5^2
-        ls_good_primes.append(4624)  # 2^4 17^2 (* 2^2
-        ls_good_primes.append(12100)  # 2^2 5^2 11^2  (* 2^2
-        ls_good_primes.append(12321)  # 3^2 37^2  (* 2^2
-        ls_good_primes.append(75076)  # 2^2 137^2
+        # # todo: add base of 4624 = 2**4 * 17**2 and 3600 = 2^4 3^2 5^2
+        # # todo fix this, this slightly over-counts the result.
+        # ls_good_primes.append(3600)  # 2^4 3^2 5^2
+        # ls_good_primes.append(4624)  # 2^4 17^2 (* 2^2
+        # ls_good_primes.append(12100)  # 2^2 5^2 11^2  (* 2^2
+        # ls_good_primes.append(12321)  # 3^2 37^2  (* 2^2
+        # ls_good_primes.append(75076)  # 2^2 137^2
 
         ls_good_primes.sort()
         # todo: include all possible multiplications of good_primes within each other
@@ -224,15 +239,37 @@ class Problem229:
         for i, p1 in enumerate(ls_good_primes):
             if p1 > sq_n:
                 break
-            for p2 in ls_good_primes[i:]:
+            # for p2 in ls_good_primes[i:]:
+            for p2 in ls_good_primes[i+1:]:
+                # for p3 in [1] +  # todo add another loop p1*p2 or p1*p2*p3
                 c = p1*p2
                 if c > self.max_n:
                     break
                 else:
                     ls_good_comp.append(c)
 
-        ls_good_nums = ls_good_comp + ls_good_primes
-        print("finished adding composites")
+        # ls_good_nums = ls_good_comp + ls_good_primes
+
+        print("finished adding composites p1*p2")
+
+        max_prime_of_3 = int(self.max_n / (193 * 337)) + 1
+        prod_3 = [i for i in ls_good_primes if i <= max_prime_of_3]
+
+        ls_good_triple_comp = []  # 187 choose 3
+        for i, p1 in enumerate(prod_3):
+            for j, p2 in enumerate(prod_3[i+1:]):
+                c2 = p1 * p2
+                if c2*190 > self.max_n:  # 190 < 193 first prime
+                    break
+                for k, p3 in enumerate(prod_3[i+j+2:]):
+                    c3 = c2*p3
+                    if c3 > self.max_n:
+                        break
+                    else:
+                        ls_good_triple_comp.append(c3)
+
+        ls_good_nums = ls_good_primes + ls_good_comp + ls_good_triple_comp
+        print("finished adding composites p1*p2*p3")
 
         # todo include
         # 20449= 11^2 13^2  # 11^2 13^2 mod 168 = 121*1 mod 168 = 121  # 13^2 * 11^2
@@ -245,11 +282,29 @@ class Problem229:
         # 85264= 73^2 2^4  # 73^2 mod 168 = 121
         # 97344= 2^6 3^2 13^2  # 13^2 mod 168 = 1
 
+        # adding the non-square numbers
         for p in ls_good_nums:
             max_possible_sq = self.max_n / p
             max_count = int(max_possible_sq**0.5)
 
             self.count += max_count
+        print("Finished adding the non square numbers. {} numbers.".format(self.count))
+        for sq in [i**2 for i in range(2, sq_n)]:
+            cond = True
+            if cond:
+                # dc_prime = primes_of_n(sq, ls_primes)
+                dc_prime = primes_of_n(sq)
+                cond = cond and self.cond_d_7(dc_prime)
+            if cond:
+                cond = cond and self.cond_d_3(dc_prime)
+            if cond:
+                cond = cond and self.cond_d_1(dc_prime)
+            if cond:
+                cond = cond and self.cond_d_2(dc_prime)
+
+            if cond:
+                self.count += 1
+                print("Running count is: {}. With new number: {}".format(self.count, sq))
 
         return self.count
 
@@ -314,19 +369,20 @@ class Solution229(unittest.TestCase):
     def setUp(self):
         # self.problem_small = Problem229(max_n=1000)
         # self.problem_small = Problem229(max_n=10000)
-        self.problem_small = Problem229(max_n=int(1e7))
-        # self.problem = Problem229(max_n=2*int(1e9))
+        # self.problem_small = Problem229(max_n=int(1e7))
+        self.problem = Problem229(max_n=2*int(1e9))
+        # s = list(range(np1)): MemoryError
 
     def test_solution(self):
         # self.assertEqual(5, self.problem_small.solve())
         # self.assertEqual(96, self.problem_small.solve())
-        self.assertEqual(75373, self.problem_small.solve())  # takes 1 second to run. 74960 != 75373
-        # self.assertEqual(None, self.problem.solve())  # not done yet
+        # self.assertEqual(75373, self.problem_small.solve())  # takes 1 second to run. 74960 != 75373.
+        self.assertEqual(11325263, self.problem.solve())  # 3 mins 50 seconds
 
-    def test_solution_dumb(self):
+    # def test_solution_dumb(self):
         # self.assertEqual(5, self.problem_small.solve_dumb())
         # self.assertEqual(96, self.problem_small.solve_dumb())
-        self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
+        # self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
         # self.assertEqual(1, self.problem.solve_dumb())  #
 
 
@@ -408,3 +464,8 @@ if __name__ == '__main__':
 # print(GOOD - full_s)
 # X = list(full_s - GOOD)
 # X.sort()
+
+
+# 11323675 + [(187 choose 3) = 1072445] +
+# 11323675 + 187*186*185 / (3*2) +
+# 11323675 + 187* (187 choose 2)
