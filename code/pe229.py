@@ -24,13 +24,13 @@ How many such numbers are there that do not exceed 2×10^9?
 
 ANSWER: 11325263
 
-Solve time ~231 seconds
+Solve time ~43 seconds
 """
 
-from util.utils import timeit, primes_of_n, sieve
+from util.utils import timeit, primes_of_n
 import unittest
 import primesieve
-
+import time
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
 # such that Norm(a + b sqrt(D)) = a^2 - D×b^2
@@ -140,6 +140,9 @@ import primesieve
 # OR
 # (1 mod 4)^(x>1) AND (3 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
 
+# If x is a square, we can factor it and then test as in demonc post.
+# If x is not a square, its squarefree part must consist of primes congruent to 1, 25 or 121 (mod 168),
+# because p = 1, 3 (mod 8), p = 1 (mod 6) and p = 1, 9, 11 (mod 14).
 
 class Problem229:
     def __init__(self, max_n):
@@ -208,51 +211,91 @@ class Problem229:
 
         return True
 
+    @staticmethod
+    def is_sq_rep_d_1(dc_prime):
+        """
+        Returns True or False is the square of the input can be represented at a^2 + 1*b^2 for a,b >0.
+        Input is the prime factorization of the number.
+        """
+        # At least one 1mod4 prime must exist
+        if sum([p % 4 == 1 for p in dc_prime.keys()]) == 0:
+                return False
+        return True
+
+    @staticmethod
+    def is_sq_rep_d_2(dc_prime):
+        """
+        Returns True or False is the square of the input can be represented at a^2 + 2*b^2 for a,b >0.
+        Input is the prime factorization of the number.
+        """
+        # At least one (1/3) mod8 prime must exist
+        if sum([p % 8 in [1, 3] for p in dc_prime.keys()]) == 0:
+            return False
+        return True
+
+    @staticmethod
+    def is_sq_rep_d_3(dc_prime):
+        """
+        Returns True or False is the square of the input can be represented at a^2 + 3*b^2 for a,b >0.
+        Input is the prime factorization of the number.
+        """
+        # At least one 1 mod3 prime must exist
+        if sum([x % 3 == 1 for x in dc_prime.keys()]) == 0:
+            # if at least one 1mod3 prime does not exist then the power of 2 must be exist
+            if 2 in dc_prime.keys():
+                return True
+            else:
+                return False
+        return True
+
+    @staticmethod
+    def is_sq_rep_d_7(dc_prime):
+        """
+        Returns True or False is the square of the input can be represented at a^2 + 7*b^2 for a,b >0.
+        Input is the prime factorization of the number.
+        """
+        # At least one 1/2/4 mod7 prime must exist
+        good_primes = [p for p in dc_prime.keys() if p % 7 in [1, 2, 4]]
+        if len(good_primes) == 0:
+            return False
+        if len(good_primes) == 1:
+            if dc_prime.get(2, 0) == 1:
+                return False
+
+        return True
+
     @timeit
     def solve(self):
         # ls_primes = list(sieve(self.max_n))
-        # ls_primes = sieve(self.max_n)
         print("generating primes")
-        ls_primes = primesieve.primes(self.max_n)
-        print("finsihed generating primes")
+        # ls_primes = primesieve.primes(self.max_n)
+        ls_primes = timeit(primesieve.primes)(self.max_n)
+        print("finished generating primes")  # 11.6 seconds
+        t0 = time.time()
         ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]  # 1 = 1^2, 25=5^2, 121=11^2
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
+        t1 = time.time()
+        print("finished adding good primes in {} seconds".format(t1-t0))  # 20.4 seconds
 
-        # [i for i in range(1, 168) if i**2 % 168 in [1,25,121]]
-        # [1, 5, 11, 13, 17, 19, 23, 25, 29, 31, 37, 41, 43, 47, 53, 55, 59, 61, 65, 67, 71, 73, 79, 83, 85, 89,
-        # 95, 97, 101, 103, 107, 109, 113, 115, 121, 125, 127, 131, 137, 139, 143, 145, 149, 151, 155, 157, 163, 167]
-
-        # # todo: add base of 4624 = 2**4 * 17**2 and 3600 = 2^4 3^2 5^2
-        # # todo fix this, this slightly over-counts the result.
-        # ls_good_primes.append(3600)  # 2^4 3^2 5^2
-        # ls_good_primes.append(4624)  # 2^4 17^2 (* 2^2
-        # ls_good_primes.append(12100)  # 2^2 5^2 11^2  (* 2^2
-        # ls_good_primes.append(12321)  # 3^2 37^2  (* 2^2
-        # ls_good_primes.append(75076)  # 2^2 137^2
-
-        ls_good_primes.sort()
-        # todo: include all possible multiplications of good_primes within each other
-        print("finished adding good primes")
+        max_prime_of_2 = int(self.max_n / (ls_good_primes[0])) + 1
+        prod_2 = [i for i in ls_good_primes if i <= max_prime_of_2]
 
         ls_good_comp = []
         sq_n = int(self.max_n**0.5)
-        for i, p1 in enumerate(ls_good_primes):
+        for i, p1 in enumerate(prod_2):
             if p1 > sq_n:
                 break
-            # for p2 in ls_good_primes[i:]:
-            for p2 in ls_good_primes[i+1:]:
-                # for p3 in [1] +  # todo add another loop p1*p2 or p1*p2*p3
+            for p2 in prod_2[i+1:]:
                 c = p1*p2
                 if c > self.max_n:
                     break
                 else:
                     ls_good_comp.append(c)
 
-        # ls_good_nums = ls_good_comp + ls_good_primes
+        t2 = time.time()
+        print("finished adding composites p1*p2 in {} seconds".format(t2-t1))  # 1.1 seconds
 
-        print("finished adding composites p1*p2")
-
-        max_prime_of_3 = int(self.max_n / (193 * 337)) + 1
+        max_prime_of_3 = int(self.max_n / (ls_good_primes[0] * ls_good_primes[1])) + 1
         prod_3 = [i for i in ls_good_primes if i <= max_prime_of_3]
 
         ls_good_triple_comp = []  # 187 choose 3
@@ -269,100 +312,30 @@ class Problem229:
                         ls_good_triple_comp.append(c3)
 
         ls_good_nums = ls_good_primes + ls_good_comp + ls_good_triple_comp
-        print("finished adding composites p1*p2*p3")
-
-        # todo include
-        # 20449= 11^2 13^2  # 11^2 13^2 mod 168 = 121*1 mod 168 = 121  # 13^2 * 11^2
-        # 24336= 2^4 3^2 13^2  # 13^2 mod 168 = 1  13^2 * 12^2
-        # 26896= 41^2 2^4  # 41^2 mod 168 = 1
-        # 30276= 2^2 3^2 29^2  # 29^2 mod 168 = 1
-        # 46225= 43^2 5^2  # 43^2 mod 168 = 1
-        # 51076= 113^2 2^2  # 113^2 mod 168 = 1
-        # 81796= 2^2 11^2 13^2  # 121 * 1 mod 168 = 121
-        # 85264= 73^2 2^4  # 73^2 mod 168 = 121
-        # 97344= 2^6 3^2 13^2  # 13^2 mod 168 = 1
+        t3 = time.time()
+        print("finished adding composites p1*p2*p3 in {} seconds".format(t3-t2))  # 1 seconds
 
         # adding the non-square numbers
-        for p in ls_good_nums:
-            max_possible_sq = self.max_n / p
-            max_count = int(max_possible_sq**0.5)
+        self.count += sum([int((self.max_n / p)**0.5) for p in ls_good_nums])
 
-            self.count += max_count
-        print("Finished adding the non square numbers. {} numbers.".format(self.count))
-        for sq in [i**2 for i in range(2, sq_n)]:
-            cond = True
-            if cond:
-                # dc_prime = primes_of_n(sq, ls_primes)
-                dc_prime = primes_of_n(sq)
-                cond = cond and self.cond_d_7(dc_prime)
-            if cond:
-                cond = cond and self.cond_d_3(dc_prime)
-            if cond:
-                cond = cond and self.cond_d_1(dc_prime)
-            if cond:
-                cond = cond and self.cond_d_2(dc_prime)
+        t4 = time.time()  # 5 seconds
+        print("Finished adding the non square numbers. {} numbers. in {} seconds".format(self.count, t4-t3))
 
+        for i in range(60, sq_n):  # first number that works is 60
+            dc_prime = primes_of_n(i)
+            cond = self.is_sq_rep_d_7(dc_prime)
+            if cond:
+                cond = cond and self.is_sq_rep_d_3(dc_prime)
+            if cond:
+                cond = cond and self.is_sq_rep_d_1(dc_prime)
+            if cond:
+                cond = cond and self.is_sq_rep_d_2(dc_prime)
             if cond:
                 self.count += 1
-                print("Running count is: {}. With new number: {}".format(self.count, sq))
 
+        t5 = time.time()
+        print("Finished adding the square numbers in {} seconds".format(t5 - t4))  # 1.2 seconds
         return self.count
-
-    @timeit
-    def solve_basic(self):
-        ls_primes = list(sieve(self.max_n))
-        for i in range(2, self.max_n + 1):
-            # dc_prime = primes_of_n(i, ls_primes)
-            # highest_multiple_of_2 = i & -i  # bitwise operation
-
-            # # k = i // highest_multiple_of_2
-            # k = i
-            #
-            # cond1 = k % 4 == 1  # not needed
-            #
-            # cond2 = k % 8 == 1
-            # # cond3 = (i % 3 == 1) or i % 3 == 0
-            # cond3 = (k % 3 == 1)
-            # # cond4 = (i % 7 == 1) or i % 7 == 0
-            # cond4 = (k % 7 == 1)
-            cond = (i & -i) != 2
-            # cond = True
-            if cond:
-                dc_prime = primes_of_n(i, ls_primes)
-                cond = cond and self.cond_d_7(dc_prime)
-            if cond:
-                cond = cond and self.cond_d_3(dc_prime)
-            if cond:
-                cond = cond and self.cond_d_1(dc_prime)
-            if cond:
-                cond = cond and self.cond_d_2(dc_prime)
-
-            if cond:
-                self.count += 1
-                print("Running count is: {}. With new number: {}".format(self.count, i))
-        return self.count
-
-    @staticmethod
-    def gx(n, ls_sq, x):
-        s = set()
-        for a2 in ls_sq:
-            for b2 in ls_sq:
-                t = a2 + x*b2
-                if t > n:
-                    break
-                else:
-                    s.add(t)
-        return s
-
-    @timeit
-    def solve_dumb(self):
-        ls_sq = [x**2 for x in range(1, self.max_n)]
-        s1 = self.gx(self.max_n, ls_sq, 1)
-        s2 = self.gx(self.max_n, ls_sq, 2)
-        s3 = self.gx(self.max_n, ls_sq, 3)
-        s4 = self.gx(self.max_n, ls_sq, 7)
-        full_s = s1.intersection(s2).intersection(s3).intersection(s4)
-        return len(full_s)
 
 
 class Solution229(unittest.TestCase):
@@ -371,101 +344,76 @@ class Solution229(unittest.TestCase):
         # self.problem_small = Problem229(max_n=10000)
         # self.problem_small = Problem229(max_n=int(1e7))
         self.problem = Problem229(max_n=2*int(1e9))
-        # s = list(range(np1)): MemoryError
 
     def test_solution(self):
         # self.assertEqual(5, self.problem_small.solve())
         # self.assertEqual(96, self.problem_small.solve())
-        # self.assertEqual(75373, self.problem_small.solve())  # takes 1 second to run. 74960 != 75373.
-        self.assertEqual(11325263, self.problem.solve())  # 3 mins 50 seconds
-
-    # def test_solution_dumb(self):
-        # self.assertEqual(5, self.problem_small.solve_dumb())
-        # self.assertEqual(96, self.problem_small.solve_dumb())
-        # self.assertEqual(75373, self.problem_small.solve_dumb())  # takes 27 seconds to run
-        # self.assertEqual(1, self.problem.solve_dumb())  #
+        # self.assertEqual(75373, self.problem_small.solve())  # 0.33 seconds
+        self.assertEqual(11325263, self.problem.solve())  # 43 seconds
 
 
 if __name__ == '__main__':
     unittest.main()
 
-# todo include
-# 3600 = 2^4 3^2 5^2  # 5^2 mod 168 = 25
-# 4624 = 2^4 17^2  # 17^2 mod 168 = 121 (extra 2^4)
-# 12100 = 2^2 11^2 5^2  # 11^2 * 5^2 mod 168 = 121 * 25 mod 168 = 1  (extra 2^2)
-# 12321 = 3^2 37^2  # 37^2 mod 168 = 25 (extra 3^2)
-# 14400= 2^6 3^2 5^2  # 5^2 mod 168 = 25 (3600 * 2^2)
-# 18496= 2^6 17^2  # 17^2 mod 168 = 121 (extra 2^6)
-# 20449= 11^2 13^2  # 11^2 13^2 mod 168 = 121*1 mod 168 = 121
-# 24336= 2^4 3^2 13^2  # 13^2 mod 168 = 1
-# 26896= 41^2 2^4  # 41^2 mod 168 = 1
-# 30276= 2^2 3^2 29^2  # 29^2 mod 168 = 1
-# 32400= 2^4 3^4 5^2  # 5^2 mod 168 = 25  (3600 * 3^2)
-# 37249= 193^2  # 193^2 mod 168 = 121
-# 41616= 2^4 3^2 17^2  # 17^2 mod 168 = 121
-# 46225= 43^2 5^2  # 43^2 mod 168 = 1
-# 48400= 2^4 11^2 5^2  # 11^2 mod 168 = 121
-# 49284= 2^2 3^2 37^2  # 37^2 mod 168 = 25
-# 51076= 113^2 2^2  # 113^2 mod 168 = 1
-# 57600= 2^8 3^2 5^2  # 5^2 mod 168 = 25 (3600 * 4^2)
-# 65041= 193^1 337^1  25 * 1 mod 168 = 25
-# 73984= 2^8 17^2  # 17^2 mod 168 = 121
-# 75076= 137^2 2^2  # 137^2 mod 168 = 121
-# 81796= 2^2 11^2 13^2  # 121 * 1 mod 168 = 121
-# 85264= 73^2 2^4  # 73^2 mod 168 = 121
-# 88201= 193^1 457^1  # 25*121 mod 168 = 1
-# 90000= 2^4 3^2 5^4  # 5^4 mod 168 = 121
-# 97344= 2^6 3^2 13^2  # 13^2 mod 168 = 1
-
-
+# balakrishnan_v comment
+# I did not realise that this can be solved using brute force. So I found it a bit hard.
+# First we look at the primes that are very special.
+# The required primes are enumerated here .
+# These are the set of primes that are 1,25,121 (mod) 168 . This is the set P .
+# The set of all special numbers ≤ N can be split into the following 4 disjoint cases:
+# 1)Numbers of the form k2 pi with pi ∈ P. The number of such numbers can be computed as
+# ∑{p[sub]i ≤ N,pi  ∈  P}[/sub] floor(√ (N/pi))
+# 2)Numbers of the form k2 pipj with pi < pj and pi,pj ∈ P. The number of such numbers can be computed as
+# ∑{p[sub]i≤ √N,pi ∈ P}[/sub] ∑{p[sub]i<pj≤N/pi ,pj ∈ P}[/sub] floor( √(N/(pipj))
+# 3)Numbers of the form k2 pipjpk with pi<pj<pk and pi,pj,pk ∈ P. The number of such numbers is
+# ∑{p[sub]i≤N(1/3),pi ∈ P}[/sub] ∑{p[sub]i<pj≤√(N/pi) , pj ∈ P}[/sub] ∑{p[sub]j<pk≤(N/(pipj)),
+# pk ∈ P}[/sub] floor( √(N/(pipjpk))
+# P.S.: Note that numbers of the form pipjpkpl k2 does not exist in our case. This is because the smallest 4 primes
+#  (193, 337, 457, 673) multiply to 20004075001 which is greater than 2*10^9 and hence need not be counted in this case.
+# 4)Some of the square numbers(m2≤N). There are floor(√N) such square numbers. Each of them needs to be tested.
+# This can be done either by brute force(since there are just √N~45000 of them) or more elegantly as follows:
 #
-# N = int(1e7)
-# ls_sq = [x ** 2 for x in range(1, N)]
-# s1 = gx(N, ls_sq, 1)
-# s2 = gx(N, ls_sq, 2)
-# s3 = gx(N, ls_sq, 3)
-# s4 = gx(N, ls_sq, 7)
-# full_s = s1.intersection(s2).intersection(s3).intersection(s4)
+# I:Test for x2+7y2
+# M can be written in the form x2+7y2 with x>0 and y>0 iff in the prime-factorization M=2b7s{p1m1*p2m2...plml} *
+# {q1n1*q2n2...qknk} (where pi are primes (3,5,6)(mod)7 and qi 's are odd primes which are 1,2,4(mod)7),
+# the following are true:
+# 1)All the mi 's are even
+# 2)k>0 or b>=3 or both
+# 3)b!=1
 #
-# def sieve(n):
-#     """Return all primes <= n."""
-#     np1 = n + 1
-#     s = list(range(np1))
-#     s[1] = 0
-#     sqrtn = int(round(n ** 0.5))
-#     for i in range(2, sqrtn + 1):
-#         if s[i]:
-#             s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
-#     return filter(None, s)
-# ls_primes = list(sieve(N))
-# ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]
-# ls_good_primes.append(3600)
-# ls_good_primes.append(4624)
-# ls_good_primes.sort()
-# ls_good_comp = []
-# sq_n = int(N ** 0.5)
-# for i, p1 in enumerate(ls_good_primes):
-#     if p1 > sq_n:
-#         break
-#     for p2 in ls_good_primes[i:]:
-#         c = p1 * p2
-#         if c > N:
-#             break
-#         else:
-#             ls_good_comp.append(c)
-# ls_good_nums = ls_good_comp + ls_good_primes
+# Note that in our case, we don't need to check for (1) and (3) since M is already a square.
 #
-# GOOD = set()
-# for p in ls_good_nums:
-#     max_possible_sq = N / p
-#     max_count = int(max_possible_sq ** 0.5)
-#     for i in range(1, max_count + 1):
-#         GOOD.add(p * (i ** 2))
-# print(GOOD - full_s)
-# X = list(full_s - GOOD)
-# X.sort()
+# II:Test for x2+3y2
+# M can be written in the form x2+3y2 with x>0 and y>0  iff in the prime-factorization
+# M=2b3s {p1m1*p2m2...plml} * {q1n1*q2n2...qknk} (where pi are odd primes (-1)(mod)3 and qi's are odd primes
+# which are 1(mod)3), the following are true:
+# 1)All the mi's are even
+# 2)b+k>0
+#
+# Again we don't need to check for (1)
+#
+# III:Test for x2+2y2
+# M can be written in the form x2+2y2 with x>0 and y>0  iff in the prime-factorization
+# M=2b  {p1m1*p2m2...plml} * {q1n1*q2n2...qknk} (where pi are odd primes which are 5(mod)8 or 7(mod)8 and  qi's are
+# odd primes which are 1(mod)8 or 3(mod)8), the following are true:
+# 1)All the mi's are even
+# 2)k>0
+#
+# Again, we don't need to check for (1).
+#
+# IV:Test for x2+y2
+# This is well known. M can be written in the form x2+y2 with x>0 and y>0  iff in the prime-factorization M=2b
+# {p1m1*p2m2...plml} * {q1n1*q2n2...qknk} (where pi are odd primes which are 3(mod)4 and qi's are odd primes
+# which are 1(mod)4),  the following are true:
+# 1)All the mi's are even
+# 2)k>0 or b is odd or both
+#
+# Again, here too we don't need to check for condition (1) since M is a square. Also there is no need to check
+# if b is odd(since b is already even), implying that k must be greater than 0.
+#
+# Thus for every integer M=i2≤ N, we first factorize the number and evaluate if the integer M comes under each of
+#  the above 4 categories. If yes, then M is a required special number.
 
-
-# 11323675 + [(187 choose 3) = 1072445] +
-# 11323675 + 187*186*185 / (3*2) +
-# 11323675 + 187* (187 choose 2)
+### Doraki  comment ###
+# The solution is either a square (with some good factors but it's easy to test), or
+# is a square times a non empty product of primes congruent to 1,25,121 mod 168.
