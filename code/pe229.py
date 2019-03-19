@@ -24,7 +24,7 @@ How many such numbers are there that do not exceed 2×10^9?
 
 ANSWER: 11325263
 
-Solve time ~10 seconds
+Solve time ~7 seconds
 """
 
 from util.utils import timeit, primes_of_n
@@ -284,10 +284,12 @@ class Problem229:
         print("finished adding composites p1*p2*p3 in {} seconds".format(t3-t2))  # 0.5 seconds
 
         # adding the non-square numbers
-        self.count += sum([int((self.max_n / p)**0.5) for p in ls_good_nums])
+        # self.count += sum([int((self.max_n / p)**0.5) for p in ls_good_nums])
+
+        self.count += int(np.floor((self.max_n / np.array(ls_good_nums)) ** 0.5).sum())
 
         t4 = time.time()
-        print("Finished adding the non square numbers in {} seconds".format(t4-t3))  # 3.5 seconds
+        print("Finished adding the non square numbers in {} seconds".format(t4-t3))  # 0.7 seconds
 
         for i in range(60, sq_n):  # first number that works is 60
             dc_prime = primes_of_n(i)
@@ -317,7 +319,7 @@ class Solution229(unittest.TestCase):
         # self.assertEqual(5, self.problem_small.solve())
         # self.assertEqual(96, self.problem_small.solve())
         # self.assertEqual(75373, self.problem_small.solve())  # 0.09 seconds
-        self.assertEqual(11325263, self.problem.solve())  # 10 seconds
+        self.assertEqual(11325263, self.problem.solve())  # 7 seconds
 
 
 if __name__ == '__main__':
