@@ -32,6 +32,7 @@ import unittest
 # from primesieve import primes
 from primesieve.numpy import primes  # much faster than primesieve.primes
 import time
+import numpy as np
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
 # such that Norm(a + b sqrt(D)) = a^2 - D×b^2
@@ -206,13 +207,12 @@ class Problem229:
         Returns True or False is the square of the input can be represented at a^2 + 3*b^2 for a,b >0.
         Input is the prime factorization of the number.
         """
+        # if divisible by 2
+        if 2 in dc_prime.keys():
+            return True
         # At least one 1 mod3 prime must exist
         if sum([x % 3 == 1 for x in dc_prime.keys()]) == 0:
-            # if at least one 1mod3 prime does not exist then the power of 2 must be exist
-            if 2 in dc_prime.keys():
-                return True
-            else:
-                return False
+            return False
         return True
 
     @staticmethod
@@ -222,10 +222,10 @@ class Problem229:
         Input is the prime factorization of the number.
         """
         # At least one 1/2/4 mod7 prime must exist
-        good_primes = [p for p in dc_prime.keys() if p % 7 in [1, 2, 4]]
-        if len(good_primes) == 0:
+        good_sum = sum([p % 7 in [1, 2, 4] for p in dc_prime.keys()])
+        if good_sum == 0:
             return False
-        if len(good_primes) == 1:
+        if good_sum == 1:
             if dc_prime.get(2, 0) == 1:
                 return False
 
@@ -234,14 +234,14 @@ class Problem229:
     @timeit
     def solve(self):
         print("generating primes")
-        # ls_primes = primesieve.primes(self.max_n)
+        # ls_primes = primesieve.primes(self.max_n)  # too memory intensive
         ls_primes = timeit(primes)(self.max_n)
         print("finished generating primes")  # 1.3 seconds
         t0 = time.time()
         # ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]  # 1 = 1^2, 25=5^2, 121=11^2
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
         p_168 = ls_primes % 168  # using numpy arrays for speed
-        ls_good_primes = (ls_primes[(p_168 == 1) | (p_168 == 25) | (p_168 == 121)]).tolist()
+        ls_good_primes = (ls_primes[np.isin(p_168, [1, 25, 121])]).tolist()
         t1 = time.time()
         print("finished adding good primes in {} seconds".format(t1-t0))  # 2.8 seconds
 
