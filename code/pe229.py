@@ -24,12 +24,13 @@ How many such numbers are there that do not exceed 2×10^9?
 
 ANSWER: 11325263
 
-Solve time ~43 seconds
+Solve time ~10 seconds
 """
 
 from util.utils import timeit, primes_of_n
 import unittest
-import primesieve
+# from primesieve import primes
+from primesieve.numpy import primes  # much faster than primesieve.primes
 import time
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
@@ -60,8 +61,6 @@ import time
 # Therefore if p == 1 mod 4 AND p == 1,3 mod 8 AND p == 1 mod 3 AND p == 1,2,4 mod 7
 # then x^2 == -1, -2, -3, -7  mod p has a solution.
 
-# Note through all of this we assumed p was an odd prime.
-
 # RULES
 # For D = -1:
 # Ignore powers of 2. 3 mod 4 primes must be even power. 1 mod 4 primes must exist OR odd power of 2.
@@ -91,58 +90,26 @@ import time
 # D = -3: 193 mod 3 = 1.
 # D = -7: 193 mod 7 = 4 and no single power of 2.
 
-# Therefore
+# Note that is a number satisfies these constraints then any square multiple of that number will also work.
 # 193 * [all squares] are all in this form.
 # 337 * [all squares] are all in this form.
 # 457 * [all squares] are all in this form.
-# this holds true for all primes of the 1,25,121 mod 168
-
-
-# Solving with some of the mandatory conditions.
-# 3 mod 4 primes must be even power and 5,7 mod 8 primes must be even power
-# and 2 mod 3 primes must be even power and 3,5,6 mod 7 primes must be even power
-
-# Notice that 3 mod 4 primes must be even power is a weaker condition than 7 mod 8 primes must be even power.
-# therefore we can eliminate that condition:
-
-# 5,7 mod 8 primes must be even power
-# and 2 mod 3 primes must be even power and 3,5,6 mod 7 primes must be even power
-
+# this holds true for all primes of the 1,25,121 mod 168.
 # since 8, 3, and 7 are all co-prime: 8*3*7 = 168
-# (5 or 7) * 2 * (3 or 5 or 6) mod 168 must be an even power.
-# i.e. 30, 42, 50, 60, 70, 84 mod 168 must be an even power
 
+# the only cases that this doesn't cover are if the numbers are square.
+
+# Looking at the full condition we get:
 # [(1 mod 4)^(x>1) or 2^odd] AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
 # AND [(1 mod 3)^(x>1) or 2^even] AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
 
-# Expanding the or's:
-# (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-# AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
-# OR
-# (1 mod 4)^(x>1) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-# AND (2^even) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
-# OR
-# (2^odd) AND (5,7 mod 8)^even AND (1,3 mod 8)^(x>1) AND (2 mod 3)^even
-# AND (1 mod 3)^(x>1) AND (3,5,6 mod 7)^even AND (1,2,4 mod 7)^(x>1) AND 2^(x!=1)
-
-# if number to consider is already a square then the criteria simplifies to:
-# (1 mod 4)^(x>1) AND (1,3 mod 8)^(x>1) AND (1 mod 3)^(x>1) AND (1,2,4 mod 7)^(x>1)
-# OR
-# (1 mod 4)^(x>1) AND (1,3 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
-
-# expanding
-# if number to consider is already a square then the criteria simplifies to:
-# (1 mod 8)^(x>1) AND (1 mod 3)^(x>1) AND (1,2,4 mod 7)^(x>1)
-# OR
-# (1 mod 4)^(x>1) AND (3 mod 8)^(x>1) AND (1 mod 3)^(x>1) AND (1,2,4 mod 7)^(x>1)
-# OR
-# (1 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
-# OR
-# (1 mod 4)^(x>1) AND (3 mod 8)^(x>1) AND (2^even) AND (1,2,4 mod 7)^(x>1)
+# Assuming our number is a square we get:
+# [(1 mod 4)^(x>1)] AND (1,3 mod 8)^(x>1) AND [(1 mod 3)^(x>1) or 2^(x>1)] AND (1,2,4 mod 7)^(x>1)
 
 # If x is a square, we can factor it and then test as in demonc post.
 # If x is not a square, its squarefree part must consist of primes congruent to 1, 25 or 121 (mod 168),
 # because p = 1, 3 (mod 8), p = 1 (mod 6) and p = 1, 9, 11 (mod 14).
+
 
 class Problem229:
     def __init__(self, max_n):
@@ -266,16 +233,17 @@ class Problem229:
 
     @timeit
     def solve(self):
-        # ls_primes = list(sieve(self.max_n))
         print("generating primes")
         # ls_primes = primesieve.primes(self.max_n)
-        ls_primes = timeit(primesieve.primes)(self.max_n)
-        print("finished generating primes")  # 11.6 seconds
+        ls_primes = timeit(primes)(self.max_n)
+        print("finished generating primes")  # 1.3 seconds
         t0 = time.time()
-        ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]  # 1 = 1^2, 25=5^2, 121=11^2
+        # ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]  # 1 = 1^2, 25=5^2, 121=11^2
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
+        p_168 = ls_primes % 168  # using numpy arrays for speed
+        ls_good_primes = (ls_primes[(p_168 == 1) | (p_168 == 25) | (p_168 == 121)]).tolist()
         t1 = time.time()
-        print("finished adding good primes in {} seconds".format(t1-t0))  # 20.4 seconds
+        print("finished adding good primes in {} seconds".format(t1-t0))  # 2.8 seconds
 
         max_prime_of_2 = int(self.max_n / (ls_good_primes[0])) + 1
         prod_2 = [i for i in ls_good_primes if i <= max_prime_of_2]
@@ -293,16 +261,16 @@ class Problem229:
                     ls_good_comp.append(c)
 
         t2 = time.time()
-        print("finished adding composites p1*p2 in {} seconds".format(t2-t1))  # 1.1 seconds
+        print("finished adding composites p1*p2 in {} seconds".format(t2-t1))  # 0.5 seconds
 
         max_prime_of_3 = int(self.max_n / (ls_good_primes[0] * ls_good_primes[1])) + 1
         prod_3 = [i for i in ls_good_primes if i <= max_prime_of_3]
 
-        ls_good_triple_comp = []  # 187 choose 3
+        ls_good_triple_comp = []
         for i, p1 in enumerate(prod_3):
             for j, p2 in enumerate(prod_3[i+1:]):
                 c2 = p1 * p2
-                if c2*190 > self.max_n:  # 190 < 193 first prime
+                if c2*prod_3[0] > self.max_n:
                     break
                 for k, p3 in enumerate(prod_3[i+j+2:]):
                     c3 = c2*p3
@@ -313,13 +281,13 @@ class Problem229:
 
         ls_good_nums = ls_good_primes + ls_good_comp + ls_good_triple_comp
         t3 = time.time()
-        print("finished adding composites p1*p2*p3 in {} seconds".format(t3-t2))  # 1 seconds
+        print("finished adding composites p1*p2*p3 in {} seconds".format(t3-t2))  # 0.5 seconds
 
         # adding the non-square numbers
         self.count += sum([int((self.max_n / p)**0.5) for p in ls_good_nums])
 
-        t4 = time.time()  # 5 seconds
-        print("Finished adding the non square numbers. {} numbers. in {} seconds".format(self.count, t4-t3))
+        t4 = time.time()
+        print("Finished adding the non square numbers in {} seconds".format(t4-t3))  # 3.5 seconds
 
         for i in range(60, sq_n):  # first number that works is 60
             dc_prime = primes_of_n(i)
@@ -348,8 +316,8 @@ class Solution229(unittest.TestCase):
     def test_solution(self):
         # self.assertEqual(5, self.problem_small.solve())
         # self.assertEqual(96, self.problem_small.solve())
-        # self.assertEqual(75373, self.problem_small.solve())  # 0.33 seconds
-        self.assertEqual(11325263, self.problem.solve())  # 43 seconds
+        # self.assertEqual(75373, self.problem_small.solve())  # 0.09 seconds
+        self.assertEqual(11325263, self.problem.solve())  # 10 seconds
 
 
 if __name__ == '__main__':
@@ -413,7 +381,3 @@ if __name__ == '__main__':
 #
 # Thus for every integer M=i2≤ N, we first factorize the number and evaluate if the integer M comes under each of
 #  the above 4 categories. If yes, then M is a required special number.
-
-### Doraki  comment ###
-# The solution is either a square (with some good factors but it's easy to test), or
-# is a square times a non empty product of primes congruent to 1,25,121 mod 168.
