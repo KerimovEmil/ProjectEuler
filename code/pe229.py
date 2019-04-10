@@ -35,7 +35,7 @@ import time
 import numpy as np
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
-# such that Norm(a + b sqrt(D)) = a^2 - D×b^2
+# such that Norm(a + b sqrt(D)) = a^2 + D×b^2
 # Note that there are only the following negative D for which the resulting field is a principal ideal domain (PID)
 # D = −1, −2, −3, −7, −11, −19, −43, −67, −163
 # However only the field extensions of D = −1, −2, −3, −7, −11 are Euclidean domains.
