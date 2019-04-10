@@ -107,3 +107,19 @@ class Solution51(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# Useful insights from project euler solutions thread
+
+# you don't have to check the primes with two or four recurring digits. If you form 8 different numbers with them,
+#  at least once the sum of the digits (and the whole number) is divisible by three.
+
+# 1.     Find all primes under 10 million.
+# 2.     Create one array -- one for primes with three recurring
+#        digits
+# 3.     For each prime:
+#
+#        A.     If it has three recurring digits, add it to the
+#               array for 3-primes.
+# 4.     For each primes in the 3-prime array, change the three
+#        repeating digits to 0, 1, 2, 3...7, 8, 9.
