@@ -16,8 +16,12 @@ ANSWER: 121313
 Solve time ~0.8 seconds
 """
 
+# Useful insights from project euler solutions thread
+
+# you don't have to check the primes with two or four recurring digits. If you form 8 different numbers with them,
+# at least once the sum of the digits (and the whole number) is divisible by three.
+
 from collections import Counter
-# from primesieve.numpy import primes
 from primesieve import primes
 from util.utils import timeit
 import unittest
@@ -27,7 +31,8 @@ class Problem51:
     def __init__(self, max_dig):
         self.max_dig_num = max_dig
         self.ls_str_primes = [str(x) for x in primes(pow(10, self.max_dig_num-1), pow(10, self.max_dig_num))]
-        # self.ls_str_primes = primes(pow(10, self.max_dig_num-1), pow(10, self.max_dig_num)).astype(str)
+        # self.ls_str_primes = [str(x) for x in primes(pow(10, 3), pow(10, self.max_dig_num))]
+        # self.ls_str_primes = [str(x) for x in primes(pow(10, self.max_dig_num))]
 
     @timeit
     def solve(self):
@@ -36,70 +41,94 @@ class Problem51:
         sub_string = ''
 
         for i in range(self.max_dig_num-1):
-            num_rep = self.f1(i)
+            num_rep = self.get_common_prime_substring([i])
             if num_rep[1] > max_rep_dig:
                 max_rep_dig = num_rep[1]
                 location = i
                 sub_string = num_rep[0]
 
             for j in range(i+1, self.max_dig_num-1):
-                num_rep = self.f2(i, j)
-                if num_rep[1] > max_rep_dig:
-                    max_rep_dig = num_rep[1]
-                    location = (i, j)
-                    sub_string = num_rep[0]
+                # num_rep = self.get_common_prime_substring([i, j])  # no need to check, see math comment above code
+                # if num_rep[1] > max_rep_dig:
+                #     max_rep_dig = num_rep[1]
+                #     location = (i, j)
+                #     sub_string = num_rep[0]
 
                 for k in range(j+1, self.max_dig_num-1):
-                    num_rep = self.f3(i, j, k)
+                    num_rep = self.get_common_prime_substring([i, j, k])
                     if num_rep[1] > max_rep_dig:
                         max_rep_dig = num_rep[1]
                         location = (i, j, k)
                         sub_string = num_rep[0]
 
-        return self.get_prime(location, sub_string, 0)
-        # return max_rep_dig, location, sub_string
+        return self.get_prime(location, sub_string)
 
-    def get_prime(self, location, sub_string, fill_num):
-        answer = [None] * self.max_dig_num
-        i = 0
-        for j in range(len(answer)):
-            if j in location:
-                answer[j] = str(fill_num)
-            else:
-                answer[j] = sub_string[i]
-                i += 1
-        possible_prime = int(''.join(answer))
-        if str(possible_prime) in self.ls_str_primes:
-            return possible_prime
-        else:
-            return self.get_prime(location, sub_string, fill_num+1)
+    def get_prime(self, location, sub_string):
+        """
+        Based on the digit locations that are being swapped, and the substring that is kept constant, fill the swapped
+        values with the fill_num until a prime is found. That prime will be the smallest one that has this property
 
-    def f3(self, i, j, k):
+        e.g.
+        location = [0, 2, 4]
+        sub_string = '233'
+
+        constructs possible prime: '121313'
+        """
+        for fill_value in range(10):  # possible digits to fill the None's by
+            possible_ls_primes = [None] * self.max_dig_num
+            j = 0  # starting at the first sub string element
+            for i in range(len(possible_ls_primes)):
+                if i in location:  # common element to fill
+                    possible_ls_primes[i] = str(fill_value)
+                else:  # substring
+                    possible_ls_primes[i] = sub_string[j]
+                    j += 1
+            # test if new number is prime
+            possible_prime = int(''.join(possible_ls_primes))
+            if str(possible_prime) in self.ls_str_primes:
+                return possible_prime
+
+    @staticmethod
+    def _remove_from_sub_string(s, ls_index):
+        """
+        Given a string s, returns the sub string with the indices in ls_index removed.
+        e.g. ls_index = [i, j, k]
+        returns p[:i] + p[i+1:j] + p[j+1:k] + p[k+1:]
+        """
+        out = s[:ls_index[0]]
+        for i in range(1, len(ls_index)):
+            out += s[ls_index[i-1] + 1: ls_index[i]]
+        out += s[ls_index[-1] + 1:]
+        return out
+
+    def get_common_prime_substring(self, digit_loc):
+        """
+        Given digit locations i,j,k,.. , for each prime removes the ith, jth, and kth digit, if they are the same,
+        and returns the most common resulting substring, and how many times it came up.
+        """
         nums = []
         for p in self.ls_str_primes:
-            if p[i] == p[j] and p[i] == p[k]:
-                nums.append(p[:i] + p[i+1:j] + p[j+1:k] + p[k+1:])
+            if len(set([p[index] for index in digit_loc])) == 1:  # checks the values being removes are the same
+                nums.append(self._remove_from_sub_string(p, digit_loc))
 
         return Counter(nums).most_common()[0]
 
-    def f2(self, i, j):
-        nums = []
-        for p in self.ls_str_primes:
-            if p[i] == p[j]:
-                nums.append(p[:i] + p[i+1:j] + p[j+1:])
-
-        return Counter(nums).most_common()[0]
-
-    def f1(self, i):
-        nums = []
-        for p in self.ls_str_primes:
-            nums.append(p[:i] + p[i+1:])
-        return Counter(nums).most_common()[0]
+    # def get_common_prime_substring_3(self, i, j, k):
+    #     """
+    #     Given a 3 digit locations i,j,k , for each prime removes the ith, jth, and kth digit, if they are the same,
+    #     and returns the most common resulting substring, and how many times it came up.
+    #     """
+    #     nums = []
+    #     for p in self.ls_str_primes:
+    #         if p[i] == p[j] and p[i] == p[k]:
+    #             nums.append(p[:i] + p[i+1:j] + p[j+1:k] + p[k+1:])
+    #
+    #     return Counter(nums).most_common()[0]
 
 
 class Solution51(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem51(max_dig=6)
+        self.problem = Problem51(max_dig=6)  # 1,000,000 <= x < 10,000,000
 
     def test_solution(self):
         self.assertEqual(121313, self.problem.solve())
@@ -109,17 +138,3 @@ if __name__ == '__main__':
     unittest.main()
 
 
-# Useful insights from project euler solutions thread
-
-# you don't have to check the primes with two or four recurring digits. If you form 8 different numbers with them,
-#  at least once the sum of the digits (and the whole number) is divisible by three.
-
-# 1.     Find all primes under 10 million.
-# 2.     Create one array -- one for primes with three recurring
-#        digits
-# 3.     For each prime:
-#
-#        A.     If it has three recurring digits, add it to the
-#               array for 3-primes.
-# 4.     For each primes in the 3-prime array, change the three
-#        repeating digits to 0, 1, 2, 3...7, 8, 9.
