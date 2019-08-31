@@ -10,13 +10,15 @@ How many starting numbers below ten million will arrive at 89?
 
 ANSWER:
 8581146
-Solve time ~20 seconds
+Solve time ~0.16 seconds
 """
 
 import functools
 from util.utils import timeit
 import unittest
-import time  # temp debugging
+from collections import Counter
+from math import factorial
+
 
 # define s(n) to be the sum of the square of the digits of n
 # hence if n = sum_{i=0}^{r} d_i 10^i  then s(n) = sum_{i=0}^{r} d_i^2
@@ -47,11 +49,47 @@ class Problem92:
         self.count = 0
 
     @timeit
-    def solve(self):
+    def solve_caching(self):
         # compute all of the sum of squares
         ls_sum_sqr = [sum(dc_dig_square[c] for c in str(d)) for d in range(1, self.n)]  # 18 seconds
 
         self.count += sum([eighty_nine(i) for i in ls_sum_sqr])  # 2.3 seconds
+
+        return self.count
+
+    @staticmethod
+    def num_of_permutations(ls):
+        num = factorial(len(ls))
+        dc_multiples = Counter(ls).values()
+        den = 1
+        for v in dc_multiples:
+            den *= factorial(v)
+        return num / den
+
+    @timeit
+    def solve(self):  # from user Silverfish
+        # Idea: construct numbers of increasing digit order, if one of the numbers end in 89 then add all of the
+        # possible permutations of that number to the count as well
+
+        # note that this implementation assumes the max of 1e7, not sure how to program it to not assume that.
+        for a in range(10):
+            s_a = str(a)
+            for b in range(a, 10):
+                s_b = str(b)
+                for c in range(b, 10):
+                    s_c = str(c)
+                    for d in range(c, 10):
+                        s_d = str(d)
+                        for e in range(d, 10):
+                            s_e = str(e)
+                            for f in range(e, 10):
+                                s_f = str(f)
+                                for g in range(max(f, 1), 10):  # starting at 1 not 0
+                                    s_g = str(g)
+                                    x = [s_a, s_b, s_c, s_d, s_e, s_f, s_g]
+                                    y = int("".join(x))
+                                    if eighty_nine(y):
+                                        self.count += self.num_of_permutations(x)
 
         return self.count
 
@@ -61,7 +99,8 @@ class Solution92(unittest.TestCase):
         self.problem = Problem92(int(1e7))
 
     def test_solution(self):
-        self.assertEqual(8581146, self.problem.solve())
+        # self.assertEqual(8581146, self.problem.solve_caching())  # ~ 20 seconds
+        self.assertEqual(8581146, self.problem.solve())  # ~ 0.16 seconds
 
 
 if __name__ == '__main__':
