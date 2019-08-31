@@ -10,7 +10,7 @@ How many starting numbers below ten million will arrive at 89?
 
 ANSWER:
 8581146
-Solve time ~76 seconds
+Solve time ~70 seconds
 """
 
 import functools
@@ -18,18 +18,7 @@ from util.utils import timeit
 import unittest
 
 
-def memoize(obj):  # todo: move to utils? or not even use his
-    cache = obj.cache = {}
-
-    @functools.wraps(obj)
-    def memoizer(*args, **kwargs):
-        if args not in cache:
-            cache[args] = obj(*args, **kwargs)
-        return cache[args]
-    return memoizer
-
-
-@memoize
+@functools.lru_cache(maxsize=None, typed=False)
 def eightynine(d):  # TODO: this is very slow, need to speed up
     if d == 89:
         return True
