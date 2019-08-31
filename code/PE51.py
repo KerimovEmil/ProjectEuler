@@ -13,7 +13,7 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
 
 ANSWER: 121313
 
-Solve time ~0.8 seconds
+Solve time ~1.7 seconds
 """
 
 # Useful insights from project euler solutions thread
@@ -31,31 +31,25 @@ class Problem51:
     def __init__(self, max_dig):
         self.max_dig_num = max_dig
         self.ls_str_primes = [str(x) for x in primes(pow(10, self.max_dig_num-1), pow(10, self.max_dig_num))]
-        # self.ls_str_primes = [str(x) for x in primes(pow(10, 3), pow(10, self.max_dig_num))]
-        # self.ls_str_primes = [str(x) for x in primes(pow(10, self.max_dig_num))]
 
     @timeit
     def solve(self):
-        max_rep_dig = 0
+        max_rep_dig = 0  # keep track of the maximum number of primes that can be represented
         location = None
         sub_string = ''
 
-        for i in range(self.max_dig_num-1):
-            num_rep = self.get_common_prime_substring([i])
+        for i in range(self.max_dig_num-1):  # loop over number of maximum digits
+            num_rep = self.get_common_prime_substring([i])  # replacing one digit
             if num_rep[1] > max_rep_dig:
                 max_rep_dig = num_rep[1]
                 location = i
                 sub_string = num_rep[0]
 
-            for j in range(i+1, self.max_dig_num-1):
-                # num_rep = self.get_common_prime_substring([i, j])  # no need to check, see math comment above code
-                # if num_rep[1] > max_rep_dig:
-                #     max_rep_dig = num_rep[1]
-                #     location = (i, j)
-                #     sub_string = num_rep[0]
+            for j in range(i+1, self.max_dig_num-1):  # loop over remaining digits
+                # no need to check replacing two digits, see math comment above code
 
                 for k in range(j+1, self.max_dig_num-1):
-                    num_rep = self.get_common_prime_substring([i, j, k])
+                    num_rep = self.get_common_prime_substring([i, j, k])  # replacing three digits
                     if num_rep[1] > max_rep_dig:
                         max_rep_dig = num_rep[1]
                         location = (i, j, k)
@@ -72,7 +66,7 @@ class Problem51:
         location = [0, 2, 4]
         sub_string = '233'
 
-        constructs possible prime: '121313'
+        constructs prime: '121313'
         """
         for fill_value in range(10):  # possible digits to fill the None's by
             possible_ls_primes = [None] * self.max_dig_num
@@ -112,18 +106,6 @@ class Problem51:
                 nums.append(self._remove_from_sub_string(p, digit_loc))
 
         return Counter(nums).most_common()[0]
-
-    # def get_common_prime_substring_3(self, i, j, k):
-    #     """
-    #     Given a 3 digit locations i,j,k , for each prime removes the ith, jth, and kth digit, if they are the same,
-    #     and returns the most common resulting substring, and how many times it came up.
-    #     """
-    #     nums = []
-    #     for p in self.ls_str_primes:
-    #         if p[i] == p[j] and p[i] == p[k]:
-    #             nums.append(p[:i] + p[i+1:j] + p[j+1:k] + p[k+1:])
-    #
-    #     return Counter(nums).most_common()[0]
 
 
 class Solution51(unittest.TestCase):
