@@ -10,12 +10,13 @@ How many starting numbers below ten million will arrive at 89?
 
 ANSWER:
 8581146
-Solve time ~58 seconds
+Solve time ~20 seconds
 """
 
 import functools
 from util.utils import timeit
 import unittest
+import time  # temp debugging
 
 # define s(n) to be the sum of the square of the digits of n
 # hence if n = sum_{i=0}^{r} d_i 10^i  then s(n) = sum_{i=0}^{r} d_i^2
@@ -26,15 +27,18 @@ import unittest
 # hence each new digit added still implies that n > s(n) if there are at least 3 digits (i.e. [1, 999]
 
 
+# pre-compute squares of strings
+dc_dig_square = {str(i): i**2 for i in range(10)}
+
+
 @functools.lru_cache(maxsize=None, typed=False)
-def eighty_nine(d):  # TODO: this is very slow, need to speed up. The slowest part is taking all of the sum of squares
-    print(d)
+def eighty_nine(d):
     if d == 89:
         return True
     elif d == 1:
         return False
     else:
-        return eighty_nine(sum(int(c) ** 2 for c in str(d)))
+        return eighty_nine(sum(dc_dig_square[c] for c in str(d)))
 
 
 class Problem92:
@@ -42,23 +46,12 @@ class Problem92:
         self.n = n
         self.count = 0
 
-    @staticmethod
-    def _eighty_nine_no_cache(d):
-        return eighty_nine(sum(int(c) ** 2 for c in str(d)))
-
     @timeit
     def solve(self):
-        cut_off = 1000
-        # cut_off = self.n
-        self.count += sum([eighty_nine(i) for i in range(1, cut_off)])
-        # for i in range(1, cut_off):
-        #     # print("----------")
-        #     self.count += eighty_nine(i)
+        # compute all of the sum of squares
+        ls_sum_sqr = [sum(dc_dig_square[c] for c in str(d)) for d in range(1, self.n)]  # 18 seconds
 
-        self.count += sum([self._eighty_nine_no_cache(i) for i in range(cut_off, self.n)])
-        # for i in range(cut_off, self.n):
-        #     # print("----------")
-        #     self.count += self._eighty_nine_no_cache(i)
+        self.count += sum([eighty_nine(i) for i in ls_sum_sqr])  # 2.3 seconds
 
         return self.count
 
