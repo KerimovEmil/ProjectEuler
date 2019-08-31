@@ -10,7 +10,7 @@ Give your answer rounded to 12 places behind the decimal point.
 
 ANSWER: 1.002322108633, more precise: 1.00232210863287
 
-Solve time ~ 0.007 seconds
+Solve time ~ 0.003 seconds
 """
 
 from util.utils import timeit
@@ -60,13 +60,14 @@ class Problem235:
             r = (lo + hi) / 2.0
             val = self.s(r)
             lo, hi = (lo, r) if val > -self.limit/3 else (r, hi)
+            # print(i, r, val)
 
         return round(r, self.precision)
 
 
 class Solution235(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem235(limit=int(- 6*1e11), num_iter=100, low=1.0, high=1.1, precision=12)
+        self.problem = Problem235(limit=int(- 6*1e11), num_iter=40, low=1.0, high=1.1, precision=12)
 
     def test_solution(self):
         self.assertEqual(1.002322108633, self.problem.solve())
