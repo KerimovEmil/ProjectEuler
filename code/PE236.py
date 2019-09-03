@@ -171,6 +171,8 @@ for k1 in range(1, floor(A_total[0]/295)):  # 17 = floor(5248/295)
 m = fractions.Fraction(1476, 1475)
 multiples = []
 for i in range(5):
+    # Since the numerator and denominator don't share any prime factors, this should always work?
+    # todo check
     multiples.append((fractions.Fraction(B_total[i], A_total[i]) * m).denominator)
 #
 # assert multiples[1] == multiples[2]
