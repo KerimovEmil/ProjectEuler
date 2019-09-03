@@ -218,13 +218,29 @@ def test_m(m):
     for k1 in range(1, floor(A_total[0] / multiples[0])):  # 17 = floor(5248/295)
         for k4 in range(1, floor(A_total[3] / multiples[3])):
             # todo solve for k235 and then test if it's an integer within these bounds, Or solve for a2 + a3 + a5
-            for k235 in range(3, floor(A_total[1] / multiples[3]) + floor(A_total[2] / multiples[2]) + floor(
-                    A_total[4] / multiples[4])):
-                lhs = m ** 2 * (59 / 41) ** 2 * 5 / 6 * (
-                            5 / 59 * k1 * multiples[0] + 41 / 90 * k4 * multiples[3] + k235 * multiples[2])
-                rhs = multiples[0] * k1 + multiples[3] * k4 + multiples[2] * k235
-                diff = abs(lhs - rhs)
-                if diff < 1e-8:
-                    print("k1:{}, k4:{}, k235:{}, diff:{}".format(k1, k4, k235, diff))
-                    can_work = True
+            num = m ** 2 * (59 / 41) ** 2 * 5 / 6 * (5 / 59 * k1 * multiples[0] + 41 / 90 * k4 * multiples[3]) -\
+                  multiples[0] * k1 + multiples[3] * k4
+            # todo fix
+            den = (1 - m ** 2 * (59 / 41) ** 2 * 5 / 6)
+            a235 = num/den  # a2 + a3 + a5
+            diff = abs(a235 - int(a235))
+            if diff <= 1e-8:
+                print("INT")
+                print("a1:{}, a4:{}, a235:{}, diff:{}".format(k1*multiples[0], k4*multiples[3], a235, diff))
+                if a235 <= A_total[1] + A_total[2] + A_total[4]:
+                    print("SMALL ENOUGH")
+                    print("a1:{}, a4:{}, a235:{}, diff:{}".format(k1 * multiples[0], k4 * multiples[3], a235, diff))
+                    if a235 >= 1:
+                        print("BIG ENOUGH")
+                        print("a1:{}, a4:{}, a235:{}, diff:{}".format(k1*multiples[0], k4*multiples[3], a235, diff))
+                        can_work = True
+            # for k235 in range(3, floor(A_total[1] / multiples[3]) + floor(A_total[2] / multiples[2]) + floor(
+            #         A_total[4] / multiples[4])):
+            #     lhs = m ** 2 * (59 / 41) ** 2 * 5 / 6 * (
+            #                 5 / 59 * k1 * multiples[0] + 41 / 90 * k4 * multiples[3] + k235 * multiples[2])
+            #     rhs = multiples[0] * k1 + multiples[3] * k4 + multiples[2] * k235
+            #     diff = abs(lhs - rhs)
+            #     if diff < 1e-8:
+            #         print("k1:{}, k4:{}, k235:{}, diff:{}".format(k1, k4, k235, diff))
+            #         can_work = True
     return can_work
