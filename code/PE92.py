@@ -75,11 +75,10 @@ class Problem92:
         # possible permutations of that number to the count as well
 
         options = list('0123456789')
-        for o1 in generate_ascending_sub_sequence(options, self.n_digits):
-            x = [*o1]
-            y = int("".join(x))
+        for asc_sub_seq in generate_ascending_sub_sequence(options, self.n_digits):
+            y = int("".join(asc_sub_seq))
             if eighty_nine(y):
-                self.count += self.num_of_permutations(x)
+                self.count += self.num_of_permutations(asc_sub_seq)
 
         return self.count
 
