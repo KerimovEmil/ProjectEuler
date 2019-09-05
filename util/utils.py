@@ -810,3 +810,37 @@ def cumsum(ls):
     Returns: <list>
     """
     return list(accumulate(ls))
+
+
+def generate_ascending_sub_sequence(options, num):
+    """
+
+    Args:
+        options: <list> of objects, ordered in ascending order
+        num: <int> the size of the sub-sequence to return
+
+    Returns: an generator of sub-sequences of options in ascending order
+
+    e.g.
+     options = ['0', '1', '2']
+     num = 3
+
+     Returns:
+     ('0', '0', '0')
+     ('0', '0', '1')
+     ('0', '0', '2')
+     ('0', '1', '1')
+     ('0', '1', '2')
+     ('0', '2', '2')
+     ('1', '1', '1')
+     ('1', '1', '2')
+     ('1', '2', '2')
+     ('2', '2', '2')
+    """
+    if num == 1:
+        for i in options:
+            yield (i, )
+    else:
+        for idx, j in enumerate(options):
+            for k in generate_ascending_sub_sequence(options[idx:], num - 1):
+                yield (j, *k)
