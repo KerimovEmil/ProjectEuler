@@ -10,14 +10,14 @@ How many starting numbers below ten million will arrive at 89?
 
 ANSWER:
 8581146
-Solve time ~0.16 seconds
+Solve time ~0.12 seconds
 """
 
 import functools
-from util.utils import timeit
+from util.utils import timeit, generate_ascending_sub_sequence
 import unittest
 from collections import Counter
-from math import factorial
+from math import factorial, log10
 
 
 # define s(n) to be the sum of the square of the digits of n
@@ -39,6 +39,8 @@ def eighty_nine(d):
         return True
     elif d == 1:
         return False
+    elif d == 0:  # only for base case in looping
+        return False
     else:
         return eighty_nine(sum(dc_dig_square[c] for c in str(d)))
 
@@ -46,6 +48,7 @@ def eighty_nine(d):
 class Problem92:
     def __init__(self, n):
         self.n = n
+        self.n_digits = int(log10(self.n))
         self.count = 0
 
     @timeit
@@ -71,25 +74,12 @@ class Problem92:
         # Idea: construct numbers of increasing digit order, if one of the numbers end in 89 then add all of the
         # possible permutations of that number to the count as well
 
-        # note that this implementation assumes the max of 1e7, not sure how to program it to not assume that.
-        for a in range(10):
-            s_a = str(a)
-            for b in range(a, 10):
-                s_b = str(b)
-                for c in range(b, 10):
-                    s_c = str(c)
-                    for d in range(c, 10):
-                        s_d = str(d)
-                        for e in range(d, 10):
-                            s_e = str(e)
-                            for f in range(e, 10):
-                                s_f = str(f)
-                                for g in range(max(f, 1), 10):  # starting at 1 not 0
-                                    s_g = str(g)
-                                    x = [s_a, s_b, s_c, s_d, s_e, s_f, s_g]
-                                    y = int("".join(x))
-                                    if eighty_nine(y):
-                                        self.count += self.num_of_permutations(x)
+        options = list('0123456789')
+        for o1 in generate_ascending_sub_sequence(options, self.n_digits):
+            x = [*o1]
+            y = int("".join(x))
+            if eighty_nine(y):
+                self.count += self.num_of_permutations(x)
 
         return self.count
 
