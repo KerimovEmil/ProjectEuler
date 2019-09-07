@@ -31,10 +31,10 @@ ANSWER:
 123/59
 Solve time ~ ____ seconds
 """
-from util.utils import timeit
-import unittest
 import fractions
+import unittest
 from math import floor
+from util.utils import timeit
 
 
 # EQ1) b_i / B_i = m * a_i / A_i for i in range(5)
@@ -165,33 +165,39 @@ class Problem236:
         self.ls_total_A = ls_total_A
         self.ls_total_B = ls_total_B
         self.max_den = max_den
+        self.possible_m = []
+        self.num_of_m_found = 0
 
-    @timeit
-    def solve(self):
+    def find_all_possible_m(self, debug=False):
         max_value = 0
-        max_frac = None
-        count = 0
+        possible_m = []
         for f in farey(self.max_den, descending=True):
             if f[0] == 0:
                 continue
             frac = fractions.Fraction(41 * f[1], 59 * f[0])
-            if (float(frac) > 1) and (f[0] % 41 != 0) and (f[1] % 59 != 0):
-                is_pass = self.test_m(frac, debug=False)
+            if float(frac) > 1:
+                is_pass = self.test_m(frac, debug=debug)
                 if is_pass:
-                    count += 1
+                    self.num_of_m_found += 1
                     if float(frac) > max_value:
                         max_value = float(frac)
-                        max_frac = frac
-                        print("NEW MAX IS: {}, value:{}, {}/{}".format(frac, float(frac), f[1], f[0]))
-        print("count:{}".format(count))
+                        possible_m.append(frac)
+                        if debug:
+                            print("NEW MAX IS: {}, value:{}, {}/{}".format(frac, float(frac), f[1], f[0]))
 
-        return max_frac
+        return possible_m
+
+    @timeit
+    def solve(self):
+        self.possible_m = self.find_all_possible_m()
+        return self.possible_m[-1]
 
     def test_m(self, m, debug=True):
         """
 
         Args:
             m: <fractions.Fraction>
+            debug: <bool>
 
         Returns:
 
@@ -236,11 +242,59 @@ class Solution236(unittest.TestCase):
         B_total = [640, 1888, 3776, 3776, 5664]
         self.problem = Problem236(A_total, B_total, max_den=60)
 
-    def test_solution(self):
+    # def test_solution(self):
+    #     self.assertEqual(fractions.Fraction(123, 59), self.problem.solve())
+
+    def test_all_solution(self):
+
+        # Check solution
         self.assertEqual(fractions.Fraction(123, 59), self.problem.solve())
+
+        # check that all found m are accurate
+        ls_all = [fractions.Fraction(41, 40),
+                  fractions.Fraction(328, 295),
+                  fractions.Fraction(369, 295),
+                  fractions.Fraction(451, 295),
+                  fractions.Fraction(492, 295),
+                  fractions.Fraction(574, 295),
+                  fractions.Fraction(123, 59),
+                  fractions.Fraction(60, 59),
+                  fractions.Fraction(63, 59),
+                  fractions.Fraction(80, 59),
+                  fractions.Fraction(81, 59),
+                  fractions.Fraction(82, 59),
+                  fractions.Fraction(108, 59),
+                  fractions.Fraction(123, 118),
+                  fractions.Fraction(205, 118),
+                  fractions.Fraction(697, 590),
+                  fractions.Fraction(861, 590),
+                  fractions.Fraction(902, 885),
+                  fractions.Fraction(1066, 885),
+                  fractions.Fraction(205, 177),
+                  fractions.Fraction(1353, 1180),
+                  fractions.Fraction(1599, 1180),
+                  fractions.Fraction(287, 236),
+                  fractions.Fraction(369, 236),
+                  fractions.Fraction(1476, 1475),
+                  fractions.Fraction(1722, 1475),
+                  fractions.Fraction(492, 413),
+                  fractions.Fraction(615, 413),
+                  fractions.Fraction(738, 413),
+                  fractions.Fraction(533, 472),
+                  fractions.Fraction(615, 472),
+                  fractions.Fraction(3321, 3245),
+                  fractions.Fraction(738, 649),
+                  fractions.Fraction(1230, 1003),
+                  fractions.Fraction(2460, 1711)
+                  ]
+
+        self.assertEqual(len(ls_all), 35)
+        print("Num found: {}/{}".format(self.problem.num_of_m_found, 35))
+        in_bool = True
+        for frac in self.problem.possible_m:
+            in_bool = in_bool and (frac in ls_all)
+        self.assertTrue(in_bool)
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
