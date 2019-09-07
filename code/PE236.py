@@ -37,6 +37,9 @@ from util.utils import timeit, farey
 from fractions import Fraction
 
 
+# defining A_i to be the number of items in good i provided by A and a_i to be the number of spoiled items
+# in good i by A, and the same definitions for B, we get:
+
 # EQ1) b_i / B_i = m * a_i / A_i for i in range(5)
 # EQ2) (sum_i b_i) / (sum_i B_i) = (1/m) * (sum_i a_i) / (sum_i A_i)
 # Where B_i and A_i are the total number of provided goods as given in the problem and b_i and a_i are the number
@@ -58,7 +61,28 @@ from fractions import Fraction
 # B4/A4 = 59/90
 # B5/A5 = 59/41
 # this means that the 2nd, 3rd, and 5th goods can all be treated together as they do not have any new constraints
+# therefore let us define a235 = a2 + a3 + a5, rewriting our equation we get
+# m^2 *(59/41) *(5/59 a1 + 41/90 a4 + a235) = 6/5 * 41/59 * (a1 + a4 + a235)
 
+# notice that the values of a1 and a4 are limited to values that result in integer bi.
+# since b_i = (B_i / A_i) * m * a_i,
+# therefore a_i can only be multiples of the denominator of (B_i / A_i) * m (when the fraction is in reduced form)
+# this means that we only need to test ai in multiples of ((B_i / A_i) * m).denominator
+# also note that since the resulting b_i must be less than B_i, we get (B_i / A_i) * m * a_i < B_i
+# this simplifies to a_i < A_i / m
+# therefore we only need to loop over ai from 1 until A_i / m in multiples of ((B_i / A_i) * m).denominator
+
+# given a a1 and an a4 we can solve for a235 and check if it is an integer, using
+# scalar = m^2 * (59/41)^2 * 5 / 6
+# a235 = [(scalar * 5/59 - 1) * a1 + (scalar * 41/90 - 1) * a4] / [1 - scalar]
+
+# now this part I just kinda guessed, I assumed the form of m will be (41/59) * some_fraction
+# and then got every fraction in lowest form that has a max denominator of 60 (this is a parameter)
+# reverted that fraction and looped over those in ascending order.
+# this is possibly why this code does not find all 35 solutions, but this allowed me to greatly reduce the search
+# todo see how other solutions handled this in the thread
+
+# EXAMPLES
 # details of solution for smallest m case:
 # if m = 1476 / 1475 then
 # a1 = 295*k1
@@ -116,12 +140,12 @@ class Problem236:
 
     def test_m(self, m, debug=True):
         """
-
+        Note that this function does not work for a general a_totals and b_totals.
         Args:
             m: <fractions.Fraction>
             debug: <bool>
 
-        Returns:
+        Returns: True if the specified m can work given the A's and B's.
 
         """
         if m <= 1:
@@ -159,12 +183,11 @@ class Problem236:
 
 class Solution236(unittest.TestCase):
     def setUp(self):
+        # Note that there are a lot of simplifications in the code due to the exact values of a_total and b_total,
+        # therefore the code does not work if a_total and b_total were to change.
         a_total = [5248, 1312, 2624, 5760, 3936]
         b_total = [640, 1888, 3776, 3776, 5664]
         self.problem = Problem236(a_total, b_total, max_den=60)
-
-    # def test_solution(self):
-    #     self.assertEqual(Fraction(123, 59), self.problem.solve())
 
     def test_all_solution(self):
 
