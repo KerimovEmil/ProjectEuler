@@ -33,8 +33,10 @@ Solve time ~ ____ seconds
 """
 from util.utils import timeit
 import unittest
+import fractions
+from math import floor
 
-# todo clean up commented notes
+
 # EQ1) b_i / B_i = m * a_i / A_i for i in range(5)
 # EQ2) (sum_i b_i) / (sum_i B_i) = (1/m) * (sum_i a_i) / (sum_i A_i)
 # Where B_i and A_i are the total number of provided goods as given in the problem and b_i and a_i are the number
@@ -46,6 +48,7 @@ import unittest
 # The goal is to find integer a_i such that the solution is satisfied, subject to the bounds:
 # 0 < a_i < A_i, and (B_i / A_i) * m * a_i < B_i
 
+# todo clean up commented notes
 # m^2 *(59/41) *(5/59 a1 + a2 + a3 + 41/90 a4 + a5) = 6/5 * 41/59 * (a1 + a2 + a3 + a4 + a5)
 
 # if m = 1476 / 1475 then
@@ -127,13 +130,6 @@ import unittest
 # NEW MAX IS: 123/59, value:2.0847457627118646, 3/1
 # count:26
 
-import fractions
-from math import floor
-
-A_total = [5248, 1312, 2624, 5760, 3936]
-B_total = [640, 1888, 3776, 3776, 5664]
-
-
 # k1:7, k4:9, k235:110
 # k1:7, k4:22, k235:129
 # k1:7, k4:35, k235:148
@@ -150,80 +146,6 @@ B_total = [640, 1888, 3776, 3776, 5664]
 # a1:4130, a4:3875, a235:5975
 # a1:4130, a4:5500, a235:6450
 
-def test_m(m, debug=True):
-    """
-
-    Args:
-        m: <fractions.Fraction>
-
-    Returns:
-
-    """
-    can_work = False
-    multiples = []
-    scalar = m ** 2 * (59 / 41) ** 2 * 5 / 6
-    den = (1 - scalar)
-    for i in range(5):
-        # Since the Fraction class automatically computes the fraction in lowest terms, this should always work.
-        multiples.append((fractions.Fraction(B_total[i], A_total[i]) * m).denominator)
-    assert multiples[1] == multiples[2]
-    assert multiples[4] == multiples[2]
-    for k1 in range(1, floor(A_total[0] / multiples[0])):  # 17 = floor(5248/295)
-        for k4 in range(1, floor(A_total[3] / multiples[3])):
-            a1 = multiples[0] * k1
-            a4 = k4 * multiples[3]
-            num = a1 * (scalar * 5 / 59 - 1) + a4 * (scalar * 41 / 90 - 1)
-            a235 = num/den  # a2 + a3 + a5
-            diff = abs(a235 - int(a235))
-            if diff <= 1e-9:
-                # check a_i bounds
-                if 1 <= a235 < A_total[1] + A_total[2] + A_total[4]:
-                    # check b_i bounds, b_i = (B_i / A_i) * m * a_i, b_i < B_i
-                    # simplifies to: m * a_i < A_i
-                    # todo: simplify with previous conditions and loops
-                    if m*a1 < A_total[0] and m*a4 < A_total[3] and m*a235 < (A_total[1] + A_total[2] + A_total[4]):
-                        if debug:
-                            print("a1:{}, a4:{}, a235:{}".format(a1, a4, int(a235)))
-                            can_work = True
-                        else:
-                            return True
-    return can_work
-
-
-class Problem236:
-    def __init__(self, ls_total_A, ls_total_B):
-        self.ls_total_A = ls_total_A
-        self.ls_total_B = ls_total_B
-
-    @timeit
-    def solve(self):
-        # return fractions.Fraction(6*41*3, 5*59)  # todo add solution
-        return None
-
-
-class Solution236(unittest.TestCase):
-    def setUp(self):
-        A_total = [5248, 1312, 2624, 5760, 3936]
-        B_total = [640, 1888, 3776, 3776, 5664]
-        self.problem = Problem236(A_total, B_total)
-
-    def test_solution(self):
-        self.assertEqual(None, self.problem.solve())
-
-
-if __name__ == '__main__':
-    unittest.main()
-
-max_value = 0
-for i in range(1, 20):
-    for j in range(1, 10):
-        frac = fractions.Fraction(41 * i, 59 * j)
-        is_pass = test_m(frac, debug=False)
-        if is_pass:
-            if float(frac) > max_value:
-                max_value = float(frac)
-                print("NEW MAX IS: {}, value:{}".format(frac, float(frac)))
-
 
 def farey(n, descending=False):
     """Print the n'th Farey sequence. Allow for either ascending or descending."""
@@ -231,58 +153,94 @@ def farey(n, descending=False):
     if descending:
         a, c = 1, n - 1
     ls_farey = [(a, b)]
-    # print(a, b)
     while (c <= n and not descending) or (a > 0 and descending):
         k = int((n + b) / d)
         a, b, c, d = c, d, k * c - a, k * d - b
-        # print(a, b)
         ls_farey.append((a, b))
     return ls_farey
 
 
-max_value = 0
-n = 10
-for f in farey(n):
-    if f[0] == 0:
-        continue
-    frac = fractions.Fraction(41 * f[1], 59 * f[0])
-    is_pass = test_m(frac, debug=False)
-    if is_pass:
-        if float(frac) > max_value:
-            max_value = float(frac)
-            print("NEW MAX IS: {}, value:{}".format(frac, float(frac)))
+class Problem236:
+    def __init__(self, ls_total_A, ls_total_B, max_den):
+        self.ls_total_A = ls_total_A
+        self.ls_total_B = ls_total_B
+        self.max_den = max_den
+
+    @timeit
+    def solve(self):
+        max_value = 0
+        max_frac = None
+        count = 0
+        for f in farey(self.max_den, descending=True):
+            if f[0] == 0:
+                continue
+            frac = fractions.Fraction(41 * f[1], 59 * f[0])
+            if (float(frac) > 1) and (f[0] % 41 != 0) and (f[1] % 59 != 0):
+                is_pass = self.test_m(frac, debug=False)
+                if is_pass:
+                    count += 1
+                    if float(frac) > max_value:
+                        max_value = float(frac)
+                        max_frac = frac
+                        print("NEW MAX IS: {}, value:{}, {}/{}".format(frac, float(frac), f[1], f[0]))
+        print("count:{}".format(count))
+
+        return max_frac
+
+    def test_m(self, m, debug=True):
+        """
+
+        Args:
+            m: <fractions.Fraction>
+
+        Returns:
+
+        """
+        B_total = self.ls_total_B
+        A_total = self.ls_total_A
+        can_work = False
+        multiples = []
+        scalar = m ** 2 * (59 / 41) ** 2 * 5 / 6
+        den = (1 - scalar)
+        for i in range(5):
+            # Since the Fraction class automatically computes the fraction in lowest terms, this should always work.
+            multiples.append((fractions.Fraction(B_total[i], A_total[i]) * m).denominator)
+        assert multiples[1] == multiples[2]
+        assert multiples[4] == multiples[2]
+        for k1 in range(1, floor(A_total[0] / multiples[0])):  # 17 = floor(5248/295)
+            for k4 in range(1, floor(A_total[3] / multiples[3])):
+                a1 = multiples[0] * k1
+                a4 = k4 * multiples[3]
+                num = a1 * (scalar * 5 / 59 - 1) + a4 * (scalar * 41 / 90 - 1)
+                a235 = num / den  # a2 + a3 + a5
+                diff = abs(a235 - int(a235))
+                if diff <= 1e-9:
+                    # check a_i bounds
+                    if 1 <= a235 < A_total[1] + A_total[2] + A_total[4]:
+                        # check b_i bounds, b_i = (B_i / A_i) * m * a_i, b_i < B_i
+                        # simplifies to: m * a_i < A_i
+                        # todo: simplify with previous conditions and loops
+                        if m * a1 < A_total[0] and m * a4 < A_total[3] and m * a235 < (
+                                A_total[1] + A_total[2] + A_total[4]):
+                            if debug:
+                                print("a1:{}, a4:{}, a235:{}".format(a1, a4, int(a235)))
+                                can_work = True
+                            else:
+                                return True
+        return can_work
 
 
+class Solution236(unittest.TestCase):
+    def setUp(self):
+        A_total = [5248, 1312, 2624, 5760, 3936]
+        B_total = [640, 1888, 3776, 3776, 5664]
+        self.problem = Problem236(A_total, B_total, max_den=60)
 
-max_value = 0
-n = 18
-count = 0
-for f in farey(n, descending=True):
-    if f[0] == 0:
-        continue
-    frac = fractions.Fraction(41 * f[1], 59 * f[0])
-    if float(frac) > 1:
-        is_pass = test_m(frac, debug=False)
-        if is_pass:
-            count += 1
-            if float(frac) > max_value:
-                max_value = float(frac)
-                print("NEW MAX IS: {}, value:{}, {}/{}".format(frac, float(frac), f[1], f[0]))
-print("count:{}".format(count))
+    def test_solution(self):
+        self.assertEqual(fractions.Fraction(123, 59), self.problem.solve())
 
 
-max_value = 0
-n=200
-count=0
-for f in farey(n, descending=True):
-    if f[0] == 0:
-        continue
-    frac = fractions.Fraction(41 * f[1], 59 * f[0])
-    if (float(frac) > 1) and (f[0]%41 != 0) and (f[1]%59 != 0):
-        is_pass = test_m(frac, debug=False)
-        if is_pass:
-            count += 1
-            if float(frac) > max_value:
-                max_value = float(frac)
-                print("NEW MAX IS: {}, value:{}, {}/{}".format(frac, float(frac), f[1], f[0]))
-print("count:{}".format(count))
+if __name__ == '__main__':
+    unittest.main()
+
+
