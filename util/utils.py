@@ -810,3 +810,16 @@ def cumsum(ls):
     Returns: <list>
     """
     return list(accumulate(ls))
+
+
+def farey(n, descending=False):
+    """Print the n'th Farey sequence. Allow for either ascending or descending."""
+    a, b, c, d = 0, 1, 1, n
+    if descending:
+        a, c = 1, n - 1
+    ls_farey = [(a, b)]
+    while (c <= n and not descending) or (a > 0 and descending):
+        k = int((n + b) / d)
+        a, b, c, d = c, d, k * c - a, k * d - b
+        ls_farey.append((a, b))
+    return ls_farey
