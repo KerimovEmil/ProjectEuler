@@ -1,5 +1,40 @@
-# todo fill description
+"""
+PROBLEM
 
+Suppliers 'A' and 'B' provided the following numbers of products for the luxury hamper market:
+
+Product	'A'	'B'
+Beluga Caviar	5248	640
+Christmas Cake	1312	1888
+Gammon Joint	2624	3776
+Vintage Port	5760	3776
+Champagne Truffles	3936	5664
+Although the suppliers try very hard to ship their goods in perfect condition, there is inevitably some spoilage
+- i.e. products gone bad.
+
+The suppliers compare their performance using two types of statistic:
+
+The five per-product spoilage rates for each supplier are equal to the number of products gone bad divided by the
+number of products supplied, for each of the five products in turn.
+The overall spoilage rate for each supplier is equal to the total number of products gone bad divided by the total
+number of products provided by that supplier.
+To their surprise, the suppliers found that each of the five per-product spoilage rates was worse (higher) for 'B' than
+for 'A' by the same factor (ratio of spoilage rates), m>1; and yet, paradoxically, the overall spoilage rate was worse
+for 'A' than for 'B', also by a factor of m.
+
+There are thirty-five m>1 for which this surprising result could have occurred, the smallest of which is 1476/1475.
+
+What's the largest possible value of m?
+Give your answer as a fraction reduced to its lowest terms, in the form u/v.
+
+ANSWER:
+______
+Solve time ~ ____ seconds
+"""
+from util.utils import timeit
+import unittest
+
+# todo clean up commented notes
 # m^2 *(59/41) *(5/59 a1 + a2 + a3 + 41/90 a4 + a5) = 6/5 * 41/59 * (a1 + a2 + a3 + a4 + a5)
 
 # if m = 1476 / 1475 then
@@ -44,161 +79,42 @@
 # m = 738/295 = 36*41*15/(25*59*6) = 6*41*3/(5*59) = 2.50169491
 # fractions.Fraction(36*41*10, 25*59*6)
 
+import fractions
+from math import floor
+
 A_total = [5248, 1312, 2624, 5760, 3936]
 B_total = [640, 1888, 3776, 3776, 5664]
 
-import fractions
-m = fractions.Fraction(1476,1475)
-for B, A in zip(B_total, A_total):
-    print("===================================")
-    # b/B = m * a/A
-    # b = (m * B / A) * a
-    s = m * B / A
-    possible_a = range(1, A)
-    possible_b = [a * s for a in possible_a]
-    for b in possible_b:
-        if int(b) == b:
-            a = b/s
-            print("a:{}, b:{}, b/36:{}, b/82:{}, a/25:{}, a/125:{}".format(a, b, b/36, b/82, a/25, a/125))
-
-import fractions
-m = fractions.Fraction(1476, 1475)
-w = [None]*5
-w_float = [None]*5
-for i, (B, A) in enumerate(zip(B_total, A_total)):
-    # b/a = m * B / A
-    print(i, m*B/A)
-    w[i] = m*B/A
-    w_float[i] = float(m*B/A)
+# m = fractions.Fraction(1476,1475)
 
 
-ratio = sum(B_total)/(sum(A_total)*m)
-ratio_float = float(sum(B_total)/(sum(A_total)*m))
-
-# print(sum(B_total)/(sum(A_total)*m))
-import cvxpy
-m = 1476/1475
-A_bad = cvxpy.Variable(5, integer=True)
-# A_bad = cvxpy.Variable(5, nonneg=True)
-ls_constraints = []
-lhs = sum([(B_total[i] / A_total[i]) * A_bad[i] for i in range(5)])
-ls_constraints.append((m**2) * lhs == sum(B_total)/sum(A_total) * cvxpy.sum(A_bad))
-# lower bound
-ls_constraints.append(A_bad >= 0)
-# upper bound
-for i in range(5):
-    ls_constraints.append(A_bad[i] <= A_total[i])
-
-prob = cvxpy.Problem(cvxpy.Maximize(cvxpy.sum(A_bad)), ls_constraints)
-prob.solve()
-print(prob.status)
-print(A_bad.value)
+# for k1 in range(1, floor(A_total[0]/295)):  # 17 = floor(5248/295)
+#     for k2 in range(1, floor(A_total[1]/25)):
+#         for k3 in range(1, floor(A_total[2]/25)):
+#             for k4 in range(1, floor(A_total[3]/125)):
+#                 for k5 in range(1, floor(A_total[4]/25)):
+#                     lhs = 216 * (k1/5 + 41/90 * k4 + k2/5 + k3/5 + k5/5)
+#                     rhs = 295*k1 + 25*k2 + 25*k3 + 125*k4 + 25*k5
+#                     diff = abs(lhs-rhs)
+#                     if diff < 1e-8:
+#                         print("k1:{}, k2:{}, k3:{}, k4:{}, k5:{}, diff:{}".format(k1,k2,k3,k4,k5,diff))
 
 
-
-import cvxpy
-
-# m = cvxpy.Variable(1)
-# m = fractions.Fraction(1476, 1475)
-m = 1476/1475
-A_bad = cvxpy.Variable(5, integer=True)
-B_bad = cvxpy.Variable(5, integer=True)
-
-ls_constraints = []
-for i in range(5):
-    # c_i = B_bad[i] / B_total[i] == m * A_bad[i] / A_total[i]
-    ls_constraints.append(B_bad[i] / B_total[i] == m * A_bad[i] / A_total[i])
-# total rate
-ls_constraints.append(m * cvxpy.sum(B_bad) / sum(B_total) == cvxpy.sum(A_bad) / sum(A_total))
-# positive number of bad
-ls_constraints.append(B_bad >= 0)
-ls_constraints.append(A_bad >= 0)
-# bad less than total
-for i in range(5):
-    ls_constraints.append(B_bad[i] <= B_total[i])
-    ls_constraints.append(A_bad[i] <= A_total[i])
-
-prob = cvxpy.Problem(cvxpy.Maximize(cvxpy.sum(A_bad)), ls_constraints)
-prob.solve(verbose=True)
-print(prob.status)
-print(A_bad.value)
-print(B_bad.value)
-
-
-def f_lhs(ls_a):
-    return (6/5)**3 * (9/59 * ls_a[0] + 41/90 * ls_a[3] + ls_a[1] + ls_a[2] + ls_a[4])
-
-
-def f_lhs_m(ls_a, m):
-    return m**2 * (59/41)**2 * 5/6 * (9/59 * ls_a[0] + 41/90 * ls_a[3] + ls_a[1] + ls_a[2] + ls_a[4])
-
-
-def f_rhs(ls_a):
-    return sum(ls_a)
-
-from math import floor
-
-for k1 in range(1, floor(A_total[0]/295)):  # 17 = floor(5248/295)
-    for k2 in range(1, floor(A_total[1]/25)):
-        for k3 in range(1, floor(A_total[2]/25)):
-            for k4 in range(1, floor(A_total[3]/125)):
-                for k5 in range(1, floor(A_total[4]/25)):
-                    lhs = 216 * (k1/5 + 41/90 * k4 + k2/5 + k3/5 + k5/5)
-                    rhs = 295*k1 + 25*k2 + 25*k3 + 125*k4 + 25*k5
-                    diff = abs(lhs-rhs)
-                    if diff < 1e-8:
-                        print("k1:{}, k2:{}, k3:{}, k4:{}, k5:{}, diff:{}".format(k1,k2,k3,k4,k5,diff))
-
-
-for k1 in range(1, floor(A_total[0]/295)):  # 17 = floor(5248/295)
-    for k4 in range(1, floor(A_total[3]/125)):
-        for k235 in range(3, floor(A_total[1]/25) + floor(A_total[2]/25) + floor(A_total[4]/25)):
-            lhs = 216 * (k1/5 + 41/90 * k4 + k235/5)
-            rhs = 295*k1 + 125*k4 + 25*k235
-            diff = abs(lhs-rhs)
-            if diff < 1e-8:
-                print("k1:{}, k4:{}, k235:{}, diff:{}".format(k1, k4, k235, diff))
-
-# k1:7, k4:9, k235:110, diff:0.0
-# k1:7, k4:22, k235:129, diff:0.0
-# k1:7, k4:35, k235:148, diff:0.0
-# k1:14, k4:5, k235:201, diff:0.0
-# k1:14, k4:18, k235:220, diff:0.0
-# k1:14, k4:31, k235:239, diff:1.8189894035458565e-12
-# k1:14, k4:44, k235:258, diff:0.0
-
-
-m = fractions.Fraction(1476, 1475)
-multiples = []
-for i in range(5):
-    # Since the numerator and denominator don't share any prime factors, this should always work?
-    # todo check
-    multiples.append((fractions.Fraction(B_total[i], A_total[i]) * m).denominator)
-#
-# assert multiples[1] == multiples[2]
-# assert multiples[4] == multiples[2]
-#
-# for k1 in range(1, floor(A_total[0]/multiples[0])):  # 17 = floor(5248/295)
-#     for k4 in range(1, floor(A_total[3]/multiples[3])):
-#         for k235 in range(3, floor(A_total[1]/multiples[3]) + floor(A_total[2]/multiples[2]) + floor(A_total[4]/multiples[4])):
-#             lhs = 216 * (k1/5 + 41/90 * k4 + k235/5)
-#             rhs = 295*k1 + 125*k4 + 25*k235
-#             diff = abs(lhs-rhs)
-#             if diff < 1e-8:
-#                 print("k1:{}, k4:{}, k235:{}, diff:{}".format(k1, k4, k235, diff))
-
-assert multiples[1] == multiples[2]
-assert multiples[4] == multiples[2]
-for k1 in range(1, floor(A_total[0]/multiples[0])):  # 17 = floor(5248/295)
-    for k4 in range(1, floor(A_total[3]/multiples[3])):
-        for k235 in range(3, floor(A_total[1]/multiples[3]) + floor(A_total[2]/multiples[2]) + floor(A_total[4]/multiples[4])):
-            lhs = m**2 * (59/41)**2 * 5/6 * (5/59 * k1 * multiples[0] + 41/90 * k4 * multiples[3] + k235*multiples[2])
-            rhs = multiples[0]*k1 + multiples[3]*k4 + multiples[2]*k235
-            diff = abs(lhs-rhs)
-            if diff < 1e-8:
-                print("k1:{}, k4:{}, k235:{}, diff:{}".format(k1, k4, k235, diff))
-                can_work = True
-
+# k1:7, k4:9, k235:110
+# k1:7, k4:22, k235:129
+# k1:7, k4:35, k235:148
+# k1:14, k4:5, k235:201
+# k1:14, k4:18, k235:220
+# k1:14, k4:31, k235:239
+# k1:14, k4:44, k235:258
+# implies
+# a1:2065, a4:1125, a235:2750
+# a1:2065, a4:2750, a235:3225
+# a1:2065, a4:4375, a235:3700
+# a1:4130, a4:625, a235:5025
+# a1:4130, a4:2250, a235:5500
+# a1:4130, a4:3875, a235:5975
+# a1:4130, a4:5500, a235:6450
 
 def test_m(m):
     """
@@ -211,36 +127,49 @@ def test_m(m):
     """
     can_work = False
     multiples = []
+    scalar = m ** 2 * (59 / 41) ** 2 * 5 / 6
+    den = (1 - scalar)
     for i in range(5):
+        # Since the numerator and denominator don't share any prime factors, this should always work?
+        # todo check
         multiples.append((fractions.Fraction(B_total[i], A_total[i]) * m).denominator)
     assert multiples[1] == multiples[2]
     assert multiples[4] == multiples[2]
     for k1 in range(1, floor(A_total[0] / multiples[0])):  # 17 = floor(5248/295)
         for k4 in range(1, floor(A_total[3] / multiples[3])):
-            # todo solve for k235 and then test if it's an integer within these bounds, Or solve for a2 + a3 + a5
-            num = m ** 2 * (59 / 41) ** 2 * 5 / 6 * (5 / 59 * k1 * multiples[0] + 41 / 90 * k4 * multiples[3]) -\
-                  multiples[0] * k1 + multiples[3] * k4
-            # todo fix
-            den = (1 - m ** 2 * (59 / 41) ** 2 * 5 / 6)
+            a1 = multiples[0] * k1
+            a4 = k4 * multiples[3]
+            num = a1 * (scalar * 5 / 59 - 1) + a4 * (scalar * 41 / 90 - 1)
             a235 = num/den  # a2 + a3 + a5
             diff = abs(a235 - int(a235))
             if diff <= 1e-8:
-                print("INT")
-                print("a1:{}, a4:{}, a235:{}, diff:{}".format(k1*multiples[0], k4*multiples[3], a235, diff))
                 if a235 <= A_total[1] + A_total[2] + A_total[4]:
-                    print("SMALL ENOUGH")
-                    print("a1:{}, a4:{}, a235:{}, diff:{}".format(k1 * multiples[0], k4 * multiples[3], a235, diff))
                     if a235 >= 1:
-                        print("BIG ENOUGH")
-                        print("a1:{}, a4:{}, a235:{}, diff:{}".format(k1*multiples[0], k4*multiples[3], a235, diff))
+                        print("a1:{}, a4:{}, a235:{}, diff:{}".format(a1, a4, int(a235), diff))
                         can_work = True
-            # for k235 in range(3, floor(A_total[1] / multiples[3]) + floor(A_total[2] / multiples[2]) + floor(
-            #         A_total[4] / multiples[4])):
-            #     lhs = m ** 2 * (59 / 41) ** 2 * 5 / 6 * (
-            #                 5 / 59 * k1 * multiples[0] + 41 / 90 * k4 * multiples[3] + k235 * multiples[2])
-            #     rhs = multiples[0] * k1 + multiples[3] * k4 + multiples[2] * k235
-            #     diff = abs(lhs - rhs)
-            #     if diff < 1e-8:
-            #         print("k1:{}, k4:{}, k235:{}, diff:{}".format(k1, k4, k235, diff))
-            #         can_work = True
     return can_work
+
+
+class Problem236:
+    def __init__(self, ls_total_A, ls_total_B):
+        self.ls_total_A = ls_total_A
+        self.ls_total_B = ls_total_B
+
+    @timeit
+    def solve(self):
+        # return fractions.Fraction(6*41*3, 5*59)  # todo add solution
+        return None
+
+
+class Solution236(unittest.TestCase):
+    def setUp(self):
+        A_total = [5248, 1312, 2624, 5760, 3936]
+        B_total = [640, 1888, 3776, 3776, 5664]
+        self.problem = Problem236(A_total, B_total)
+
+    def test_solution(self):
+        self.assertEqual(None, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()
