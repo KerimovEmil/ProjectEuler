@@ -29,7 +29,7 @@ Give your answer as a fraction reduced to its lowest terms, in the form u/v.
 
 ANSWER:
 123/59
-Solve time ~ ____ seconds
+Solve time ~ 0.23 seconds
 """
 import fractions
 import unittest
@@ -202,6 +202,8 @@ class Problem236:
         Returns:
 
         """
+        if m <= 1:
+            return False
         B_total = self.ls_total_B
         A_total = self.ls_total_A
         can_work = False
@@ -213,26 +215,23 @@ class Problem236:
             multiples.append((fractions.Fraction(B_total[i], A_total[i]) * m).denominator)
         assert multiples[1] == multiples[2]
         assert multiples[4] == multiples[2]
-        for k1 in range(1, floor(A_total[0] / multiples[0])):  # 17 = floor(5248/295)
-            for k4 in range(1, floor(A_total[3] / multiples[3])):
+        for k1 in range(1, floor(A_total[0] / (m*multiples[0]))):
+            for k4 in range(1, floor(A_total[3] / (m*multiples[3]))):
                 a1 = multiples[0] * k1
                 a4 = k4 * multiples[3]
                 num = a1 * (scalar * 5 / 59 - 1) + a4 * (scalar * 41 / 90 - 1)
                 a235 = num / den  # a2 + a3 + a5
                 diff = abs(a235 - int(a235))
                 if diff <= 1e-9:
-                    # check a_i bounds
-                    if 1 <= a235 < A_total[1] + A_total[2] + A_total[4]:
-                        # check b_i bounds, b_i = (B_i / A_i) * m * a_i, b_i < B_i
-                        # simplifies to: m * a_i < A_i
-                        # todo: simplify with previous conditions and loops
-                        if m * a1 < A_total[0] and m * a4 < A_total[3] and m * a235 < (
-                                A_total[1] + A_total[2] + A_total[4]):
-                            if debug:
-                                print("a1:{}, a4:{}, a235:{}".format(a1, a4, int(a235)))
-                                can_work = True
-                            else:
-                                return True
+                    # check a_i bounds and check b_i bounds
+                    # b_i = (B_i / A_i) * m * a_i, b_i < B_i
+                    # simplifies to: m * a_i < A_i
+                    if 1 <= a235 < m * (A_total[1] + A_total[2] + A_total[4]):
+                        if debug:
+                            print("a1:{}, a4:{}, a235:{}".format(a1, a4, int(a235)))
+                            can_work = True
+                        else:
+                            return True
         return can_work
 
 
