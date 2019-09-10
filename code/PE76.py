@@ -13,7 +13,7 @@ It is possible to write five as a sum in exactly six different ways:
 How many different ways can one hundred be written as a sum of at least two positive integers?
 
 ANSWER:
-
+190569291
 Solve time ~0.03 seconds
 """
 from util.utils import timeit, partition_number
