@@ -16,12 +16,6 @@ ANSWER:
 
 Solve time ~0.03 seconds
 """
-
-# using recursive equation found here: http://www.cs.utsa.edu/~wagner/python/fp/part.html
-# p(n) = sum_{k=1}^{n} (-1)^{k+1} (p(x) + p(y))
-# x = n - k*(3k-1)/2
-# y = n - k*(3k+1)/2
-
 from util.utils import timeit, partition_number
 import unittest
 
