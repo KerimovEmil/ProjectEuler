@@ -844,3 +844,12 @@ def generate_ascending_sub_sequence(options, num):
         for idx, j in enumerate(options):
             for k in generate_ascending_sub_sequence(options[idx:], num - 1):
                 yield (j, *k)
+
+
+def euler_totient_function(n):
+    dc_factors = primes_of_n(n)
+    iter_primes = ((1-1/p) for p in dc_factors.keys())
+    output = n
+    for p in iter_primes:
+        output *= p
+    return int(output)
