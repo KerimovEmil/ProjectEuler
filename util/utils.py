@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from itertools import accumulate
+from functools import lru_cache
 
 
 class Hungarian:
@@ -844,6 +845,39 @@ def generate_ascending_sub_sequence(options, num):
         for idx, j in enumerate(options):
             for k in generate_ascending_sub_sequence(options[idx:], num - 1):
                 yield (j, *k)
+
+
+@lru_cache(maxsize=None, typed=False)
+def partition_number(n):
+    """
+    Compute the partition number of n.
+    Using recursive equation found here: http://www.cs.utsa.edu/~wagner/python/fp/part.html
+    p(n) = sum_{k=1}^{n} (-1)^{k+1} (p(x) + p(y))
+    x = n - k*(3k-1)/2
+    y = n - k*(3k+1)/2
+    """
+    if n < 0:
+        return 0
+    if n == 0:
+        return 1
+    sign = 1
+    summation = 0
+    for k in range(1, n+1):
+        x = n - int(k*(3*k-1)/2)
+        y = n - int(k*(3*k+1)/2)
+        summation += sign*(partition_number(x) + partition_number(y))
+        sign *= -1
+    return summation
+
+
+def euler_totient_function(n):
+    dc_factors = primes_of_n(n)
+    iter_primes = ((1-1/p) for p in dc_factors.keys())
+    output = n
+    for p in iter_primes:
+        output *= p
+    return int(output)
+
 
 def farey(n, descending=False):
     """Print the n'th Farey sequence. Allow for either ascending or descending."""
