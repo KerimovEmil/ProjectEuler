@@ -1,6 +1,16 @@
-# By solving all fifty puzzles find the sum of the 3-digit numbers found in the top left corner
-# of each solution grid; for example, 483 is the 3-digit number found in the top left corner of
-# the solution grid above.
+"""
+PROBLEM
+
+By solving all fifty puzzles find the sum of the 3-digit numbers found in the top left corner
+of each solution grid; for example, 483 is the 3-digit number found in the top left corner of
+the solution grid above.
+
+ANSWER:
+24702
+Solve time ~ 68 seconds
+"""
+
+
 from util.utils import timeit
 from util.dlx import DancingLinks, LeftIterator
 import unittest
@@ -101,7 +111,7 @@ class Problem96:
 
 class Solution96(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem96('./problem_data/p096_sudoku.txt')
+        self.problem = Problem96(r'../problem_data/p096_sudoku.txt')
 
     def test_solution(self):
         self.assertEqual(24702, self.problem.solve())
