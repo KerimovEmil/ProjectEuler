@@ -868,3 +868,13 @@ def partition_number(n):
         summation += sign*(partition_number(x) + partition_number(y))
         sign *= -1
     return summation
+
+
+def euler_totient_function(n):
+    dc_factors = primes_of_n(n)
+    iter_primes = ((1-1/p) for p in dc_factors.keys())
+    output = n
+    for p in iter_primes:
+        output *= p
+    return int(output)
+
