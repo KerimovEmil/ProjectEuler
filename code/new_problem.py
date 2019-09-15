@@ -5,6 +5,7 @@ import sys
 TEMPLATE = """from util.utils import timeit
 import unittest
 
+
 class Problem{0}:
     def __init__(self):
         pass
@@ -12,6 +13,7 @@ class Problem{0}:
     @timeit
     def solve(self):
         raise NotImplementedError('Please implement this method!')
+
 
 class Solution{0}(unittest.TestCase):
     def setUp(self):
@@ -21,8 +23,10 @@ class Solution{0}(unittest.TestCase):
         # Fill this in once you've got a working solution!
         self.assertEqual(1, self.problem.solve())
 
+
 if __name__ == '__main__':
     unittest.main()
+
 """
 
 if __name__ == '__main__':
