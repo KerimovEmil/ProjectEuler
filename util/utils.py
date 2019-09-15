@@ -904,6 +904,7 @@ def len_faray_seq(n):
     Using the recursive relation |F_{n}| = |F_{n-1}| + euler_totient(n),
     Expanding for all n and then inverting the relation, after using |F_1| = 2 we get
     |F_{n}| = 1/2 * (n+3) * n  - sum_{d=2}^{n} |F_{floor(n/d)}|
+    See Also: https://en.wikipedia.org/wiki/Farey_sequence
     """
 
     if n == 1:
