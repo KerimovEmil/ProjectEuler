@@ -12,7 +12,7 @@ How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper f
 
 ANSWER:
 7295372
-Solve time ~62 seconds
+Solve time ~14 seconds
 """
 
 from util.utils import timeit, farey, len_faray_seq
@@ -22,6 +22,23 @@ import unittest
 class Problem73:
     def __init__(self, d):
         self.d = d
+
+    @timeit
+    def quicker_solve(self):
+        n = self.d
+        a, b, c, d = 0, 1, 1, n
+        ok = False
+        ans = 0
+        while c <= n:
+            k = int((n + b) / d)
+            a, b, c, d = c, d, k * c - a, k * d - b
+            if a == 1 and b == 2:
+                break
+            if ok:
+                ans += 1
+            if a == 1 and b == 3:
+                ok = True
+        return ans
 
     @timeit
     def solve(self):
@@ -42,10 +59,12 @@ class Solution73(unittest.TestCase):
         self.problem = Problem73(d=12000)
 
     def test_solution(self):
-        self.assertEqual(7295372, self.problem.solve())
+        # self.assertEqual(7295372, self.problem.solve())
+        self.assertEqual(7295372, self.problem.quicker_solve())
 
     def test_solution_small(self):
-        self.assertEqual(3, Problem73(d=8).solve())
+        # self.assertEqual(3, Problem73(d=8).solve())
+        self.assertEqual(3, Problem73(d=8).quicker_solve())
 
 
 if __name__ == '__main__':
