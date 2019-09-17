@@ -12,10 +12,10 @@ How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper f
 
 ANSWER:
 7295372
-Solve time ~14 seconds
+Solve time ~9.7 seconds
 """
 
-from util.utils import timeit, farey, len_faray_seq
+from util.utils import timeit, len_faray_seq
 import unittest
 
 
@@ -23,33 +23,27 @@ class Problem73:
     def __init__(self, d):
         self.d = d
 
-    @timeit
-    def quicker_solve(self):
-        n = self.d
+    @staticmethod
+    def quick_index_of_one_third(n):
         a, b, c, d = 0, 1, 1, n
-        ok = False
         ans = 0
         while c <= n:
             k = int((n + b) / d)
             a, b, c, d = c, d, k * c - a, k * d - b
-            if a == 1 and b == 2:
-                break
-            if ok:
-                ans += 1
+            ans += 1
             if a == 1 and b == 3:
-                ok = True
+                return ans
         return ans
 
     @timeit
     def solve(self):
         len_f = len_faray_seq(self.d)  # very fast
-        f = farey(self.d)  # super slow way
 
         # note that the middle value will always be 1/2 for all n>1
         # therefore there are always (|F_n| - 1)/2 elements that are less than 1/2
         index_of_half = int((len_f - 1)/2)
 
-        index_of_one_third = f.index((1, 3))  # also slow
+        index_of_one_third = self.quick_index_of_one_third(self.d)
 
         return index_of_half - index_of_one_third - 1
 
@@ -59,12 +53,10 @@ class Solution73(unittest.TestCase):
         self.problem = Problem73(d=12000)
 
     def test_solution(self):
-        # self.assertEqual(7295372, self.problem.solve())
-        self.assertEqual(7295372, self.problem.quicker_solve())
+        self.assertEqual(7295372, self.problem.solve())
 
     def test_solution_small(self):
-        # self.assertEqual(3, Problem73(d=8).solve())
-        self.assertEqual(3, Problem73(d=8).quicker_solve())
+        self.assertEqual(3, Problem73(d=8).solve())
 
 
 if __name__ == '__main__':
