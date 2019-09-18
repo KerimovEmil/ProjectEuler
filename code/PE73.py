@@ -12,7 +12,7 @@ How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper f
 
 ANSWER:
 7295372
-Solve time ~9.7 seconds
+Solve time ~0.007 seconds  # easy solution in ~9.7 seconds
 """
 
 from util.utils import timeit, len_faray_seq
@@ -47,16 +47,66 @@ class Problem73:
 
         return index_of_half - index_of_one_third - 1
 
+    def fastest_solve(self):  # TODO figure out exactly why this works.
+        N = self.d
+        K = int((N / 2) ** 0.5)
+        M = int(N / (2 * K + 1))
+        rsmall = [0 for _ in range(M + 1)]
+        rlarge = [0 for _ in range(K)]
+
+        def f(n):
+            q = n // 6
+            r = n % 6
+            ans = q * (3 * q - 2 + r)
+            if r == 5:
+                ans += 1
+            return ans
+
+        def R(n):
+            switch = int((n / 2) ** 0.5)
+            count = f(n)
+            count -= f(n // 2)
+            m = 5
+            k = (n - 5) // 10
+            while k >= switch:
+                k2 = ((n // (m + 1)) - 1) // 2
+                count -= (k - k2) * rsmall[m]
+                k = k2
+                m += 1
+            while k > 0:
+                m = n // (2 * k + 1)
+                if m <= M:
+                    count -= rsmall[m]
+                else:
+                    count -= rlarge[((N // m) - 1) // 2]
+                k -= 1
+            if n <= M:
+                rsmall[n] = count
+            else:
+                rlarge[((N // n) - 1) // 2] = count
+            return
+
+        for n in range(5, M + 1):
+            R(n)
+
+        for j in range(K - 1, -1, -1):
+            R(N // (2 * j + 1))
+
+        count = rlarge[0]
+        return count
+
 
 class Solution73(unittest.TestCase):
     def setUp(self):
         self.problem = Problem73(d=12000)
 
     def test_solution(self):
-        self.assertEqual(7295372, self.problem.solve())
+        # self.assertEqual(7295372, self.problem.solve())
+        self.assertEqual(7295372, self.problem.fastest_solve())
 
     def test_solution_small(self):
-        self.assertEqual(3, Problem73(d=8).solve())
+        # self.assertEqual(3, Problem73(d=8).solve())
+        self.assertEqual(3, Problem73(d=8).fastest_solve())
 
 
 if __name__ == '__main__':
