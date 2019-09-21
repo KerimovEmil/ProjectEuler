@@ -12,7 +12,7 @@ How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper f
 
 ANSWER:
 7295372
-Solve time ~0.007 seconds  # easy solution in ~9.7 seconds
+Solve time ~0.004 seconds  # easy solution in ~9.7 seconds
 """
 
 from util.utils import timeit, len_faray_seq
@@ -47,53 +47,83 @@ class Problem73:
 
         return index_of_half - index_of_one_third - 1
 
-    def fastest_solve(self):  # TODO figure out exactly why this works.
-        N = self.d
-        K = int((N / 2) ** 0.5)
-        M = int(N / (2 * K + 1))
-        rsmall = [0 for _ in range(M + 1)]
-        rlarge = [0 for _ in range(K)]
+    def fastest_solve(self):
+        """
+        See description of why this works here: https://projecteuler.net/overview=073.
+        The rough idea is to express the number of fractions between x and y as a sum of the number of reduced fractions
+        between x and y. Then represent that sum in an easier form. Then use a mobius summation inversion to represent
+        the number of reduced fractions between  and y as a sum of the number of fractions between x and y.
+        Define F(N) = number of fractions between x and y, where the denominator <= N
+        Define R(N) = number of reduced fractions between x and y, where the denominator <= N
 
-        def f(n):
-            q = n // 6
-            r = n % 6
-            ans = q * (3 * q - 2 + r)
-            if r == 5:
-                ans += 1
-            return ans
+        (EQ1) F(N) = sum_{m=1}^{N} R(floor(N/m))
+        This can be seen since (the number of fractions between x,y with gcm(num, den) == m) = R(floor(N/m)
+
+        One can also see that F(m) = sum_{n=1}^{m} (floor((n-1)/2) - floor(n/3)), for x=1/3 and y = 1/2.
+        This sum can be evaluated directly, I'm not 100% sure how though, but it becomes
+        (EQ2) F(m) = q*(3q - 2 + r) + (r==5)
+        where q = floor(m/6), r = m%6
+
+        Since we have an easy way to calculate F(m), we can use the mobius inversion on EQ1 to represent R(N) as a
+        function of F(m). Also not 100% sure how.
+
+        (EQ3) R(N) = sum_{m=1}^{N} mu(m) * F(floor(N/m))
+        Where mu(m) is the mobius function defined as
+        (EQ4) mu(m) = (-1)^r if n is the product of r distinct primes, 0 if n has a square
+
+        This gives us
+        (EQ5) R(N) = F(N) - sum_{m=2}^{N} R(floor(N/m))
+        We could just stop here, but we can get a better algorithm
+
+        (EQ6) R(N) = F(N) - F(floor(N/2)) - sum_{k=1}^{floor((N-1)/2)} R(floor(N/(2k+1)))
+        Notice that floor(N/(2k+1)) will be constant for many values of k when N is large. Counting these we get:
+        N/(2k-1) - N/(2k+1) > 1, implies k <= sqrt(N/2)
+        therefore defined k0 = floor(sqrt(N/2))
+        Using this idea, and a lot of math we get the below algorithm.
+        """
+
+        K = int((self.d / 2) ** 0.5)
+        M = int(self.d / (2 * K + 1))
+        ls_r_small = [0] * (M+1)  # R(m)
+        ls_r_large = [0] * K  # R(int(N/(2k-1))
+
+        def f(d):
+            """Returns the number of fractions between 1/3 and 1/2 whose denominators are less than d"""
+            q, r = d // 6, d % 6
+            return q * (3 * q - 2 + r) + (r == 5)
 
         def R(n):
+            """Sets values in ls_r_small and ls_r_large"""
             switch = int((n / 2) ** 0.5)
-            count = f(n)
-            count -= f(n // 2)
-            m = 5
+            count = f(n) - f(n // 2)
+            m = 5  # the first 5 are 0
             k = (n - 5) // 10
             while k >= switch:
                 k2 = ((n // (m + 1)) - 1) // 2
-                count -= (k - k2) * rsmall[m]
+                count -= (k - k2) * ls_r_small[m]  # -(k(m)-k(m+1))*R(m)
                 k = k2
                 m += 1
             while k > 0:
                 m = n // (2 * k + 1)
                 if m <= M:
-                    count -= rsmall[m]
+                    count -= ls_r_small[m]  # -R(m)
                 else:
-                    count -= rlarge[((N // m) - 1) // 2]
+                    count -= ls_r_large[((self.d // m) - 1) // 2]  # -R(int(N/(2k-1))
                 k -= 1
             if n <= M:
-                rsmall[n] = count
+                ls_r_small[n] = count
             else:
-                rlarge[((N // n) - 1) // 2] = count
-            return
+                ls_r_large[((self.d // n) - 1) // 2] = count
 
-        for n in range(5, M + 1):
-            R(n)
+        # call R(5), R(6), ..., R(M)
+        for i in range(5, M + 1):
+            R(i)
 
+        # call R(K-1), R(K-2), ..., R(0)
         for j in range(K - 1, -1, -1):
-            R(N // (2 * j + 1))
+            R(self.d // (2 * j + 1))
 
-        count = rlarge[0]
-        return count
+        return ls_r_large[0]  # R(int(N/(2*0-1))) = R(N)
 
 
 class Solution73(unittest.TestCase):
