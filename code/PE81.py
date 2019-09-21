@@ -17,7 +17,6 @@ import unittest
 class Problem81:
     def __init__(self, data_path):
         self.problem_data = self.load_data(data_path)
-        self.n = len(self.problem_data)
         self.working_matrix = copy.deepcopy(self.problem_data)
 
     @staticmethod
@@ -29,7 +28,7 @@ class Problem81:
     @timeit
     def solve(self):
         B = self.working_matrix
-        n = self.n
+        n = len(self.working_matrix)
 
         # Calculate the right side and bottom side
         for i in range(n):
