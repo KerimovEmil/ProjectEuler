@@ -12,12 +12,12 @@ is minimised; what is the value of D?
 
 ANSWER:
 5482660
-Solve time ~3.6 seconds
+Solve time ~0.8 seconds
 """
 
 # p(n) = n(3n−1)/2
 
-# testing if a number is a penta number:
+# testing if a number is a pentagonal number:
 # n = (3x^2 - x)/2
 # 3/2 x^2 - 1/2 x - n = 0
 # x^2 - 1/3 x - 2/3 n = 0
@@ -45,38 +45,18 @@ class Problem44:
     def generate_ls_pentagonal_numbers(self):
         return [int(i * (3 * i - 1) / 2) for i in range(1, self.max_pentagonal_sum)]
 
-    @staticmethod
-    def is_pent(num):
-        return ((1 + (24 * num + 1) ** 0.5) / 6).is_integer()
-
     @timeit
     def solve(self):
         ls_pentagonal_numbers = self.generate_ls_pentagonal_numbers()
+        set_pentagonal_numbers = set(ls_pentagonal_numbers)
         for m in range(1, self.max_pentagonal_number):
             for n in range(m + 1, self.max_pentagonal_number):
                 pent_sum = ls_pentagonal_numbers[m] + ls_pentagonal_numbers[n]
-                if Problem44.is_pent(pent_sum):
+                if pent_sum in set_pentagonal_numbers:
                     pent_diff = ls_pentagonal_numbers[n] - ls_pentagonal_numbers[m]
-                    if Problem44.is_pent(pent_diff):
+                    if pent_diff in set_pentagonal_numbers:
                         print(m, n, ls_pentagonal_numbers[m], ls_pentagonal_numbers[n], pent_diff)
                         self.ans = min(pent_diff, self.ans)
-        return self.ans
-
-    @timeit
-    def solve_alternative(self):
-        ls_pentagonal_numbers = set(self.generate_ls_pentagonal_numbers())
-        for p_m in ls_pentagonal_numbers:
-            for p_n in ls_pentagonal_numbers:
-                pent_sum = p_m + p_n
-                if Problem44.is_pent(pent_sum):
-                    if p_n > p_m:
-                        pent_diff = p_n - p_m
-                        if Problem44.is_pent(pent_diff):
-                            print(p_m, p_n, pent_diff)
-                            self.ans = min(pent_diff, self.ans)
-        return self.ans
-
-    def get_solution(self):
         return self.ans
 
 
