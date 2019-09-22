@@ -1,15 +1,20 @@
-# The number 3797 has an interesting property. Being prime itself, it is possible to
-# continuously remove digits from left to right, and remain prime at each stage:
-# 3797, 797, 97, and 7. Similarly we can work from right to left: 3797, 379, 37, and 3.
+"""
+PROBLEM
 
-# Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
+The number 3797 has an interesting property. Being prime itself, it is possible to continuously remove digits from left
+to right, and remain prime at each stage: 3797, 797, 97, and 7. Similarly we can work from right to left:
+3797, 379, 37, and 3.
 
-# NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
+Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
+NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
 
-# ANSWER
-# 748317
+ANSWER:
+748317
+Solve time ~7.3 seconds
+"""
 
-from util.utils import sieve
+from util.utils import timeit, sieve
+import unittest
 
 
 def trunc_left(num):
@@ -44,6 +49,7 @@ class Problem37:
                 ls_primes_loop.append(prime)
         return ls_primes_loop, ls_primes
 
+    @timeit
     def solve(self):
         ls_primes_loop, ls_primes = self.create_list_of_primes()
         for prime in ls_primes_loop:
@@ -68,11 +74,14 @@ class Problem37:
                 return self.ans
         return self.ans
 
-    def get_solution(self):
-        return self.ans
+
+class Solution37(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem37(max_int=800000)
+
+    def test_solution(self):
+        self.assertEqual(748317, self.problem.solve())
 
 
-if __name__ == "__main__":
-    obj = Problem37(max_int=800000)
-    sol = obj.solve()
-    print(sol)
+if __name__ == '__main__':
+    unittest.main()
