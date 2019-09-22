@@ -11,7 +11,7 @@ HINT: Some products can be obtained in more than one way so be sure to only incl
 
 ANSWER:
 45228
-Solve time ~2.14 seconds
+Solve time ~1.8 seconds
 """
 
 from util.utils import timeit
@@ -27,8 +27,8 @@ class Problem32:
     @timeit
     def solve(self):
         t = []
-        for i in range(self.max_x):
-            for j in range(self.max_y):
+        for i in range(1, self.max_x):
+            for j in range(1, self.max_y):
                 if Problem32.pandigital(i, j):
                     if i*j not in t:
                         t.append(i * j)
@@ -39,31 +39,27 @@ class Problem32:
     @staticmethod
     def pandigital(a, b):
         """Return True is a*b=c is all pandigital"""
-        x = Problem32.check(a)  # check if a is pandigital
-        if x is False:
+        used_digits = {'0'}
+        # check if a is pandigital without using the digit of 0
+        used_digits = Problem32.check(a, used_digits)
+        if used_digits is not False:
+            # check if b is pandigital without using the digits in a
+            used_digits = Problem32.check(b, used_digits)
+            if used_digits is not False:
+                # check if a*b is pandigital without using the digits in a or b
+                used_digits = Problem32.check(a * b, used_digits)
+
+        if (used_digits is False) or (len(used_digits) != 10):
             return False
-        y = Problem32.check(b, x)
-        if y is False:
-            return False
-        z = Problem32.check(a * b, y)
-        if z is False:
-            return False
-        if len(z) == 9:
-            return True
-        return False
+        return True
 
     @staticmethod
-    def check(num, a=None):
-        s = set() if a is None else a
-
+    def check(num, s):
         for i in str(num):
             if i in s:
                 return False
             else:
-                if i == '0':
-                    return False
-                else:
-                    s.add(i)
+                s.add(i)
         return s
 
 
