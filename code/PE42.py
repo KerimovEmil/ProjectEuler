@@ -1,19 +1,26 @@
-# The nth term of the sequence of triangle numbers is given by, tn = n(n+1)/2; so the first
-# ten triangle numbers are:
+"""
+PROBLEM
 
-# 1, 3, 6, 10, 15, 21, 28, 36, 45, 55,
+The nth term of the sequence of triangle numbers is given by, tn = n(n+1)/2; so the first
+ten triangle numbers are:
 
-# By converting each letter in a word to a number corresponding to its alphabetical position
-# and adding these values we form a word value. For example, the word value for
-# SKY is 19 + 11 + 25 = 55 = t10. If the word value is a triangle number then we shall call
-#  the word a triangle word.
+1, 3, 6, 10, 15, 21, 28, 36, 45, 55,
 
-# Using words.txt (right click and 'Save Link/Target As...'), a 16K text file containing
-# nearly two-thousand common English words, how many are triangle words?
+By converting each letter in a word to a number corresponding to its alphabetical position
+and adding these values we form a word value. For example, the word value for
+SKY is 19 + 11 + 25 = 55 = t10. If the word value is a triangle number then we shall call
+ the word a triangle word.
 
-# Answer = 162
+Using words.txt (right click and 'Save Link/Target As...'), a 16K text file containing
+nearly two-thousand common English words, how many are triangle words?
+
+ANSWER:
+162
+Solve time ~0.007 seconds
+"""
 
 from util.utils import timeit
+import unittest
 
 
 class Problem42:
@@ -42,13 +49,16 @@ class Problem42:
                 self.count += 1
         return self.count
 
-    def get_solution(self):
-        return self.count
+
+class Solution42(unittest.TestCase):
+    def setUp(self):
+        with open(r"..\problem_data\p042_words.txt", 'r+') as f:
+            old_words = f.read().split(',')
+        self.problem = Problem42(words=old_words, max_triangle_sum=100)
+
+    def test_solution(self):
+        self.assertEqual(162, self.problem.solve())
 
 
-if __name__ == "__main__":
-    old_words = open(r"..\problem_data\p042_words.txt", 'r+').read().split(',')
-
-    obj = Problem42(words=old_words, max_triangle_sum=100)
-    sol = obj.solve()
-    print(sol)
+if __name__ == '__main__':
+    unittest.main()
