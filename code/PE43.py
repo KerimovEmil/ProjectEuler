@@ -1,28 +1,29 @@
-# The number, 1406357289, is a 0 to 9 pandigital number because it is made up of each of
-# the digits 0 to 9 in some order, but it also has a rather interesting sub-string divisibility property.
+"""
+PROBLEM
 
-# Let d1 be the 1st digit, d2 be the 2nd digit, and so on. In this way, we note the following:
+The number, 1406357289, is a 0 to 9 pandigital number because it is made up of each of
+the digits 0 to 9 in some order, but it also has a rather interesting sub-string divisibility property.
 
-# d2d3d4=406 is divisible by 2
-# d3d4d5=063 is divisible by 3
-# d4d5d6=635 is divisible by 5
-# d5d6d7=357 is divisible by 7
-# d6d7d8=572 is divisible by 11
-# d7d8d9=728 is divisible by 13
-# d8d9d10=289 is divisible by 17
-# Find the sum of all 0 to 9 pandigital numbers with this property.
+Let d1 be the 1st digit, d2 be the 2nd digit, and so on. In this way, we note the following:
 
+d2d3d4=406 is divisible by 2
+d3d4d5=063 is divisible by 3
+d4d5d6=635 is divisible by 5
+d5d6d7=357 is divisible by 7
+d6d7d8=572 is divisible by 11
+d7d8d9=728 is divisible by 13
+d8d9d10=289 is divisible by 17
+Find the sum of all 0 to 9 pandigital numbers with this property.
 
-# Answer = 16695334890
+ANSWER:
+16695334890
+Solve time ~ seconds
+"""
 
 # d2 d3 d4 is divisible by 2 implies d4 = 0,2,4,6,8
-
 # d4 d5 d6 is divisible by 5 implies d6 = 0 or 5
-
 # d3 d4 d5 is divisible by 3 implies d3 + d4 + d5 is divisible by 3
-
 # d5 5 d7 is divisible by 7 implies d5 d7 = (1,4), (2,9), (3,0), (3,7), (6,1), (6,8), (7,6), (8,4), (9,2)
-
 # d6 d7 d8 is divisible by 11 implies d6 cant be 0, since 11, 22, .. 99, are not unique digits
 # Therefore d6 = 5, and d7 d8 = (0,6), (1,7), (2,8), (3,9), (6,1), (7,2), (8,3), (9,4)
 # note that (5,0) can't work since d6 = 5.
@@ -42,6 +43,7 @@
 
 import itertools
 from util.utils import timeit
+import unittest
 
 
 class DumbProblem43:  # takes ~16 seconds
@@ -63,9 +65,6 @@ class DumbProblem43:  # takes ~16 seconds
             str_num = ''.join(map(str, list(pan_digit)))
             if self.check(str_num):
                 self.ans += int(str_num)
-        return self.ans
-
-    def get_solution(self):
         return self.ans
 
 
@@ -103,12 +102,15 @@ class Problem43:
             self.ans += int(''.join(map(str, list(tup))))
         return self.ans
 
-    def get_solution(self):
-        return self.ans
+
+class Solution43(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem43(n_criteria=7)
+
+    def test_solution(self):
+        # TODO FIX THIS, it's giving the wrong answer
+        self.assertEqual(16695334890, self.problem.solve())
 
 
-if __name__ == "__main__":
-    obj = Problem43(n_criteria=7)
-    sol = obj.solve()
-    print(sol)
-
+if __name__ == '__main__':
+    unittest.main()
