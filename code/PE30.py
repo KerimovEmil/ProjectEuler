@@ -1,11 +1,22 @@
-# PROBLEM
+"""
+PROBLEM
 
-# Find the sum of all the numbers that can be written as the sum of fifth powers of their digits.
-# As 1 = 1^5 is not a sum it is not included.
+Surprisingly there are only three numbers that can be written as the sum of fourth powers of their digits:
 
-# ANSWER:
-# 443839
-# Solve time ~ 0.65 seconds
+1634 = 1^4 + 6^4 + 3^4 + 4^4
+8208 = 8^4 + 2^4 + 0^4 + 8^4
+9474 = 9^4 + 4^4 + 7^4 + 4^4
+As 1 = 1^4 is not a sum it is not included.
+
+The sum of these numbers is 1634 + 8208 + 9474 = 19316.
+
+Find the sum of all the numbers that can be written as the sum of fifth powers of their digits.
+
+ANSWER:
+443839
+Solve time ~ 0.72 seconds
+"""
+
 
 # 9^5 = 59049.
 # So the maximum sum would be 9*59049 = 531441,
@@ -19,6 +30,7 @@
 # log(n) + power*log(9) = n log(10)
 
 from util.utils import timeit
+import unittest
 
 
 class Problem30:
@@ -42,7 +54,13 @@ class Problem30:
         return self.ans
 
 
-if __name__ == "__main__":
-    obj = Problem30(power=5, max_num=int(6 * 9**5))
-    sol = obj.solve()
-    print(sol)
+class Solution30(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem30(power=5, max_num=int(6 * 9**5))
+
+    def test_solution(self):
+        self.assertEqual(443839, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()

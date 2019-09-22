@@ -1,17 +1,21 @@
-# We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once;
-# for example, the 5-digit number, 15234, is 1 through 5 pandigital.
+"""
+PROBLEM
 
-# The product 7254 is unusual, as the identity, 39 × 186 = 7254, containing multiplicand, multiplier, and product
-#  is 1 through 9 pandigital.
+We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once; for example,
+the 5-digit number, 15234, is 1 through 5 pandigital.
+The product 7254 is unusual, as the identity, 39 × 186 = 7254, containing multiplicand, multiplier, and product is 1
+through 9 pandigital.
+Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital.
 
-# Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9
-# pandigital.
+HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
 
-# ANSWER
-# 45228
+ANSWER:
+45228
+Solve time ~2.14 seconds
+"""
 
 from util.utils import timeit
-# from util.utils import is_pandigital
+import unittest
 
 
 class Problem32:
@@ -26,9 +30,7 @@ class Problem32:
         for i in range(self.max_x):
             for j in range(self.max_y):
                 if Problem32.pandigital(i, j):
-                    if i * j in t:
-                        pass
-                    else:
+                    if i*j not in t:
                         t.append(i * j)
                         self.sum += i * j
 
@@ -36,19 +38,19 @@ class Problem32:
 
     @staticmethod
     def pandigital(a, b):
-        x = Problem32.check(a)
-        if x == False:
+        """Return True is a*b=c is all pandigital"""
+        x = Problem32.check(a)  # check if a is pandigital
+        if x is False:
             return False
-        else:
-            y = Problem32.check(b, x)
-            if y == False:
-                return False
-            else:
-                z = Problem32.check(a * b, y)
-        if z == False:
+        y = Problem32.check(b, x)
+        if y is False:
             return False
-        elif len(z) == 9:
+        z = Problem32.check(a * b, y)
+        if z is False:
+            return False
+        if len(z) == 9:
             return True
+        return False
 
     @staticmethod
     def check(num, a=None):
@@ -65,8 +67,13 @@ class Problem32:
         return s
 
 
-if __name__ == "__main__":
-    obj = Problem32(max_x=100, max_y=10000)
-    sol = obj.solve()
-    print(sol)
+class Solution32(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem32(max_x=100, max_y=10000)
 
+    def test_solution(self):
+        self.assertEqual(45228, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()
