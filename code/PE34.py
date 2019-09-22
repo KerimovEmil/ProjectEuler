@@ -9,7 +9,7 @@ Note: as 1! = 1 and 2! = 2 are not sums they are not included.
 
 ANSWER:
 40730
-Solve time ~7.3  seconds
+Solve time ~7.3 seconds
 """
 
 # https://en.wikipedia.org/wiki/Factorion
