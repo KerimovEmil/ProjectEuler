@@ -13,8 +13,6 @@ ANSWER:
 Solve time ~0.05 seconds
 """
 
-# Answer: 840
-
 # (a,b,c) int s.t. a^2 + b^2 = c^2
 
 # a = k(m^2 - n^2)
