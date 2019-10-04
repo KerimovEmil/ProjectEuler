@@ -2,6 +2,7 @@ import numpy as np
 import time
 from itertools import accumulate
 from functools import lru_cache
+from math import gcd
 
 
 class Hungarian:
@@ -878,3 +879,7 @@ def euler_totient_function(n):
         output *= p
     return int(output)
 
+
+def is_coprime(a, b):
+    """Returns True if a and b are co-prime, False otherwise"""
+    return gcd(a,b) == 1
