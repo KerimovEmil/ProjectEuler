@@ -52,24 +52,6 @@ class Problem678:
         self.n = n
 
     @staticmethod
-    def cond_d_1(dc_prime):  # Accurate!
-        """Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power."""
-        # NOTE: THIS EXCLUDES 0, SO NO 2^2 + 0^2 = 4.
-        # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p ≡ 3 (mod 4)
-        # 3 mod 4 primes must all be even powers
-        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 4 == 3]):
-            return False
-        # At least one 1mod4 prime must exist
-        if sum([x % 4 == 1 for x in dc_prime.keys()]) == 0:
-            # if at least one 1mod4 prime does not exist then the power of 4 must be odd
-            # if 2 in dc_prime.keys():
-            if dc_prime.get(2, 0) % 2 == 1:
-                return True
-            else:
-                return False
-        return True
-
-    @staticmethod
     def number_of_sum_of_squares(dc_prime):
         """
         Given the prime factorization, outputs the number of ways this number can be represented as the sum of two
@@ -108,20 +90,13 @@ class Problem678:
         # Therefore the highest value of c is N**(1/3)
         # for c in range(2, round(self.n**(1/3))+1):
         for c in range(3, max_c + 1):  # todo prove that c=2 does not work. This simplifies the below logic
-            dc_prime = primes_of_n(c, ls_primes)  # todo pass in list of primes
+            dc_prime = primes_of_n(c, ls_primes)
             f = 3
-            new_dc_prime = {k: v*f for k,v in dc_prime.items()}
+            new_dc_prime = {k: v*f for k, v in dc_prime.items()}
             while c**f <= self.n:
                 # check if sum of squares
                 answer += self.number_of_sum_of_squares(new_dc_prime)
-                # if self.cond_d_1(new_dc_prime):
-                #     mod_4_remainder_1 = {k: v for k, v in new_dc_prime.items() if k % 4 == 1}
-                #     num_of_partitions = ceil(prod(v+1 for k, v in mod_4_remainder_1.items()) / 2)
-                #     answer += num_of_partitions
-                #     # if perfect square then subtract 1 to eliminate the solution 0 + b^2 = square
-                #     if all(exp % 2 == 0 for p, exp in new_dc_prime.items() if p != 2):  # then perfect square
-                #         answer -= 1
-                answer += self.check_if_sum_of_powers(round(c**f), c, f, lowest_e=3)
+                answer += self.check_if_sum_of_powers(round(c**f), c, f, lowest_e=3)  # this part needs to be faster
                 f += 1
                 new_dc_prime = {k: v * f for k, v in dc_prime.items()}
         return answer
@@ -182,8 +157,17 @@ class Solution678(unittest.TestCase):
         self.assertEqual(53, problem.solve2())
 
     def test_big_sample_solution2(self):
-        problem = Problem678(n=int(1e7))
+        problem = Problem678(n=int(1e7))  # takes 5 seconds.
         self.assertEqual(287, problem.solve2())
+
+    # 1e7 takes 5 seconds
+    # 1e8 takes 54 seconds
+
+    # 1e18 for just case 1 takes: 24 seconds
+
+    # def test_big(self):
+    #     problem = Problem678(n=int(1e18))
+    #     problem.solve2()
 
 
 if __name__ == '__main__':
