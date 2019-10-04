@@ -24,34 +24,127 @@ Solve time ~???? seconds
 # BEAL'S CONJECTURE:  If A^x + B^y = C^z, where A, B, C, x, y and z are positive integers
 # and x, y and z are all greater than 2, then A, B and C must have a common prime factor.
 
+# assuming the Beal conjecture, we can split the problem into 3 cases:
 
-from util.utils import timeit, is_coprime
+# CASE 1: e = 2
+# a^2 + b^2 = c^f, for 0 < a < b, f>=3, c^f <= 10^18
+# For this we can figure out if a number can be expressed as the sum of two squares by counting the number of prime
+# factors in it. (see PE 229 and 233)
+# Ignore powers of 2. 3 mod 4 primes must be even power. 1 mod 4 primes must exist OR odd power of 2.
+
+# CASE 2: e > 2
+# a^e + b^e = c^f, for 0 < a < b, e>= 3, f>=3, c^f <= 10^18
+# Assuming Beal's conjecture, a,b,c must all have a common factor.
+
+from util.utils import timeit, is_coprime, primes_of_n, sieve
 import unittest
+from functools import reduce
+import operator
+from math import ceil
+
+
+def prod(iterable):
+    return reduce(operator.mul, iterable, 1)
 
 
 class Problem678:
     def __init__(self, n):
         self.n = n
 
+    @staticmethod
+    def cond_d_1(dc_prime):  # Accurate!
+        """Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power."""
+        # NOTE: THIS EXCLUDES 0, SO NO 2^2 + 0^2 = 4.
+        # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p ≡ 3 (mod 4)
+        # 3 mod 4 primes must all be even powers
+        if any([x % 2 != 0 for p, x in dc_prime.items() if p % 4 == 3]):
+            return False
+        # At least one 1mod4 prime must exist
+        if sum([x % 4 == 1 for x in dc_prime.keys()]) == 0:
+            # if at least one 1mod4 prime does not exist then the power of 4 must be odd
+            # if 2 in dc_prime.keys():
+            if dc_prime.get(2, 0) % 2 == 1:
+                return True
+            else:
+                return False
+        return True
+
+    @staticmethod
+    def number_of_sum_of_squares(dc_prime):
+        """
+        Given the prime factorization, outputs the number of ways this number can be represented as the sum of two
+        squares. Excluding the a^2 + 0^2 case.
+        This function does not consider any powers of 2, this simplifies the exceptions.
+        Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power.
+        """
+        # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p ≡ 3 (mod 4)
+        # 3 mod 4 primes must all be even powers
+        if any(x % 2 != 0 for p, x in dc_prime.items() if p % 4 == 3):  # odd powers of bad primes
+            return 0
+        # NOTE: THIS EXCLUDES 0, SO NO 2^2 + 0^2 = 4.
+        # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p ≡ 3 (mod 4)
+        # 3 mod 4 primes must all be even powers
+
+        # At least one 1mod4 prime must exist. Ignoring the special condition of powers of 2.
+        mod_4_remainder_1 = {k: v for k, v in dc_prime.items() if k % 4 == 1}
+        if len(mod_4_remainder_1) == 0:
+            return 0
+
+        num_of_partitions = ceil(prod(v + 1 for k, v in mod_4_remainder_1.items()) / 2)
+        # if perfect square then subtract 1 to eliminate the solution 0 + b^2 = square
+        if all(exp % 2 == 0 for p, exp in mod_4_remainder_1.items()):
+            num_of_partitions -= 1
+
+        return num_of_partitions
+
     @timeit
-    def solve(self):
+    def solve2(self):
+        # lowest value of f is 3
+        # Therefore the highest value of c is N**(1/3)
+        max_c = int(round(self.n**(1/3)))
+        ls_primes = list(sieve(max_c))
         answer = 0
         # lowest value of f is 3
         # Therefore the highest value of c is N**(1/3)
-        for c in range(2, round(self.n**(1/3))+1):
+        # for c in range(2, round(self.n**(1/3))+1):
+        for c in range(3, max_c + 1):  # todo prove that c=2 does not work. This simplifies the below logic
+            dc_prime = primes_of_n(c, ls_primes)  # todo pass in list of primes
             f = 3
+            new_dc_prime = {k: v*f for k,v in dc_prime.items()}
             while c**f <= self.n:
-                answer += self.check_if_sum_of_powers(round(c**f), c, f)
+                # check if sum of squares
+                answer += self.number_of_sum_of_squares(new_dc_prime)
+                # if self.cond_d_1(new_dc_prime):
+                #     mod_4_remainder_1 = {k: v for k, v in new_dc_prime.items() if k % 4 == 1}
+                #     num_of_partitions = ceil(prod(v+1 for k, v in mod_4_remainder_1.items()) / 2)
+                #     answer += num_of_partitions
+                #     # if perfect square then subtract 1 to eliminate the solution 0 + b^2 = square
+                #     if all(exp % 2 == 0 for p, exp in new_dc_prime.items() if p != 2):  # then perfect square
+                #         answer -= 1
+                answer += self.check_if_sum_of_powers(round(c**f), c, f, lowest_e=3)
                 f += 1
+                new_dc_prime = {k: v * f for k, v in dc_prime.items()}
         return answer
 
+    # @timeit
+    # def solve(self):
+    #     answer = 0
+    #     # lowest value of f is 3
+    #     # Therefore the highest value of c is N**(1/3)
+    #     for c in range(2, round(self.n**(1/3))+1):
+    #         f = 3
+    #         while c**f <= self.n:
+    #             answer += self.check_if_sum_of_powers(round(c**f), c, f)
+    #             f += 1
+    #     return answer
+
     @staticmethod
-    def check_if_sum_of_powers(limit, c, f):
+    def check_if_sum_of_powers(limit, c, f, lowest_e=2):
         """Returns how many a^e + b^e = limit, for a < b. Where limit = c^f"""
         count = 0
-        for a in range(1, round((limit/2)**0.5)+1):  # way too many
-            for b in range(a+1, round((limit - a**2)**0.5 + 1)):  # way too many
-                e = 2  # e must be either 2 or coprime to f
+        for a in range(1, round((limit/2)**(1/lowest_e))+1):  # way too many
+            for b in range(a+1, round((limit - a**lowest_e)**(1/lowest_e) + 1)):  # way too many
+                e = lowest_e  # e must be either 2 or coprime to f
                 fermat_sum = round(a**e + b**e)
                 while fermat_sum < limit:
                     e += 1
@@ -72,17 +165,25 @@ class Solution678(unittest.TestCase):
     #     # Fill this in once you've got a working solution!
     #     self.assertEqual(1, self.problem.solve())
 
-    def test_smallest_solution(self):
+    # def test_smallest_solution(self):
+    #     problem = Problem678(n=int(1e3))
+    #     self.assertEqual(7, problem.solve())
+    #
+    # def test_small_solution(self):
+    #     problem = Problem678(n=int(1e5))
+    #     self.assertEqual(53, problem.solve())
+
+    def test_smallest_solution2(self):
         problem = Problem678(n=int(1e3))
-        self.assertEqual(7, problem.solve())
+        self.assertEqual(7, problem.solve2())
 
-    def test_small_solution(self):
+    def test_small_solution2(self):
         problem = Problem678(n=int(1e5))
-        self.assertEqual(53, problem.solve())
+        self.assertEqual(53, problem.solve2())
 
-    # def test_big_sample_solution(self):
-    #     problem = Problem678(n=int(1e7))
-    #     self.assertEqual(287, problem.solve())
+    def test_big_sample_solution2(self):
+        problem = Problem678(n=int(1e7))
+        self.assertEqual(287, problem.solve2())
 
 
 if __name__ == '__main__':
