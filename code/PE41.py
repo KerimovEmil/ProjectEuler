@@ -1,53 +1,56 @@
-# We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n
-# exactly once. For example, 2143 is a 4-digit pandigital and is also prime.
+"""
+PROBLEM
 
-# What is the largest n-digit pandigital prime that exists?
+We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once.
+For example, 2143 is a 4-digit pandigital and is also prime.
 
-# Answer: 7652413
+What is the largest n-digit pandigital prime that exists?
 
-import itertools
+ANSWER:
+7652413
+Solve time ~0.5 seconds
+"""
+
+# Note that:
+# 4-digit = 1+2+3+4 = 10
+# 5-digit = 1+2+3+4+5 = 15, which is divisible by 3 so it cannot be a prime number.
+# 6-digit = 1+2+3+4+5+6 = 21, which is divisible by 3 so it cannot be a prime number.
+# 7-digit = 1+2+3+4+5+6+7 = 28
+# 8-digit = 1+2+3+4+5+6+7+8 = 36, which is divisible by 3 so it cannot be a prime number.
+# 9-digit = 1+2+3+4+5+6+7+8+9 = 45, which is divisible by 3 so it cannot be a prime number.
+# 10-digit can't exist.
+
+# therefore since we know it's not a 4 digit number due to the problem, it must be a 7-digit number.
+
 from util.utils import timeit
+import unittest
+from primesieve import primes
 
 
 class Problem41:
     def __init__(self, n):
         self.n = n
         self.ans = 0
-
-    @staticmethod
-    def is_prime(n):  # todo reconcile with other is_prime functions
-        if n == 2 or n == 3:
-            return True
-        if n < 2 or n % 2 == 0: return False
-        if n < 9: return True
-        if n % 3 == 0: return False
-        r = int(n ** 0.5)
-        f = 5
-        while f <= r:
-            if n % f == 0: return False
-            if n % (f + 2) == 0: return False
-            f += 6
-        return True
+        self.ls_prime = primes(int(10**(n-1)), int(10**n))
 
     @timeit
     def solve(self):
-        ls_nums = itertools.permutations(range(1, self.n + 1))
-        for i in ls_nums:
-            num = int(''.join(map(str, list(i))))
-            if Problem41.is_prime(num):
-                if num > self.ans:
-                    self.ans = num
-        return self.ans
+        digit_set = {str(i) for i in range(1, self.n + 1)}
 
-    def get_solution(self):
-        return self.ans
+        for prime in self.ls_prime[::-1]:
+            unique = len(set(str(prime))) == len(list(str(prime)))
+            correct_values = set(str(prime)) == digit_set
+            if unique and correct_values:
+                return prime
 
 
-if __name__ == "__main__":
-    # 0: for 9 digits
-    # 0 : for 8 digits
-    # 7652413 : for 7 digits
+class Solution41(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem41(n=7)
 
-    obj = Problem41(n=7)
-    sol = obj.solve()
-    print(sol)
+    def test_solution(self):
+        self.assertEqual(7652413, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()
