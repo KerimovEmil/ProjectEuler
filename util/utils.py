@@ -890,3 +890,27 @@ def farey(n, descending=False):
         a, b, c, d = c, d, k * c - a, k * d - b
         ls_farey.append((a, b))
     return ls_farey
+
+
+@lru_cache(maxsize=None, typed=False)
+def len_faray_seq(n):
+    """
+    Calculates the length of the n'th Faray Sequence.
+    Args:
+        n: <int>
+
+    Returns: <int>
+
+    Using the recursive relation |F_{n}| = |F_{n-1}| + euler_totient(n),
+    Expanding for all n and then inverting the relation, after using |F_1| = 2 we get
+    |F_{n}| = 1/2 * (n+3) * n  - sum_{d=2}^{n} |F_{floor(n/d)}|
+    See Also: https://en.wikipedia.org/wiki/Farey_sequence
+    """
+
+    if n == 1:
+        return 2
+    elif n < 1:
+        raise NotImplementedError("What happened??")
+    else:
+
+        return int(0.5*(n+3)*n) - sum(len_faray_seq(int(n/d)) for d in range(2, n+1))

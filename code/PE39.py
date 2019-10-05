@@ -1,11 +1,17 @@
-# If p is the perimeter of a right angle triangle with integral length sides,
-# {a,b,c}, there are exactly three solutions for p = 120.
+"""
+PROBLEM
 
-# (20,48,52), (24,45,51), (30,40,50)
+If p is the perimeter of a right angle triangle with integral length sides,
+{a,b,c}, there are exactly three solutions for p = 120.
 
-# For which value of p <= 1000, is the number of solutions maximised?
+(20,48,52), (24,45,51), (30,40,50)
 
-# Answer: 840
+For which value of p <= 1000, is the number of solutions maximised?
+
+ANSWER:
+840
+Solve time ~0.05 seconds
+"""
 
 # (a,b,c) int s.t. a^2 + b^2 = c^2
 
@@ -22,6 +28,7 @@
 # therefore perimeter must always be even.
 
 from util.utils import timeit
+import unittest
 
 
 class Problem39:
@@ -67,7 +74,13 @@ class Problem39:
         return self.ans
 
 
-if __name__ == "__main__":
-    obj = Problem39(max_perimeter=1000)
-    sol = obj.solve()
-    print(sol)
+class Solution39(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem39(max_perimeter=1000)
+
+    def test_solution(self):
+        self.assertEqual(840, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()
