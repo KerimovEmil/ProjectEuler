@@ -1,17 +1,26 @@
-# Take the number 192 and multiply it by each of 1, 2, and 3:
-# 192 * 1 = 192
-# 192 * 2 = 384
-# 192 * 3 = 576
-# By concatenating each product we get the 1 to 9 pandigital, 192384576.
-# We will call 192384576 the concatenated product of 192 and (1,2,3)
+"""
+PROBLEM
 
-# The same can be achieved by starting with 9 and multiplying by 1, 2, 3, 4, and 5,
-# giving the pandigital, 918273645, which is the concatenated product of 9 and (1,2,3,4,5).
+Take the number 192 and multiply it by each of 1, 2, and 3:
+192 * 1 = 192
+192 * 2 = 384
+192 * 3 = 576
+By concatenating each product we get the 1 to 9 pandigital, 192384576.
+We will call 192384576 the concatenated product of 192 and (1,2,3)
 
-# What is the largest 1 to 9 pandigital 9-digit number that can be formed as the concatenated
-#  product of an integer with (1,2, ... , n) where n > 1?
+The same can be achieved by starting with 9 and multiplying by 1, 2, 3, 4, and 5,
+giving the pandigital, 918273645, which is the concatenated product of 9 and (1,2,3,4,5).
 
-# Answer = 932718654
+What is the largest 1 to 9 pandigital 9-digit number that can be formed as the concatenated product of an integer
+with (1,2, ... , n) where n > 1?
+
+ANSWER:
+932718654
+Solve time ~0.02 seconds
+"""
+
+from util.utils import timeit
+import unittest
 
 
 def unique_digits(str_num):
@@ -25,17 +34,15 @@ def unique_digits(str_num):
     str_num_set = set(str_num)
     if '0' in str_num_set:
         return False
-    elif len(str_num_set) != len(str_num):
+    if len(str_num_set) != len(str_num):
         return False
-    else:
-        return True
+    return True
 
 
 class Problem38:
     def __init__(self, max_integer, n_digit):
         self.max_integer = max_integer
         self.n_digit = n_digit
-        self.max = 0
 
     def create_sample_pandigital(self, num):
         num_str = str(num)
@@ -53,12 +60,18 @@ class Problem38:
                 return int(num_str)
         return 0
 
+    @timeit
     def solve(self):
-        self.max = max([self.create_sample_pandigital(i) for i in range(1, self.max_integer)])
-        return self.max
+        return max([self.create_sample_pandigital(i) for i in range(1, self.max_integer)])
 
 
-if __name__ == "__main__":
-    obj = Problem38(max_integer=10000, n_digit=9)
-    sol = obj.solve()
-    print(sol)
+class Solution38(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem38(max_integer=10000, n_digit=9)
+
+    def test_solution(self):
+        self.assertEqual(932718654, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()

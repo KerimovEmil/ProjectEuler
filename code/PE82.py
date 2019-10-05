@@ -1,32 +1,36 @@
-# PROBLEM
+"""
+PROBLEM
 
-# Find the minimal path sum, in matrix.txt (right click and "Save Link/Target As..."),
-# a 31K text file containing a 80 by 80 matrix, from the left column to the right column.
+Find the minimal path sum, in matrix.txt (right click and "Save Link/Target As..."),
+a 31K text file containing a 80 by 80 matrix, from the left column to the right column.
 
-# ANSWER
-# 260324
+ANSWER:
+260324
+Solve time ~2.2 seconds
+Related problems: 81
+"""
 
 import copy
+from util.utils import timeit
+import unittest
 
 
 class Problem82:
     def __init__(self, data_path):
-        self.problem_data = []
-        self.load_data(data_path)
-        self.n = len(self.problem_data)
+        self.problem_data = self.load_data(data_path)
         self.working_matrix = copy.deepcopy(self.problem_data)
 
-    def load_data(self, data_path):
-        f = open(data_path, 'r')
-        for line in f:
-            w = line.split(',')
-            w = [int(x) for x in w]
-            self.problem_data.append(w)
+    @staticmethod
+    def load_data(data_path):
+        with open(data_path, 'r') as f:
+            problem_data = [[int(n) for n in s.split(',')] for s in f.readlines()]
+        return problem_data
 
+    @timeit
     def solve(self):
         a = self.problem_data
         B = self.working_matrix
-        n = self.n
+        n = len(self.problem_data)
 
         for j in range(n - 1):  # loop over n-1 cols
             col = n - 2 - j  # dynamic programming
@@ -54,7 +58,13 @@ class Problem82:
         return min([x[0] for x in B])
 
 
-if __name__ == "__main__":
-    obj = Problem82(r'..\problem_data\p082_matrix.txt')
-    sol = obj.solve()
-    print(sol)
+class Solution81(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem82(r'..\problem_data\p082_matrix.txt')
+
+    def test_solution(self):
+        self.assertEqual(260324, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()
