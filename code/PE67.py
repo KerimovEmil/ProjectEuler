@@ -13,26 +13,8 @@ Solve time ~0.007 seconds
 Related Problems: 18
 """
 
-from util.utils import timeit
 import unittest
-
-
-class Problem67:
-    def __init__(self, data):
-        self.data = data
-
-    def reduce_triangle(self):
-        for i in range(len(self.data[-1]) - 1):
-            best_path = max(self.data[-1][i], self.data[-1][i + 1])
-            self.data[-2][i] += best_path
-        del self.data[-1]
-
-    @timeit
-    def solve(self):
-        for row in range(len(self.data)-1):
-            self.reduce_triangle()
-
-        return self.data[0][0]
+from code.PE18 import Problem18
 
 
 class Solution67(unittest.TestCase):
@@ -40,7 +22,7 @@ class Solution67(unittest.TestCase):
         with open(r'../problem_data/p067_triangle.txt') as f:
             triangle = [[int(n) for n in s.split()] for s in f.readlines()]
 
-        self.problem = Problem67(triangle)
+        self.problem = Problem18(triangle)
 
     def test_solution(self):
         self.assertEqual(7273, self.problem.solve())

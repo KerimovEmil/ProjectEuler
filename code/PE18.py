@@ -20,6 +20,11 @@ class Problem18:
         self.data = data
 
     def reduce_triangle(self):
+        """
+        This method replaces the last row of the triangle with the sum of that row and the maximum of the left
+        and right paths. This replacement happens for each row of the triangle starting from the bottom until only one
+        number is left.
+        """
         for i in range(len(self.data[-1]) - 1):
             best_path = max(self.data[-1][i], self.data[-1][i + 1])
             self.data[-2][i] += best_path
