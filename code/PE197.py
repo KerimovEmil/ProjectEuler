@@ -4,7 +4,7 @@ PROBLEM
 Given is the function f(x) = ⌊2^(30.403243784-x^2)⌋ × 1e-9 ( ⌊ ⌋ is the floor-function),
 the sequence u(n) is defined by u(0) = -1 and u(n+1) = f(u(n)).
 
-Find un + un+1 for n = 10^12.
+Find u(n) + u(n+1) for n = 10^12.
 Give your answer with 9 digits after the decimal point.
 
 ANSWER:
