@@ -8,13 +8,13 @@ How many square root smooth numbers are there not exceeding 10000000000?
 
 ANSWER: 2811077773
 
-Solve time ~18 seconds
+Solve time ~6 seconds
 """
 
 from util.utils import timeit
 import unittest
 from primesieve import primes, count_primes
-from math import log
+
 # resources: https://math.dartmouth.edu/~carlp/PDF/qs08.pdf
 
 #  primes(int(100**0.5)) = primes(10) = [2, 3, 5, 7]
@@ -51,97 +51,72 @@ class Problem668:
         self.n = n
         self.ans = 0
 
-    def multiply_recurse(self, num, max_prime, ls_primes):
-        if len(ls_primes) == 0:
-            return num ** 0.5 > max_prime
-        else:
-            output_sum = self.multiply_recurse(num, max_prime, ls_primes[1:])  # skipping this prime
-            p = ls_primes[0]
-            max_prime = max(p, max_prime)
-            ls_nums_less_than_limit = (num * (p**exp) for exp in range(1, int(log(self.n/num, p)) + 1))
-            output_sum += sum(self.multiply_recurse(n, max_prime, ls_primes[1:]) for n in ls_nums_less_than_limit)
-            return output_sum
-
-    @timeit
-    def solve3(self):
-        ls_p = primes(int(self.n ** 0.5))[::-1]  # [7, 5, 3, 2]
-        print("Finished calculating primes")
-        self.ans = self.multiply_recurse(num=1, max_prime=0, ls_primes=ls_p)
-        return self.ans
-
-    @timeit
-    def solve2(self):
-        # ls_p = primes(int(self.n ** 0.5))  # [2, 3, 5, 7]
-        limit = self.n  # change per prime using logs
-        ans = 0
-        max_prime = 0
-        # set_answers = {1}
-        for n2 in range(limit):
-            if n2 > 0:
-                max_prime = 2
-                # num *= 2
-            num = 2 ** n2
-            if num > limit:
-                break
-            for n3 in range(limit):
-                if n3 > 0:
-                    max_prime = 3
-                num = 2 ** n2 * 3 ** n3
-                if num > limit:
-                    break
-                for n5 in range(limit):
-                    if n5 > 0:
-                        max_prime = 5
-                        # num *= 5
-                    num = 2 ** n2 * 3 ** n3 * 5 ** n5
-                    if num > limit:
-                        break
-                    for n7 in range(limit):
-                        if n7 > 0:
-                            max_prime = 7
-                            # num *= 7
-                        num = 2 ** n2 * 3 ** n3 * 5 ** n5 * 7 ** n7
-                        if num > limit:
-                            break
-                        if num ** 0.5 > max_prime:
-                            # set_answers.add(num)
-                            ans += 1
-        # print(ans)
-        # print(set_answers)
-        return ans
-
     @timeit
     def solve(self):
-        # # ∑_{p≤N} min(p,⌊N//p⌋)
+        # # ∑_{p≤N} min(p,⌊N//p⌋), # too slow
         # return self.n - sum(min(p, self.n//p) for p in primes(self.n))
 
         # x − ∑_{y=1}^{√x} (π(x//y)−π(y−1)).
-        return self.n - sum(count_primes(self.n//y) - count_primes(y-1) for y in range(1, int(self.n**0.5) + 1))
+        # return self.n - sum(count_primes(self.n//y) - count_primes(y-1) for y in range(1, int(self.n**0.5) + 1))
+
+        return self.first_solution()
+
+    def first_solution(self):
+        """
+        from user: shs.10978 in https://projecteuler.net/thread=668,
+        which is a variant of Lucy's algo found here: https://projecteuler.net/thread=10;page=5#111677
+        """
+        sq_rt_n = int(self.n**0.5)
+
+        lo = [i - 1 for i in range(sq_rt_n + 1)]
+        hi = [0] + [self.n // i - 1 for i in range(1, sq_rt_n + 1)]
+
+        tot = self.n
+        for p in range(2, sq_rt_n + 1):
+            if lo[p] == lo[p - 1]:
+                continue
+
+            tot -= p  # all multiples of p less than p * p is not
+
+            p_cnt = lo[p - 1]
+            q = p * p
+            end = min(sq_rt_n, self.n // q)
+            for i in range(1, end + 1):
+                d = i * p
+                if d <= sq_rt_n:
+                    hi[i] -= hi[d] - p_cnt
+                else:
+                    hi[i] -= lo[self.n // d] - p_cnt
+            for i in range(sq_rt_n, q - 1, -1):
+                lo[i] -= lo[i // p] - p_cnt
+
+        for k in range(1, sq_rt_n):
+            tot -= k * (hi[k] - hi[k + 1])
+
+        tot -= sq_rt_n * (hi[sq_rt_n] - lo[sq_rt_n])  # correction: for primes in (sq_rt_n, N // sq_rt_n]
+        return tot
 
 
 class Solution668(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def test_solution_11(self):
+    def test_solution_1(self):
         self.assertEqual(29, Problem668(n=100).solve())
 
-    def test_solution_21(self):
+    def test_solution_2(self):
         self.assertEqual(26613, Problem668(n=100000).solve())
 
-    def test_solution_31(self):
+    def test_solution_3(self):
         self.assertEqual(268172, Problem668(n=1000000).solve())
 
-    def test_solution_41(self):
+    def test_solution_4(self):
         self.assertEqual(2719288, Problem668(n=10000000).solve())
 
-    def test_solution_51(self):
+    def test_solution_5(self):
         self.assertEqual(27531694, Problem668(n=100000000).solve())
 
-    def test_solution_61(self):
+    def test_solution_6(self):
         self.assertEqual(278418003, Problem668(n=1000000000).solve())
 
-    def test_solution_71(self):
+    def test_solution_7(self):
         self.assertEqual(2811077773, Problem668(n=10000000000).solve())
 
 
