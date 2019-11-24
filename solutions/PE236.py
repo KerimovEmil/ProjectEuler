@@ -96,7 +96,7 @@ from fractions import Fraction
 # now this part I just kinda guessed, I assumed the form of m will be (41/59) * some_fraction
 # and then got every fraction in lowest form that has a max denominator of 60 (this is a parameter)
 # reverted that fraction and looped over those in ascending order.
-# this is possibly why this code does not find all 35 solutions, but this allowed me to greatly reduce the search
+# this is possibly why this solutions does not find all 35 solutions, but this allowed me to greatly reduce the search
 # todo see how other solutions handled this in the thread
 
 # ALTERNATIVE APPROACH
@@ -251,8 +251,8 @@ class Problem236:
 
 class Solution236(unittest.TestCase):
     def setUp(self):
-        # Note that there are a lot of simplifications in the code due to the exact values of a_total and b_total,
-        # therefore the code does not work if a_total and b_total were to change.
+        # Note that there are a lot of simplifications in the solutions due to the exact values of a_total and b_total,
+        # therefore the solutions does not work if a_total and b_total were to change.
         a_total = [5248, 1312, 2624, 5760, 3936]
         b_total = [640, 1888, 3776, 3776, 5664]
         self.problem = Problem236(a_total, b_total, max_den=60)  # max_den=100

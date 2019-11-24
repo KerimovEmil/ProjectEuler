@@ -54,7 +54,7 @@ import unittest
 # and d = 892371480 has R(d) = 0.16358819553891188 < 15499/94744 = 0.1635881955585578
 
 
-# See code below to codify this logic
+# See solutions below to codify this logic
 
 
 class Problem243:

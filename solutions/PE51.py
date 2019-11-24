@@ -46,7 +46,7 @@ class Problem51:
                 sub_string = num_rep[0]
 
             for j in range(i+1, self.max_dig_num-1):  # loop over remaining digits
-                # no need to check replacing two digits, see math comment above code
+                # no need to check replacing two digits, see math comment above solutions
 
                 for k in range(j+1, self.max_dig_num-1):
                     num_rep = self.get_common_prime_substring([i, j, k])  # replacing three digits

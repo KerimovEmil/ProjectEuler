@@ -14,7 +14,7 @@ Related Problems: 18
 """
 
 import unittest
-from code.PE18 import Problem18
+from solutions.PE18 import Problem18
 
 
 class Solution67(unittest.TestCase):
