@@ -16,7 +16,6 @@ Solve time ~2 seconds
 from util.utils import timeit, primes_of_n
 import unittest
 import functools
-import operator
 
 
 class Problem124:
@@ -33,8 +32,7 @@ class Problem124:
             return functools.reduce(lambda a, b: a * b, k)
 
         ls_full = {i: prod(primes_of_n(i)) for i in range(2, self.max_n+1)}
-
-        sorted_x = sorted(ls_full.items(), key=operator.itemgetter(1))
+        sorted_x = sorted(ls_full.items(), key=lambda kv: kv[1])
 
         return sorted_x[self.order - 2][0]
 
