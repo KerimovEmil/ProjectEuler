@@ -12,13 +12,47 @@ How many generalised Hamming numbers of type 100 are there which don't exceed 10
 
 ANSWER:
 2944730
-Solve time ~11 seconds
+Solve time ~1.3 seconds
 """
 
 from util.utils import timeit
 import unittest
-from primesieve import count_primes, primes
+from primesieve import primes
 import math
+
+# Idea is as follows: (from user Assato in https://projecteuler.net/thread=204;page=2)
+# Define hamming(N,b) returns how many numbers below N are primes(b)-smooth.
+# note that the number of 2-smooth numbers N are: floor(log(N) / log(2)) + 1
+# therefore hamming(N, 2) = floor(log(N) / log(2)) + 1
+
+# Looking at hamming(N,7). There are two types of 7-smooth numbers:
+# (i) those that are actually 5-smooth = hamming(N, 5)
+# (ii) those that contains at least one factor 7 = ?
+
+# The key to realize is that (ii) is  hamming(N/7 , 7).
+# This is true because hamming(N/7,7) contains ALL 7-smooth values until N/7 (those that contains the factor 7 and
+# those who don't). By multiplying each of them by 7, we'll get each and every 7-smooth number under a that contains
+# at least one 7 factor.
+
+# therefore hamming(N,7) = hamming(N,5) + hamming(N/7, 7)
+
+# example:
+# hamming(100, 5) = hamming(100, 3) + hamming(20, 5)
+
+# hamming(100, 3) = hamming(100, 2) + hamming(33, 3) = hamming(100, 2) + hamming(33, 2) + hamming(11, 3)
+#                 = hamming(100, 2) + hamming(33, 2) + hamming(11, 2) + hamming(3, 3)
+#                 = ceil(log(100)/log(2)) + ceil(log(33)/log(2)) + ceil(log(11)/log(2)) + 3
+#                 = 7 + 6 + 4 + 3
+#                 = 20
+
+# hamming(20, 5) = hamming(20, 3) + hamming(4, 5)
+#                = hamming(20, 2) + hamming(6, 3) + 4
+#                = hamming(20, 2) + hamming(6, 2) + hamming(2, 3) + 4
+#                = ceil(log(20)/log(2)) + ceil(log(6)/log(2)) + 2 + 4
+#                = 5 + 3 + 2 + 4
+#                = 14
+
+# therefore hamming(100, 5) = hamming(100, 3) + hamming(20, 5) = 20 + 14 = 34
 
 
 class Problem204:
@@ -28,19 +62,28 @@ class Problem204:
 
     @timeit
     def solve(self):
-        raise NotImplementedError('Please implement this method!')
+        """From user: Assato"""
+        ls_prime = primes(self.hamming)
+
+        def recursive_count(i, j):
+            if j == 0:
+                return int(math.log(i) / math.log(2)) + 1
+            if i == 0:
+                return 0
+            return recursive_count(i, j - 1) + recursive_count(i // ls_prime[j], j)
+
+        return recursive_count(self.limit, len(ls_prime)-1)
 
     @timeit
-    def simple_recursive_solve(self):
+    def simple_recursive_solve(self):  # slower solution
         ls_prime = primes(self.hamming)
-        LIMIT = self.limit
 
         def count(primeindex, product):
             if primeindex == len(ls_prime):
-                return 1 if product <= LIMIT else 0
+                return product <= self.limit
             else:
                 result = 0
-                while product <= LIMIT:
+                while product <= self.limit:
                     result += count(primeindex + 1, product)
                     product *= ls_prime[primeindex]
                 return result
@@ -49,17 +92,18 @@ class Problem204:
 
 
 class Solution204(unittest.TestCase):
-    # def setUp(self):
-    #     self.problem = Problem204()
 
-    # def test_solution_small(self):
-    #     self.assertEqual(1105, Problem204(hamming=5, limit=int(1e8)).solve())
+    def test_solution_small(self):
+        self.assertEqual(1105, Problem204(hamming=5, limit=int(1e8)).solve())
+
+    def test_solution(self):
+        self.assertEqual(2944730, Problem204(hamming=100, limit=int(1e9)).solve())
 
     def test_solution_small_simple(self):
         self.assertEqual(1105, Problem204(hamming=5, limit=int(1e8)).simple_recursive_solve())
 
-    def test_solution_simple(self):
-        self.assertEqual(2944730, Problem204(hamming=100, limit=int(1e9)).simple_recursive_solve())
+    # def test_solution_simple(self): # ~ 10 seconds
+    #     self.assertEqual(2944730, Problem204(hamming=100, limit=int(1e9)).simple_recursive_solve())
 
 
 if __name__ == '__main__':
