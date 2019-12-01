@@ -12,7 +12,7 @@ How many generalised Hamming numbers of type 100 are there which don't exceed 10
 
 ANSWER:
 2944730
-Solve time ~1.3 seconds
+Solve time ~0.6 seconds
 """
 
 from util.utils import timeit
@@ -63,16 +63,24 @@ class Problem204:
     @timeit
     def solve(self):
         """From user: Assato"""
-        ls_prime = primes(self.hamming)
+        ls_prime = primes(self.hamming)[::-1]
 
-        def recursive_count(i, j):
-            if j == 0:
-                return int(math.log(i) / math.log(2)) + 1
-            if i == 0:
-                return 0
-            return recursive_count(i, j - 1) + recursive_count(i // ls_prime[j], j)
+        def recursive_count(n, ls_dec_primes):
+            """
+            n: total limit to consider
+            ls_dec_primes: list of decreasing primes to consider.
 
-        return recursive_count(self.limit, len(ls_prime)-1)
+            returns how many numbers below N are primes(b)-smooth.
+            e.g. hamming(N,7) = hamming(N,5) + hamming(N/7, 7)
+            """
+            p = ls_dec_primes[0]
+            if p == 2:
+                return int(math.log2(n)) + 1
+            if n <= p:
+                return n
+            return recursive_count(n, ls_dec_primes[1:]) + recursive_count(n // p, ls_dec_primes)
+
+        return recursive_count(self.limit, ls_prime)
 
     @timeit
     def simple_recursive_solve(self):  # slower solution
