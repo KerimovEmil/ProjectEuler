@@ -8,55 +8,60 @@ How many square-free numbers are there below 2^50?
 
 ANSWER:
 684465067343069
-Solve time ~68 seconds
+Solve time ~49 seconds
 
 References:
   https://arxiv.org/pdf/1107.4890.pdf
   http://www.numericana.com/answer/numbers.htm#moebius
 """
-from util.utils import timeit
+from util.utils import timeit, mobius_sieve
 import unittest
 from primesieve import primes
-
-
-def sign(x):
-    if x < 0:
-        return -1
-    elif x > 0:
-        return 1
-    else:
-        return 0
-
-
-@timeit
-def mobius_sieve(n):  # todo speed this up. Currently take ~ 40 seconds
-    """
-    Returns a list of all mobius function values.
-    mobius(n) = 1 if i is square-free with even number of primes,
-               -1 if odd number,
-                0 if contains square
-    """
-    ls_m = [1]*n
-    ls_p = primes(int(n**0.5) + 1)
-    for p in ls_p:
-        ls_m[p:n:p] = [-p * x for x in ls_m[p:n:p]]
-        p2 = p ** 2
-        ls_m[p2:n:p2] = [0] * len(ls_m[p2:n:p2])
-
-    ls_m = [sign(x) if abs(x) == i else sign(-x) for i, x in enumerate(ls_m)]
-    return ls_m
 
 
 class Problem193:
     def __init__(self, n):
         self.n = n
+        self.ls_primes = None
 
     @timeit
     def solve(self):
+        self.ls_primes = primes((self.n ** 0.5) + 1)
+        print("finished calculating primes")
         limit = self.n - 1
-        ls_m = mobius_sieve(n=int(limit ** 0.5) + 1)
-        print("finished calculating mobius numbers")
-        return sum(ls_m[i] * (limit // (i ** 2)) for i in range(1, int(limit ** 0.5) + 1))
+        sq_root_n = int(self.n**0.5) + 1
+        ls_m = mobius_sieve(n=sq_root_n, ls_prime=self.ls_primes)
+        return sum(ls_m[i] * (limit // (i ** 2)) for i in range(1, sq_root_n))
+
+    @timeit
+    def solve_inclusion_exclusion(self):  # 46 seconds
+        self.total = self.n - 1
+        self.ls_primes = primes((self.n**0.5) + 1)
+        self.helper_adjust(True, 1, 0)
+        return self.total
+
+    def helper_adjust(self, even_bool, prev_prod, prime_index):
+        # get next prime
+        try:
+            next_prime = self.ls_primes[prime_index]
+        except:
+            return
+
+        next_prod = prev_prod * next_prime
+        while next_prod <= int(self.n**0.5):
+            n = (self.n - 1) // (next_prod * next_prod)
+            if even_bool:
+                self.total -= n
+            else:
+                self.total += n
+
+            self.helper_adjust(not even_bool, next_prod, prime_index + 1)
+            prime_index += 1
+            try:
+                next_prime = self.ls_primes[prime_index]
+            except:
+                break
+            next_prod = prev_prod * next_prime
 
 
 class Solution193(unittest.TestCase):
@@ -65,6 +70,7 @@ class Solution193(unittest.TestCase):
 
     def test_solution(self):
         self.assertEqual(684465067343069, self.problem.solve())
+        # self.assertEqual(684465067343069, self.problem.solve_inclusion_exclusion())
 
 
 if __name__ == '__main__':
