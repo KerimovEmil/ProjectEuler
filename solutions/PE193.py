@@ -7,8 +7,8 @@ square-free, but not 4, 8, 9, 12.
 How many square-free numbers are there below 2^50?
 
 ANSWER:
-???  (684465067343069)
-Solve time ~ ??? seconds
+684465067343069
+Solve time ~67 seconds
 
 References:
   https://arxiv.org/pdf/1107.4890.pdf
@@ -60,6 +60,26 @@ def sieve(n):
 #     }
 #     return mu;
 # }
+
+def m_2_sieve(n):
+    np1 = n + 1
+    ls_m = [1]*np1
+    ls_p = primes(int(np1**0.5))
+    for p in ls_p:
+        ls_m[p:np1:p] = [-p * x for x in ls_m[p:np1:p]]
+        p2 = p ** 2
+        ls_m[p2:np1:p2] = [0] * len(ls_m[p2:np1:p2])
+
+    def sign(x):
+        if x < 0:
+            return -1
+        elif x > 0:
+            return 1
+        else:
+            return 0
+
+    ls_m = [sign(x) if abs(x) == i else sign(-x) for i, x in enumerate(ls_m)]
+    return ls_m
 
 
 def m_sieve(n):
@@ -139,13 +159,16 @@ class Problem193:
 
     @timeit
     def solve(self):
-        ls_primes = primes(self.n**0.5)
+        # ls_primes = primes(self.n**0.5)
         # ls_primes = None
         limit = self.n - 1
         count = 0
+        ls_m = m_2_sieve(n=int(limit ** 0.5) + 1)
+        print("finished mobius numbers")
         for i in range(1, int(limit ** 0.5) + 1):
             # mobius = m(i, ls_primes)  # 1 if i is square-free with even number of primes, -1 if odd number, 0 if contains square
-            mobius = m2(i, ls_primes)  # 1 if i is square-free with even number of primes, -1 if odd number, 0 if contains square
+            # mobius = m2(i, ls_primes)  # 1 if i is square-free with even number of primes, -1 if odd number, 0 if contains square
+            mobius = ls_m[i]
             count += mobius * (limit // (i ** 2))
         return count
 
@@ -159,10 +182,10 @@ class Problem193:
         # ls_primes = None
         limit = self.n - 1
         count = 0
+
         for i in range(1, int(limit ** 0.5) + 1):
             # mobius = m(i, ls_primes)  # 1 if i is square-free with even number of primes, -1 if odd number, 0 if contains square
-            mobius = m2(i,
-                        ls_primes)  # 1 if i is square-free with even number of primes, -1 if odd number, 0 if contains square
+            mobius = m2(i, ls_primes)  # 1 if i is square-free with even number of primes, -1 if odd number, 0 if contains square
             count += mobius * (limit // (i ** 2))
         return count
 
@@ -180,10 +203,13 @@ class Problem193:
 class Solution193(unittest.TestCase):
     def setUp(self):
         # self.problem = Problem193(n=int(2**50))
-        self.problem = Problem193(n=int(2**37))
+        self.problem = Problem193(n=int(2**50))
 
     def test_solution(self):
-        self.assertEqual(83552864618, self.problem.solve())
+        # self.assertEqual(83552864618, self.problem.solve())  # n = int(2**37)
+        # self.assertEqual(668422917419, self.problem.solve())  # n = int(2**40)
+        # self.assertEqual(21389533354934, self.problem.solve())  # n = int(2**45)
+        self.assertEqual(684465067343069, self.problem.solve())  # n = int(2**50)
 
 
 if __name__ == '__main__':
