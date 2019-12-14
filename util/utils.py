@@ -914,3 +914,32 @@ def len_faray_seq(n):
     else:
 
         return int(0.5*(n+3)*n) - sum(len_faray_seq(int(n/d)) for d in range(2, n+1))
+
+
+def sign(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    else:
+        return 0
+
+
+@timeit
+def mobius_sieve(n, ls_prime):
+    """
+    Returns a list of all mobius function values.
+    mobius(n) = 1 if i is square-free with even number of primes,
+               -1 if odd number,
+                0 if contains square
+    """
+    ls_m = [1]*n
+    if ls_prime is None:
+        ls_p = list(sieve(n))
+    else:
+        ls_p = ls_prime
+    for p in ls_p:
+        ls_m[p:n:p] = [-1 * x for x in ls_m[p:n:p]]
+        p2 = p ** 2
+        ls_m[p2:n:p2] = [0] * len(ls_m[p2:n:p2])
+    return ls_m
