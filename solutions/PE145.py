@@ -30,9 +30,8 @@ class Problem145:
         for d in range(1, max_dig+1):
             if (d % 2) == 0:
                 self.count += 20 * int(30 ** (d / 2 - 1))
-            else:
-                if (d % 4) == 3:
-                    self.count += 100 * int(500 ** ((d+1) / 4 - 1))
+            elif (d % 4) == 3:
+                self.count += 100 * int(500 ** ((d+1) / 4 - 1))
         return self.count
 
     @timeit
