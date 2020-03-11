@@ -22,15 +22,15 @@ down then count that as zero.) Give your answer rounded to 8 places after the de
 
 ANSWER:
 n=4: 1163.97561450
-n=5:  995.60730880
-n=6: 1091.73835731
-n=7: 1096.65847394
-n=8: 1226.72799475
-n=9: MemoryError
+n=5: 1335.55436650
+n=6: 1426.50414520
+n=7: 1469.04149634
+n=8: 1483.60117187  (~328 seconds)
+n=9: MemoryError when generating options
 ...
 n=big_enough_number: ...
 
-Solve time ~  seconds
+Solve time ~ a bit too many seconds
 """
 
 from util.utils import timeit
@@ -63,7 +63,7 @@ class ProbMatrix:
         df[['#']] = 0.02
         df.loc['#', '#'] = 1
         for row in options:
-            rowsub = row[-3:]
+            rowsub = row[1:]
             ls_cols = [c for c in options if c.startswith(rowsub)]
             df.loc[row, ls_cols] = 0.14
         starting = ' '*n
@@ -102,7 +102,7 @@ class Solution610(unittest.TestCase):
         self.problem = Problem610()
 
     def test_solution(self):
-        self.assertEqual(None, self.problem.solve(n=9))
+        self.assertEqual(None, self.problem.solve(n=8))
 
     def test_option_generation(self):
         valid_options = set(ProbMatrix.options(n=5))
