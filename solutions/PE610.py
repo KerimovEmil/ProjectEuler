@@ -23,12 +23,14 @@ down then count that as zero.) Give your answer rounded to 8 places after the de
 ANSWER:
 n=4: 1163.97561450
 n=5: 1335.55436650
-n=6: 1426.50414520
+n=6: 1426.50414520 (~1.5 seconds)
 n=7: 1469.04149634
-n=8: 1483.60117187  (~328 seconds)
-n=9: MemoryError when generating options
+n=8: 1483.60117187  (~15.8 seconds) (options took 8 seconds, get_matrix tool 5.5 seconds)
+n=9: 1487.92740977  (~65 seconds) (options took 52 seconds, get_matrix tool 8 seconds)
 ...
 n=big_enough_number: ...
+
+pd.DataFrame([1163.97561450, 1335.55436650, 1426.50414520,1469.04149634, 1483.60117187, 1487.92740977 ]).plot()
 
 Solve time ~ a bit too many seconds
 """
@@ -39,14 +41,23 @@ import pandas as pd
 import numpy as np
 from solutions.PE89 import RomanNumeral
 from itertools import product
+from itertools import combinations
 
 
 class ProbMatrix:
     OPTIONS = ['M', 'D', 'C', 'L', 'X', 'V', 'I', ' ']
 
     @staticmethod
+    @timeit
     def options(n=5):  # todo, speed up whole function, this is bottle neck
-        all_options = list(product(ProbMatrix.OPTIONS, repeat=n))
+
+        dc = {' ': n, 'M': n, 'CM': 1, 'D': 1, 'CD': 1, 'C': 3, 'XC': 1, 'L': 1, 'XL': 1,
+              'X': 3, 'IX': 1, 'V': 1, 'IV': 1, 'I': 3}
+        raw_all_options = ''.join([k*v for k, v in dc.items()])
+        all_options = set(combinations(raw_all_options, n))
+
+        # all_options = list(product(ProbMatrix.OPTIONS, repeat=n))
+        # all_str_options = [''.join(x) for x in product(ProbMatrix.OPTIONS, repeat=n)]
         all_str_options = [''.join(x) for x in all_options]
         # filter out incorrect space cases
         all_str_options = [x for x in all_str_options if ' ' not in x.lstrip()]
@@ -57,17 +68,23 @@ class ProbMatrix:
         return valid_options
 
     @staticmethod
-    def get_matrix(n=4):  # todo speed up, this is bottle neck
+    @timeit
+    def get_matrix(n=4):
         options = ProbMatrix.options(n=n)
-        df = pd.DataFrame(0, index=options + ["#"], columns=options + ['#'])
-        df[['#']] = 0.02
-        df.loc['#', '#'] = 1
+
+        ls_values = []
         for row in options:
             rowsub = row[1:]
-            ls_cols = [c for c in options if c.startswith(rowsub)]
-            df.loc[row, ls_cols] = 0.14
+
+            vals = [0.14 if c.startswith(rowsub) else 0 for c in options] + [0.02]
+            ls_values.append(vals)
+        ls_values.append([0]*len(options) + [1])
+
+        df = pd.DataFrame(ls_values, index=options + ["#"], columns=options + ['#'])
+
         starting = ' '*n
         df.loc[starting, starting] = 0
+        print('Done computing the transition matrix')
         return df.divide(df.sum(axis=1), axis=0)
 
 
@@ -80,19 +97,20 @@ class Problem610:
         prob_matrix = ProbMatrix.get_matrix(n=n)
         q_matrix = prob_matrix.drop('#', axis=1)
         q_matrix = q_matrix.drop('#', axis=0)
-        eye = pd.DataFrame(np.eye(len(q_matrix.index)), index=q_matrix.index, columns=q_matrix.columns)
+        states = q_matrix.index
+
+        eye = pd.DataFrame(np.eye(len(states)), index=states, columns=states)
         N = eye - q_matrix
         N_inv = np.linalg.inv(N.values)
-        df_N_inv = pd.DataFrame(N_inv, index=q_matrix.index, columns=q_matrix.columns)
+        df_N_inv = pd.DataFrame(N_inv, index=states, columns=states)
 
         starting_state = ' '*n
-        df_terminal = df_N_inv.loc[[starting_state]]  # expected last value before termination given starting state
 
         expected_value = 0
+        print(len(states))
         # todo fix this, as we need to keep track of previous states as well, in the meantime just have many more states
-        for state in df_terminal.columns:
-            expected_value += RomanNumeral.parse(state.strip()) * df_terminal.loc[starting_state, state]
-            # print(state, RomanNumeral.parse(state.strip()), df_terminal.loc[starting_state, state])
+        for state in states:
+            expected_value += RomanNumeral.parse(state.strip()) * df_N_inv.loc[starting_state, state]
 
         return expected_value
 
@@ -101,8 +119,15 @@ class Solution610(unittest.TestCase):
     def setUp(self):
         self.problem = Problem610()
 
-    def test_solution(self):
-        self.assertEqual(None, self.problem.solve(n=8))
+    def test_solution_6(self):
+        self.assertEqual(1426.50414520, round(self.problem.solve(n=6), 8))
+
+    def test_solution_8(self):
+        self.assertEqual(1483.60117187, round(self.problem.solve(n=8), 8))
+        # n=8: 1483.60117187  (~328 seconds)
+
+    def test_solution_9(self):
+        self.assertEqual(1487.92740977, round(self.problem.solve(n=9), 8))
 
     def test_option_generation(self):
         valid_options = set(ProbMatrix.options(n=5))
