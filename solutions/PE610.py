@@ -38,13 +38,13 @@ class Problem610:
     @staticmethod
     @timeit
     def get_transition_matrix():
-        # Get all Roman Numerals less than 1000 (not starting with M), note max characters is 12
-        options = [RomanNumeral.construct(n).rjust(12) for n in range(1000)]
+        # Get all Roman Numerals less than 1000 (not starting with M)
+        options = [RomanNumeral.construct(n) for n in range(1000)]
 
-        ls_values = [[0.14 if c.startswith(row[1:]) else 0 for c in options] + [0.02] for row in options]
+        ls_values = [[0.14 if c[:-1] == row else 0 for c in options] + [0.02] for row in options]
         ls_values.append([0] * len(options) + [1])  # termination state only maps to termination state
         # adjust first row (starting position)
-        ls_values[0][0] = 0  # ' '*n should not be able to go to ' '*n
+        ls_values[0][0] = 0  # ' ' should not be able to go to ' '
 
         np_val = np.array(ls_values)
         # normalize each row
@@ -61,7 +61,7 @@ class Problem610:
         # sum_{n=0}^{inf} Q^n = (I-Q)^-1
         inf_sum_q = np.linalg.inv(np.eye(len(states)) - q_matrix)
 
-        # prob(starting at ' '*n, ending at state_i)*prob(state_i, terminal state #)
+        # prob(starting at '', ending at state_i)*prob(state_i, terminal state #)
         w = inf_sum_q[0] * prob_matrix[:-1, -1]
 
         # The value of all roman numerals that don't start with M
