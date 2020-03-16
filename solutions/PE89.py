@@ -91,8 +91,6 @@ class RomanNumeral:
     @staticmethod
     def isvalid(roman):
         s = roman.strip()
-        if s == '':
-            return True
         value = RomanNumeral.parse(s)
         trueroman = RomanNumeral.construct(value)
         return s == trueroman
