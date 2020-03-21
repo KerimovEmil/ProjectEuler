@@ -88,6 +88,13 @@ class RomanNumeral:
                     break
         return roman
 
+    @staticmethod
+    def isvalid(roman):
+        s = roman.strip()
+        value = RomanNumeral.parse(s)
+        trueroman = RomanNumeral.construct(value)
+        return s == trueroman
+
 
 class Problem89:
     def __init__(self, data_path):
