@@ -47,32 +47,23 @@ import unittest
 
 
 class Problem700:
-    def __init__(self, a, m):
-        self.a = a
-        self.m = m
-
     @timeit
-    def solve(self):
-        a = self.a
-        m = self.m
-
-        s = a
-        while a != 0:
-            m %= a
-            while a >= m:
-                a -= m
-                s += a
-        return s
+    def solve(self, a, m):
+        res = 0
+        while a > 0:
+            res += a
+            a, m = -m % a, a
+        return res
 
 
 class Solution700(unittest.TestCase):
     def setUp(self):
-        a = 1504170715041707  # 17 × 1249 × 12043 × 5882353
-        m = 4503599627370517  # prime number
-        self.problem = Problem700(a, m)
+        self.problem = Problem700()
 
     def test_solution(self):
-        self.assertEqual(1517926517777556, self.problem.solve())
+        a = 1504170715041707  # 17 × 1249 × 12043 × 5882353
+        m = 4503599627370517  # prime number
+        self.assertEqual(1517926517777556, self.problem.solve(a, m))
 
 
 if __name__ == '__main__':
