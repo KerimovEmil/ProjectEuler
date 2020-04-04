@@ -879,6 +879,19 @@ def euler_totient_function(n):
     return int(output)
 
 
+@lru_cache(maxsize=None)
+def sum_phi(n):
+    """Returns sum_{i=1 to n} phi(i) where phi is the euler totient function"""
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    v = int(n**0.5)
+    nv = n//(v+1)
+
+    return n*(n+1)//2 - sum(sum_phi(x) * (n//x - n//(x+1)) for x in range(1, v+1)) - sum(sum_phi(n//k) for k in range(2, nv+1))
+
+
 def farey(n, descending=False):
     """Print the n'th Farey sequence. Allow for either ascending or descending."""
     a, b, c, d = 0, 1, 1, n
