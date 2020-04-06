@@ -157,7 +157,7 @@ class Problem140:
         """
         u = u_tup[0] + u_tup[1] * d**0.5
         # need to check |y| <= sqrt(n*u/d)
-        abs_y_threshold = int((n*u/d)**0.5)  # 12
+        abs_y_threshold = int((abs(n)*u/d)**0.5)  # 12
 
         ls_tup = []
         for y in range(1, abs_y_threshold + 1):
@@ -185,7 +185,7 @@ class Problem140:
         return ls_final_tup
 
     @staticmethod
-    def generate_sorted_golden_nuggets(ls_unique, mult_by_u):
+    def generate_sorted_golden_nuggets(ls_unique, mult_by_u, get_k):
         num_iter = 10  # some large enough number
         ls_answers = []
         for tup in ls_unique:
@@ -193,22 +193,24 @@ class Problem140:
             for i in range(num_iter):
                 new_answer = mult_by_u(new_answer)
                 x = new_answer[0]
-                k = (x - 7) / 5
+                k = get_k(x)
                 if is_int(k):
                     ls_answers.append(int(k))
 
         return sorted(ls_answers)
 
-    @timeit
-    def solve(self, n):
-        d = 5
+    def generate_all_solutions(self, get_k, d=5, equal_n=44):
         u_tup = self.generate_fundamental_solution(d=d)
         # u_tup = (9, 4)
         mult_by_u = lambda x: multiply_by_u(x=x, u=u_tup, d=d)
         # u = 9 + 4 * (5 ** 0.5)
-        ls_unique = self.generate_primitive_solution(u_tup=u_tup, n=44, mult_by_u=mult_by_u, d=d)
+        ls_unique = self.generate_primitive_solution(u_tup=u_tup, n=equal_n, mult_by_u=mult_by_u, d=d)
         # ls_unique = [(7, 1), (7, -1), (8, 2), (8, -2), (13, -5), (17, -7)]
-        ls_answers = self.generate_sorted_golden_nuggets(ls_unique, mult_by_u)
+        return self.generate_sorted_golden_nuggets(ls_unique, mult_by_u, get_k)
+
+    @timeit
+    def solve(self, n):
+        ls_answers = self.generate_all_solutions(d=5, equal_n=44, get_k=lambda x: (x - 7) / 5)
         return sum(ls_answers[:n])
 
 
