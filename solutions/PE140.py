@@ -119,17 +119,6 @@ def multiply_by_u(x, u=(9, 4), d=5):
     return f, s
 
 
-def divide_by_u(x, u=(9, 4), d=5):
-    """return (x,y) such that (x + y*sqrt(5)) = (a+b*sqrt(5)) / (9 + 4*sqrt(5))"""
-    a, b = x
-    u1, u2 = u
-
-    f = u1*a - u2*d*b  # 20 = 4*5
-    s = -u2*a + u1*b  # note (9 + 4*sqrt(5))*(9 - 4*sqrt(5)) = 1
-    # note that since u is a fundamental solution to u[0]^2 - d*u[1]^2 = 1
-    return f, s
-
-
 def is_int(n):
     return abs(n - int(n)) < 1e-13
 
@@ -229,12 +218,6 @@ class Solution140(unittest.TestCase):
 
     def test_solution(self):
         self.assertEqual(5673835352990, self.problem.solve(n=30))
-
-    def test_multiply_and_divide_functions(self):
-        # self.assertEqual((3, 4), divide_by_u(*multiply_by_u((3, 4), u=(9, 4), d=5)))
-        u = (9, 4)
-        d = 5
-        self.assertEqual((3, 4), divide_by_u(multiply_by_u((3, 4), u, d), u, d))
 
 
 if __name__ == '__main__':
