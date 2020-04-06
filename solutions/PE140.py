@@ -101,14 +101,14 @@ import unittest
 # if k is an integer, then k is a golden nugget
 
 
-def t(a, b):
+def mult_by_u(a, b):
     """return (x,y) such that (x + y*sqrt(5)) =  (a+b*sqrt(5)) * (9 + 4*sqrt(5))"""
     f = 9*a + 20*b  # 20 = 4*5
     s = 4*a + 9*b
     return f, s
 
 
-def d(a, b):
+def divide_by_u(a, b):
     """return (x,y) such that (x + y*sqrt(5)) = (a+b*sqrt(5)) / (9 + 4*sqrt(5))"""
     f = 9*a - 20*b  # 20 = 4*5
     s = -4*a + 9*b  # note (9 + 4*sqrt(5))*(9 - 4*sqrt(5)) = 1
@@ -126,13 +126,9 @@ class Problem140:
         num_iter = 10  # some large enough number
         ls_answers = []
         for tup in ls_unique:
-            new_answer = t(*tup)
-            x = new_answer[0]
-            k = (x - 7) / 5
-            if is_int(k):
-                ls_answers.append(int(k))
+            new_answer = tup
             for i in range(num_iter):
-                new_answer = t(*new_answer)
+                new_answer = mult_by_u(*new_answer)
                 x = new_answer[0]
                 k = (x - 7) / 5
                 if is_int(k):
@@ -159,7 +155,7 @@ class Solution140(unittest.TestCase):
         self.assertEqual(211345365, self.problem.generate_sorted_golden_nuggets(ls_unique)[19])
 
     def test_multiply_and_divide_functions(self):
-        self.assertEqual((3, 4), d(*t(3, 4)))
+        self.assertEqual((3, 4), divide_by_u(*mult_by_u(3, 4)))
 
 
 if __name__ == '__main__':
