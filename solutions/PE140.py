@@ -101,17 +101,32 @@ import unittest
 # if k is an integer, then k is a golden nugget
 
 
-def mult_by_u(a, b):
-    """return (x,y) such that (x + y*sqrt(5)) =  (a+b*sqrt(5)) * (9 + 4*sqrt(5))"""
-    f = 9*a + 20*b  # 20 = 4*5
-    s = 4*a + 9*b
+def multiply_by_u(x, u=(9, 4), d=5):
+    """
+    Multiply x with u, interpreting as numbers from the field sqrt(d). Where u is a fundamental solution.
+    Args:
+        x: <tuple> (a,b) to be interpreted as (a+b*sqrt(d))
+        u: <tuple> (u1,u2) to be interpreted as (u1+u2*sqrt(d))
+        d: <int>
+
+    Returns: (x,y) such that (x + y*sqrt(5)) = x * u
+    """
+    a, b = x
+    u1, u2 = u
+
+    f = u1*a + u2*d*b
+    s = u2*a + u1*b
     return f, s
 
 
-def divide_by_u(a, b):
+def divide_by_u(x, u=(9, 4), d=5):
     """return (x,y) such that (x + y*sqrt(5)) = (a+b*sqrt(5)) / (9 + 4*sqrt(5))"""
-    f = 9*a - 20*b  # 20 = 4*5
-    s = -4*a + 9*b  # note (9 + 4*sqrt(5))*(9 - 4*sqrt(5)) = 1
+    a, b = x
+    u1, u2 = u
+
+    f = u1*a - u2*d*b  # 20 = 4*5
+    s = -u2*a + u1*b  # note (9 + 4*sqrt(5))*(9 - 4*sqrt(5)) = 1
+    # note that since u is a fundamental solution to u[0]^2 - d*u[1]^2 = 1
     return f, s
 
 
@@ -122,13 +137,72 @@ def is_int(n):
 class Problem140:
 
     @staticmethod
-    def generate_sorted_golden_nuggets(ls_unique):
+    def generate_fundamental_solution(d=5):
+        """
+        Get the fundamental solution to x^2 - d*y^2 = 1
+        Args:
+            d: <int>
+
+        Returns: <tuple> (x,y) of solution x^2 - d*y^2 = 1
+        """
+        y = 1
+        while True:
+            x2 = 1 + d * y * y
+            if is_int(x2 ** 0.5):
+                x = int(x2 ** 0.5)
+                # only keep the positive values of x and y
+                return x, y
+            y += 1
+
+    @staticmethod
+    def generate_primitive_solution(u_tup, n, mult_by_u, d=5):
+        """
+        Get all possibly unique primitive generators of x^2 - d*y^2 = n
+        Args:
+            u_tup: <tuple> (a,b) fundamental solution to a^2 - b*y^2 = 1
+            n: <int>
+            mult_by_u: <func>
+            d: <int>
+
+        Returns: list of tuples (x,y) of the form (x + y*sqrt(d))
+        """
+        u = u_tup[0] + u_tup[1] * d**0.5
+        # need to check |y| <= sqrt(n*u/d)
+        abs_y_threshold = int((n*u/d)**0.5)  # 12
+
+        ls_tup = []
+        for y in range(1, abs_y_threshold + 1):
+            x2 = n + d * y * y
+            if is_int(x2 ** 0.5):
+                x = int(x2 ** 0.5)
+                # only keep the positive values of x + y*sqrt(d)
+                ls_tup.append((x, y))
+                if -x + y*(d**0.5) > 0:
+                    ls_tup.append((-x, y))
+                else:
+                    ls_tup.append((x, -y))
+                # ls_tup.append((-x, -y))  # will always be negative
+
+        # [(7, 1), (7, -1), (8, 2), (8, -2), (13, -5), (13, 5), (17, -7), (17, 7)]
+
+        # filter out replicates
+        ls_final_tup = ls_tup
+        for sol in ls_tup:
+            new_tup = mult_by_u(sol)
+            if new_tup in ls_tup:
+                ls_final_tup.remove(new_tup)
+
+        # [(7, 1), (7, -1), (8, 2), (8, -2), (13, -5), (17, -7)]
+        return ls_final_tup
+
+    @staticmethod
+    def generate_sorted_golden_nuggets(ls_unique, mult_by_u):
         num_iter = 10  # some large enough number
         ls_answers = []
         for tup in ls_unique:
             new_answer = tup
             for i in range(num_iter):
-                new_answer = mult_by_u(*new_answer)
+                new_answer = mult_by_u(new_answer)
                 x = new_answer[0]
                 k = (x - 7) / 5
                 if is_int(k):
@@ -138,8 +212,14 @@ class Problem140:
 
     @timeit
     def solve(self, n):
-        ls_unique = [(7, 1), (7, -1), (8, 2), (8, -2), (13, -5), (17, -7)]
-        ls_answers = self.generate_sorted_golden_nuggets(ls_unique)
+        d = 5
+        u_tup = self.generate_fundamental_solution(d=d)
+        # u_tup = (9, 4)
+        mult_by_u = lambda x: multiply_by_u(x=x, u=u_tup, d=d)
+        # u = 9 + 4 * (5 ** 0.5)
+        ls_unique = self.generate_primitive_solution(u_tup=u_tup, n=44, mult_by_u=mult_by_u, d=d)
+        # ls_unique = [(7, 1), (7, -1), (8, 2), (8, -2), (13, -5), (17, -7)]
+        ls_answers = self.generate_sorted_golden_nuggets(ls_unique, mult_by_u)
         return sum(ls_answers[:n])
 
 
@@ -150,12 +230,11 @@ class Solution140(unittest.TestCase):
     def test_solution(self):
         self.assertEqual(5673835352990, self.problem.solve(n=30))
 
-    def test_20th_nugget(self):
-        ls_unique = [(7, 1), (7, -1), (8, 2), (8, -2), (13, -5), (17, -7)]
-        self.assertEqual(211345365, self.problem.generate_sorted_golden_nuggets(ls_unique)[19])
-
     def test_multiply_and_divide_functions(self):
-        self.assertEqual((3, 4), divide_by_u(*mult_by_u(3, 4)))
+        # self.assertEqual((3, 4), divide_by_u(*multiply_by_u((3, 4), u=(9, 4), d=5)))
+        u = (9, 4)
+        d = 5
+        self.assertEqual((3, 4), divide_by_u(multiply_by_u((3, 4), u, d), u, d))
 
 
 if __name__ == '__main__':
