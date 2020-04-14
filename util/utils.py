@@ -1,7 +1,7 @@
 import numpy as np
 import time
 from itertools import accumulate
-from functools import lru_cache
+from functools import lru_cache, reduce
 
 
 class Hungarian:
@@ -956,3 +956,13 @@ def mobius_sieve(n, ls_prime):
         p2 = p ** 2
         ls_m[p2:n:p2] = [0] * len(ls_m[p2:n:p2])
     return ls_m
+
+
+# @lru_cache(maxsize=None)
+def num_of_divisors(n):
+    """
+    Return the number of positive divisors of n.
+    e.g. sigma(12) = 6
+    """
+    dc_primes = primes_of_n(n)
+    return reduce(lambda a, b: a * b, (v + 1 for v in dc_primes.values()))
