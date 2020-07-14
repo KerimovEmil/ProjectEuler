@@ -12,7 +12,7 @@ Given that the perimeter of the right triangle is less than one-hundred million,
  allow such a tiling to take place?
 
 ANSWER: 10057761
-Solve time ~21.5 seconds
+Solve time ~9.5 seconds
 """
 
 from util.utils import timeit
@@ -35,7 +35,8 @@ class Problem139:
                 if gcd(m, n) != 1:  # this is already counted in the sum
                     continue
 
-                a, b, c = self.get_triangle(m, n)
+                # Use Pythagorean triples
+                a, b, c = m*m - n*n, 2*m*n, m*m + n*n
                 p = a + b + c
                 if p >= max_p:
                     break
@@ -43,13 +44,6 @@ class Problem139:
                     count += max_p // p
 
         return count
-
-    @staticmethod
-    def get_triangle(m, n):
-        a = m ** 2 - n ** 2
-        b = 2 * m * n
-        c = m ** 2 + n ** 2
-        return a, b, c
 
 
 class Solution139(unittest.TestCase):
