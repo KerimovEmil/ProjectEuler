@@ -12,7 +12,8 @@ Given that the perimeter of the right triangle is less than one-hundred million,
  allow such a tiling to take place?
 
 ANSWER: 10057761
-Solve time ~9.5 seconds
+Solve time ~9.5 seconds using brute force
+Solve time ~0.003 seconds using pell equations
 """
 
 from util.utils import timeit
@@ -20,12 +21,31 @@ import unittest
 from math import gcd
 
 
+# set up
+# if m, n are co-prime, and m<n<0, and different parity then we have
+# a = m^2 - n^2, b = 2mn, c = m^2 + n^2
+# perimeter = a + b + c = 2m(m+n) < 1e8
+# gap = b - a
+
+# simple solution:
+# loop over m from 1 to 1e4, and check if gap divides c, if it does then add all of the multiples possible
+
+# better solution:
+# area of gap = (b-a)^2 and area of gap = c^2 - 2ab
+# Therefore for gap to divide c, (b-a)|c, it implied (b-a)^2|c^2, therefore we only need to check if (b-a)^2 | 2ab
+# note that since gcd(a,b) = 1, then this implies that b - a = 1. i.e. a^2 + (a + 1)^2 = c^2
+# therefore  n^2 + 2mn - m^2 = -1 = (n - m)^2 - 2 m^2
+# this is the Pell equation for d = 2 (x^2 - 2y^2 = -1), i.e. a convergent of sqrt(2)
+
+# initial solution that works, is 7^2 - 2*5^2 = 49 - 50 = -1
+# smallest solution to x^2 - 2y^2 = 1 is 3^2 - 2*2^2 = 9 - 8 = 1. Hence 3 + 2*sqrt(2) is a unit
+
 class Problem139:
     def __init__(self):
         pass
 
     @timeit
-    def solve(self, max_p):
+    def simple_solve(self, max_p):
         count = 0
         max_m = int((max_p/2)**0.5) + 1
         for m in range(2, max_m):
@@ -45,6 +65,19 @@ class Problem139:
 
         return count
 
+    @timeit
+    def pell_equation_solve(self, max_p):
+        """See here for implementation https://projecteuler.net/thread=139;page=4"""
+        x, y, count = 7, 5, 0
+        # 7^2 - 2*5^2 = 49 - 50 = -1
+        while x + y < max_p:
+            count += (max_p - 1) // (x + y)
+            # 3^2 - 2*2^2 = 9 - 8 = 1, therefore 3 + 2*sqrt(2) is a unit, hence we get all other solutions by
+            # multiplying by 3 + 2*sqrt(2)
+            # (x + y*sqrt(2)) * (3 + 2*sqrt(2)) = (3x + 4y) + (2x + 3y)*sqrt(2)
+            x, y = 3 * x + 4 * y, 2 * x + 3 * y
+        return count
+
 
 class Solution139(unittest.TestCase):
     def setUp(self):
@@ -52,7 +85,7 @@ class Solution139(unittest.TestCase):
 
     def test_solution(self):
         limit = int(1e8)
-        self.assertEqual(10057761, self.problem.solve(max_p=limit))
+        self.assertEqual(10057761, self.problem.pell_equation_solve(max_p=limit))
 
 
 if __name__ == '__main__':
