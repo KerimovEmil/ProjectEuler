@@ -26,6 +26,7 @@ class Problem753:
         self.max_p = max_p
 
     def given_p(self, p: int) -> int:
+        """Return the number of solutions to a^3 + b^3 = c^3 mod p for 1 <= a,b,c < p"""
         if p % 3 != 1:
             return (p-1) * (p-2)
         else:
@@ -40,7 +41,7 @@ class Problem753:
         Note that this only works when p==1 mod 3
         See paper here: http://matwbn.icm.edu.pl/ksiazki/aa/aa37/aa3718.pdf
         """
-        return (self.dc[p]+p-8)*(p-1)
+        return (p-1) * (self.dc[p]+p-8)
 
     @staticmethod
     def create_dict(max_p):
@@ -51,20 +52,20 @@ class Problem753:
         max_b = int((4*max_p//27)**0.5) + 10
         max_a = int(((4*max_p)**0.5)) + 10
 
+        # make sure the first value of a is 1 mod 3
         x = (-max_a) % 3
         if x == 2:
             max_a += 1
         if x == 0:
             max_a += 2
-
         assert (-max_a) % 3 == 1
 
         dc = {}
         for a in range(-max_a, max_a, 3):  # a == 1 mod 3
-            for b in range(1, max_b):
+            a_parity = a % 2
+            for b in range(1 + (1 - a_parity), max_b, 2):  # this is equivalent to p4 % 4 == 0
                 p4 = a ** 2 + 27 * (b ** 2)
-                if p4 % 4 == 0:
-                    dc[p4 // 4] = a
+                dc[p4 // 4] = a
         return dc
 
     @timeit
