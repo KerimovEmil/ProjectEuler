@@ -43,12 +43,40 @@ def r(a, p):
 #         f = -(cos_sum / (p - 1) + 1) / p
 #         form_f = int(round(f, 4))
 #         form_cossum_3 = int(round(cos_sum/3, 4))
-#         print(p, form_f, form_f+p, (form_f+p)//3,(p-1)/3 , given_p(p), p**2- 3*p + 2 - form_f*(p-1), cos_sum, form_cossum_3, form_cossum_3/(p-1)/3)
+#         print(p, form_f, form_f+p, (form_f+p)//3,(p-1)/3 , given_p(p), p**2- 3*p + 2 - form_f*(p-1), cos_sum, cos_sum/(p-1)/3/3)
 
 
 class Problem753:
     def __init__(self):
         pass
+
+    @staticmethod
+    def given_p_simple(p: int) -> int:
+        if p % 3 != 1:
+            return (p-1)*(p-2)
+
+        dc_c_values = {}
+        for i in range(1, p):
+            i3 = i ** 3 % p
+            dc_c_values[i3] = 1 + dc_c_values.get(i3, 0)
+
+        ans = 0
+
+        # for i in range(1, p):
+        #     for j in range(1, p):
+        #         cubed_sum = (i ** 3 + j ** 3) % p
+        #         ans += dc_c_values.get(cubed_sum, 0)
+
+        for i in range(1, p):
+            cubed_sum = (2*i**3) % p
+            ans += dc_c_values.get(cubed_sum, 0)
+
+        for i in range(1, p):
+            for j in range(i+1, p):
+                cubed_sum = (i**3 + j**3) % p
+                ans += 2*dc_c_values.get(cubed_sum, 0)
+
+        return ans
 
     @staticmethod
     def given_p(p: int) -> int:
@@ -69,6 +97,7 @@ class Problem753:
 
         ans = (p-1)**3
         ans += 16*sum(sum(cos(p_pi_2 * a * np_range**3))**3 for a in np_range)
+        # cos sum is divisible by 9*(p-1)
 
         # (-16*cos_sums/(p-1) -1) /p must be an integer
 
@@ -108,7 +137,8 @@ class Problem753:
     def solve(self, max_p: int) -> int:
         ans = 0
         for p in primes(max_p):
-            ans += self.given_p(p)
+            # ans += self.given_p(p)
+            ans += self.given_p_simple(p)
         return ans
 
 
@@ -118,15 +148,17 @@ class Solution753(unittest.TestCase):
 
     def test_specific_p(self):
         with self.subTest('testing p=5'):
-            self.assertEqual(12, self.problem.given_p(5))
+            # self.assertEqual(12, self.problem.given_p(5))
+            self.assertEqual(12, self.problem.given_p_simple(5))
         with self.subTest('testing p=7'):
-            self.assertEqual(0, self.problem.given_p(7))
+            # self.assertEqual(0, self.problem.given_p(7))
+            self.assertEqual(0, self.problem.given_p_simple(7))
 
     def test_solution(self):
         # self.assertEqual(None, self.problem.solve(6000000))
         # self.assertEqual(None, self.problem.solve(5000))
-        self.assertEqual(48911172, self.problem.solve(1000))
-        # self.assertEqual(6910616, self.problem.solve(500))
+        # self.assertEqual(48911172, self.problem.solve(1000))
+        self.assertEqual(6910616, self.problem.solve(500))
         # self.assertEqual(59762, self.problem.solve(100))
 
 
