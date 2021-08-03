@@ -46,6 +46,31 @@ def r(a, p):
 #         print(p, form_f, form_f+p, (form_f+p)//3,(p-1)/3 , given_p(p), p**2- 3*p + 2 - form_f*(p-1), cos_sum, cos_sum/(p-1)/3/3)
 
 
+# def int_print(*args):
+#     ls = []
+#     for x in args:
+#         if abs(int(round(x, 4)) - x) <= 1e-3:
+#             ls.append(int(round(x, 4)))
+#         else:
+#             raise NotImplementedError(f'{x} is not an integer')
+#     print(ls)
+#
+# for p in primes(3,100):
+#     if p%3 ==1:
+#         np_range = arange(1, p//2 + 1)
+#         cos_sum = 16 * sum(sum(cos(2 * pi/p * a * np_range ** 3)) ** 3 for a in np_range)
+#         f = -(cos_sum / (p - 1) + 1) / p
+#         int_print(p, given_p(p), f, cos_sum, cos_sum/(p-1)/9)
+
+# for p in primes(3,200):
+#     if p%3 ==1:
+#         np_range = arange(1, p//2 + 1)
+#         cos_sum = 16 * sum(sum(cos(2 * pi/p * a * np_range ** 3)) ** 3 for a in np_range)
+#         f = -cos_sum / (p - 1)/p - 1/ p
+#         g_p = (p-1)**3/p + cos_sum/p
+#         int_print(p, f, cos_sum/(p-1)/9 + 2*p, g_p/(p-1)/9, (p//3)/2)
+
+
 class Problem753:
     def __init__(self):
         pass
@@ -62,11 +87,6 @@ class Problem753:
 
         ans = 0
 
-        # for i in range(1, p):
-        #     for j in range(1, p):
-        #         cubed_sum = (i ** 3 + j ** 3) % p
-        #         ans += dc_c_values.get(cubed_sum, 0)
-
         for i in range(1, p):
             cubed_sum = (2*i**3) % p
             ans += dc_c_values.get(cubed_sum, 0)
@@ -79,11 +99,30 @@ class Problem753:
         return ans
 
     @staticmethod
+    def given_p_simple_2(p: int) -> int:
+        # if p % 3 != 1:
+        #     return (p-1)*(p-2)
+
+        dc_c_values = {}
+        for i in range(1, p):
+            i3 = i ** 3 % p
+            dc_c_values[i3] = 1 + dc_c_values.get(i3, 0)
+
+        ans = 0
+        # (p-1) * number of solutions to a^3 + 1 = c^3
+
+        for i in range(1, p):
+            cubed_sum = (i**3 + 1) % p
+            ans += dc_c_values.get(cubed_sum, 0)
+
+        return ans*(p-1)
+
+    @staticmethod
     def given_p(p: int) -> int:
-        if p == 2:  # since scaling by 16 shouldn't happen then
-            return 0
         if p % 3 != 1:
             return (p-1)*(p-2)
+
+        # given_p must be divisible by (p-1)
 
         # therefore p-1 must be divisible by 3
         # therefore cos_sum must be divisible by 3
@@ -135,10 +174,12 @@ class Problem753:
 
     @timeit
     def solve(self, max_p: int) -> int:
-        ans = 0
-        for p in primes(max_p):
+        ans = sum((p-1)*(p-2) for p in primes(max_p) if p % 3 != 1)
+        mod_3_primes = (p for p in primes(max_p) if p % 3 == 1)
+        for p in mod_3_primes:
             # ans += self.given_p(p)
-            ans += self.given_p_simple(p)
+            ans += self.given_p_simple_2(p)
+            # ans += self.given_p_simple(p)
         return ans
 
 
@@ -149,16 +190,18 @@ class Solution753(unittest.TestCase):
     def test_specific_p(self):
         with self.subTest('testing p=5'):
             # self.assertEqual(12, self.problem.given_p(5))
-            self.assertEqual(12, self.problem.given_p_simple(5))
+            self.assertEqual(12, self.problem.given_p_simple_2(5))
+            # self.assertEqual(12, self.problem.given_p_simple(5))
         with self.subTest('testing p=7'):
             # self.assertEqual(0, self.problem.given_p(7))
-            self.assertEqual(0, self.problem.given_p_simple(7))
+            self.assertEqual(0, self.problem.given_p_simple_2(7))
+            # self.assertEqual(0, self.problem.given_p_simple(7))
 
     def test_solution(self):
         # self.assertEqual(None, self.problem.solve(6000000))
-        # self.assertEqual(None, self.problem.solve(5000))
+        self.assertEqual(5041836452, self.problem.solve(5000))
         # self.assertEqual(48911172, self.problem.solve(1000))
-        self.assertEqual(6910616, self.problem.solve(500))
+        # self.assertEqual(6910616, self.problem.solve(500))
         # self.assertEqual(59762, self.problem.solve(100))
 
 
