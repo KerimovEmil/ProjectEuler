@@ -108,8 +108,10 @@ class Problem753:
         #     return (p-1)*(p-2)
 
         set_c_values = {i ** 3 % p for i in range(1, p)}  # there are 3 values of i for each one value of i^3
+        # if p==1 mod p, then a is a cube mod p, iff a**((p-1)/2) == 1
 
-        ans = 3* sum((i**3 + 1) % p in set_c_values for i in range(1, p))
+        # ans = 3 * sum((i**3 + 1) % p in set_c_values for i in range(1, p))
+        ans = 9 * sum((i3 + 1) in set_c_values for i3 in set_c_values)
 
         # ans = 0
         # for i in range(1, p):
@@ -199,6 +201,7 @@ class Solution753(unittest.TestCase):
 
     def test_solution(self):
         # self.assertEqual(None, self.problem.solve(6000000))
+        # self.assertEqual(None, self.problem.solve(50000))
         self.assertEqual(37501868762, self.problem.solve(10000))
         # self.assertEqual(5041836452, self.problem.solve(5000))
         # self.assertEqual(48911172, self.problem.solve(1000))
