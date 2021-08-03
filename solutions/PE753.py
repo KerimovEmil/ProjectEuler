@@ -100,20 +100,22 @@ class Problem753:
 
     @staticmethod
     def given_p_simple_2(p: int) -> int:
+        """
+        Only called when p%3 == 1.
+        Returns (p-1)* number of solutions to (a^3 + 1 = c^3)
+        """
         # if p % 3 != 1:
         #     return (p-1)*(p-2)
 
-        dc_c_values = {}
-        for i in range(1, p):
-            i3 = i ** 3 % p
-            dc_c_values[i3] = 1 + dc_c_values.get(i3, 0)
+        set_c_values = {i ** 3 % p for i in range(1, p)}  # there are 3 values of i for each one value of i^3
 
-        ans = 0
-        # (p-1) * number of solutions to a^3 + 1 = c^3
+        ans = 3* sum((i**3 + 1) % p in set_c_values for i in range(1, p))
 
-        for i in range(1, p):
-            cubed_sum = (i**3 + 1) % p
-            ans += dc_c_values.get(cubed_sum, 0)
+        # ans = 0
+        # for i in range(1, p):
+        #     cubed_sum = (i**3 + 1) % p
+        #     if cubed_sum in set_c_values:
+        #         ans += 3
 
         return ans*(p-1)
 
@@ -175,11 +177,11 @@ class Problem753:
     @timeit
     def solve(self, max_p: int) -> int:
         ans = sum((p-1)*(p-2) for p in primes(max_p) if p % 3 != 1)
-        mod_3_primes = (p for p in primes(max_p) if p % 3 == 1)
-        for p in mod_3_primes:
-            # ans += self.given_p(p)
+
+        mod_3_1_primes = (p for p in primes(max_p) if p % 3 == 1)
+
+        for p in mod_3_1_primes:
             ans += self.given_p_simple_2(p)
-            # ans += self.given_p_simple(p)
         return ans
 
 
@@ -189,17 +191,16 @@ class Solution753(unittest.TestCase):
 
     def test_specific_p(self):
         with self.subTest('testing p=5'):
-            # self.assertEqual(12, self.problem.given_p(5))
-            self.assertEqual(12, self.problem.given_p_simple_2(5))
+            self.assertEqual(12, self.problem.given_p(5))
             # self.assertEqual(12, self.problem.given_p_simple(5))
         with self.subTest('testing p=7'):
-            # self.assertEqual(0, self.problem.given_p(7))
-            self.assertEqual(0, self.problem.given_p_simple_2(7))
+            self.assertEqual(0, self.problem.given_p(7))
             # self.assertEqual(0, self.problem.given_p_simple(7))
 
     def test_solution(self):
         # self.assertEqual(None, self.problem.solve(6000000))
-        self.assertEqual(5041836452, self.problem.solve(5000))
+        self.assertEqual(37501868762, self.problem.solve(10000))
+        # self.assertEqual(5041836452, self.problem.solve(5000))
         # self.assertEqual(48911172, self.problem.solve(1000))
         # self.assertEqual(6910616, self.problem.solve(500))
         # self.assertEqual(59762, self.problem.solve(100))
