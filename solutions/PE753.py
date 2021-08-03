@@ -71,6 +71,33 @@ def r(a, p):
 #         int_print(p, f, cos_sum/(p-1)/9 + 2*p, g_p/(p-1)/9, (p//3)/2)
 
 
+def is_int(n):
+    return abs(n - int(n)) < 1e-13
+
+def find_a(p):
+    """Find a such that 4p = a^2 + 27b^2 and a==1 mod 3"""
+    p4 = 4*p
+    max_b2 = p4 // 27
+    for i in range(int(max_b2**0.5)+3):
+        if i**2 > max_b2:
+            b = i
+            break
+
+    for _ in range(b+1):
+        b -= 1
+        a2 = p4 - 27*b**2
+        if is_int(round(a2**0.5, 6)):
+            a = int(round(a2**0.5, 4))
+            break
+
+    if a%3 == 1:
+        return a
+    elif (-a) %3 == 1:
+        return -a
+    else:
+        raise NotImplementedError(a)
+
+
 class Problem753:
     def __init__(self):
         pass
@@ -104,22 +131,26 @@ class Problem753:
         Only called when p%3 == 1.
         Returns (p-1)* number of solutions to (a^3 + 1 = c^3)
         """
-        # if p % 3 != 1:
-        #     return (p-1)*(p-2)
 
         set_c_values = {i ** 3 % p for i in range(1, p)}  # there are 3 values of i for each one value of i^3
-        # if p==1 mod p, then a is a cube mod p, iff a**((p-1)/2) == 1
+        # if p==1 mod 3, then a is a cube mod p, iff a**((p-1)/2) == 1
+        # how many a and a+1 are cubes
+        # therefore a**((p-1)/2) == 1, and (a+1)**((p-1)/2) == 1
+        ans = sum((i3 + 1) in set_c_values for i3 in set_c_values)
 
-        # ans = 3 * sum((i**3 + 1) % p in set_c_values for i in range(1, p))
-        ans = 9 * sum((i3 + 1) in set_c_values for i3 in set_c_values)
+        return ans
 
-        # ans = 0
-        # for i in range(1, p):
-        #     cubed_sum = (i**3 + 1) % p
-        #     if cubed_sum in set_c_values:
-        #         ans += 3
-
-        return ans*(p-1)
+    def given_p_3(self, p: int) -> int:
+        """
+        Only called when p%3 == 1.
+        Returns (p-1)* number of solutions to (a^3 + 1 = c^3). This is equal to p + a - 8
+        Where a is uniquely defined as
+        4p = a^2 + 27*b^2, a==1 mod 3
+        Note that this only works when p==1 mod 3
+        See paper here: http://matwbn.icm.edu.pl/ksiazki/aa/aa37/aa3718.pdf
+        """
+        # return find_a(p)+p-8
+        return self.dc[p]+p-8
 
     @staticmethod
     def given_p(p: int) -> int:
@@ -176,14 +207,40 @@ class Problem753:
 
         return int(round((ans/p), 4))
 
+    def create_dict(self, max_p):
+
+        # 4p = a^2 + 27 * b^2
+        # max p = 6,000,000
+        max_b = int((4*max_p//27)**0.5) + 10
+        max_a = int(((4*max_p)**0.5)) + 10
+
+        x = (-max_a) % 3
+        if x == 2:
+            max_a += 1
+        if x == 0:
+            max_a += 2
+
+        assert (-max_a) % 3 == 1
+
+        self.dc = {}
+        for a in range(-max_a, max_a, 3):  # a == 1 mod 3
+            for b in range(1, max_b):
+                p4 = a ** 2 + 27 * (b ** 2)
+                if p4 % 4 == 0:
+                    self.dc[p4 // 4] = a
+
     @timeit
     def solve(self, max_p: int) -> int:
+
+        self.create_dict(max_p)
+
         ans = sum((p-1)*(p-2) for p in primes(max_p) if p % 3 != 1)
 
         mod_3_1_primes = (p for p in primes(max_p) if p % 3 == 1)
+        print('starting calculating p==1 mod 3')
 
-        for p in mod_3_1_primes:
-            ans += self.given_p_simple_2(p)
+        # ans += 9 * sum((p-1)*self.given_p_simple_2(p) for p in mod_3_1_primes)
+        ans += sum((p-1)*self.given_p_3(p) for p in mod_3_1_primes)
         return ans
 
 
@@ -200,9 +257,11 @@ class Solution753(unittest.TestCase):
             # self.assertEqual(0, self.problem.given_p_simple(7))
 
     def test_solution(self):
-        # self.assertEqual(None, self.problem.solve(6000000))
-        # self.assertEqual(None, self.problem.solve(50000))
-        self.assertEqual(37501868762, self.problem.solve(10000))
+        self.assertEqual(4714126766770661630, self.problem.solve(6000000))
+        # self.assertEqual(3259631135871932, self.problem.solve(500000))
+        # self.assertEqual(29820865379858, self.problem.solve(100000))
+        # self.assertEqual(3964606054604, self.problem.solve(50000))
+        # self.assertEqual(37501868762, self.problem.solve(10000))
         # self.assertEqual(5041836452, self.problem.solve(5000))
         # self.assertEqual(48911172, self.problem.solve(1000))
         # self.assertEqual(6910616, self.problem.solve(500))
