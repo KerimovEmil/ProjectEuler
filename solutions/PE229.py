@@ -26,11 +26,7 @@ ANSWER: 11325263
 
 Solve time ~7 seconds
 """
-
-import time
-
 import numpy as np
-# from primesieve import primes
 from primesieve.numpy import primes  # much faster than primesieve.primes
 
 import unittest
@@ -234,66 +230,85 @@ class Problem229:
 
         return True
 
+    @staticmethod
     @timeit
-    def solve(self):
-        print("generating primes")
-        # ls_primes = primesieve.primes(self.max_n)  # too memory intensive
-        ls_primes = timeit(primes)(self.max_n)
-        print("finished generating primes")  # 1.3 seconds
-        t0 = time.time()
-        # ls_good_primes = [p for p in ls_primes if p % 168 in [1, 25, 121]]  # 1 = 1^2, 25=5^2, 121=11^2
-        # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
-        p_168 = ls_primes % 168  # using numpy arrays for speed
-        ls_good_primes = (ls_primes[np.isin(p_168, [1, 25, 121])]).tolist()
-        t1 = time.time()
-        print("finished adding good primes in {} seconds".format(t1 - t0))  # 2.8 seconds
+    def get_ls_good_composite(max_n: int, ls_good_primes: list) -> list:
+        """
+        Compute a list of composite numbers consisting of two primes, less than max_n
+        Args:
+            max_n: max composite number
+            ls_good_primes: list of primes to use
 
-        max_prime_of_2 = int(self.max_n / (ls_good_primes[0])) + 1
+        Returns:
+
+        """
+        max_prime_of_2 = int(max_n / (ls_good_primes[0])) + 1
         prod_2 = [i for i in ls_good_primes if i <= max_prime_of_2]
 
-        ls_good_comp = []
-        sq_n = int(self.max_n ** 0.5)
+        ls_good_composite = []
+        sq_n = int(max_n ** 0.5)
         for i, p1 in enumerate(prod_2):
             if p1 > sq_n:
                 break
             for p2 in prod_2[i + 1:]:
                 c = p1 * p2
-                if c > self.max_n:
+                if c > max_n:
                     break
                 else:
-                    ls_good_comp.append(c)
+                    ls_good_composite.append(c)
+        return ls_good_composite
 
-        t2 = time.time()
-        print("finished adding composites p1*p2 in {} seconds".format(t2 - t1))  # 0.5 seconds
+    @staticmethod
+    @timeit
+    def get_ls_good_composite_3_primes(max_n: int, ls_good_primes: list) -> list:
+        """
+        Compute a list of composite numbers consisting of three primes, less than max_n
+        Args:
+            max_n: max composite number
+            ls_good_primes: list of primes to use
 
-        max_prime_of_3 = int(self.max_n / (ls_good_primes[0] * ls_good_primes[1])) + 1
+        Returns:
+
+        """
+
+        max_prime_of_3 = int(max_n / (ls_good_primes[0] * ls_good_primes[1])) + 1
         prod_3 = [i for i in ls_good_primes if i <= max_prime_of_3]
 
         ls_good_triple_comp = []
         for i, p1 in enumerate(prod_3):
             for j, p2 in enumerate(prod_3[i + 1:]):
                 c2 = p1 * p2
-                if c2 * prod_3[0] > self.max_n:
+                if c2 * prod_3[0] > max_n:
                     break
                 for k, p3 in enumerate(prod_3[i + j + 2:]):
                     c3 = c2 * p3
-                    if c3 > self.max_n:
+                    if c3 > max_n:
                         break
                     else:
                         ls_good_triple_comp.append(c3)
+        return ls_good_triple_comp
+
+    @timeit
+    def solve(self):
+        print("generating primes")
+        ls_primes = timeit(primes)(self.max_n)
+        print("finished generating primes")  # 1.3 seconds
+        # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
+        p_168 = ls_primes % 168  # using numpy arrays for speed
+        ls_good_primes = (ls_primes[np.isin(p_168, [1, 25, 121])]).tolist()
+
+        # generate all n = p_i * p_j, s.t. n <= max_n
+        ls_good_comp = self.get_ls_good_composite(max_n=self.max_n, ls_good_primes=ls_good_primes)
+
+        # generate all n = p_i * p_j * p_k, s.t. n <= max_n
+        ls_good_triple_comp = self.get_ls_good_composite_3_primes(max_n=self.max_n, ls_good_primes=ls_good_primes)
 
         ls_good_nums = ls_good_primes + ls_good_comp + ls_good_triple_comp
-        t3 = time.time()
-        print("finished adding composites p1*p2*p3 in {} seconds".format(t3 - t2))  # 0.5 seconds
 
         # adding the non-square numbers
-        # self.count += sum([int((self.max_n / p)**0.5) for p in ls_good_nums])
-
         self.count += int(np.floor((self.max_n / np.array(ls_good_nums)) ** 0.5).sum())
 
-        t4 = time.time()
-        print("Finished adding the non square numbers in {} seconds".format(t4 - t3))  # 0.7 seconds
-
+        sq_n = int(self.max_n ** 0.5)
         for i in range(60, sq_n):  # first number that works is 60
             dc_prime = primes_of_n(i)
             cond = self.is_sq_rep_d_7(dc_prime)
@@ -306,8 +321,6 @@ class Problem229:
             if cond:
                 self.count += 1
 
-        t5 = time.time()
-        print("Finished adding the square numbers in {} seconds".format(t5 - t4))  # 1.2 seconds
         return self.count
 
 
