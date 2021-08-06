@@ -105,7 +105,7 @@ class Problem266:
             else:
                 if debug:
                     print("{} can be in the divisor, since smallest still bigger than max "
-                          "int.".format(p, num_iter, len(ls_test)))
+                          "int.".format(p))
                 break
         return ls_test
 
@@ -135,7 +135,7 @@ class Problem266:
                 if debug:
                     print(
                         "{} can be in the divisor, since without it the largest is still bigger than the previous max."
-                        "".format(p, num_iter, len(ls_test)))
+                        "".format(p))
                 break
         return ls_test
 
@@ -164,7 +164,7 @@ class Problem266:
                           " {} choices left out of {} primes.".format(p, num_iter, len(ls_test)))
             else:
                 if debug:
-                    print("{} does not NEED to be in the divisor.".format(p, num_iter, len(ls_test)))
+                    print("{} does not NEED to be in the divisor.".format(p))
                 break
         return divisor_must, ls_test, num_iter
 
