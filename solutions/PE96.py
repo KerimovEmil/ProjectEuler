@@ -10,10 +10,9 @@ ANSWER:
 Solve time ~ 68 seconds
 """
 
-
-from util.utils import timeit
-from util.dlx import DancingLinks, LeftIterator
 import unittest
+from util.dlx import DancingLinks, LeftIterator
+from util.utils import timeit
 
 
 class Problem96:
@@ -36,7 +35,7 @@ class Problem96:
         # only once in row,
         # only once in column,
         # only one in group,
-        constraints = [False for _ in range(81*4)]
+        constraints = [False for _ in range(81 * 4)]
         eid = value - 1
 
         # box(i,j) is filled
@@ -44,13 +43,13 @@ class Problem96:
         # value only exists in row-i once
         constraints[81 + eid * 9 + row_id] = True
         # value only exists in col-j once
-        constraints[2*81 + eid*9 + col_id] = True
+        constraints[2 * 81 + eid * 9 + col_id] = True
         # value only exists in group-k once
         group_row = row_id // 3
         group_col = col_id // 3
 
         idx = group_row * 3 + group_col
-        constraints[3*81 + eid * 9 + idx] = True
+        constraints[3 * 81 + eid * 9 + idx] = True
         return tuple(constraints)
 
     @staticmethod

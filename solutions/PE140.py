@@ -21,8 +21,9 @@ Find the sum of the first thirty golden nuggets.
 ANSWER: 5673835352990
 Solve time ~0.001 seconds
 """
-from util.utils import timeit
 import unittest
+from util.utils import timeit
+
 
 # A(x) = sum_{n=1, inf} G_n x^n
 # A(x) = G_1 x + G_2 x^2 + sum_{n=3, inf} G_n x^n
@@ -114,8 +115,8 @@ def multiply_by_u(x, u=(9, 4), d=5):
     a, b = x
     u1, u2 = u
 
-    f = u1*a + u2*d*b
-    s = u2*a + u1*b
+    f = u1 * a + u2 * d * b
+    s = u2 * a + u1 * b
     return f, s
 
 
@@ -155,9 +156,9 @@ class Problem140:
 
         Returns: list of tuples (x,y) of the form (x + y*sqrt(d))
         """
-        u = u_tup[0] + u_tup[1] * d**0.5
+        u = u_tup[0] + u_tup[1] * d ** 0.5
         # need to check |y| <= sqrt(n*u/d)
-        abs_y_threshold = int((abs(n)*u/d)**0.5)  # 12
+        abs_y_threshold = int((abs(n) * u / d) ** 0.5)  # 12
 
         ls_tup = []
         for y in range(1, abs_y_threshold + 1):
@@ -166,7 +167,7 @@ class Problem140:
                 x = int(x2 ** 0.5)
                 # only keep the positive values of x + y*sqrt(d)
                 ls_tup.append((x, y))
-                if -x + y*(d**0.5) > 0:
+                if -x + y * (d ** 0.5) > 0:
                     ls_tup.append((-x, y))
                 else:
                     ls_tup.append((x, -y))
@@ -202,7 +203,7 @@ class Problem140:
     def generate_all_solutions(self, get_k, d=5, equal_n=44):
         u_tup = self.generate_fundamental_solution(d=d)
         # u_tup = (9, 4)
-        mult_by_u = lambda x: multiply_by_u(x=x, u=u_tup, d=d)
+        def mult_by_u(x): return multiply_by_u(x=x, u=u_tup, d=d)
         # u = 9 + 4 * (5 ** 0.5)
         ls_unique = self.generate_primitive_solution(u_tup=u_tup, n=equal_n, mult_by_u=mult_by_u, d=d)
         # ls_unique = [(7, 1), (7, -1), (8, 2), (8, -2), (13, -5), (17, -7)]
@@ -224,4 +225,3 @@ class Solution140(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

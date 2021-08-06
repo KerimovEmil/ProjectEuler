@@ -31,8 +31,8 @@ Solve time ~0.8 seconds
 # m(3m−1)/2 - n(3n−1)/2 = (3m^2-m - 3n^2-n)/2 = q(3q−1)/2
 # 3m^2 - 3n^2 + n - m = 3q^2 - q
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem44:

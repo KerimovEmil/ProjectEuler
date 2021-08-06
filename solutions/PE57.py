@@ -20,6 +20,7 @@
 # 153
 
 import decimal
+
 decimal.getcontext().prec = 2000
 
 

@@ -16,8 +16,8 @@ ANSWER:
 190569291
 Solve time ~0.03 seconds
 """
-from util.utils import timeit, partition_number
 import unittest
+from util.utils import timeit, partition_number
 
 
 class Problem76:

@@ -27,12 +27,15 @@ ANSWER: 11325263
 Solve time ~7 seconds
 """
 
-from util.utils import timeit, primes_of_n
-import unittest
+import time
+
+import numpy as np
 # from primesieve import primes
 from primesieve.numpy import primes  # much faster than primesieve.primes
-import time
-import numpy as np
+
+import unittest
+from util.utils import timeit, primes_of_n
+
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
 # such that Norm(a + b sqrt(D)) = a^2 - D×b^2
@@ -187,7 +190,7 @@ class Problem229:
         """
         # At least one 1mod4 prime must exist
         if sum([p % 4 == 1 for p in dc_prime.keys()]) == 0:
-                return False
+            return False
         return True
 
     @staticmethod
@@ -243,37 +246,37 @@ class Problem229:
         p_168 = ls_primes % 168  # using numpy arrays for speed
         ls_good_primes = (ls_primes[np.isin(p_168, [1, 25, 121])]).tolist()
         t1 = time.time()
-        print("finished adding good primes in {} seconds".format(t1-t0))  # 2.8 seconds
+        print("finished adding good primes in {} seconds".format(t1 - t0))  # 2.8 seconds
 
         max_prime_of_2 = int(self.max_n / (ls_good_primes[0])) + 1
         prod_2 = [i for i in ls_good_primes if i <= max_prime_of_2]
 
         ls_good_comp = []
-        sq_n = int(self.max_n**0.5)
+        sq_n = int(self.max_n ** 0.5)
         for i, p1 in enumerate(prod_2):
             if p1 > sq_n:
                 break
-            for p2 in prod_2[i+1:]:
-                c = p1*p2
+            for p2 in prod_2[i + 1:]:
+                c = p1 * p2
                 if c > self.max_n:
                     break
                 else:
                     ls_good_comp.append(c)
 
         t2 = time.time()
-        print("finished adding composites p1*p2 in {} seconds".format(t2-t1))  # 0.5 seconds
+        print("finished adding composites p1*p2 in {} seconds".format(t2 - t1))  # 0.5 seconds
 
         max_prime_of_3 = int(self.max_n / (ls_good_primes[0] * ls_good_primes[1])) + 1
         prod_3 = [i for i in ls_good_primes if i <= max_prime_of_3]
 
         ls_good_triple_comp = []
         for i, p1 in enumerate(prod_3):
-            for j, p2 in enumerate(prod_3[i+1:]):
+            for j, p2 in enumerate(prod_3[i + 1:]):
                 c2 = p1 * p2
-                if c2*prod_3[0] > self.max_n:
+                if c2 * prod_3[0] > self.max_n:
                     break
-                for k, p3 in enumerate(prod_3[i+j+2:]):
-                    c3 = c2*p3
+                for k, p3 in enumerate(prod_3[i + j + 2:]):
+                    c3 = c2 * p3
                     if c3 > self.max_n:
                         break
                     else:
@@ -281,7 +284,7 @@ class Problem229:
 
         ls_good_nums = ls_good_primes + ls_good_comp + ls_good_triple_comp
         t3 = time.time()
-        print("finished adding composites p1*p2*p3 in {} seconds".format(t3-t2))  # 0.5 seconds
+        print("finished adding composites p1*p2*p3 in {} seconds".format(t3 - t2))  # 0.5 seconds
 
         # adding the non-square numbers
         # self.count += sum([int((self.max_n / p)**0.5) for p in ls_good_nums])
@@ -289,7 +292,7 @@ class Problem229:
         self.count += int(np.floor((self.max_n / np.array(ls_good_nums)) ** 0.5).sum())
 
         t4 = time.time()
-        print("Finished adding the non square numbers in {} seconds".format(t4-t3))  # 0.7 seconds
+        print("Finished adding the non square numbers in {} seconds".format(t4 - t3))  # 0.7 seconds
 
         for i in range(60, sq_n):  # first number that works is 60
             dc_prime = primes_of_n(i)
@@ -313,7 +316,7 @@ class Solution229(unittest.TestCase):
         # self.problem_small = Problem229(max_n=1000)
         # self.problem_small = Problem229(max_n=10000)
         # self.problem_small = Problem229(max_n=int(1e7))
-        self.problem = Problem229(max_n=2*int(1e9))
+        self.problem = Problem229(max_n=2 * int(1e9))
 
     def test_solution(self):
         # self.assertEqual(5, self.problem_small.solve())

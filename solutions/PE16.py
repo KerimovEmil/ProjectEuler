@@ -10,8 +10,8 @@ ANSWER:
 Solve time ~0.003 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem16:
@@ -21,7 +21,7 @@ class Problem16:
 
     @timeit
     def solve(self):
-        return sum(map(int, str(self.base**self.expo)))
+        return sum(map(int, str(self.base ** self.expo)))
 
 
 class Solution16(unittest.TestCase):

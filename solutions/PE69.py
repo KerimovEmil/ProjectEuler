@@ -9,8 +9,9 @@ ANSWER:
 510510
 Solve time ~0.002 seconds
 """
-from util.utils import timeit, sieve
 import unittest
+from util.utils import timeit, sieve
+
 
 # Note that you can show that phi(n) = n*(1-1/p1)*(1-1/p2)*... for all of the prime factors of n
 # Therefore the maximum of n / phi(n) = max 1/((1-1/p1)*(1-1/p2)*...) = min((1-1/p1)*(1-1/p2)*...)
@@ -28,7 +29,7 @@ class Problem69:
         for p in self.primes:
             output *= p
             if output > self.limit:
-                return output/p
+                return output / p
         raise ValueError("Max Prime is not large enough")
 
 

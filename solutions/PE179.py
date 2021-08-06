@@ -9,8 +9,8 @@ ANSWER: 986262
 Solve time ~19 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem179:
@@ -22,8 +22,8 @@ class Problem179:
         """Create a sieve of divisors"""
         divisors = [2] * (self.n + 1)  # every number is divisible by itself and 1.
         # The number of divisors for 1 is incorrect but we don't use it anyway
-        for i in range(2, int(self.n**0.5) + 1):
-            i2 = i*i
+        for i in range(2, int(self.n ** 0.5) + 1):
+            i2 = i * i
             divisors[i2] -= 1  # remove one divisor for each square number
             for x in range(i2, self.n, i):
                 divisors[x] += 2  # add the two divisors of i and n/i
@@ -40,4 +40,3 @@ class Solution179(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

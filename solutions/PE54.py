@@ -49,23 +49,24 @@ ANSWER: 376
 Solve time ~0.15  seconds
 """
 
-from util.utils import timeit
-import unittest
-from enum import IntEnum
 from collections import Counter
+from enum import IntEnum
+
+import unittest
+from util.utils import timeit
 
 
 class Card:
     def __init__(self, value, suit):
         self.value = value
         self.suit = suit
-        
+
     def __lt__(self, other):  # high card comparison
         return self.value < other.value
-    
+
     def __gt__(self, other):
         return self.value > other.value
-    
+
     def __eq__(self, other):
         return self.value == other.value
 

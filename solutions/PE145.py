@@ -13,9 +13,10 @@ ANSWER:
 608720
 Solve time ~ 0.003s seconds
 """
-from util.utils import timeit
-import unittest
 import math
+
+import unittest
+from util.utils import timeit
 
 
 class Problem145:
@@ -27,11 +28,11 @@ class Problem145:
     def solve(self):
         """See xiangpeng's comment in https://projecteuler.net/thread=145;page=5"""
         max_dig = int(math.log10(int(self.n)))
-        for d in range(1, max_dig+1):
+        for d in range(1, max_dig + 1):
             if (d % 2) == 0:
                 self.count += 20 * int(30 ** (d / 2 - 1))
             elif (d % 4) == 3:
-                self.count += 100 * int(500 ** ((d+1) / 4 - 1))
+                self.count += 100 * int(500 ** ((d + 1) / 4 - 1))
         return self.count
 
     @timeit

@@ -11,8 +11,8 @@ square sum = (1 + 2 + 3 + 4 + ... + n)^2 = (n * (n+1) / 2)^2
 sum squares = 1^2 + 2^2 + 3^2 + ... + n^2 = n * (n+1) * (2n+1) / 6
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem6:
@@ -33,7 +33,7 @@ class Problem6:
         Returns the sum of the squares from 1 to n.
         1^2 + 2^2 + 3^2 + ... + n^2
         """
-        return n * (n + 1) * (2*n + 1) / 6
+        return n * (n + 1) * (2 * n + 1) / 6
 
     @timeit
     def solve(self):

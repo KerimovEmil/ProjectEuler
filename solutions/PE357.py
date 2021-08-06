@@ -19,8 +19,8 @@
 # p_2 + p_1*p_2 = p_2 * (1 + p_1) != prime.
 
 
-from util.utils import sieve
 from util.utils import primes_of_n
+from util.utils import sieve
 from util.utils import timeit
 
 

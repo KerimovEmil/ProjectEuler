@@ -12,19 +12,19 @@ ANSWER:
 Solve time ~ 0.001 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 def f(x):
-    return int(2**(30.403243784-x**2)) * 1e-9
+    return int(2 ** (30.403243784 - x ** 2)) * 1e-9
 
 
 def u(n):
     if n == 0:
         return -1
     else:
-        return f(u(n-1))
+        return f(u(n - 1))
 
 
 # notice that the values of u_n seem to osculate
@@ -59,7 +59,7 @@ class Problem197:
 
     @timeit
     def solve(self):
-        return round(u(518) + u(518+1), 9)
+        return round(u(518) + u(518 + 1), 9)
 
 
 class Solution197(unittest.TestCase):

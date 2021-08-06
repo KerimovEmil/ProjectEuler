@@ -11,8 +11,8 @@ Solve time ~0.002 seconds
 Related Problems: 67
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem18:
@@ -32,7 +32,7 @@ class Problem18:
 
     @timeit
     def solve(self):
-        for row in range(len(self.data)-1):
+        for row in range(len(self.data) - 1):
             self.reduce_triangle()
 
         return self.data[0][0]

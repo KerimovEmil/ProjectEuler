@@ -16,9 +16,10 @@ Solve time ~9.5 seconds using brute force
 Solve time ~0.003 seconds using pell equations
 """
 
-from util.utils import timeit
-import unittest
 from math import gcd
+
+import unittest
+from util.utils import timeit
 
 
 # set up
@@ -47,7 +48,7 @@ class Problem139:
     @timeit
     def simple_solve(self, max_p):
         count = 0
-        max_m = int((max_p/2)**0.5) + 1
+        max_m = int((max_p / 2) ** 0.5) + 1
         for m in range(2, max_m):
             for n in range(1, m):
                 if (n + m) % 2 != 1:  # different parity
@@ -56,11 +57,11 @@ class Problem139:
                     continue
 
                 # Use Pythagorean triples
-                a, b, c = m*m - n*n, 2*m*n, m*m + n*n
+                a, b, c = m * m - n * n, 2 * m * n, m * m + n * n
                 p = a + b + c
                 if p >= max_p:
                     break
-                if c % (b-a) == 0:
+                if c % (b - a) == 0:
                     count += max_p // p
 
         return count
@@ -90,4 +91,3 @@ class Solution139(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

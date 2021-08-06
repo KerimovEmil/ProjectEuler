@@ -42,8 +42,9 @@ Solve time ~0.007 seconds
 
 
 import itertools
-from util.utils import timeit
+
 import unittest
+from util.utils import timeit
 
 
 class DumbProblem43:  # takes ~16 seconds
@@ -55,7 +56,7 @@ class DumbProblem43:  # takes ~16 seconds
 
     def check(self, str_num):
         for i in range(self.n_criteria):
-            if int(str_num[i+1:i+4]) % self.ls_small_primes[i]:
+            if int(str_num[i + 1:i + 4]) % self.ls_small_primes[i]:
                 return False
         return True
 
@@ -76,7 +77,7 @@ class Problem43:
 
     def check(self, str_num):
         for i in range(self.n_criteria):
-            if int(str_num[i+1:i+4]) % self.ls_small_primes[i]:
+            if int(str_num[i + 1:i + 4]) % self.ls_small_primes[i]:
                 return False
         return True
 

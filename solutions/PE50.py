@@ -36,7 +36,7 @@ class Problem50:
                 prime_sum = sum(self.ls_primes[i:j + 1 + self.max_len])
                 if prime_sum < self.max_int:
                     if prime_sum in primes:
-                        size = j+1-i
+                        size = j + 1 - i
                         if size > self.max_len:
                             self.max_len = size
                             self.ans = prime_sum

@@ -10,8 +10,8 @@ ANSWER:
 Solve time ~ 0.001 seconds
 """
 
-from util.utils import timeit, primes_of_n
 import unittest
+from util.utils import timeit, primes_of_n
 
 
 class Problem3:

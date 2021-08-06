@@ -13,8 +13,8 @@ ANSWER:
 Solve time ~0.3 seconds
 """
 
-from util.utils import timeit, sieve
 import unittest
+from util.utils import timeit, sieve
 
 
 def trunc_left(num):

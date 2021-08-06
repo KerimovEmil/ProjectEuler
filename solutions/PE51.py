@@ -22,15 +22,17 @@ Solve time ~1.7 seconds
 # at least once the sum of the digits (and the whole number) is divisible by three.
 
 from collections import Counter
+
 from primesieve import primes
-from util.utils import timeit
+
 import unittest
+from util.utils import timeit
 
 
 class Problem51:
     def __init__(self, max_dig):
         self.max_dig_num = max_dig
-        self.ls_str_primes = [str(x) for x in primes(pow(10, self.max_dig_num-1), pow(10, self.max_dig_num))]
+        self.ls_str_primes = [str(x) for x in primes(pow(10, self.max_dig_num - 1), pow(10, self.max_dig_num))]
 
     @timeit
     def solve(self):
@@ -38,17 +40,17 @@ class Problem51:
         location = None
         sub_string = ''
 
-        for i in range(self.max_dig_num-1):  # loop over number of maximum digits
+        for i in range(self.max_dig_num - 1):  # loop over number of maximum digits
             num_rep = self.get_common_prime_substring([i])  # replacing one digit
             if num_rep[1] > max_rep_dig:
                 max_rep_dig = num_rep[1]
                 location = i
                 sub_string = num_rep[0]
 
-            for j in range(i+1, self.max_dig_num-1):  # loop over remaining digits
+            for j in range(i + 1, self.max_dig_num - 1):  # loop over remaining digits
                 # no need to check replacing two digits, see math comment above code
 
-                for k in range(j+1, self.max_dig_num-1):
+                for k in range(j + 1, self.max_dig_num - 1):
                     num_rep = self.get_common_prime_substring([i, j, k])  # replacing three digits
                     if num_rep[1] > max_rep_dig:
                         max_rep_dig = num_rep[1]
@@ -91,7 +93,7 @@ class Problem51:
         """
         out = s[:ls_index[0]]
         for i in range(1, len(ls_index)):
-            out += s[ls_index[i-1] + 1: ls_index[i]]
+            out += s[ls_index[i - 1] + 1: ls_index[i]]
         out += s[ls_index[-1] + 1:]
         return out
 
@@ -118,5 +120,3 @@ class Solution51(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

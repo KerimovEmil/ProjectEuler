@@ -16,8 +16,8 @@ Solve time ~7.3 seconds
 # only four such numbers exist: 1,2, 145, 40585.
 # since 1 and 2 are not sums as the question stated then the answer is 145+40585 = 40730
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 factorials_0_to_9 = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
 

@@ -25,10 +25,11 @@ ANSWER: 319.30207833
 Solve time ~0.58 seconds
 """
 
-from util.utils import timeit
-import unittest
 import numpy as np
+
+import unittest
 from solutions.PE89 import RomanNumeral
+from util.utils import timeit
 
 
 # Idea:
@@ -105,7 +106,7 @@ class Problem610:
         expected_value = sum(RomanNumeral.parse(state) * w[i] for i, state in enumerate(states))
 
         # The expected value added of all roman numerals that start with M are 1000*0.14/(1-0.14)
-        return expected_value + 1000*0.14/(1-0.14)
+        return expected_value + 1000 * 0.14 / (1 - 0.14)
 
 
 class Solution610(unittest.TestCase):

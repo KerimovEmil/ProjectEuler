@@ -13,9 +13,10 @@ ANSWER: 1.002322108633, more precise: 1.00232210863287
 Solve time ~ 0.003 seconds
 """
 
-from util.utils import timeit
-import unittest
 import math
+
+import unittest
+from util.utils import timeit
 
 
 # Using:
@@ -49,8 +50,8 @@ class Problem235:
     def s(r):  # using limit/(-3)
         # (4700 * r ^ 5000 + 300) / (r - 1) + (1 - r ^ 5000) / (r - 1) ^ 2 = 200,000,000,000
         r_5000 = math.pow(r, 5000)
-        r_1 = r-1
-        return (4700 * r_5000 + 300) / r_1 + (1-r_5000) / math.pow(r_1, 2)
+        r_1 = r - 1
+        return (4700 * r_5000 + 300) / r_1 + (1 - r_5000) / math.pow(r_1, 2)
 
     @timeit
     def solve(self):
@@ -59,7 +60,7 @@ class Problem235:
         for i in range(self.num_iter):
             r = (lo + hi) / 2.0
             val = self.s(r)
-            lo, hi = (lo, r) if val > -self.limit/3 else (r, hi)
+            lo, hi = (lo, r) if val > -self.limit / 3 else (r, hi)
             # print(i, r, val)
 
         return round(r, self.precision)
@@ -67,7 +68,7 @@ class Problem235:
 
 class Solution235(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem235(limit=int(- 6*1e11), num_iter=40, low=1.0, high=1.1, precision=12)
+        self.problem = Problem235(limit=int(- 6 * 1e11), num_iter=40, low=1.0, high=1.1, precision=12)
 
     def test_solution(self):
         self.assertEqual(1.002322108633, self.problem.solve())

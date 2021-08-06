@@ -71,7 +71,7 @@ class Problem185:
         return best_guess, min_dist
 
     def solve(self):
-        min_dist = self.digits*len(self.ls_attempts)
+        min_dist = self.digits * len(self.ls_attempts)
         is_solved = False
         while is_solved is False:
             best_guess, dist = self.solve_attempt()
@@ -127,4 +127,3 @@ def main2():
 if __name__ == "__main__":
     # main1()
     main2()
-

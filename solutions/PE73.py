@@ -15,8 +15,8 @@ ANSWER:
 Solve time ~0.004 seconds  # easy solution in ~9.7 seconds
 """
 
-from util.utils import timeit, len_faray_seq
 import unittest
+from util.utils import timeit, len_faray_seq
 
 
 class Problem73:
@@ -41,7 +41,7 @@ class Problem73:
 
         # note that the middle value will always be 1/2 for all n>1
         # therefore there are always (|F_n| - 1)/2 elements that are less than 1/2
-        index_of_half = int((len_f - 1)/2)
+        index_of_half = int((len_f - 1) / 2)
 
         index_of_one_third = self.quick_index_of_one_third(self.d)
 
@@ -84,7 +84,7 @@ class Problem73:
 
         K = int((self.d / 2) ** 0.5)
         M = int(self.d / (2 * K + 1))
-        ls_r_small = [0] * (M+1)  # R(m)
+        ls_r_small = [0] * (M + 1)  # R(m)
         ls_r_large = [0] * K  # R(int(N/(2k-1))
 
         def f(d):

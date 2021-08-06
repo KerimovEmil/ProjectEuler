@@ -37,9 +37,9 @@ class Problem401:
     def solve(self):
         mod = self.mod
         n = self.max_int
-        sqr_n = int(n**0.5)
+        sqr_n = int(n ** 0.5)
         # i < sqrt(n)
-        self.sum_n = sum(((i**2 % mod) * (n // i)) for i in range(1, sqr_n + 1)) % mod
+        self.sum_n = sum(((i ** 2 % mod) * (n // i)) for i in range(1, sqr_n + 1)) % mod
 
         # i >= sqrt(n)
         self.sum_n += sum(((i * self.diff_sum_squares(n // i, n // (i + 1))) % mod
@@ -55,7 +55,7 @@ class Problem401:
     def diff_sum_squares(n, n2):
         """Returns sum_squares(n) - sum_squares(n2)"""
         x = n - n2  # n2 = n - x
-        return (x*n*(n2 + 1)) + (x*(2*x-1)*(x-1)) // 6
+        return (x * n * (n2 + 1)) + (x * (2 * x - 1) * (x - 1)) // 6
 
     # def sum_squares(self, n, m):
     #     if n not in self.dc_sum_sq.keys():

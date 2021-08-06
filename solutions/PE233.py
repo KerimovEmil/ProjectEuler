@@ -13,8 +13,9 @@ ANSWER: 271204031455541309
 Solve time ~3.5 seconds
 """
 
-from util.utils import timeit, sieve
 import unittest
+from util.utils import timeit, sieve
+
 
 # Examining f(N)
 # Define G(N) = number of lattice points on circle with radius sqrt(N)

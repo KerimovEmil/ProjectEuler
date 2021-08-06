@@ -14,8 +14,8 @@ ANSWER:
 Solve time ~4 seconds
 """
 
-from util.utils import timeit, len_faray_seq
 import unittest
+from util.utils import timeit, len_faray_seq
 
 
 class Problem72:
@@ -40,4 +40,3 @@ class Solution72(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

@@ -14,8 +14,8 @@ ANSWER:
 Solve time ~1.8 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem32:
@@ -30,7 +30,7 @@ class Problem32:
         for i in range(1, self.max_x):
             for j in range(1, self.max_y):
                 if Problem32.pandigital(i, j):
-                    if i*j not in t:
+                    if i * j not in t:
                         t.append(i * j)
                         self.sum += i * j
 

@@ -11,12 +11,13 @@ ANSWER:
 Solve time ~0.4 seconds
 """
 
-from util.utils import timeit, sieve
 import unittest
+from util.utils import timeit, sieve
 
 
 class Problem35:
     """How many circular primes are there below one million?"""
+
     def __init__(self, n):
         self.count = 0
         self.set_primes = set(sieve(n))
@@ -28,7 +29,7 @@ class Problem35:
         dig.append(dig.pop(0))  # rotate
         test_prime = int(''.join(dig))
 
-        for _ in range(len(dig)-1):
+        for _ in range(len(dig) - 1):
             if test_prime not in self.set_primes:
                 return False
             else:

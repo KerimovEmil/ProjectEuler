@@ -26,8 +26,9 @@
 # 272
 
 
-import math
 import decimal
+import math
+
 decimal.getcontext().prec = 1000
 
 

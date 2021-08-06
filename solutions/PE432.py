@@ -15,6 +15,7 @@ Solve time 618 seconds ~ 10 mins + 20 seconds
 import unittest
 from util.utils import timeit, euler_totient_function, sum_phi
 
+
 # 510510 = 2×3×5×7×11×13×17
 # n = 510510
 # phi(n) = 92160
@@ -58,7 +59,7 @@ class Solution432(unittest.TestCase):
 
     def test_sum_phi_function(self):
         n = 5000
-        self.assertEqual(sum(euler_totient_function(i) for i in range(1, n+1)), sum_phi(n))
+        self.assertEqual(sum(euler_totient_function(i) for i in range(1, n + 1)), sum_phi(n))
 
     def test_solution_4(self):
         self.assertEqual(570531840, self.problem.solve(int(1e4)))

@@ -31,10 +31,12 @@ ANSWER:
 123/59
 Solve time ~ 0.23 seconds
 """
-import unittest
-from math import ceil
-from util.utils import timeit, farey
 from fractions import Fraction
+from math import ceil
+
+import unittest
+from util.utils import timeit, farey
+
 
 # ----------------------------
 # SETTING UP THE PROBLEM
@@ -165,7 +167,7 @@ class Problem236:
             for b_i in range(int(a_i / m_scalar_float) + 1, b):  # todo include an upper bound for m
                 t_set.add(Fraction(b_i, a_i))
 
-        return {m_scalar*t for t in t_set}
+        return {m_scalar * t for t in t_set}
 
     def all_possible_m_loop(self):
         """ Using m = (b_i / a_i)  * (A_i / B_i) """
@@ -228,8 +230,8 @@ class Problem236:
             multiples.append((Fraction(b_total[i], a_total[i]) * m).denominator)
         assert multiples[1] == multiples[2]
         assert multiples[4] == multiples[2]
-        for k1 in range(1, ceil(a_total[0] / (m*multiples[0])) + 1):
-            for k4 in range(1, ceil(a_total[3] / (m*multiples[3])) + 1):
+        for k1 in range(1, ceil(a_total[0] / (m * multiples[0])) + 1):
+            for k4 in range(1, ceil(a_total[3] / (m * multiples[3])) + 1):
                 a1 = k1 * multiples[0]
                 a4 = k4 * multiples[3]
                 num = a1 * (scalar * 5 / 59 - 1) + a4 * (scalar * 41 / 90 - 1)
@@ -258,7 +260,6 @@ class Solution236(unittest.TestCase):
         self.problem = Problem236(a_total, b_total, max_den=60)  # max_den=100
 
     def test_all_solution(self):
-
         # Check solution
         self.assertEqual(Fraction(123, 59), self.problem.solve())
 
@@ -313,10 +314,6 @@ class Solution236(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
 
 # MANUAL ATTEMPTS
 # a_total = [5248, 1312, 2624, 5760, 3936]

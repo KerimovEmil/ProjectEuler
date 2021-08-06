@@ -14,11 +14,11 @@ Solve time ~0.12 seconds
 """
 
 import functools
-from util.utils import timeit, generate_ascending_sub_sequence
-import unittest
 from collections import Counter
 from math import factorial, log10
 
+import unittest
+from util.utils import timeit, generate_ascending_sub_sequence
 
 # define s(n) to be the sum of the square of the digits of n
 # hence if n = sum_{i=0}^{r} d_i 10^i  then s(n) = sum_{i=0}^{r} d_i^2
@@ -30,7 +30,7 @@ from math import factorial, log10
 
 
 # pre-compute squares of strings
-dc_dig_square = {str(i): i**2 for i in range(10)}
+dc_dig_square = {str(i): i ** 2 for i in range(10)}
 
 
 @functools.lru_cache(maxsize=None, typed=False)

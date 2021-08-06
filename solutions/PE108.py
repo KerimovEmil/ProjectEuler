@@ -57,7 +57,7 @@ class Problem108:
         pass
 
     def solve(self):
-        return 2*2*3*3*5*7*11*13
+        return 2 * 2 * 3 * 3 * 5 * 7 * 11 * 13
 
 
 if __name__ == "__main__":

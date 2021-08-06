@@ -30,7 +30,6 @@ import unittest
 
 from util.utils import timeit
 
-
 # Numerals must be arranged in descending order of size.
 # M, C, and X cannot be equalled or exceeded by smaller denominations.
 # D, L, and V can each only appear once.

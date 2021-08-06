@@ -11,9 +11,9 @@ ANSWER: 2811077773
 Solve time ~6 seconds
 """
 
-from util.utils import timeit
 import unittest
-from primesieve import primes, count_primes
+from util.utils import timeit
+
 
 # resources: https://math.dartmouth.edu/~carlp/PDF/qs08.pdf
 
@@ -43,6 +43,7 @@ def str_form(dc_fac):
         out_str += ' * {}^{}'.format(exp[0], exp[1])
     return out_str[3:]
 
+
 # prime * product of smaller primes that are less than the prime.
 
 
@@ -66,7 +67,7 @@ class Problem668:
         from user: shs.10978 in https://projecteuler.net/thread=668,
         which is a variant of Lucy's algo found here: https://projecteuler.net/thread=10;page=5#111677
         """
-        sq_rt_n = int(self.n**0.5)
+        sq_rt_n = int(self.n ** 0.5)
 
         lo = [i - 1 for i in range(sq_rt_n + 1)]
         hi = [0] + [self.n // i - 1 for i in range(1, sq_rt_n + 1)]

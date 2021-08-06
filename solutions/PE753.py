@@ -2,7 +2,8 @@
 Fermat's Last Theorem states that no three positive integers a,b,c satisfy the equation a^n + b^n = c^n
 for any integer value of n greater than 2.
 
-For this problem we are only considering the case n=3. For certain values of p, it is possible to solve the congruence equation:
+For this problem we are only considering the case n=3. For certain values of p, it is possible to solve the congruence
+equation:
 a^3 + b^3 = c^3 mod p
 
 For a prime p, we define F(p) as the number of integer solutions to this equation for 1 <= a,b,c < p.
@@ -15,9 +16,11 @@ ANSWER: 4714126766770661630
 Solve time ~2.5 seconds
 """
 
-from util.utils import timeit
-import unittest
 from primesieve import primes
+
+import unittest
+from util.utils import timeit
+
 
 # high level concise logic (Julia)
 # function A(p)
@@ -41,7 +44,7 @@ class Problem753:
     def given_p(self, p: int) -> int:
         """Return the number of solutions to a^3 + b^3 = c^3 mod p for 1 <= a,b,c < p"""
         if p % 3 != 1:
-            return (p-1) * (p-2)
+            return (p - 1) * (p - 2)
         else:
             return self.given_p_3(p)
 
@@ -54,7 +57,7 @@ class Problem753:
         Note that this only works when p==1 mod 3
         See paper here: http://matwbn.icm.edu.pl/ksiazki/aa/aa37/aa3718.pdf
         """
-        return (p-1) * (self.dc[p]+p-8)
+        return (p - 1) * (self.dc[p] + p - 8)
 
     @staticmethod
     def create_dict(max_p):
@@ -62,12 +65,12 @@ class Problem753:
         Create dictionary of unique values of a for each p (p==1 mod 3), such that
          4p = a^2 + 27b^2, and a==1 mod 3
          """
-        max_b = int((4*max_p//27)**0.5) + 10
-        max_a = int(((4*max_p)**0.5)) + 10
+        max_b = int((4 * max_p // 27) ** 0.5) + 10
+        max_a = int(((4 * max_p) ** 0.5)) + 10
 
         # make sure the first value of a is 1 mod 3
         x = (-max_a) % 3
-        max_a += (x-1) % 3
+        max_a += (x - 1) % 3
         assert (-max_a) % 3 == 1
 
         dc = {}
@@ -83,7 +86,7 @@ class Problem753:
         if max_p is None:
             max_p = self.max_p
 
-        ans = sum((p-1)*(p-2) for p in primes(max_p) if p % 3 != 1)
+        ans = sum((p - 1) * (p - 2) for p in primes(max_p) if p % 3 != 1)
 
         mod_3_1_primes = (p for p in primes(max_p) if p % 3 == 1)
 
@@ -109,4 +112,3 @@ class Solution753(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
