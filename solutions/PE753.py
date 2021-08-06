@@ -12,12 +12,25 @@ You are given F(5)=12 and F(7)=0.
 Find the sum of F(p) over all primes p less than 6,000,000.
 
 ANSWER: 4714126766770661630
-Solve time ~4.5 seconds
+Solve time ~2.5 seconds
 """
 
 from util.utils import timeit
 import unittest
 from primesieve import primes
+
+# high level concise logic (Julia)
+# function A(p)
+#     for b in 0:isqrt(4p ÷ 27)
+#         a2 = 4p - 27b^2
+#         a = isqrt(a2)
+#         a^2 == a2 && return a % 3 == 1 ? a : -a
+#     end
+# end
+#
+# F(p) = (p-1) * (p % 3 ≠ 1 ? p-2 : p-8+A(p))
+#
+# sum(F(p) for p in primes(6000000))
 
 
 class Problem753:
@@ -54,10 +67,7 @@ class Problem753:
 
         # make sure the first value of a is 1 mod 3
         x = (-max_a) % 3
-        if x == 2:
-            max_a += 1
-        if x == 0:
-            max_a += 2
+        max_a += (x-1) % 3
         assert (-max_a) % 3 == 1
 
         dc = {}
@@ -82,8 +92,9 @@ class Problem753:
 
 
 class Solution753(unittest.TestCase):
-    def setUp(self):
-        self.problem = Problem753(max_p=6000000)
+    @classmethod
+    def setUpClass(cls):
+        cls.problem = Problem753(max_p=6000000)
 
     def test_specific_p(self):
         with self.subTest('testing p=5'):
