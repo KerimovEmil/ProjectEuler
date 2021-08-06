@@ -2,7 +2,8 @@
 Fermat's Last Theorem states that no three positive integers a,b,c satisfy the equation a^n + b^n = c^n
 for any integer value of n greater than 2.
 
-For this problem we are only considering the case n=3. For certain values of p, it is possible to solve the congruence equation:
+For this problem we are only considering the case n=3. For certain values of p, it is possible to solve the congruence
+equation:
 a^3 + b^3 = c^3 mod p
 
 For a prime p, we define F(p) as the number of integer solutions to this equation for 1 <= a,b,c < p.

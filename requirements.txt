@@ -1,2 +1,2 @@
 numpy==1.18.1
-primesieve==1.4.4
+primesieve==2.3.0
