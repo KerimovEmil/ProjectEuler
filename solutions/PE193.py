@@ -43,10 +43,7 @@ class Problem193:
 
     def helper_adjust(self, even_bool, prev_prod, prime_index):
         # get next prime
-        try:
-            next_prime = self.ls_primes[prime_index]
-        except:
-            return
+        next_prime = self.ls_primes[prime_index]
 
         next_prod = prev_prod * next_prime
         while next_prod <= int(self.n ** 0.5):
@@ -58,10 +55,7 @@ class Problem193:
 
             self.helper_adjust(not even_bool, next_prod, prime_index + 1)
             prime_index += 1
-            try:
-                next_prime = self.ls_primes[prime_index]
-            except:
-                break
+            next_prime = self.ls_primes[prime_index]
             next_prod = prev_prod * next_prime
 
 
