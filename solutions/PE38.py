@@ -19,8 +19,8 @@ ANSWER:
 Solve time ~0.02 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 def unique_digits(str_num):

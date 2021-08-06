@@ -17,9 +17,11 @@ ANSWER:
 Solve time ~1113 seconds ~ 19 mins
 """
 
-from util.utils import timeit
-import unittest
 from math import gcd
+
+import unittest
+from util.utils import timeit
+
 
 # https://en.wikipedia.org/wiki/Square_root_of_a_2_by_2_matrix
 # https://projecteuler.net/problem=420
@@ -27,7 +29,7 @@ from math import gcd
 # See the whole explanation of solution in the first answer in this thread https://projecteuler.net/thread=420
 
 def lcm(x, y):
-    return x*y // gcd(x, y)
+    return x * y // gcd(x, y)
 
 
 def is_int(n):
@@ -53,21 +55,21 @@ class Problem420:
         # det_neg < sqrt(2*n)
         # det_pos < sqrt(2*n - det_neg^2)
         # for det_neg in range(1, int((2*self.n) ** 0.5)):
-        for det_neg in range(2, int((2*self.n) ** 0.5)):
-            d_pos_limit = (2*self.n - det_neg ** 2)**0.5
+        for det_neg in range(2, int((2 * self.n) ** 0.5)):
+            d_pos_limit = (2 * self.n - det_neg ** 2) ** 0.5
             if is_int(d_pos_limit):
                 d_pos_limit = int(d_pos_limit)
             else:
                 d_pos_limit = int(d_pos_limit) + 1
 
             if det_neg in ls_p:
-                det_pos_range = range(2*det_neg, d_pos_limit, det_neg)
+                det_pos_range = range(2 * det_neg, d_pos_limit, det_neg)
             else:
                 det_pos_range = range(det_neg + 2, d_pos_limit, 2)
 
             for det_pos in det_pos_range:
-                trace = (det_pos**2 + det_neg**2)//2
-                delta = (det_pos**2 - det_neg**2)//4  # delta = int((trace - det_neg**2)/2)
+                trace = (det_pos ** 2 + det_neg ** 2) // 2
+                delta = (det_pos ** 2 - det_neg ** 2) // 4  # delta = int((trace - det_neg**2)/2)
 
                 det_pos_neg = lcm(det_pos, det_neg)
                 # print(f'det_pos_neg:{det_pos_neg}, det_neg:{det_neg}, det_pos:{det_pos}')

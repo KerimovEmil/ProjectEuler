@@ -13,8 +13,9 @@ ANSWER:
 Solve time ~0.001 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
+
 
 # Expanding using pascals triangle of (a−1)^n + (a+1)^n we see that only the last two terms are not powers of a^2
 # moreover, if n is an even power only the constant term remains and if n is an odd term only the second last term
@@ -41,7 +42,7 @@ class Problem120:
 
     @timeit
     def solve(self):
-        return sum(a**2 - (2 - (a % 2))*a for a in range(self.min_a, self.max_a+1))
+        return sum(a ** 2 - (2 - (a % 2)) * a for a in range(self.min_a, self.max_a + 1))
 
 
 class Solution120(unittest.TestCase):
@@ -57,5 +58,3 @@ class Solution120(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

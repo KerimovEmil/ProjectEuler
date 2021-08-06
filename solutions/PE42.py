@@ -19,8 +19,8 @@ ANSWER:
 Solve time ~0.007 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem42:
@@ -34,7 +34,7 @@ class Problem42:
         return {i * (i + 1) / 2 for i in range(self.max_triangle_sum)}
 
     def generate_decoder(self):
-        self.decoder = {let: i+1 for (i, let) in enumerate(list("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))}
+        self.decoder = {let: i + 1 for (i, let) in enumerate(list("ABCDEFGHIJKLMNOPQRSTUVWXYZ"))}
 
     def enum(self, word):
         return sum([self.decoder[letter] for letter in word])

@@ -27,12 +27,13 @@ Solve time ~0.05 seconds
 
 # therefore perimeter must always be even.
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem39:
     """For which value of p <= 1000, is the number of solutions maximised?"""
+
     def __init__(self, max_perimeter):
         self.max_perimeter = max_perimeter
         self.ans = 0
@@ -46,7 +47,7 @@ class Problem39:
         for n in range(1, max_n):
             for m in range(n + 1, max_m):
                 # perimeter = 2km(m + n)
-                max_k = int(self.max_perimeter/(2*m*(m+n)))
+                max_k = int(self.max_perimeter / (2 * m * (m + n)))
                 for k in range(1, max_k + 1):
                     a = k * (m * m - n * n)
                     b = k * 2 * n * m

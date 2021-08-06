@@ -17,7 +17,6 @@ ANSWER:
 Solve time ~ 0.72 seconds
 """
 
-
 # 9^5 = 59049.
 # So the maximum sum would be 9*59049 = 531441,
 
@@ -29,8 +28,8 @@ Solve time ~ 0.72 seconds
 # n*9^5 == 10^n
 # log(n) + power*log(9) = n log(10)
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem30:
@@ -38,7 +37,7 @@ class Problem30:
         self.power = power
         self.max_num = max_num
         self.ans = 0
-        self.digit_powers = {str(i): i**self.power for i in range(10)}
+        self.digit_powers = {str(i): i ** self.power for i in range(10)}
 
     @timeit
     def solve(self):
@@ -56,7 +55,7 @@ class Problem30:
 
 class Solution30(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem30(power=5, max_num=int(6 * 9**5))
+        self.problem = Problem30(power=5, max_num=int(6 * 9 ** 5))
 
     def test_solution(self):
         self.assertEqual(443839, self.problem.solve())

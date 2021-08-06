@@ -14,9 +14,10 @@ References:
   https://arxiv.org/pdf/1107.4890.pdf
   http://www.numericana.com/answer/numbers.htm#moebius
 """
-from util.utils import timeit, mobius_sieve
-import unittest
 from primesieve import primes
+
+import unittest
+from util.utils import timeit, mobius_sieve
 
 
 class Problem193:
@@ -29,14 +30,14 @@ class Problem193:
         self.ls_primes = primes((self.n ** 0.5) + 1)
         print("finished calculating primes")
         limit = self.n - 1
-        sq_root_n = int(self.n**0.5) + 1
+        sq_root_n = int(self.n ** 0.5) + 1
         ls_m = mobius_sieve(n=sq_root_n, ls_prime=self.ls_primes)
         return sum(ls_m[i] * (limit // (i ** 2)) for i in range(1, sq_root_n))
 
     @timeit
     def solve_inclusion_exclusion(self):  # 46 seconds
         self.total = self.n - 1
-        self.ls_primes = primes((self.n**0.5) + 1)
+        self.ls_primes = primes((self.n ** 0.5) + 1)
         self.helper_adjust(True, 1, 0)
         return self.total
 
@@ -48,7 +49,7 @@ class Problem193:
             return
 
         next_prod = prev_prod * next_prime
-        while next_prod <= int(self.n**0.5):
+        while next_prod <= int(self.n ** 0.5):
             n = (self.n - 1) // (next_prod * next_prod)
             if even_bool:
                 self.total -= n
@@ -66,7 +67,7 @@ class Problem193:
 
 class Solution193(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem193(n=int(2**50))
+        self.problem = Problem193(n=int(2 ** 50))
 
     def test_solution(self):
         self.assertEqual(684465067343069, self.problem.solve())

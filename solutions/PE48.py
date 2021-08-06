@@ -13,7 +13,7 @@ class Problem48:
     @timeit
     def __init__(self, n, last_n_digits):
         self.n = n
-        self.mod_div = int(10**last_n_digits)
+        self.mod_div = int(10 ** last_n_digits)
         self.ans = 0
 
     @timeit

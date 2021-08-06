@@ -11,9 +11,10 @@ ANSWER:
 17427258
 Solve time ~ 4.843s seconds
 """
-from util.utils import timeit
-import unittest
 from primesieve import primes
+
+import unittest
+from util.utils import timeit
 
 
 class Problem187:
@@ -23,7 +24,7 @@ class Problem187:
     @timeit
     def solve(self):
         ls_all_p = primes(self.n)
-        ls_small_p = primes(self.n**0.5)
+        ls_small_p = primes(self.n ** 0.5)
 
         count = 0
         for p in ls_small_p:
@@ -47,4 +48,3 @@ class Solution187(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

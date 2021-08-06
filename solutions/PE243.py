@@ -21,8 +21,9 @@ Solve time 0.003 seconds (over estimate)
 # https://en.wikipedia.org/wiki/Euler%27s_totient_function
 
 
-from util.utils import timeit, sieve
 import unittest
+from util.utils import timeit, sieve
+
 
 # The number of fractions with a denominator d that cannot get simplified is equal to the euler totient function of d,
 # since that is the same as the number of numbers below d that d is co-prime with.
@@ -76,22 +77,22 @@ class Problem243:
         # d < limit/output *(d)  - limit/output
         # limit/output < (limit/output - 1) * d
         # d > limit/output / (limit/output - 1) = lower_bound
-        ratio = self.limit/output
-        lower_bound = ratio/(ratio - 1)
+        ratio = self.limit / output
+        lower_bound = ratio / (ratio - 1)
         # take the ceiling of the ratio from all of the primes to the lower bound to get the scalar required
-        scalar = int(lower_bound/n) + 1
-        return n*scalar
+        scalar = int(lower_bound / n) + 1
+        return n * scalar
 
 
 class Solution243(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem243(limit=15499/94744)
+        self.problem = Problem243(limit=15499 / 94744)
 
     def test_solution(self):
         self.assertEqual(892371480, self.problem.solve())
 
     def test_sample_solution(self):
-        small_problem = Problem243(limit=4/10)
+        small_problem = Problem243(limit=4 / 10)
         self.assertEqual(12, small_problem.solve())
 
 

@@ -12,10 +12,10 @@ ANSWER:
 Solve time ~2 seconds
 """
 
-
-from util.utils import timeit, primes_of_n
-import unittest
 import functools
+
+import unittest
+from util.utils import timeit, primes_of_n
 
 
 class Problem124:
@@ -31,7 +31,7 @@ class Problem124:
         def prod(k):
             return functools.reduce(lambda a, b: a * b, k)
 
-        ls_full = {i: prod(primes_of_n(i)) for i in range(2, self.max_n+1)}
+        ls_full = {i: prod(primes_of_n(i)) for i in range(2, self.max_n + 1)}
         sorted_values = sorted(ls_full, key=ls_full.get)
 
         return sorted_values[self.order - 2]
@@ -49,4 +49,3 @@ class Solution124(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

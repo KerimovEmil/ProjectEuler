@@ -10,8 +10,8 @@ ANSWER:
 Solve time ~0.6 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 def is_palindromic(input_string):

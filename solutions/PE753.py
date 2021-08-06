@@ -15,9 +15,11 @@ ANSWER: 4714126766770661630
 Solve time ~2.5 seconds
 """
 
-from util.utils import timeit
-import unittest
 from primesieve import primes
+
+import unittest
+from util.utils import timeit
+
 
 # high level concise logic (Julia)
 # function A(p)

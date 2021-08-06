@@ -11,8 +11,8 @@ ANSWER:
 Solve time ~ 0.002 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
 
 
 class Problem1:

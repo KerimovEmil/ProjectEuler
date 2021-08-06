@@ -11,9 +11,10 @@ ANSWER:
 Solve time ~ 0.760 seconds
 """
 
-from util.utils import timeit
-import unittest
 from itertools import product
+
+import unittest
+from util.utils import timeit
 
 
 class Problem4:

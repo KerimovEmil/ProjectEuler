@@ -10,9 +10,10 @@ ANSWER:
 Solve time ~ 0.003 seconds
 """
 
-from util.utils import timeit, primes_of_n
-import unittest
 from collections import defaultdict
+
+import unittest
+from util.utils import timeit, primes_of_n
 
 
 class Problem5:

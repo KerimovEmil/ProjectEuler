@@ -15,8 +15,6 @@
 # Try digit with least number of corrects.
 # rescursive call
 
-import itertools
-
 
 def probability_sort(ls_possible, ls_attempts):
     digits = len(ls_attempts[0][0])
@@ -24,7 +22,7 @@ def probability_sort(ls_possible, ls_attempts):
     dc_prob = {x: 0 for x in ls_possible}  # If 0 correct guesses, it is already removed from ls_possible
     for attempt in ls_attempts:
         num = int(attempt[0][0])
-        prob = attempt[1]/digits
+        prob = attempt[1] / digits
         if num in dc_prob.keys():
             dc_prob[num] += prob
 
@@ -201,4 +199,3 @@ def main2():
 if __name__ == "__main__":
     # main1()
     main2()
-

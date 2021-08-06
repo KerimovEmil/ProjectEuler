@@ -13,9 +13,10 @@
 
 # Answer = 134043
 
+from itertools import count
+
 from util.utils import sieve
 from util.utils import timeit
-from itertools import count
 
 
 class DumbProblem47:  # slower ~ 30 seconds
@@ -104,4 +105,3 @@ if __name__ == "__main__":
     obj = Problem47(consec_n=4)
     sol = obj.solve()
     print(sol)
-

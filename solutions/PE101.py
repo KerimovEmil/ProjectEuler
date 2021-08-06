@@ -37,6 +37,7 @@
 # 37076114526
 
 import numpy as np
+
 from util.utils import timeit
 
 
@@ -51,8 +52,8 @@ class Problem101:
     @timeit
     def solve(self):
         for k in range(1, self.max_power + 1):
-            ls_coef = np.polyfit(y=[self.generating_poly(i) for i in range(1, k+1)], x=range(1, k+1), deg=k-1)
-            self.ans += int(np.poly1d(ls_coef)(k+1) + 0.5)
+            ls_coef = np.polyfit(y=[self.generating_poly(i) for i in range(1, k + 1)], x=range(1, k + 1), deg=k - 1)
+            self.ans += int(np.poly1d(ls_coef)(k + 1) + 0.5)
 
         return self.ans
 

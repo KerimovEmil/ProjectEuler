@@ -21,8 +21,9 @@ Find the sum of the first thirty golden nuggets.
 ANSWER: 5673835352990
 Solve time ~0.001 seconds
 """
-from util.utils import timeit
 import unittest
+from util.utils import timeit
+
 
 # A(x) = sum_{n=1, inf} G_n x^n
 # A(x) = G_1 x + G_2 x^2 + sum_{n=3, inf} G_n x^n

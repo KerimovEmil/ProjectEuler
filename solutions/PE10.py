@@ -9,9 +9,10 @@ ANSWER:
 Solve time ~ 0.02 seconds
 """
 
-from util.utils import timeit
-import unittest
 from primesieve import primes
+
+import unittest
+from util.utils import timeit
 
 
 class Problem10:

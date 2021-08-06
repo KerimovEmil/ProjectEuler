@@ -20,8 +20,9 @@ ANSWER: 998567458,1046245404,43363922
 Solve time ~21 seconds
 """
 
-from util.utils import timeit
 import unittest
+from util.utils import timeit
+
 
 # the look and say sequence only has a finite amount of 'atoms'. Hence we just need to know how the atoms
 # evolve to the others

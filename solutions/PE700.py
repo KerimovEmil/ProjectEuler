@@ -16,8 +16,9 @@ ANSWER:
 1517926517777556
 Solve time ~0.003 seconds
 """
-from util.utils import timeit
 import unittest
+from util.utils import timeit
+
 
 # Explanation from ProjectEuler user RubiksCube:
 # After brute forcing the first 15 Eulercoins I tried the Euclidean algorithm and found that I got every coin and the

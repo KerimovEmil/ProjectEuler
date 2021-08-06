@@ -17,9 +17,11 @@
 # S = (x^8 - 1) / (x^2 - 1)
 
 import unittest
-from util.utils import timeit
 from util.utils import primes_of_n
 from util.utils import sieve
+from util.utils import timeit
+
+
 # import math
 # from functools import lru_cache
 
@@ -49,7 +51,7 @@ class Problem211:
             sum_sqs = self.sum_sq_divisors(dc_factors)
 
             if self.test_square(sum_sqs):
-                print(i, dc_factors, int(sum_sqs), int(sum_sqs**0.5))
+                print(i, dc_factors, int(sum_sqs), int(sum_sqs ** 0.5))
                 self.sum_n += i
         return self.sum_n
 
@@ -63,7 +65,7 @@ class Problem211:
         if (prime, factor) in self.dc_sq_sum:
             return self.dc_sq_sum[(prime, factor)]
         else:
-            self.dc_sq_sum[(prime, factor)] = (prime**(2*factor+2) - 1) / (prime**2 - 1)
+            self.dc_sq_sum[(prime, factor)] = (prime ** (2 * factor + 2) - 1) / (prime ** 2 - 1)
             return self.dc_sq_sum[(prime, factor)]
 
     def sum_sq_divisors(self, dc_primes):

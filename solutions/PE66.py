@@ -57,7 +57,7 @@ class Problem66:
         return (p, q)
 
     def solve(self):
-        non_sqr_ls = [x for x in range(1, self.max_d+1) if int(x ** 0.5) != x ** 0.5]
+        non_sqr_ls = [x for x in range(1, self.max_d + 1) if int(x ** 0.5) != x ** 0.5]
 
         for i in non_sqr_ls:
             min_x = Problem66.get_min_x_given_d(i)[1]

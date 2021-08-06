@@ -14,6 +14,7 @@
 
 class Problem97:
     """Find last 10 digits of 28433*2^(7830457)+ 1  (Proth Prime)"""
+
     def __init__(self, modN, k, exp):
         self.modN = modN
         self.k = k

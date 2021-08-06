@@ -21,8 +21,8 @@ class Problem49:
 
     @timeit
     def solve(self):
-        max_prime = int(10**self.n)
-        min_prime = int(10**(self.n-1))
+        max_prime = int(10 ** self.n)
+        min_prime = int(10 ** (self.n - 1))
 
         P = list(sieve(max_prime))  # all primes less than 10000
         P2 = list(sieve(min_prime))
@@ -30,7 +30,7 @@ class Problem49:
         Q = set(T)
         U = []
         for x in T:
-            for i in range(1, int(max_prime/2)):
+            for i in range(1, int(max_prime / 2)):
                 if ((x + i) in Q) and ((x + 2 * i) in Q):
                     if set(str(x)) == set(str(x + i)):
                         if set(str(x)) == set(str(x + 2 * i)):

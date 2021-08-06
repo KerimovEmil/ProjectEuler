@@ -15,10 +15,13 @@ ANSWER:
 Solve time ~0.6 seconds
 """
 
-from util.utils import timeit
-import unittest
-from primesieve import primes
 import math
+
+from primesieve import primes
+
+import unittest
+from util.utils import timeit
+
 
 # Idea is as follows: (from user Assato in https://projecteuler.net/thread=204;page=2)
 # Define hamming(N,b) returns how many numbers below N are primes(b)-smooth.

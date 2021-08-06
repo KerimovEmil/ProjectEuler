@@ -2,7 +2,9 @@
 # 15955822
 
 import sys
+
 from util.utils import ChineseRemainderTheorem, EulerNumber
+
 
 # 77777777 = 7 x 11 x 73 x 101 x 137
 

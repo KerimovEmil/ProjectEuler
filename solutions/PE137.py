@@ -16,9 +16,9 @@ Find the 15th golden nugget.
 ANSWER: 1120149658760
 Solve time ~0.001 seconds
 """
-from util.utils import timeit
 import unittest
 from solutions.PE140 import Problem140
+from util.utils import timeit
 
 
 # A(x) = x / (1 - x - x^2)
@@ -57,7 +57,7 @@ class Problem137(Problem140):
     @timeit
     def solve(self, n):
         ls_answers = self.generate_all_solutions(d=5, equal_n=-4, get_k=lambda x: (x - 1) / 5)
-        return ls_answers[n-1]
+        return ls_answers[n - 1]
 
 
 class Solution137(unittest.TestCase):
