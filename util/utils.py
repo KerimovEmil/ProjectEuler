@@ -1,7 +1,7 @@
 import numpy as np
 import time
 from itertools import accumulate
-from functools import lru_cache
+from functools import lru_cache, reduce
 
 
 class Hungarian:
@@ -878,3 +878,91 @@ def euler_totient_function(n):
         output *= p
     return int(output)
 
+
+@lru_cache(maxsize=None)
+def sum_phi(n):
+    """Returns sum_{i=1 to n} phi(i) where phi is the euler totient function"""
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    v = int(n**0.5)
+    nv = n//(v+1)
+
+    return n*(n+1)//2 - sum(sum_phi(x) * (n//x - n//(x+1)) for x in range(1, v+1)) - sum(sum_phi(n//k) for k in range(2, nv+1))
+
+
+def farey(n, descending=False):
+    """Print the n'th Farey sequence. Allow for either ascending or descending."""
+    a, b, c, d = 0, 1, 1, n
+    if descending:
+        a, c = 1, n - 1
+    ls_farey = [(a, b)]
+    while (c <= n and not descending) or (a > 0 and descending):
+        k = int((n + b) / d)
+        a, b, c, d = c, d, k * c - a, k * d - b
+        ls_farey.append((a, b))
+    return ls_farey
+
+
+@lru_cache(maxsize=None, typed=False)
+def len_faray_seq(n):
+    """
+    Calculates the length of the n'th Faray Sequence.
+    Args:
+        n: <int>
+
+    Returns: <int>
+
+    Using the recursive relation |F_{n}| = |F_{n-1}| + euler_totient(n),
+    Expanding for all n and then inverting the relation, after using |F_1| = 2 we get
+    |F_{n}| = 1/2 * (n+3) * n  - sum_{d=2}^{n} |F_{floor(n/d)}|
+    See Also: https://en.wikipedia.org/wiki/Farey_sequence
+    """
+
+    if n == 1:
+        return 2
+    elif n < 1:
+        raise NotImplementedError("What happened??")
+    else:
+
+        return int(0.5*(n+3)*n) - sum(len_faray_seq(int(n/d)) for d in range(2, n+1))
+
+
+def sign(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    else:
+        return 0
+
+
+@timeit
+def mobius_sieve(n, ls_prime):
+    """
+    Returns a list of all mobius function values.
+    mobius(n) = 1 if i is square-free with even number of primes,
+               -1 if odd number,
+                0 if contains square
+    """
+    ls_m = [1]*n
+    if ls_prime is None:
+        ls_p = list(sieve(n))
+    else:
+        ls_p = ls_prime
+    for p in ls_p:
+        ls_m[p:n:p] = [-1 * x for x in ls_m[p:n:p]]
+        p2 = p ** 2
+        ls_m[p2:n:p2] = [0] * len(ls_m[p2:n:p2])
+    return ls_m
+
+
+# @lru_cache(maxsize=None)
+def num_of_divisors(n):
+    """
+    Return the number of positive divisors of n.
+    e.g. sigma(12) = 6
+    """
+    dc_primes = primes_of_n(n)
+    return reduce(lambda a, b: a * b, (v + 1 for v in dc_primes.values()))
