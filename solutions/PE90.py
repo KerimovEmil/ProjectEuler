@@ -25,8 +25,8 @@ extended set {1, 2, 3, 4, 5, 6, 9} for the purpose of forming 2-digit numbers.
 
 How many distinct arrangements of the two cubes allow for all of the square numbers to be displayed?
 
-ANSWER:
-Solve time ~ seconds
+ANSWER: 1217
+Solve time ~0.06 seconds
 """
 
 from util.utils import timeit
