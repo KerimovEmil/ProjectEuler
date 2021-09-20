@@ -71,10 +71,6 @@ class FieldExtensionD:
     def __repr__(self):
         return str(self)
 
-    def print_generator(self):
-        soln = str(self)
-        return f"({soln})^k"
-
     def __eq__(self, other):
         if isinstance(other, FieldExtensionD):
             return (self.x == other.x) and (self.y == other.y) and (self.d == other.d)
@@ -94,11 +90,12 @@ def g(n, max_n=10000):
         return 0
     start = FieldExtensionD(1, 1, 7)
     x = FieldExtensionD(1, 1, 7)
+    sol = FieldExtensionD(1, 0, 7)
 
-    for i in range(max_n):
+    for i in range(2, max_n):
         start = (start * x) % n
-        if start.x == 1 and start.y == 0:
-            return i + 2
+        if start == sol:
+            return i
 
 
 class Problem752:
@@ -124,3 +121,43 @@ class Solution752(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
 
+# g(2) = 0
+# g(3) = 0
+# g(5) = 12
+# g(7) = 7
+# g(11) = 60
+# g(13) = 168
+# g(17) = 288
+# g(19) = 18
+# g(23) = 176
+# g(29) = 7
+# g(31) = 30
+# g(37) = 12
+# g(41) = 560
+# g(43) = 264
+# g(47) = 46
+# g(53) = 52
+# g(59) = 29
+# g(61) = 3720
+# g(67) = 4488
+# g(71) = 5040
+# g(73) = 2664
+# g(79) = 780
+# g(83) = 41
+# g(89) = 7920
+# g(97) = 1176
+
+# g(5) = 12
+# g(7) = 7
+# g(11) = 60
+# g(5*7) = g(5) * g(7) = 12 * 7 = 84
+
+# g(5^n) = g(5) * 5^(n-1)
+# g(7^n) = g(7) * 7^(n-1)
+# g(5^2 * 7^2) = g(5) * g(7) * 5 * 7
+# g(31^3) = g(31) * 31^2
+
+# g(31*37*41) = 120 * g(31)*g(37)*g(41)
+# g(5*7*11) = 12 * g(5)*g(7)*g(11)
+# g(13*31*59) = 6 * g(13)*g(31)*g(59)
+# g(13*31*59*7) = 42 * g(13)*g(31)*g(59)*g(7)
