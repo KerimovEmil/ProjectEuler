@@ -135,11 +135,41 @@ def f5(n):
 
 # Case 4: n = 6k + 3, f(n) = 2*(2**n - 16*n + 56 - (2*n - 9)/3)
 # f(k) = 2^3*(2^6)^k - 96k - 48 + 56 - (12k + 6 - 9)/3
-# f(k) = 8*(2^6)^k - 96k + 8 - (12k -3)/3
+# f(k) = 8*(2^6)^k - 100k + 9
 
 # find k such that f(k) == 0 mod 9
-# ... == 0 mod 9
-# k == ... mod 9
+# 8k == 1 mod 9
+# k == 8 mod 9
+
+# find k such that f(k) == 0 mod 1997
+# ... == 0 mod 1997
+# ...
+
+# find k such that f(k) == 0 mod 4877
+# ... == 0 mod 4877
+# ...
+
+# Case 5: n = 6k + 4, f(n) = ...
+# f(k) = 2^4*(2^6)^k - 96k - 64 + 56 - 4k
+# f(k) = 16*(2^6)^k - 100k - 8
+
+# find k such that f(k) == 0 mod 9
+# k == 8 mod 9
+
+# find k such that f(k) == 0 mod 1997
+# ... == 0 mod 1997
+# ...
+
+# find k such that f(k) == 0 mod 4877
+# ... == 0 mod 4877
+# ...
+
+# Case 6: n = 6k + 5
+# f(k) = 2^5*(2^6)^k - 96k - 80 + 56 - 4k - 2
+# f(k) = 32*(2^6)^k - 100k - 26
+
+# find k such that f(k) == 0 mod 9
+# k == 6 mod 9
 
 # find k such that f(k) == 0 mod 1997
 # ... == 0 mod 1997
