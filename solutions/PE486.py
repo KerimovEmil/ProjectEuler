@@ -84,12 +84,12 @@ def f5(n):
 
 # Key facts
 # 2^6 == 1 mod 9
-# 2^999 == 1 mod 1997
-# 2^4875 == 1 mod 4877
+# 2^1996 == 1 mod 1997
+# 2^4876 == 1 mod 4877
 
 # Case 1: n = 6k, f(n) = 2*(2**n - 16*n + 56 - (2*n - 3)/3)
 # f(k) = 2*((2^6)^k - 96k + 57 - 4k), since 2 is never divisible by 9, 1997, or 4877, we can focus on
-# f(k) = (2^6)^k - 96k + 57 - 4k
+# f(k) = (2^6)^k - 100k + 57
 
 # find k such that f(k) == 0 mod 9
 # (2^6)^k - 96k + 57 - 4k == 0 mod 9
@@ -97,7 +97,15 @@ def f5(n):
 # k == 4  mod 9
 
 # find k such that f(k) == 0 mod 1997
-# (2^6)^k - 96k + 57 - 4k == 0 mod 1997
+# 2^(6k) - 100k + 57 == 0 mod 1997
+# 2^(6k) + 1897k + 57 == 0 mod 1997
+# k = 1996r + a
+# 2^(11976r + 6a) + 1897k + 57 == 0 mod 1997
+# 2^(11976r) * 2^(6a) + 1897k + 57 == 0 mod 1997
+# 2^(1996 * 6 * r) * 2^(6a) + 1897k + 57 == 0 mod 1997
+# 1^(6 * r) * 2^(6a) + 1897k + 57 == 0 mod 1997
+# 2^(6a) + 1897k + 57 == 0 mod 1997
+# 2^1996 == 1 mod 1997
 # ...
 
 # Case 2: n = 6k + 1, f(n) = 2*(2**n - 16*n + 56 - (2*n - 5)/3)
@@ -206,9 +214,102 @@ class Solution486(unittest.TestCase):
                 self.assertEqual(brute_force_f5(i), f5(i))
 
     # def test_solution(self):
-    #     self.assertEqual(1, self.problem.solve())
+    #     self.assertEqual(51, self.problem.solve(5*int(1e9)))
 
 
 if __name__ == '__main__':
     unittest.main()
 
+
+def g(n):
+    return 2**n - 100*n//6 + 57
+    # return 64**k - 100*k + 57
+    # return 64**(9t + 4) - 100*(9t + 4) + 57
+    # return 16777216 * 18014398509481984**(t) - 900*t - 343
+
+def h(t):
+    return 16777216 * 18014398509481984**t - 900*t - 343
+
+def h_1997(t):
+    return (419 * 782**t - 900*t - 343) % 1997
+
+def h_4877(t):
+    return (336 * 2507**t - 900*t - 343) % 4877
+
+# L = 5*int(1e9)
+# n = 6k
+# k = 9t + 4
+# n = 54t + 24
+# n==0 mod 6 -> n=6k
+# k==4 mod 9 -> k=9t + 4
+
+# for t in range(10000):
+# # for t in range((L - 24) // 54 + 1):
+#     # fn = g(54 * t + 24)
+#     fn = h(t)
+#     assert fn % 9 == 0
+#     if fn % 1997 == 0:
+#         k = 9 * t + 4  # case 1, k==4 mod 9
+#         n = 6 * k  # case 1, n==0 mod 6
+#         assert fn % 9 == 0
+#         # print(f'1997, n={n}, k={k}, t={t}, f(n)={fn}')
+#         print(f'1997, n={n}, k={k}, t={t}')
+#     if fn % 4877 == 0:
+#         k = 9 * t + 4
+#         n = 6 * k
+#         assert fn % 9 == 0
+#         # print(f'4877, n={n}, k={k}, t={t}, f(n)={fn}')
+#         print(f'4877, n={n}, k={k}, t={t}')
+
+# 4877, n=69846, k=11641, t=1293
+# 4877, n=99870, k=16645, t=1849
+# 1997, n=134214, k=22369, t=2485
+# 1997, n=163914, k=27319, t=3035
+# 4877, n=199608, k=33268, t=3696
+# 1997, n=206034, k=34339, t=3815
+# 1997, n=417768, k=69628, t=7736
+# 1997, n=434724, k=72454, t=8050
+
+
+# for t in range((L - 24) // 54 + 1):
+# for t in range(10000):
+#     if h_1997(t) == 0:
+#         k = 9 * t + 4  # case 1, k==4 mod 9
+#         n = 6 * k  # case 1, n==0 mod 6
+#         print(f'1997, n={n}, k={k}, t={t}')
+#     if h_4877(t) == 0:
+#         k = 9 * t + 4
+#         n = 6 * k
+#         print(f'4877, n={n}, k={k}, t={t}')
+
+# ls_n = []
+# ls_k = []
+# ls_t = []
+# for t in range(15000):
+#     if h_1997(t) == 0:
+#         k = 9 * t + 4  # case 1, k==4 mod 9
+#         n = 6 * k  # case 1, n==0 mod 6
+#         print(f'1997, n={n}, k={k}, t={t}')
+#         ls_t.append(t)
+#         ls_k.append(k)
+#         ls_n.append(n)
+# print(ls_n)
+# print(ls_k)
+# print(ls_t)
+
+# 1997, values of t, s.t. h(t) is divisible by 1997
+# 1997, n=134214, k=22369, t=2485
+# 1997, n=163914, k=27319, t=3035
+# 1997, n=206034, k=34339, t=3815
+# 1997, n=417768, k=69628, t=7736
+# 1997, n=434724, k=72454, t=8050
+# 1997, n=632850, k=105475, t=11719
+# 1997, n=733506, k=122251, t=13583
+# 1997, n=749220, k=124870, t=13874
+# 1997, n=764880, k=127480, t=14164
+# 1997, n=861216, k=143536, t=15948
+# 1997, n=928122, k=154687, t=17187
+# 1997, n=982392, k=163732, t=18192
+# 1997, n=1026294, k=171049, t=19005
+# 1997, n=1369734, k=228289, t=25365
+#
