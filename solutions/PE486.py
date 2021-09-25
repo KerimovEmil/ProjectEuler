@@ -59,11 +59,24 @@ def brute_force_f5(n):
 
 def f5(n):
     """Analytical solution"""
-    p = [3, 5, 7, 9, 8, 4]
-    t = 2**n - 16*n + 56 - (2*n - p[n % 6]) // 3
+    # p = [3, 5, 7, 9, 8, 4]
+    # t = 2**n - 16*n + 56 - (2*n - p[n % 6]) // 3
+
+    p = [1, 1, 1, 1, 0, -2]
+    k = n // 6
+    t = 2**n - 16*n + 56 - 4*k + p[n % 6]
     if n == 5:
         t -= 2
     return 2*t
+
+# the link between both solutions
+# (2*n - p[n % 6]) / 3
+# n = 6k + 0 -> (12k + 0 - 3)/3 = 4k - 1
+# n = 6k + 1 -> (12k + 2 - 5)/3 = 4k - 1
+# n = 6k + 2 -> (12k + 4 - 7)/3 = 4k - 1
+# n = 6k + 3 -> (12k + 6 - 9)/3 = 4k - 1
+# n = 6k + 4 -> (12k + 8 - 8)/3 = 4k
+# n = 6k + 5 -> (12k + 10 - 4)/3 = 4k + 2
 
 
 # Let D(L) be the number of integers n such that 5 ≤ n ≤ L and F5(n) is divisible by 87654321 = 3^2 × 1997 × 4877
@@ -93,7 +106,6 @@ def f5(n):
 
 # find k such that f(k) == 0 mod 9
 # 2^1*(2^6)^k - 100k + 41 == 0 mod 9
-# 4k == 1 mod 9
 # k == 7 mod 9
 
 # find k such that f(k) == 0 mod 1997
@@ -105,7 +117,37 @@ def f5(n):
 # ...
 
 # Case 3: n = 6k + 2, f(n) = 2*(2**n - 16*n + 56 - (2*n - 7)/3)
+# f(k) = 2^2*(2^6)^k - 96k - 32 + 56 - (12k + 4 - 7)/3
+# f(k) = 4*(2^6)^k - 100k + 25
 
+# find k such that f(k) == 0 mod 9
+# 4*(2^6)^k - 100k + 25 == 0 mod 9
+# 4k + 1 == 0 mod 9
+# k == 2 mod 9
+
+# find k such that f(k) == 0 mod 1997
+# 4*(2^6)^k - 100k + 25 == 0 mod 1997
+# ...
+
+# find k such that f(k) == 0 mod 4877
+# 4*(2^6)^k - 100k + 25 == 0 mod 4877
+# ...
+
+# Case 4: n = 6k + 3, f(n) = 2*(2**n - 16*n + 56 - (2*n - 9)/3)
+# f(k) = 2^3*(2^6)^k - 96k - 48 + 56 - (12k + 6 - 9)/3
+# f(k) = 8*(2^6)^k - 96k + 8 - (12k -3)/3
+
+# find k such that f(k) == 0 mod 9
+# ... == 0 mod 9
+# k == ... mod 9
+
+# find k such that f(k) == 0 mod 1997
+# ... == 0 mod 1997
+# ...
+
+# find k such that f(k) == 0 mod 4877
+# ... == 0 mod 4877
+# ...
 
 class Problem486:
     def __init__(self):
@@ -130,7 +172,7 @@ class Solution486(unittest.TestCase):
 
     def test_brute_force_against_analytic_solution(self):
         for i in range(5, 15):
-            with self.subTest('n=5'):
+            with self.subTest(f'n={i}'):
                 self.assertEqual(brute_force_f5(i), f5(i))
 
     # def test_solution(self):
