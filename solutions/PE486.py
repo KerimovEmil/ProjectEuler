@@ -92,8 +92,6 @@ def f5(n):
 # f(k) = (2^6)^k - 100k + 57
 
 # find k such that f(k) == 0 mod 9
-# (2^6)^k - 100k + 57 == 0 mod 9
-# 1 + 3k + 3 + 5k == 0 mod 9
 # k == 4  mod 9
 
 # find k such that f(k) == 0 mod 1997
@@ -117,49 +115,20 @@ def f5(n):
 # f(k) = 2^1*(2^6)^k - 100k + 41
 
 # find k such that f(k) == 0 mod 9
-# 2^1*(2^6)^k - 100k + 41 == 0 mod 9
 # k == 7 mod 9
 
-# find k such that f(k) == 0 mod 1997
-# 2^1*(2^6)^k - 100k + 41 == 0 mod 1997
-# ...
-
-# find k such that f(k) == 0 mod 4877
-# 2^1*(2^6)^k - 100k + 41 == 0 mod 4877
-# ...
-
 # Case 3: n = 6k + 2, f(n) = 2*(2**n - 16*n + 56 - (2*n - 7)/3)
-# f(k) = 2^2*(2^6)^k - 96k - 32 + 56 - (12k + 4 - 7)/3
 # f(k) = 4*(2^6)^k - 100k + 25
 
 # find k such that f(k) == 0 mod 9
-# 4*(2^6)^k - 100k + 25 == 0 mod 9
-# 4k + 1 == 0 mod 9
 # k == 2 mod 9
-
-# find k such that f(k) == 0 mod 1997
-# 4*(2^6)^k - 100k + 25 == 0 mod 1997
-# ...
-
-# find k such that f(k) == 0 mod 4877
-# 4*(2^6)^k - 100k + 25 == 0 mod 4877
-# ...
 
 # Case 4: n = 6k + 3, f(n) = 2*(2**n - 16*n + 56 - (2*n - 9)/3)
 # f(k) = 2^3*(2^6)^k - 96k - 48 + 56 - (12k + 6 - 9)/3
 # f(k) = 8*(2^6)^k - 100k + 9
 
 # find k such that f(k) == 0 mod 9
-# 8k == 1 mod 9
 # k == 8 mod 9
-
-# find k such that f(k) == 0 mod 1997
-# ... == 0 mod 1997
-# ...
-
-# find k such that f(k) == 0 mod 4877
-# ... == 0 mod 4877
-# ...
 
 # Case 5: n = 6k + 4, f(n) = ...
 # f(k) = 2^4*(2^6)^k - 96k - 64 + 56 - 4k
@@ -167,14 +136,6 @@ def f5(n):
 
 # find k such that f(k) == 0 mod 9
 # k == 8 mod 9
-
-# find k such that f(k) == 0 mod 1997
-# ... == 0 mod 1997
-# ...
-
-# find k such that f(k) == 0 mod 4877
-# ... == 0 mod 4877
-# ...
 
 # Case 6: n = 6k + 5
 # f(k) = 2^5*(2^6)^k - 96k - 80 + 56 - 4k - 2
@@ -192,7 +153,7 @@ def f5(n):
 # ...
 
 # Summary of mod 9 results
-# n=6k -> k = 9t + 4 -> n = 54t + 24
+# n=6k + 0 -> k = 9t + 4 -> n = 54t + 24
 # n=6k + 1 -> k = 9t + 7 -> n = 54t + 43
 # n=6k + 2 -> k = 9t + 2 -> n = 54t + 14
 # n=6k + 3 -> k = 9t + 8 -> n = 54t + 51
@@ -338,7 +299,7 @@ def h_4877(t):
 def find(m, v):
     ls = []
     for i in range(v):
-        ans = f5(v + i)
+        ans = f5(i)
         if ans % m == 0:
             ls.append(i)
     return ls
