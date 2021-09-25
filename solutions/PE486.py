@@ -315,9 +315,10 @@ def find(m, v):
 # 2^1996 == 1 mod 1997
 # 2^4876 == 1 mod 4877
 
-# mod 9    -> 6      = 6*1
-# mod 1997 -> 1996*3 = 6*998
-# mod 4877 -> 4876*3 = 6*2438
+# mod 9    -> 6      = 6*1    = 6*v
+# mod 1997 -> 1996*3 = 6*998  = 6*v
+# mod 4877 -> 4876*3 = 6*2438 = 6*v
+# mod x -> 2^(6v) == 1 mod x -> given an x, easy to find smallest v
 
 # Therefore the class of equivalence will be based on
 # mod 9    -> 6*9         = 54
@@ -330,18 +331,17 @@ def find(m, v):
 # Divisible by 4877 -> n = 71340756t + {...} for all t
 
 
-# n = 6k
-# k = 998t + a
-# a = 1997*r + b
-
-# 2^1996 == 1 mod 1997
-# 2^{6k} mod 1997
-# 1996*3/6 = 998
-# k = 998*r + a
-# 2^{6(998*r + a)} mod 1997
-# 2^(5988r) * 2^(6a) mod 1997
-# 2^998 == 1 mod 1997
-# (2^998)^(6r) * 2^(6a) mod 1997
-# 2^(6a) mod 1997
+# p = [1, 1, 1, 1, 0, -2]
+# f(n) = 2**n - 16*n + 56 - 4*(n//6) + p[n % 6]
+# n == a mod 6 -> n = 6k + a
+# f(n) = 2**6k * 2**a - 16*(6k+a) + 56 - 4k + p[a] mod x
+# k == b mod v -> k = rv + b
+# f(n) = 2**a * 2**6rv * 2**6b - 16*(6k+a) + 56 - 4k + p[a] mod x = 0
+# f(n) = 2**a * (2**6v)**(r) * 2**6b - 16*(6k+a) + 56 - 4k + p[a] mod x = 0
+# f(n) = 2**a * 2**6b - 16*(6k+a) + 56 - 4k + p[a] mod x = 0
+# f(n) = 2**(6b + a) - 16*(6b + a) - 16*6rv + 56 - 4(rv + b) + p[a] mod x = 0
+# f(n) = 2**(6b + a) - 100(rv+b) + 16a  + 56 + p[a] mod x = 0
+# f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
+# 0<=a<6, 0<=b<v
 
 
