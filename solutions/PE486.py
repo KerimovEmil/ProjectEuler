@@ -364,6 +364,7 @@ def find(m, v):
 # n=6k + 4 -> k = 1r + 0 -> r = 9t + 8 -> n = 54t + 52
 # n=6k + 5 -> k = 1r + 0 -> r = 9t + 6 -> n = 54t + 41
 
+
 def get_mod_equations(x):
     """
     f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
@@ -373,10 +374,16 @@ def get_mod_equations(x):
     """
     if x == 9:
         v = 1
+        inv_100 = 1
+        inv_v = 1
     elif x == 1997:
         v = 998
+        inv_100 = 1338
+        inv_v = 1995
     elif x == 4877:
         v = 2438
+        inv_100 = 4243
+        inv_v = 4875
     else:
         raise NotImplementedError
     p = [1, 1, 1, 1, 0, -2]
@@ -384,21 +391,12 @@ def get_mod_equations(x):
     for b in range(v):
         dc_sol[b] = {}
         for a in range(6):
-            dc_sol[b][a] = {}
-            # k = n // 6
-            sol_found = False
-            r = 0
-            while not sol_found:
-                # k = r*v + b
-                # f = 2**(6*b + a) - 100*k - 16*a + 56 + p[a]
-                # f = 2**(6*b + a) - 100*v*r - 100*b - 16*a + 56 + p[a]
-                # solve for r such that f == 0 mod x
-                # 100 * v * r == 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a] (mod x)
-                lhs = 100*v*r
-                rhs = 2**(6*b + a) - 100*b - 16*a + 56 + p[a]
-                if (lhs - rhs) % x == 0:
-                    dc_sol[b][a] = r
-                    sol_found = True
-                else:
-                    r += 1
+            rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
+            r = (rhs * inv_100 * inv_v) % x
+            dc_sol[b][a] = r
     return dc_sol
+
+
+dc_9 = get_mod_equations(9)
+dc_1997 = get_mod_equations(1997)
+dc_4877 = get_mod_equations(4877)
