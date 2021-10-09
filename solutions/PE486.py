@@ -340,8 +340,8 @@ def find(m, v):
 # f(n) = 2**a * (2**6v)**(r) * 2**6b - 16*(6k+a) + 56 - 4k + p[a] mod x = 0
 # f(n) = 2**a * 2**6b - 16*(6k+a) + 56 - 4k + p[a] mod x = 0
 # f(n) = 2**(6b + a) - 16*(6b + a) - 16*6rv + 56 - 4(rv + b) + p[a] mod x = 0
-# f(n) = 2**(6b + a) - 100(rv+b) + 16a  + 56 + p[a] mod x = 0
-# f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
+# f(n) = 2**(6b + a) - 100(rv+b) - 16a  + 56 + p[a] mod x = 0
+# f(n) = 2**(6b + a) - 100k - 16a  + 56 + p[a] mod x = 0
 # 0<=a<6, 0<=b<v
 
 # example with x = 9 -> v = 1
@@ -363,3 +363,42 @@ def find(m, v):
 # n=6k + 3 -> k = 1r + 0 -> r = 9t + 8 -> n = 54t + 51
 # n=6k + 4 -> k = 1r + 0 -> r = 9t + 8 -> n = 54t + 52
 # n=6k + 5 -> k = 1r + 0 -> r = 9t + 6 -> n = 54t + 41
+
+def get_mod_equations(x):
+    """
+    f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
+    0<=a<6, 0<=b<v
+    n == a mod 6 -> n = 6k + a
+    k == b mod v -> k = rv + b
+    """
+    if x == 9:
+        v = 1
+    elif x == 1997:
+        v = 998
+    elif x == 4877:
+        v = 2438
+    else:
+        raise NotImplementedError
+    p = [1, 1, 1, 1, 0, -2]
+    dc_sol = {}
+    for b in range(v):
+        dc_sol[b] = {}
+        for a in range(6):
+            dc_sol[b][a] = {}
+            # k = n // 6
+            sol_found = False
+            r = 0
+            while not sol_found:
+                # k = r*v + b
+                # f = 2**(6*b + a) - 100*k - 16*a + 56 + p[a]
+                # f = 2**(6*b + a) - 100*v*r - 100*b - 16*a + 56 + p[a]
+                # solve for r such that f == 0 mod x
+                # 100 * v * r == 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a] (mod x)
+                lhs = 100*v*r
+                rhs = 2**(6*b + a) - 100*b - 16*a + 56 + p[a]
+                if (lhs - rhs) % x == 0:
+                    dc_sol[b][a] = r
+                    sol_found = True
+                else:
+                    r += 1
+    return dc_sol
