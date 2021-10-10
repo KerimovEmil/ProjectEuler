@@ -59,24 +59,12 @@ def brute_force_f5(n):
 
 def f5(n):
     """Analytical solution"""
-    # p = [3, 5, 7, 9, 8, 4]
-    # t = 2**n - 16*n + 56 - (2*n - p[n % 6]) // 3
-
     p = [1, 1, 1, 1, 0, -2]
     k = n // 6
     t = 2**n - 16*n + 56 - 4*k + p[n % 6]
     if n == 5:
         t -= 2
     return 2*t
-
-# the link between both solutions
-# (2*n - p[n % 6]) / 3
-# n = 6k + 0 -> (12k + 0 - 3)/3 = 4k - 1
-# n = 6k + 1 -> (12k + 2 - 5)/3 = 4k - 1
-# n = 6k + 2 -> (12k + 4 - 7)/3 = 4k - 1
-# n = 6k + 3 -> (12k + 6 - 9)/3 = 4k - 1
-# n = 6k + 4 -> (12k + 8 - 8)/3 = 4k
-# n = 6k + 5 -> (12k + 10 - 4)/3 = 4k + 2
 
 
 # Let D(L) be the number of integers n such that 5 ≤ n ≤ L and F5(n) is divisible by 87654321 = 3^2 × 1997 × 4877
@@ -93,22 +81,6 @@ def f5(n):
 
 # find k such that f(k) == 0 mod 9
 # k == 4  mod 9
-
-# find k such that f(k) == 0 mod 1997
-# 2^(6k) - 100k + 57 == 0 mod 1997
-# 2^(6k) + 1897k + 57 == 0 mod 1997
-# n = 6k
-# k = 998r + a -> k==a mod 998
-# 2^(5988 + 6a) + 1897k + 57 == 0 mod 1997
-# 2^(1996 * 3 * r) * 2^(6a) + 1897k + 57 == 0 mod 1997
-# 1^(3 * r) * 2^(6a) + 1897k + 57 == 0 mod 1997
-# 2^(6a) + 1897k + 57 == 0 mod 1997
-# 2^(6a) + 1897*(998r + a) + 57 == 0 mod 1997
-# 2^(6a) + 1893206r + 1897a + 57 == 0 mod 1997
-# 2^(6a) + 50r + 1897a + 57 == 0 mod 1997
-# 2^(6a) + 50r - 100a + 57 == 0 mod 1997
-# ...
-# ...
 
 # Case 2: n = 6k + 1, f(n) = 2*(2**n - 16*n + 56 - (2*n - 5)/3)
 # f(k) = 2^1*(2^6)^k - 96k - 16 + 56 - (12k + 2 - 5)/3
@@ -144,13 +116,6 @@ def f5(n):
 # find k such that f(k) == 0 mod 9
 # k == 6 mod 9
 
-# find k such that f(k) == 0 mod 1997
-# ... == 0 mod 1997
-# ...
-
-# find k such that f(k) == 0 mod 4877
-# ... == 0 mod 4877
-# ...
 
 # Summary of mod 9 results
 # n=6k + 0 -> k = 9t + 4 -> n = 54t + 24
@@ -164,11 +129,80 @@ def f5(n):
 
 class Problem486:
     def __init__(self):
-        pass
+
+        # (for a in 0 to 5)
+        # Relations for divisibility by 9  (for all T1)
+        # n = dc_9_3[a] + 6*9*T1
+        # Relations for divisibility by 1997 (for all T2)
+        # n = dc_1997_3[a] + 6*998*1997*T2
+        # Relations for divisibility by 4877 (for all T3)
+        # n = dc_4877_3[a] + 6*2438*4877*T3
+
+        self.dc_9_3 = self.get_mod_equations_3(9)
+        self.dc_1997_3 = self.get_mod_equations_3(1997)
+        self.dc_4877_3 = self.get_mod_equations_3(4877)
+
+    @staticmethod
+    def get_mod_equations_3(x):
+        """
+        f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
+        0<=a<6, 0<=b<v
+        n == a mod 6 -> n = 6k + a
+        k == b mod v -> k = rv + b
+        """
+        if x == 9:
+            v = 1
+            inv_100 = 1
+            inv_v = 1
+        elif x == 1997:
+            v = 998
+            inv_100 = 1338
+            inv_v = 1995
+        elif x == 4877:
+            v = 2438
+            inv_100 = 4243
+            inv_v = 4875
+        else:
+            raise NotImplementedError
+        p = [1, 1, 1, 1, 0, -2]
+        dc_sol = {}
+        for a in range(6):
+            dc_sol[a] = set()
+            for b in range(v):
+                rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
+                r = (rhs * inv_100 * inv_v) % x
+                # 6 * (998 * (dc_1997_2[4][123] + 2 * 1997) + 123) + 4
+                # 5988*dc_1997_2[a][b] + 6*b + a + 11958036*T
+                dc_sol[a].add(6*v*r + 6*b + a)
+        return dc_sol
+
+    def get_sol_for_given_a(self, d=int(5e9), a=0):  # todo speed up
+        """
+        Return the number of integers n == a mod 6 such that 5<=n<=d and F_5(n) is divisible by 87654321
+        n = 6k + a
+        """
+        s_1997 = set()
+        s_4877 = set()
+
+        for i in range(d // (6 * 2438 * 4877) + 1):
+            s_4877 = s_4877.union({x + 6 * 2438 * 4877 * i for x in self.dc_4877_3[a]})
+        for i in range(d // (6 * 998 * 1997) + 1):
+            s_1997 = s_1997.union({x + 6 * 998 * 1997 * i for x in self.dc_1997_3[a]})
+
+        w = s_4877.intersection(s_1997)
+        y = []
+        remainder_54 = list(self.dc_9_3[a])[0]  # there is only one element here todo think of better way
+        for t in w:
+            if (t - remainder_54) % 54 == 0:
+                y.append(t)
+        return len(y)
 
     @timeit
-    def solve(self):
-        raise NotImplementedError('Please implement this method!')
+    def solve(self, d):
+        total = 0
+        for a in range(6):
+            total += self.get_sol_for_given_a(d=d, a=a)
+        return total
 
 
 class Solution486(unittest.TestCase):
@@ -188,106 +222,18 @@ class Solution486(unittest.TestCase):
             with self.subTest(f'n={i}'):
                 self.assertEqual(brute_force_f5(i), f5(i))
 
-    # def test_solution(self):
-    #     self.assertEqual(51, self.problem.solve(5*int(1e9)))
+    def test_smaller_solution(self):
+        self.assertEqual(1, self.problem.solve(d=95440424))
+
+    def test_smaller_solution_2(self):
+        self.assertEqual(10, self.problem.solve(d=879562681))
+
+    def test_given_sample_solution(self):
+        self.assertEqual(51, self.problem.solve(d=5*int(1e9)))  # takes around 42 seconds
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
-def g(n):
-    return 2**n - 100*n//6 + 57
-    # return 64**k - 100*k + 57
-    # return 64**(9t + 4) - 100*(9t + 4) + 57
-    # return 16777216 * 18014398509481984**(t) - 900*t - 343
-
-def h(t):
-    return 16777216 * 18014398509481984**t - 900*t - 343
-
-def h_1997(t):
-    return (419 * 782**t - 900*t - 343) % 1997
-
-def h_4877(t):
-    return (336 * 2507**t - 900*t - 343) % 4877
-
-# L = 5*int(1e9)
-# n = 6k
-# k = 9t + 4
-# n = 54t + 24
-# n==0 mod 6 -> n=6k
-# k==4 mod 9 -> k=9t + 4
-
-# for t in range(10000):
-# # for t in range((L - 24) // 54 + 1):
-#     # fn = g(54 * t + 24)
-#     fn = h(t)
-#     assert fn % 9 == 0
-#     if fn % 1997 == 0:
-#         k = 9 * t + 4  # case 1, k==4 mod 9
-#         n = 6 * k  # case 1, n==0 mod 6
-#         assert fn % 9 == 0
-#         # print(f'1997, n={n}, k={k}, t={t}, f(n)={fn}')
-#         print(f'1997, n={n}, k={k}, t={t}')
-#     if fn % 4877 == 0:
-#         k = 9 * t + 4
-#         n = 6 * k
-#         assert fn % 9 == 0
-#         # print(f'4877, n={n}, k={k}, t={t}, f(n)={fn}')
-#         print(f'4877, n={n}, k={k}, t={t}')
-
-# 4877, n=69846, k=11641, t=1293
-# 4877, n=99870, k=16645, t=1849
-# 1997, n=134214, k=22369, t=2485
-# 1997, n=163914, k=27319, t=3035
-# 4877, n=199608, k=33268, t=3696
-# 1997, n=206034, k=34339, t=3815
-# 1997, n=417768, k=69628, t=7736
-# 1997, n=434724, k=72454, t=8050
-
-
-# for t in range((L - 24) // 54 + 1):
-# for t in range(10000):
-#     if h_1997(t) == 0:
-#         k = 9 * t + 4  # case 1, k==4 mod 9
-#         n = 6 * k  # case 1, n==0 mod 6
-#         print(f'1997, n={n}, k={k}, t={t}')
-#     if h_4877(t) == 0:
-#         k = 9 * t + 4
-#         n = 6 * k
-#         print(f'4877, n={n}, k={k}, t={t}')
-
-# ls_n = []
-# ls_k = []
-# ls_t = []
-# for t in range(15000):
-#     if h_1997(t) == 0:
-#         k = 9 * t + 4  # case 1, k==4 mod 9
-#         n = 6 * k  # case 1, n==0 mod 6
-#         print(f'1997, n={n}, k={k}, t={t}')
-#         ls_t.append(t)
-#         ls_k.append(k)
-#         ls_n.append(n)
-# print(ls_n)
-# print(ls_k)
-# print(ls_t)
-
-# 1997, values of t, s.t. h(t) is divisible by 1997
-# 1997, n=134214, k=22369, t=2485
-# 1997, n=163914, k=27319, t=3035
-# 1997, n=206034, k=34339, t=3815
-# 1997, n=417768, k=69628, t=7736
-# 1997, n=434724, k=72454, t=8050
-# 1997, n=632850, k=105475, t=11719
-# 1997, n=733506, k=122251, t=13583
-# 1997, n=749220, k=124870, t=13874
-# 1997, n=764880, k=127480, t=14164
-# 1997, n=861216, k=143536, t=15948
-# 1997, n=928122, k=154687, t=17187
-# 1997, n=982392, k=163732, t=18192
-# 1997, n=1026294, k=171049, t=19005
-# 1997, n=1369734, k=228289, t=25365
-#
 
 
 # mod 9 -> 54 = 6*9
@@ -295,16 +241,6 @@ def h_4877(t):
 # mod 4877 -> 71340756 = 6*4877*2438
 
 # n = 54t + {14, 24, 41, 43, 51, 52}, for all t has f5(t) divisible by 9
-
-def find(m, v):
-    ls = []
-    for i in range(v):
-        ans = f5(i)
-        if ans % m == 0:
-            ls.append(i)
-    return ls
-# find(9, 54) -> [14, 24, 41, 43, 51, 52]
-# -> n = 54t + {14, 24, 41, 43, 51, 52}, for all t has f5(t) divisible by 9
 
 # 87654321 = 3^2×1997×4877
 # 87654321 = 9 × 1997 × 4877
@@ -365,45 +301,6 @@ def find(m, v):
 # n=6k + 5 -> k = 1r + 0 -> r = 9t + 6 -> n = 54t + 41
 
 
-def get_mod_equations_2(x):
-    """
-    f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
-    0<=a<6, 0<=b<v
-    n == a mod 6 -> n = 6k + a
-    k == b mod v -> k = rv + b
-    """
-    if x == 9:
-        v = 1
-        inv_100 = 1
-        inv_v = 1
-    elif x == 1997:
-        v = 998
-        inv_100 = 1338
-        inv_v = 1995
-    elif x == 4877:
-        v = 2438
-        inv_100 = 4243
-        inv_v = 4875
-    else:
-        raise NotImplementedError
-    p = [1, 1, 1, 1, 0, -2]
-    dc_sol = {}
-    for a in range(6):
-        dc_sol[a] = {}
-        for b in range(v):
-            rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
-            r = (rhs * inv_100 * inv_v) % x
-            dc_sol[a][b] = r
-    return dc_sol
-
-
-# from util.utils import ChineseRemainderTheorem
-# theorem = ChineseRemainderTheorem()
-# theorem.solve(a_list=[0, 3, 4], n_list=[3, 4, 5])  # solves
-
-dc_9_2 = get_mod_equations_2(9)
-dc_1997_2 = get_mod_equations_2(1997)
-
 # if a == 0 (i.e. n = 6k)
 
 # f5(6*dc_9_2[0][0]) % 9 == 0
@@ -451,99 +348,8 @@ dc_1997_2 = get_mod_equations_2(1997)
 # T2 = 111376, T1 = -1828601464
 
 
-def solve_bezouts_identity(a, b, d):
-    """Finds solution (x,y) s.t. ax + by = d"""
-    max_abs_x = abs(d//b) + 1
-    max_abs_y = abs(d//a) + 1
-
-    for x in range(-max_abs_x, max_abs_x):
-        for y in range(-max_abs_y, max_abs_y):
-            if a*x + b*y == d:
-                return (x,y)
-    raise ValueError
 
 
-def get_mod_equations_3(x):
-    """
-    f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
-    0<=a<6, 0<=b<v
-    n == a mod 6 -> n = 6k + a
-    k == b mod v -> k = rv + b
-    """
-    if x == 9:
-        v = 1
-        inv_100 = 1
-        inv_v = 1
-    elif x == 1997:
-        v = 998
-        inv_100 = 1338
-        inv_v = 1995
-    elif x == 4877:
-        v = 2438
-        inv_100 = 4243
-        inv_v = 4875
-    else:
-        raise NotImplementedError
-    p = [1, 1, 1, 1, 0, -2]
-    dc_sol = {}
-    for a in range(6):
-        dc_sol[a] = set()
-        for b in range(v):
-            rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
-            r = (rhs * inv_100 * inv_v) % x
-            # 6 * (998 * (dc_1997_2[4][123] + 2 * 1997) + 123) + 4
-            # 5988*dc_1997_2[a][b] + 6*b + a + 11958036*T
-            dc_sol[a].add(6*v*r + 6*b + a)
-    return dc_sol
-
-
-dc_9_3 = get_mod_equations_3(9)
-dc_1997_3 = get_mod_equations_3(1997)
-dc_4877_3 = get_mod_equations_3(4877)
-
-
-# Relations for divisibility by 9 (for a in 0 to 5) (for b in 0 to v-1) (for all T)
-# 6*dc_9_2[a][0] + a + 6*9*T
-# dc_9_3[a] + 6*9*T
-
-# Relations for divisibility by 1997 (for a in 0 to 5) (for b in 0 to v-1) (for all T)
-# 6*998*dc_1997_2[a][b] + 6*b + a + 6*998*1997*T
-# dc_1997_3[a] + 6*998*1997*T
-
-# Relations for divisibility by 4877 (for a in 0 to 5) (for b in 0 to v-1) (for all T)
-# 6*2438*dc_4877_2[a][b] + 6*b + a + 6*2438*4877*T
-# dc_4877_3[a] + 6*2438*4877*T
-
-
-# (for a in 0 to 5)
-# Relations for divisibility by 9  (for all T1)
-# n = dc_9_3[a] + 6*9*T1
-# Relations for divisibility by 1997 (for all T2)
-# n = dc_1997_3[a] + 6*998*1997*T2
-# Relations for divisibility by 4877 (for all T3)
-# n = dc_4877_3[a] + 6*2438*4877*T3
-
-
-def r(D=int(5e9), a=0):
-    """
-    Return the number of integers n == a mod 6 such that 5<=n<=D and F_5(n) is divisible by 87654321
-    n = 6k + a
-    """
-    s_1997 = set()
-    s_4877 = set()
-
-    for i in range(D // (6 * 2438 * 4877) + 1):
-        s_4877 = s_4877.union({x + 6 * 2438 * 4877 * i for x in dc_4877_3[a]})
-    for i in range(D // (6 * 998 * 1997) + 1):
-        s_1997 = s_1997.union({x + 6 * 998 * 1997 * i for x in dc_1997_3[a]})
-
-    w = s_4877.intersection(s_1997)
-    y = []
-    remainder_54 = list(dc_9_3[a])[0]
-    for t in w:
-        if (t - remainder_54) % 54 == 0:
-            y.append(t)
-    return len(y)
 
 # r(a=0) = 10
 # r(a=1) = 14
@@ -554,16 +360,6 @@ def r(D=int(5e9), a=0):
 # total = 10 + 14 + 10 + 7 + 6 + 4 = 51
 
 
-def get_total(D=int(5e9)):
-    """
-    Return the number of integers n such that 5<=n<=D and F_5(n) is divisible by 87654321
-    """
-    total = 0
-    for a in range(6):
-        total += r(D=D, a=a)
-    return total
-
-
 # r2(a=0)
 # [604567122, 1312942470, 1325507676, 1549519224, 1776581556, 2182638390, 3065794620, 3475760406, 3585507468, 4559634096]
 
@@ -572,7 +368,8 @@ def get_total(D=int(5e9)):
 # 3503520745, 3507223093, 3849723709, 4457322745]
 
 # r2(a=2)
-# [95440424, 101714738, 478919156, 1220169056, 2297654708, 2666828300, 3423823034, 3895848158, 4146707480, 4951748930]
+# [95440424, 101714738, 478919156, 1220169056, 2297654708, 2666828300, 3,423,823,034, 3,895,848,158,
+# 4,146,707,480, 4,951,748,930]
 
 # r2(a=3)
 # [204995229, 238948971, 1155177015, 1703229765, 1957680303, 2724076113, 2874690537]
@@ -585,12 +382,12 @@ def get_total(D=int(5e9)):
 
 
 # Some test answer:
-# D(95440424)=1
-# D(879562681)=10
-# D(9524776956)=100
-# D(18010838498)=200
-# D(26168704503)=300
-# D(33855231633)=400
+# D(95,440,424)=1
+# D(879,562,681)=10
+# D(9,524,776,956)=100
+# D(18,010,838,498)=200
+# D(26,168,704,503)=300
+# D(33,855,231,633)=400
 #
 # These are first time they become this value, example: D(33855231632)=399
 
