@@ -354,7 +354,7 @@ def find(m, v):
 # if a == 2 -> f(n) = 4 - 100r + 16*2 + 56 + 1 mod 9 = 0 -> r == 2 mod 9
 # if a == 3 -> f(n) = 8 - 100r + 16*3 + 56 + 1 mod 9 = 0 -> r == 8 mod 9
 # if a == 4 -> f(n) = 16 - 100r + 16*4 + 56 + 0 mod 9 = 0 -> r == 8 mod 9
-# if a == 5 -> f(n) = 32 - 100r + 16*5 + 56 - 2 mod 9 = 0 -> r == 8 mod 6
+# if a == 5 -> f(n) = 32 - 100r + 16*5 + 56 - 2 mod 9 = 0 -> r == 8 mod 9
 
 # Summary of mod 9 results
 # n=6k + 0 -> k = 1r + 0 -> r = 9t + 4 -> n = 54t + 24
@@ -397,6 +397,70 @@ def get_mod_equations(x):
     return dc_sol
 
 
+def get_mod_equations_2(x):
+    """
+    f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
+    0<=a<6, 0<=b<v
+    n == a mod 6 -> n = 6k + a
+    k == b mod v -> k = rv + b
+    """
+    if x == 9:
+        v = 1
+        inv_100 = 1
+        inv_v = 1
+    elif x == 1997:
+        v = 998
+        inv_100 = 1338
+        inv_v = 1995
+    elif x == 4877:
+        v = 2438
+        inv_100 = 4243
+        inv_v = 4875
+    else:
+        raise NotImplementedError
+    p = [1, 1, 1, 1, 0, -2]
+    dc_sol = {}
+    for a in range(6):
+        dc_sol[a] = {}
+        for b in range(v):
+            rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
+            r = (rhs * inv_100 * inv_v) % x
+            dc_sol[a][b] = r
+    return dc_sol
+
+
 dc_9 = get_mod_equations(9)
 dc_1997 = get_mod_equations(1997)
 dc_4877 = get_mod_equations(4877)
+
+# from util.utils import ChineseRemainderTheorem
+# theorem = ChineseRemainderTheorem()
+# theorem.solve(a_list=[0, 3, 4], n_list=[3, 4, 5])  # solves
+
+dc_9_2 = get_mod_equations_2(9)
+dc_1997_2 = get_mod_equations_2(1997)
+
+# if a == 0 (i.e. n = 6k)
+
+# f5(6*dc_9_2[0][0]) % 9 == 0
+# f5(6*(dc_9_2[3][0] + 9) + 3) % 9 == 0
+# f5(6*998*dc_1997_2[0][0]) % 1997 == 0
+# f5(6*998*dc_1997_2[0][1] + 6*1) % 1997 == 0
+# f5(6*998*dc_1997_2[0][5] + 6*5) % 1997 == 0
+# f5(6*998*dc_1997_2[4][5] + 6*5 + 4) % 1997 == 0
+# f5(6*998*dc_1997_2[4][123] + 6*123 + 4) % 1997 == 0
+# f5(6*(998*(dc_1997_2[4][123] + 1997) + 123) + 4) % 1997 == 0
+# f5(6*(998*(dc_1997_2[4][123] + 2*1997) + 123) + 4) % 1997 == 0
+# n == a mod 6 -> n = 6k + a
+# k == b mod v -> k = rv + b
+# n = 6k + a = 6(rv + b) + a
+# n = 6vr + 6b + a
+
+# Relations for divisibility by 9 (for a in 0 to 5) (for b in 0 to 0) (v-1 = 0) (for all T)
+# 6*(dc_9_2[a][0] + T*9) + a
+# 6*dc_9_2[a][0] + a + 54*T
+
+# Relations for divisibility by 1997 (for a in 0 to 5) (for b in 0 to 997) (v-1 = 997) (for all T)
+# 6*(998*(dc_1997_2[a][b] + T*1997) + b) + a
+# 5988*dc_1997_2[a][b] + 5988*T*1997 + 6*b + a
+# 5988*dc_1997_2[a][b] + 6*b + a + 11958036*T
