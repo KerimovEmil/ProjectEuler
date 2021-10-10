@@ -458,9 +458,80 @@ dc_1997_2 = get_mod_equations_2(1997)
 
 # Relations for divisibility by 9 (for a in 0 to 5) (for b in 0 to 0) (v-1 = 0) (for all T)
 # 6*(dc_9_2[a][0] + T*9) + a
+# 6*dc_9_2[a][0] + a + 6*9*T
 # 6*dc_9_2[a][0] + a + 54*T
 
 # Relations for divisibility by 1997 (for a in 0 to 5) (for b in 0 to 997) (v-1 = 997) (for all T)
 # 6*(998*(dc_1997_2[a][b] + T*1997) + b) + a
-# 5988*dc_1997_2[a][b] + 5988*T*1997 + 6*b + a
+# 6*998*dc_1997_2[a][b] + 6*b + a + 6*998*1997*T
 # 5988*dc_1997_2[a][b] + 6*b + a + 11958036*T
+
+# Relations for divisibility by 4877 (for a in 0 to 5) (for b in 0 to 2437) (for all T)
+# 6*(2438*(dc_4877_2[a][b] + T*4877) + b) + a
+# 6*2438*dc_4877_2[a][b] + 6*b + a + 6*2438*4877*T
+# 14628*dc_4877_2[a][b] + 6*b + a + 71340756*T
+
+
+# 6*dc_9_2[a][0] + a + 54*T1 = 5988*dc_1997_2[a][b] + 6*b + a + 11958036*T2
+# 6*dc_9_2[a][0] + 54*T1 = 5988*dc_1997_2[a][b] + 6*b + 11958036*T2
+# 6*dc_9_2[a][0] - 5988*dc_1997_2[a][b] = 6*b + 11958036*T2 - 54*T1
+# 6*dc_9_2[a][0] - 5988*dc_1997_2[a][b] = 6(b + 1993006*T2 - 9*T1)
+# dc_9_2[a][0] - 998*dc_1997_2[a][b] = b + 1993006*T2 - 9*T1
+# dc_9_2[a][0] - 998*dc_1997_2[a][b] = b + 998*1997*T2 - 9*T1
+# if b = 0
+# -556880 = 998*1997*T2 - 9*T1, find T1 and T2 which work (if any??)
+# 199300 = 22144*9 + 4
+# 9 = 2*4 + 1
+# 4 = 4*1 + 0
+# 1	= (1 * 9) + (-2 * 4) = (-2 * 199300) + (44289 * 9)
+# T2 = 111376, T1 = -1828601464
+
+
+def solve_bezouts_identity(a, b, d):
+    """Finds solution (x,y) s.t. ax + by = d"""
+    max_abs_x = abs(d//b) + 1
+    max_abs_y = abs(d//a) + 1
+
+    for x in range(-max_abs_x, max_abs_x):
+        for y in range(-max_abs_y, max_abs_y):
+            if a*x + b*y == d:
+                return (x,y)
+    raise ValueError
+
+
+def get_mod_equations_3(x):
+    """
+    f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
+    0<=a<6, 0<=b<v
+    n == a mod 6 -> n = 6k + a
+    k == b mod v -> k = rv + b
+    """
+    if x == 9:
+        v = 1
+        inv_100 = 1
+        inv_v = 1
+    elif x == 1997:
+        v = 998
+        inv_100 = 1338
+        inv_v = 1995
+    elif x == 4877:
+        v = 2438
+        inv_100 = 4243
+        inv_v = 4875
+    else:
+        raise NotImplementedError
+    p = [1, 1, 1, 1, 0, -2]
+    dc_sol = {}
+    for a in range(6):
+        dc_sol[a] = set()
+        for b in range(v):
+            rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
+            r = (rhs * inv_100 * inv_v) % x
+            # 6 * (998 * (dc_1997_2[4][123] + 2 * 1997) + 123) + 4
+            # 5988*dc_1997_2[a][b] + 6*b + a + 11958036*T
+            dc_sol[a].add(6*v*r + 6*b + a)
+    return dc_sol
+
+dc_9_3 = get_mod_equations_3(9)
+dc_1997_3 = get_mod_equations_3(1997)
+dc_4877_3 = get_mod_equations_3(4877)
