@@ -365,38 +365,6 @@ def find(m, v):
 # n=6k + 5 -> k = 1r + 0 -> r = 9t + 6 -> n = 54t + 41
 
 
-def get_mod_equations(x):
-    """
-    f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
-    0<=a<6, 0<=b<v
-    n == a mod 6 -> n = 6k + a
-    k == b mod v -> k = rv + b
-    """
-    if x == 9:
-        v = 1
-        inv_100 = 1
-        inv_v = 1
-    elif x == 1997:
-        v = 998
-        inv_100 = 1338
-        inv_v = 1995
-    elif x == 4877:
-        v = 2438
-        inv_100 = 4243
-        inv_v = 4875
-    else:
-        raise NotImplementedError
-    p = [1, 1, 1, 1, 0, -2]
-    dc_sol = {}
-    for b in range(v):
-        dc_sol[b] = {}
-        for a in range(6):
-            rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
-            r = (rhs * inv_100 * inv_v) % x
-            dc_sol[b][a] = r
-    return dc_sol
-
-
 def get_mod_equations_2(x):
     """
     f(n) = 2**(6b + a) - 100k + 16a  + 56 + p[a] mod x = 0
@@ -428,10 +396,6 @@ def get_mod_equations_2(x):
             dc_sol[a][b] = r
     return dc_sol
 
-
-dc_9 = get_mod_equations(9)
-dc_1997 = get_mod_equations(1997)
-dc_4877 = get_mod_equations(4877)
 
 # from util.utils import ChineseRemainderTheorem
 # theorem = ChineseRemainderTheorem()
@@ -532,6 +496,69 @@ def get_mod_equations_3(x):
             dc_sol[a].add(6*v*r + 6*b + a)
     return dc_sol
 
+
 dc_9_3 = get_mod_equations_3(9)
 dc_1997_3 = get_mod_equations_3(1997)
 dc_4877_3 = get_mod_equations_3(4877)
+
+
+# Relations for divisibility by 9 (for a in 0 to 5) (for b in 0 to v-1) (for all T)
+# 6*dc_9_2[a][0] + a + 6*9*T
+# dc_9_3[a] + 6*9*T
+
+# Relations for divisibility by 1997 (for a in 0 to 5) (for b in 0 to v-1) (for all T)
+# 6*998*dc_1997_2[a][b] + 6*b + a + 6*998*1997*T
+# dc_1997_3[a] + 6*998*1997*T
+
+# Relations for divisibility by 4877 (for a in 0 to 5) (for b in 0 to v-1) (for all T)
+# 6*2438*dc_4877_2[a][b] + 6*b + a + 6*2438*4877*T
+# dc_4877_3[a] + 6*2438*4877*T
+
+
+# (for a in 0 to 5)
+# Relations for divisibility by 9  (for all T1)
+# n = dc_9_3[a] + 6*9*T1
+# Relations for divisibility by 1997 (for all T2)
+# n = dc_1997_3[a] + 6*998*1997*T2
+# Relations for divisibility by 4877 (for all T3)
+# n = dc_4877_3[a] + 6*2438*4877*T3
+
+
+def r(D=int(5e9), a=0):
+    """
+    Return the number of integers n == a mod 6 such that 5<=n<=D and F_5(n) is divisible by 87654321
+    n = 6k + a
+    """
+    s_1997 = set()
+    s_4877 = set()
+
+    for i in range(D // (6 * 2438 * 4877)):
+        s_4877 = s_4877.union({x + 6 * 2438 * 4877 * i for x in dc_4877_3[a]})
+    for i in range(D // (6 * 998 * 1997)):
+        s_1997 = s_1997.union({x + 6 * 998 * 1997 * i for x in dc_1997_3[a]})
+
+    w = s_4877.intersection(s_1997)
+    y = []
+    remainder_54 = list(dc_9_3[a])[0]
+    for t in w:
+        if (t - remainder_54) % 54 == 0:
+            y.append(t)
+    return len(y)
+
+# r(a=0) = 10
+# r(a=1) = 14
+# r(a=2) = 10
+# r(a=3) = 7
+# r(a=4) = 6
+# r(a=5) = 4
+# total = 10 + 14 + 10 + 7 + 6 + 4 = 51
+
+
+def get_total(D=int(5e9)):
+    """
+    Return the number of integers n such that 5<=n<=D and F_5(n) is divisible by 87654321
+    """
+    total = 0
+    for a in range(6):
+        total += r(D=D, a=a)
+    return total
