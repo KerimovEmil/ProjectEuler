@@ -181,21 +181,30 @@ class Problem486:
         Return the number of integers n == a mod 6 such that 5<=n<=d and F_5(n) is divisible by 87654321
         n = 6k + a
         """
-        s_1997 = set()
         s_4877 = set()
+
+        # todo based on these two linear congruences, combine to one linear congruence
+        # e.g. x==3 mod 4 and x == 5 mod 21 -> x == 47 mod 84
 
         for i in range(d // (6 * 2438 * 4877) + 1):
             s_4877 = s_4877.union({x + 6 * 2438 * 4877 * i for x in self.dc_4877_3[a]})
-        for i in range(d // (6 * 998 * 1997) + 1):
-            s_1997 = s_1997.union({x + 6 * 998 * 1997 * i for x in self.dc_1997_3[a]})
 
-        w = s_4877.intersection(s_1997)
+        # filter out based on dc_1997_3
+        w = []
+        for t in s_4877:
+            if t % (6 * 998 * 1997) in self.dc_1997_3[a]:
+                w.append(t)
+
         y = []
         remainder_54 = list(self.dc_9_3[a])[0]  # there is only one element here todo think of better way
         for t in w:
             if (t - remainder_54) % 54 == 0:
                 y.append(t)
-        return len(y)
+
+        # filter out bigger values
+        y_2 = [x for x in y if x <= d]
+
+        return len(y_2)
 
     @timeit
     def solve(self, d):
@@ -400,3 +409,7 @@ if __name__ == '__main__':
 # Relations for divisibility by 4877 (for all T3)
 # n = dc_4877_3[a] + 6*2438*4877*T3
 # period = 639821496386412 = 6*9*998*1997*2438*4877 / 2
+
+# len(dc_9_3[0]) * len(dc_1997_3[0]) * len(dc_4877_3[0])  -> 2433124 * 6 -> 14,598,744
+# max(dc_9_3[0]) * max(dc_1997_3[0]) * max(dc_4877_3[0]) -> 20,466,335,888,646,912 = 2*1e17
+# 11,408,450,515
