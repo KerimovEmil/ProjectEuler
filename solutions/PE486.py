@@ -181,30 +181,18 @@ class Problem486:
         Return the number of integers n == a mod 6 such that 5<=n<=d and F_5(n) is divisible by 87654321
         n = 6k + a
         """
-        s_4877 = set()
-
         # todo based on these two linear congruences, combine to one linear congruence
         # e.g. x==3 mod 4 and x == 5 mod 21 -> x == 47 mod 84
 
-        for i in range(d // (6 * 2438 * 4877) + 1):
-            s_4877 = s_4877.union({x + 6 * 2438 * 4877 * i for x in self.dc_4877_3[a]})
-
-        # filter out based on dc_1997_3
-        w = []
-        for t in s_4877:
-            if t % (6 * 998 * 1997) in self.dc_1997_3[a]:
-                w.append(t)
-
         y = []
-        remainder_54 = list(self.dc_9_3[a])[0]  # there is only one element here todo think of better way
-        for t in w:
-            if (t - remainder_54) % 54 == 0:
-                y.append(t)
-
-        # filter out bigger values
-        y_2 = [x for x in y if x <= d]
-
-        return len(y_2)
+        for i in range(d // (6 * 2438 * 4877) + 1):
+            for x in self.dc_4877_3[a]:
+                num = x + 6 * 2438 * 4877 * i
+                if num % (6 * 998 * 1997) in self.dc_1997_3[a]:  # filter out based on dc_1997_3
+                    if num % (6 * 9) in self.dc_9_3[a]:  # filter out based on dc_9_3
+                        if num <= d:  # filter out bigger values
+                            y.append(num)
+        return len(y)
 
     @timeit
     def solve(self, d):
@@ -238,7 +226,19 @@ class Solution486(unittest.TestCase):
         self.assertEqual(10, self.problem.solve(d=879562681))
 
     def test_given_sample_solution(self):
-        self.assertEqual(51, self.problem.solve(d=5*int(1e9)))  # takes around 42 seconds
+        self.assertEqual(51, self.problem.solve(d=5*int(1e9)))  # takes around 0.7 seconds
+
+    def test_first_100_solution(self):
+        self.assertEqual(100, self.problem.solve(d=9524776956))  # takes around 1 seconds
+
+    def test_first_200_solution(self):
+        self.assertEqual(200, self.problem.solve(d=18010838498))  # takes around 1.6 seconds
+
+    def test_first_300_solution(self):
+        self.assertEqual(300, self.problem.solve(d=26168704503))  # takes around 2.3 seconds
+
+    def test_first_400_solution(self):
+        self.assertEqual(400, self.problem.solve(d=33855231633))  # takes around 2.7 seconds
 
 
 if __name__ == '__main__':
