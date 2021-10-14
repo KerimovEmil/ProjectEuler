@@ -185,12 +185,15 @@ class Problem486:
         # e.g. x==3 mod 4 and x == 5 mod 21 -> x == 47 mod 84
 
         y = []
+        remainder_54 = list(self.dc_9_3[a])[0]  # todo fix
         for x in self.dc_4877_3[a]:
-            for i in range((d-x) // (6 * 2438 * 4877) + 1):
+            for i in range((-(x - remainder_54)//6) % 9, (d-x) // (6 * 2438 * 4877) + 1, 9):
+            # for i in range((d-x) // (6 * 2438 * 4877) + 1):
                 num = x + 6 * 2438 * 4877 * i
                 if num % (6 * 998 * 1997) in self.dc_1997_3[a]:  # filter out based on dc_1997_3
-                    if num % (6 * 9) in self.dc_9_3[a]:  # filter out based on dc_9_3
-                        y.append(num)
+                    # if num % (6 * 9) in self.dc_9_3[a]:  # filter out based on dc_9_3
+                    #     y.append(num)
+                    y.append(num)
         return len(y)
 
     @timeit
@@ -231,13 +234,16 @@ class Solution486(unittest.TestCase):
         self.assertEqual(100, self.problem.solve(d=9524776956))  # takes around 1 seconds
 
     def test_first_200_solution(self):
-        self.assertEqual(200, self.problem.solve(d=18010838498))  # takes around 1.6 seconds
+        self.assertEqual(200, self.problem.solve(d=18010838498))  # takes around 0.5 seconds
 
     def test_first_300_solution(self):
-        self.assertEqual(300, self.problem.solve(d=26168704503))  # takes around 2.3 seconds
+        self.assertEqual(300, self.problem.solve(d=26168704503))  # takes around 0.6 seconds
 
     def test_first_400_solution(self):
-        self.assertEqual(400, self.problem.solve(d=33855231633))  # takes around 2.7 seconds
+        self.assertEqual(400, self.problem.solve(d=33855231633))  # takes around 0.6 seconds
+
+    def test_larger_solution(self):
+        self.assertEqual(11365, self.problem.solve(d=int(1e12)))  # takes around 8.7 seconds
 
 
 if __name__ == '__main__':
@@ -389,17 +395,6 @@ if __name__ == '__main__':
 # [1646490281, 2463945899, 2880042143, 4098746111]
 
 
-# Some test answer:
-# D(95,440,424)=1
-# D(879,562,681)=10
-# D(9,524,776,956)=100
-# D(18,010,838,498)=200
-# D(26,168,704,503)=300
-# D(33,855,231,633)=400
-#
-# These are first time they become this value, example: D(33855231632)=399
-
-
 # (for a in 0 to 5)
 # Relations for divisibility by 9  (for all T1)
 # n = dc_9_3[a] + 6*9*T1
@@ -412,3 +407,46 @@ if __name__ == '__main__':
 # len(dc_9_3[0]) * len(dc_1997_3[0]) * len(dc_4877_3[0])  -> 2433124 * 6 -> 14,598,744
 # max(dc_9_3[0]) * max(dc_1997_3[0]) * max(dc_4877_3[0]) -> 20,466,335,888,646,912 = 2*1e17
 # 11,408,450,515
+
+
+# (x + 6 * 2438 * 4877 * i) mod 54 == self.dc_9_3[a]
+# (x + 6 * i) mod 54 == self.dc_9_3[a]
+# (x - self.dc_9_3[a] + 6 * i) mod 54 == 0
+# ((x - self.dc_9_3[a] // 6 + i) mod 9 == 0
+# i mod 9 == - (x - self.dc_9_3[a] // 6
+
+# 33841074 mod 9 == 3  and all i == 8 mod 9
+# 33841074/6 mod 9 == 5
+
+# 41374068 mod 9 == 6 and all i == 0 mod 9
+# 41374068/6 mod 9 == 4
+
+# 28808862 mod 9 == 6 and all i == 0 mod 9
+
+# 51363348 mod 9 == 6 and all i == 3 mod 9
+# 51363348/6 mod 9 == 1
+
+# 64403412 mod 9 == 6 and all i == 6 mod 9
+
+# x + 6 *
+
+# x=33841074, i=8
+# x=41374068, i=18
+# x=28808862, i=18
+# x=51363348, i=21
+# x=64403412, i=24
+# x=42415710, i=30
+# x=69482868, i=42
+# x=51404118, i=48
+# x=18469668, i=50
+# x=65166468, i=63
+# x=11379726, i=70
+# x=68363214, i=99
+# x=54117438, i=105
+# x=18975162, i=113
+# x=13288128, i=117
+# x=61426596, i=125
+# x=33908346, i=127
+# x=51013248, i=132
+# x=36456408, i=133
+# x=55133142, i=138
