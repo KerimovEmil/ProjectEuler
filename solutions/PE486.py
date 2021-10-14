@@ -185,13 +185,12 @@ class Problem486:
         # e.g. x==3 mod 4 and x == 5 mod 21 -> x == 47 mod 84
 
         y = []
-        for i in range(d // (6 * 2438 * 4877) + 1):
-            for x in self.dc_4877_3[a]:
+        for x in self.dc_4877_3[a]:
+            for i in range((d-x) // (6 * 2438 * 4877) + 1):
                 num = x + 6 * 2438 * 4877 * i
                 if num % (6 * 998 * 1997) in self.dc_1997_3[a]:  # filter out based on dc_1997_3
                     if num % (6 * 9) in self.dc_9_3[a]:  # filter out based on dc_9_3
-                        if num <= d:  # filter out bigger values
-                            y.append(num)
+                        y.append(num)
         return len(y)
 
     @timeit
