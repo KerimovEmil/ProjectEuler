@@ -13,7 +13,7 @@ For example, D(10^7) = 0 and D(5·10^9) = 51.
 Find D(10^18).
 
 ANSWER: 11408450515
-Solve time: 1 minute and 42 seconds  # todo make faster
+Solve time: 18 seconds
 """
 
 from util.utils import timeit, lcm
@@ -287,7 +287,7 @@ class Solution486(unittest.TestCase):
     #     self.assertEqual(11365, self.problem.solve(d=int(1e12)))  # takes around 8.7 seconds
 
     def test_solution(self):
-        self.assertEqual(11408450515, self.problem.solve(d=int(1e18)))  # takes around 1 min 42 seconds
+        self.assertEqual(11408450515, self.problem.solve(d=int(1e18)))  # takes around 18 seconds
 
 
 if __name__ == '__main__':

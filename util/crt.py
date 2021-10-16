@@ -1,9 +1,50 @@
-from typing import List, Set
+from typing import List, Set, Tuple
 from math import gcd
 from itertools import product
 
 
 class NoSolutionException(Exception): pass
+
+
+def bezout_thm(a: int, b: int) -> (int, int):
+    """return x,y such that a*x + b*y = 1"""
+    (x, y) = (0, 1)
+    (last_x, last_y) = (1, 0)
+    while b != 0:
+        (q, r) = divmod(a, b)
+        (a, b) = (b, r)
+        (x, last_x) = (last_x - q * x, x)
+        (y, last_y) = (last_y - q * y, y)
+    return last_x, last_y
+
+
+class SetInteger(Set):
+    """Class for sets of integers"""
+    def __mul__(self, other: int):
+        if isinstance(other, int):
+            return SetInteger({other*x for x in self})
+        else:
+            return NotImplementedError
+
+    def __add__(self, other):
+        if isinstance(other, int):
+            return SetInteger({other + x for x in self})
+        elif isinstance(other, SetInteger):
+            return SetInteger({x+y for x, y in product(self, other)})
+        else:
+            return NotImplementedError
+
+    def __floordiv__(self, other):
+        if isinstance(other, int):
+            return SetInteger({x // other for x in self})
+        else:
+            return NotImplementedError
+
+    def __mod__(self, other):  # todo figure out why sometimes test is failing
+        if isinstance(other, int):
+            return SetInteger({x % other for x in self})
+        else:
+            return NotImplementedError
 
 
 class ChineseRemainderTheorem:
@@ -31,22 +72,11 @@ class ChineseRemainderTheorem:
         for n, b in zip(self.n_list[1:], self.a_list[1:]):
             g = gcd(m, n)
             q = m*n // g
-            (x, y) = self.__extended_gcd(m, n)  # solve for x,y such that m*x + n*y = 1
+            (x, y) = bezout_thm(m, n)  # solve for x,y such that m*x + n*y = 1
             primary_root = b*x*m + a*n*y
             root = (primary_root // g) % q
             a, m = root, q
         return a
-
-    @staticmethod
-    def __extended_gcd(a, b):
-        (x, y) = (0, 1)
-        (last_x, last_y) = (1, 0)
-        while b != 0:
-            (q, r) = divmod(a, b)
-            (a, b) = (b, r)
-            (x, last_x) = (last_x - q * x, x)
-            (y, last_y) = (last_y - q * y, y)
-        return last_x, last_y
 
 
 class ChineseRemainderTheoremSets:
@@ -54,15 +84,24 @@ class ChineseRemainderTheoremSets:
     Solve x = {a_i} (mod n_i) where n_i are coprime.
     """
     def __init__(self, a_sets: List[Set[int]], n_list: List[int]):
-        self.a_sets = a_sets
+        self.a_sets = [SetInteger(x) for x in a_sets]
         self.n_list = n_list
 
-    def __call__(self) -> Set[int]:
-        sol_set = set()
-        for a_list in product(*self.a_sets):
-            try:
-                sol = ChineseRemainderTheorem(a_list=a_list, n_list=self.n_list).solve()
-                sol_set.add(sol)
-            except NoSolutionException:
-                pass
-        return sol_set
+    def __call__(self) -> SetInteger:
+        a_set = self.a_sets[0]
+        m = self.n_list[0]
+        for n, b_set in zip(self.n_list[1:], self.a_sets[1:]):
+            g = gcd(m, n)
+            q = m * n // g
+
+            (x, y) = bezout_thm(m, n)  # solve for x,y such that m*x + n*y = 1
+
+            root = SetInteger()
+            for mod_g_subset in (a_set % g):
+                a_sub_set = SetInteger({x for x in a_set if x % g == mod_g_subset})
+                b_sub_set = SetInteger({x for x in b_set if x % g == mod_g_subset})
+                primary_root = b_sub_set * x * m + a_sub_set * n * y
+                root = SetInteger(root.union((primary_root // g) % q))
+
+            a_set, m = root, q
+        return a_set
