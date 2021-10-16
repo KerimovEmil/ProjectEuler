@@ -1,5 +1,5 @@
 import unittest
-from util.utils import ChineseRemainderTheorem, ChineseRemainderTheoremSets
+from util.crt import ChineseRemainderTheorem, ChineseRemainderTheoremSets
 from random import randint
 
 
