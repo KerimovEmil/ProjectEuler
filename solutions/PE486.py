@@ -187,9 +187,11 @@ class Problem486:
         y = []
         remainder_54 = list(self.dc_9_3[a])[0]  # todo fix
         for x in self.dc_4877_3[a]:
-            for i in range((-(x - remainder_54)//6) % 9, (d-x) // (6 * 2438 * 4877) + 1, 9):
+            start = (-(x - remainder_54)//6) % 9  # since (6 * 2438 * 4877) mod (6*9) == 6
+            for i in range(start, (d-x) // (6 * 2438 * 4877) + 1, 9):
             # for i in range((d-x) // (6 * 2438 * 4877) + 1):
                 num = x + 6 * 2438 * 4877 * i
+                # todo use fact that each one x corresponds to exactly one value in self.dc_1997_3[a]
                 if num % (6 * 998 * 1997) in self.dc_1997_3[a]:  # filter out based on dc_1997_3
                     # if num % (6 * 9) in self.dc_9_3[a]:  # filter out based on dc_9_3
                     #     y.append(num)
@@ -450,3 +452,9 @@ if __name__ == '__main__':
 # x=51013248, i=132
 # x=36456408, i=133
 # x=55133142, i=138
+
+
+# a = 0
+# obj = ChineseRemainderTheoremSets([dc_9_3[a], dc_1997_3[a], dc_4877_3[a]], n_list=[6*9, 6*998*1997, 6*2438*4877])
+# e = obj()
+# {x % (6*9) for x in e} in dc_9_3
