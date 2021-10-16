@@ -81,7 +81,8 @@ class ChineseRemainderTheorem:
 
 class ChineseRemainderTheoremSets:
     """
-    Solve x = {a_i} (mod n_i) where n_i are coprime.
+    Solve x = {a_i} (mod n_i)
+    Note that is a_i are not co-prime then a_i == a_j mod gcm(n_i, n_j)
     """
     def __init__(self, a_sets: List[Set[int]], n_list: List[int]):
         self.a_sets = [SetInteger(x) for x in a_sets]
@@ -98,6 +99,7 @@ class ChineseRemainderTheoremSets:
 
             root = SetInteger()
             for mod_g_subset in (a_set % g):
+                # if a%g != b%g then there are no solutions
                 a_sub_set = SetInteger({x for x in a_set if x % g == mod_g_subset})
                 b_sub_set = SetInteger({x for x in b_set if x % g == mod_g_subset})
                 primary_root = b_sub_set * x * m + a_sub_set * n * y

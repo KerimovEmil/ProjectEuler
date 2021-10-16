@@ -200,28 +200,22 @@ class Problem486:
         m2 = 6 * 998 * 1997
         m3 = 6 * 2438 * 4877
 
-        s1 = self.dc_9[a]  # much smaller
+        s1 = self.dc_9[a]
         s2 = self.dc_1997[a]
         s3 = self.dc_4877[a]
 
-        # todo think of speeding up by filtering congruences that won't have any solutions
-        obj_1 = ChineseRemainderTheoremSets([s1, s2], n_list=[m1, m2])
-        sol_set_1 = obj_1()
-        period_1 = lcm(m1, m2)
-        print(f'created first solution set for a={a}')
-
-        obj_2 = ChineseRemainderTheoremSets([sol_set_1, s3], n_list=[period_1, m3])  # todo split by even and odd
-        sol_set_2 = obj_2()
-        period_2 = lcm(period_1, m3)
-        print(f'created second solution set for a={a}')
+        obj = ChineseRemainderTheoremSets([s1, s2, s3], n_list=[m1, m2, m3])
+        sol_set = obj()
+        period = lcm(lcm(m1, m2), m3)
+        print(f'created solution set for a={a}')
 
         num_sol = 0
-        if d > period_2:
-            multiple = (d // period_2)
-            num_sol += multiple * len(sol_set_2)
-            d -= period_2 * multiple
+        if d > period:
+            multiple = (d // period)
+            num_sol += multiple * len(sol_set)
+            d -= period * multiple
 
-        num_sol += sum(x <= d for x in sol_set_2)
+        num_sol += sum(x <= d for x in sol_set)
 
         print(f'added up all values under d for a={a}')
         return num_sol
