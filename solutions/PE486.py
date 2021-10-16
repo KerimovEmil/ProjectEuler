@@ -12,11 +12,11 @@ For example, D(10^7) = 0 and D(5·10^9) = 51.
 
 Find D(10^18).
 
-ANSWER: ~
-Solve time: ~
+ANSWER: 11408450515
+Solve time: 1 minute and 42 seconds  # todo make faster
 """
 
-from util.utils import timeit
+from util.utils import timeit, ChineseRemainderTheoremSets, lcm
 import unittest
 
 
@@ -176,7 +176,7 @@ class Problem486:
                 dc_sol[a].add(6*v*r + 6*b + a)
         return dc_sol
 
-    def get_sol_for_given_a(self, d=int(5e9), a=0):  # todo speed up
+    def get_sol_for_given_a_fast_under_1e11(self, d=int(5e9), a=0):  # todo speed up
         """
         Return the number of integers n == a mod 6 such that 5<=n<=d and F_5(n) is divisible by 87654321
         n = 6k + a
@@ -189,20 +189,64 @@ class Problem486:
         for x in self.dc_4877_3[a]:
             start = (-(x - remainder_54)//6) % 9  # since (6 * 2438 * 4877) mod (6*9) == 6
             for i in range(start, (d-x) // (6 * 2438 * 4877) + 1, 9):
-            # for i in range((d-x) // (6 * 2438 * 4877) + 1):
                 num = x + 6 * 2438 * 4877 * i
                 # todo use fact that each one x corresponds to exactly one value in self.dc_1997_3[a]
                 if num % (6 * 998 * 1997) in self.dc_1997_3[a]:  # filter out based on dc_1997_3
-                    # if num % (6 * 9) in self.dc_9_3[a]:  # filter out based on dc_9_3
-                    #     y.append(num)
                     y.append(num)
         return len(y)
+
+    def get_sol_for_given_a(self, d=int(5e9), a=0):  # todo speed up
+        """
+        Return the number of integers n == a mod 6 such that 5<=n<=d and F_5(n) is divisible by 87654321
+        n = 6k + a
+        """
+
+        m1 = 9 * 6
+        m2 = 6 * 998 * 1997
+        m3 = 6 * 2438 * 4877
+
+        s1 = self.dc_9_3[a]  # much smaller
+        s2 = self.dc_1997_3[a]
+        s3 = self.dc_4877_3[a]
+
+        # todo think of speeding up by filtering congruences that won't have any solutions
+        obj_1 = ChineseRemainderTheoremSets([s1, s2], n_list=[m1, m2])
+        sol_set_1 = obj_1()
+        period_1 = lcm(m1, m2)
+        print(f'created first solution set for a={a}')
+
+        obj_2 = ChineseRemainderTheoremSets([sol_set_1, s3], n_list=[period_1, m3])  # todo split by even and odd
+        sol_set_2 = obj_2()
+        period_2 = lcm(period_1, m3)
+        print(f'created second solution set for a={a}')
+
+        num_sol = 0
+        if d > period_2:
+            multiple = (d // period_2)
+            num_sol += multiple * len(sol_set_2)
+            d -= period_2 * multiple
+
+        num_sol += sum(x <= d for x in sol_set_2)
+
+        print(f'added up all values under d for a={a}')
+        return num_sol
 
     @timeit
     def solve(self, d):
         total = 0
+
+        m1 = 9 * 6
+        m2 = 6 * 998 * 1997
+        m3 = 6 * 2438 * 4877
+        period = lcm(lcm(m1, m2), m3)
+
+        if d < period:
+            func = self.get_sol_for_given_a_fast_under_1e11
+        else:
+            func = self.get_sol_for_given_a
+
         for a in range(6):
-            total += self.get_sol_for_given_a(d=d, a=a)
+            total += func(d=d, a=a)
         return total
 
 
@@ -244,8 +288,11 @@ class Solution486(unittest.TestCase):
     def test_first_400_solution(self):
         self.assertEqual(400, self.problem.solve(d=33855231633))  # takes around 0.6 seconds
 
-    def test_larger_solution(self):
-        self.assertEqual(11365, self.problem.solve(d=int(1e12)))  # takes around 8.7 seconds
+    # def test_larger_solution(self):
+    #     self.assertEqual(11365, self.problem.solve(d=int(1e12)))  # takes around 8.7 seconds
+
+    def test_solution(self):
+        self.assertEqual(11408450515, self.problem.solve(d=int(1e18)))  # takes around 1 min 42 seconds
 
 
 if __name__ == '__main__':
