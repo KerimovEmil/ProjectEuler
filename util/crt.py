@@ -1,13 +1,16 @@
-from typing import List, Set, Tuple
+from typing import List, Set
 from math import gcd
 from itertools import product
 
 
-class NoSolutionException(Exception): pass
+class NoSolutionException(Exception):
+    pass
 
 
 def bezout_thm(a: int, b: int) -> (int, int):
-    """return x,y such that a*x + b*y = 1"""
+    """
+    return x,y such that a*x + b*y = 1, using the extended gcd algorithm
+    """
     (x, y) = (0, 1)
     (last_x, last_y) = (1, 0)
     while b != 0:
@@ -22,15 +25,15 @@ class SetInteger(Set):
     """Class for sets of integers"""
     def __mul__(self, other: int):
         if isinstance(other, int):
-            return SetInteger({other*x for x in self})
+            return SetInteger(other*x for x in self)
         else:
             return NotImplementedError
 
     def __add__(self, other):
         if isinstance(other, int):
-            return SetInteger({other + x for x in self})
+            return SetInteger(other + x for x in self)
         elif isinstance(other, SetInteger):
-            return SetInteger({x+y for x, y in product(self, other)})
+            return SetInteger(x+y for x, y in product(self, other))
         else:
             return NotImplementedError
 
@@ -40,7 +43,7 @@ class SetInteger(Set):
         else:
             return NotImplementedError
 
-    def __mod__(self, other):  # todo figure out why sometimes test is failing
+    def __mod__(self, other):
         if isinstance(other, int):
             return SetInteger({x % other for x in self})
         else:
@@ -94,9 +97,7 @@ class ChineseRemainderTheoremSets:
         for n, b_set in zip(self.n_list[1:], self.a_sets[1:]):
             g = gcd(m, n)
             q = m * n // g
-
             (x, y) = bezout_thm(m, n)  # solve for x,y such that m*x + n*y = 1
-
             root = SetInteger()
             for mod_g_subset in (a_set % g):
                 # if a%g != b%g then there are no solutions
