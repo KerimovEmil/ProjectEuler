@@ -28,9 +28,9 @@ class TestChineseRemainderTheorem(unittest.TestCase):
         m2 = 6 * 998 * 1997
         m3 = 6 * 2438 * 4877
 
-        s1 = {randint(1, m1-1) for _ in range(30)}
-        s2 = {randint(1, m2-1) for _ in range(100)}
-        s3 = {randint(1, m3-1) for _ in range(100)}
+        s1 = {randint(0, m1-1) for _ in range(30)}
+        s2 = {randint(0, m2-1) for _ in range(100)}
+        s3 = {randint(0, m3-1) for _ in range(1000)}
 
         obj = ChineseRemainderTheoremSets([s1, s2, s3], n_list=[m1, m2, m3])
         sol_set = obj()

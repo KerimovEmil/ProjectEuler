@@ -29,10 +29,14 @@ class SetInteger(Set):
         else:
             return NotImplementedError
 
+    def __rmul__(self, other):
+        """Defining x * object as object * x"""
+        return self.__mul__(other)
+
     def __add__(self, other):
         if isinstance(other, int):
             return SetInteger(other + x for x in self)
-        elif isinstance(other, SetInteger):
+        elif isinstance(other, SetInteger):  # this is the slowest part
             return SetInteger(x+y for x, y in product(self, other))
         else:
             return NotImplementedError
@@ -103,7 +107,7 @@ class ChineseRemainderTheoremSets:
                 # if a%g != b%g then there are no solutions
                 a_sub_set = SetInteger({x for x in a_set if x % g == mod_g_subset})
                 b_sub_set = SetInteger({x for x in b_set if x % g == mod_g_subset})
-                primary_root = b_sub_set * x * (m//g) + a_sub_set * (n//g) * y
+                primary_root = x * (m//g) * b_sub_set + (n//g) * y * a_sub_set
                 root = SetInteger(root.union(primary_root % q))
 
             a_set, m = root, q
