@@ -36,7 +36,7 @@ class SetInteger(Set):
     def __add__(self, other):
         if isinstance(other, int):
             return SetInteger(other + x for x in self)
-        elif isinstance(other, SetInteger):  # this is the slowest part
+        elif isinstance(other, SetInteger):
             return SetInteger(x+y for x, y in product(self, other))
         else:
             return NotImplementedError

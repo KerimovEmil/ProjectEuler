@@ -178,8 +178,13 @@ class Problem486:
         elif x == 4877:
             v = 2438  # 2^(6*2438) == 1 mod 4877
             inv_100 = 4243  # 100*4243 == 1 mod 4877
-            inv_v = 4875  # 2438*4875 == 1mod 4877
+            inv_v = 4875  # 2438*4875 == 1 mod 4877
+        elif x == 87654321:
+            v = 1216562  # 2^(6*1216562) == 1 mod 87654321  # pow(2,6*1216562, 87654321)
+            inv_100 = 16654321  # 100*16654321 == 1 mod 87654321
+            inv_v = 80527988  # 1216562*80527988 == 1 mod 87654321
         else:
+
             raise NotImplementedError
         p = [1, 1, 1, 1, 0, -2]
         dc_sol = {}
@@ -217,7 +222,7 @@ class Problem486:
                     y.append(num)
         return len(y)
 
-    def get_sol_for_given_a(self, d=int(5e9), a=0):  # todo speed up
+    def get_sol_for_given_a(self, d=int(5e9), a=0):
         """
         Return the number of integers n == a mod 6 such that 5<=n<=d and F_5(n) is divisible by 87654321
         n = 6k + a
@@ -251,12 +256,7 @@ class Problem486:
     def solve(self, d):
         total = 0
 
-        m1 = 6 * 9
-        m2 = 6 * 998 * 1997
-        m3 = 6 * 2438 * 4877
-        period = lcm(lcm(m1, m2), m3)
-
-        if d < period:
+        if d < lcm(lcm(6 * 9, 6 * 998 * 1997),  6 * 2438 * 4877):
             func = self.get_sol_for_given_a_fast_under_1e11
         else:
             func = self.get_sol_for_given_a
