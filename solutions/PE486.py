@@ -97,7 +97,6 @@ def f5(n):
 # Divisible by 1997 -> n = 11958036t + {...} for all t
 # Divisible by 4877 -> n = 71340756t + {...} for all t
 
-
 # p = [1, 1, 1, 1, 0, -2]
 # f(n) = 2**n - 16*n + 56 - 4*(n//6) + p[n % 6]
 # n == a mod 6 -> n = 6k + a
@@ -111,22 +110,43 @@ def f5(n):
 # f(n) = 2**(6b + a) - 100k - 16a  + 56 + p[a] mod x = 0
 # 0<=a<6, 0<=b<v
 
+# keep track of the following expression for n
+# n = 6vr + 6b + a
+# since this implied that F5(n) == 0 mod x
+
 # example with x = 9 -> v = 1
 # v=1 -> b=0 -> k=r, n = 6k + a
 # f(n) = 2^a - 100r + 16a + 56 + p[a] mod 9 = 0
 # 0<=a<6
 # p = [1, 1, 1, 1, 0, -2]
-# if a == 0 -> f(n) = 1 - 100r + 56 + 1 mod 9 = 0 -> r == 4 mod 9
-# if a == 1 -> f(n) = 2 - 100r + 16 + 56 + 1 mod 9 = 0 -> r == 7 mod 9
-# if a == 2 -> f(n) = 4 - 100r + 16*2 + 56 + 1 mod 9 = 0 -> r == 2 mod 9
-# if a == 3 -> f(n) = 8 - 100r + 16*3 + 56 + 1 mod 9 = 0 -> r == 8 mod 9
-# if a == 4 -> f(n) = 16 - 100r + 16*4 + 56 + 0 mod 9 = 0 -> r == 8 mod 9
-# if a == 5 -> f(n) = 32 - 100r + 16*5 + 56 - 2 mod 9 = 0 -> r == 8 mod 9
+# if a == 0 -> f(n) = 1 - 100r + 56 + 1 mod 9 = 0 -> r == 4 mod 9  -> n = 9*6t + 4*6 + 0 = 54t + 24
+# if a == 1 -> f(n) = 2 - 100r + 16 + 56 + 1 mod 9 = 0 -> r == 7 mod 9  -> n = 9*6t + 7*6 + 1 = 54t + 43
+# if a == 2 -> f(n) = 4 - 100r + 16*2 + 56 + 1 mod 9 = 0 -> r == 2 mod 9  -> n = 9*6t + 2*6 + 2 = 54t + 14
+# if a == 3 -> f(n) = 8 - 100r + 16*3 + 56 + 1 mod 9 = 0 -> r == 8 mod 9  -> n = 9*6t + 8*6 + 3 = 54t + 51
+# if a == 4 -> f(n) = 16 - 100r + 16*4 + 56 + 0 mod 9 = 0 -> r == 8 mod 9  -> n = 9*6t + 8*6 + 4 = 54t + 52
+# if a == 5 -> f(n) = 32 - 100r + 16*5 + 56 - 2 mod 9 = 0 -> r == 6 mod 9  -> n = 9*6t + 6*6 + 5 = 54t + 41
 
 # this logic is coded up efficiently in get_mod_equations method below
 
+# using the numbers we kept track of, we have the following divisibility rules
+# (for a in 0 to 5)
+# Relations for divisibility by 9  (for all T1)
+# n = dc_9[a] + 6*9*T1
+# Relations for divisibility by 1997 (for all T2)
+# n = dc_1997[a] + 6*998*1997*T2
+# Relations for divisibility by 4877 (for all T3)
+# n = dc_4877[a] + 6*2438*4877*T3
+
+# when combining all of these modular equations together using the Chinese Remainder Theorem (allowing for co-primes),
+# we get that the final modular equation will have a period of lcm(6*9, 6*998*1997,  6*2438*4877)
+# period = 639821496386412 ~= 6e15
+# this implies that for finding all values less than 1e18 which are divisible by 87654321 we only need to search within
+# d = 1e18 mod 6e15
+
+
 class Problem486:
     def __init__(self):
+        # 87654321 = 9*1997*4877
         self.dc_9 = self.get_mod_equations(9)
         self.dc_1997 = self.get_mod_equations(1997)
         self.dc_4877 = self.get_mod_equations(4877)
@@ -148,17 +168,17 @@ class Problem486:
             note that 54 = 9*6*v (since v is 1 for x=9)
         """
         if x == 9:
-            v = 1
-            inv_100 = 1
-            inv_v = 1
+            v = 1  # 2^(6*1) == 1 mod 9
+            inv_100 = 1  # 100*1 == 1 mod 9
+            inv_v = 1  # 1*1 == 1 mod 9
         elif x == 1997:
-            v = 998
-            inv_100 = 1338
-            inv_v = 1995
+            v = 998  # 2^(6*998) == 1 mod 1997
+            inv_100 = 1338  # 100*1338 == 1 mod 1997
+            inv_v = 1995  # 998*1995 == 1 mod 1997
         elif x == 4877:
-            v = 2438
-            inv_100 = 4243
-            inv_v = 4875
+            v = 2438  # 2^(6*2438) == 1 mod 4877
+            inv_100 = 4243  # 100*4243 == 1 mod 4877
+            inv_v = 4875  # 2438*4875 == 1mod 4877
         else:
             raise NotImplementedError
         p = [1, 1, 1, 1, 0, -2]
@@ -166,8 +186,15 @@ class Problem486:
         for a in range(6):
             dc_sol[a] = set()
             for b in range(v):
+                # using:
+                # f(n) = 2**(6b + a) - 100*(rv+b) - 16a  + 56 + p[a] == 0 mod x
+                # re-arranging to solve for r, we get
+                # r*100*v = 2**(6b + a) - 100b - 16a  + 56 + p[a] mod x
+                # r = (2**(6b + a) - 100b - 16a  + 56 + p[a]) * inv_100 * inv_v  mod x
                 rhs = 2 ** (6 * b + a) - 100 * b - 16 * a + 56 + p[a]
                 r = (rhs * inv_100 * inv_v) % x
+                # storing n = 6vr + 6b + a
+                # since this implies that F5(n) == 0 mod x
                 dc_sol[a].add(6*v*r + 6*b + a)
         return dc_sol
 
@@ -224,7 +251,7 @@ class Problem486:
     def solve(self, d):
         total = 0
 
-        m1 = 9 * 6
+        m1 = 6 * 9
         m2 = 6 * 998 * 1997
         m3 = 6 * 2438 * 4877
         period = lcm(lcm(m1, m2), m3)
@@ -256,10 +283,10 @@ class Solution486(unittest.TestCase):
             with self.subTest(f'n={i}'):
                 self.assertEqual(brute_force_f5(i), f5(i))
 
-    def test_smaller_solution(self):
+    def test_first_solution(self):
         self.assertEqual(1, self.problem.solve(d=95440424))
 
-    def test_smaller_solution_2(self):
+    def test_first_10_solution(self):
         self.assertEqual(10, self.problem.solve(d=879562681))
 
     def test_given_sample_solution(self):
@@ -286,56 +313,3 @@ class Solution486(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-# Summary of mod 9 results
-# n=6k + 0 -> k = 1r + 0 -> r = 9t + 4 -> n = 54t + 24
-# n=6k + 1 -> k = 1r + 0 -> r = 9t + 7 -> n = 54t + 43
-# n=6k + 2 -> k = 1r + 0 -> r = 9t + 2 -> n = 54t + 14
-# n=6k + 3 -> k = 1r + 0 -> r = 9t + 8 -> n = 54t + 51
-# n=6k + 4 -> k = 1r + 0 -> r = 9t + 8 -> n = 54t + 52
-# n=6k + 5 -> k = 1r + 0 -> r = 9t + 6 -> n = 54t + 41
-
-
-# if a == 0 (i.e. n = 6k)
-
-# f5(6*dc_9_2[0][0]) % 9 == 0
-# f5(6*(dc_9_2[3][0] + 9) + 3) % 9 == 0
-# f5(6*998*dc_1997_2[0][0]) % 1997 == 0
-# f5(6*998*dc_1997_2[0][1] + 6*1) % 1997 == 0
-# f5(6*998*dc_1997_2[0][5] + 6*5) % 1997 == 0
-# f5(6*998*dc_1997_2[4][5] + 6*5 + 4) % 1997 == 0
-# f5(6*998*dc_1997_2[4][123] + 6*123 + 4) % 1997 == 0
-# f5(6*(998*(dc_1997_2[4][123] + 1997) + 123) + 4) % 1997 == 0
-# f5(6*(998*(dc_1997_2[4][123] + 2*1997) + 123) + 4) % 1997 == 0
-# n == a mod 6 -> n = 6k + a
-# k == b mod v -> k = rv + b
-# n = 6k + a = 6(rv + b) + a
-# n = 6vr + 6b + a
-
-# Relations for divisibility by 9 (for a in 0 to 5) (for b in 0 to 0) (v-1 = 0) (for all T)
-# 6*(dc_9_2[a][0] + T*9) + a
-# 6*dc_9_2[a][0] + a + 6*9*T
-# 6*dc_9_2[a][0] + a + 54*T
-
-# Relations for divisibility by 1997 (for a in 0 to 5) (for b in 0 to 997) (v-1 = 997) (for all T)
-# 6*(998*(dc_1997_2[a][b] + T*1997) + b) + a
-# 6*998*dc_1997_2[a][b] + 6*b + a + 6*998*1997*T
-# 5988*dc_1997_2[a][b] + 6*b + a + 11958036*T
-
-# Relations for divisibility by 4877 (for a in 0 to 5) (for b in 0 to 2437) (for all T)
-# 6*(2438*(dc_4877_2[a][b] + T*4877) + b) + a
-# 6*2438*dc_4877_2[a][b] + 6*b + a + 6*2438*4877*T
-# 14628*dc_4877_2[a][b] + 6*b + a + 71340756*T
-
-
-# (for a in 0 to 5)
-# Relations for divisibility by 9  (for all T1)
-# n = dc_9[a] + 6*9*T1
-# Relations for divisibility by 1997 (for all T2)
-# n = dc_1997[a] + 6*998*1997*T2
-# Relations for divisibility by 4877 (for all T3)
-# n = dc_4877[a] + 6*2438*4877*T3
-# period = 639821496386412 = 6*9*998*1997*2438*4877 / 2
