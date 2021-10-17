@@ -102,8 +102,8 @@ class ChineseRemainderTheoremSets:
                 # if a%g != b%g then there are no solutions
                 a_sub_set = SetInteger({x for x in a_set if x % g == mod_g_subset})
                 b_sub_set = SetInteger({x for x in b_set if x % g == mod_g_subset})
-                primary_root = b_sub_set * x * m + a_sub_set * n * y
-                root = SetInteger(root.union((primary_root // g) % q))
+                primary_root = b_sub_set * x * (m//g) + a_sub_set * (n//g) * y
+                root = SetInteger(root.union(primary_root % q))
 
             a_set, m = root, q
         return a_set
