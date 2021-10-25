@@ -37,7 +37,7 @@ class SetInteger(Set):
         if isinstance(other, int):
             return SetInteger(other + x for x in self)
         elif isinstance(other, SetInteger):
-            return SetInteger(x+y for x, y in product(self, other))
+            return SetInteger({x+y for x, y in product(self, other)})
         else:
             return NotImplementedError
 
@@ -70,7 +70,6 @@ class ChineseRemainderTheorem:
         for i, (m, n) in enumerate(zip(self.n_list[:-1], self.n_list[1:])):
             g = gcd(m, n)
             if (self.a_list[i] - self.a_list[i + 1]) % g != 0:
-                # print(f'm={m}, n={n}, a={self.a_list[i]}, b={self.a_list[i + 1]}, g={g}')
                 raise NoSolutionException()
 
     def solve(self):
@@ -78,11 +77,11 @@ class ChineseRemainderTheorem:
         m = self.n_list[0]
         for n, b in zip(self.n_list[1:], self.a_list[1:]):
             g = gcd(m, n)
-            q = m*n // g
+            new_mod = m*n // g
             (x, y) = bezout_thm(m, n)  # solve for x,y such that m*x + n*y = 1
-            primary_root = b*x*m + a*n*y
-            root = (primary_root // g) % q
-            a, m = root, q
+            primary_root = b*x*m//g + a*y*n//g
+            root = primary_root % new_mod
+            a, m = root, new_mod
         return a
 
 
@@ -93,22 +92,27 @@ class ChineseRemainderTheoremSets:
     """
     def __init__(self, a_sets: List[Set[int]], n_list: List[int]):
         self.a_sets = [SetInteger(x) for x in a_sets]
-        self.n_list = n_list
+        self.mod_list = n_list
 
     def __call__(self) -> SetInteger:
-        a_set = self.a_sets[0]
-        m = self.n_list[0]
-        for n, b_set in zip(self.n_list[1:], self.a_sets[1:]):
-            g = gcd(m, n)
-            q = m * n // g
-            (x, y) = bezout_thm(m, n)  # solve for x,y such that m*x + n*y = 1
-            root = SetInteger()
-            for mod_g_subset in (a_set % g):
-                # if a%g != b%g then there are no solutions
-                a_sub_set = SetInteger({x for x in a_set if x % g == mod_g_subset})
-                b_sub_set = SetInteger({x for x in b_set if x % g == mod_g_subset})
-                primary_root = x * (m//g) * b_sub_set + (n//g) * y * a_sub_set
-                root = SetInteger(root.union(primary_root % q))
+        existing_set = self.a_sets[0]
+        existing_mod = self.mod_list[0]
+        for new_mod, new_set in zip(self.mod_list[1:], self.a_sets[1:]):
+            g = gcd(existing_mod, new_mod)
+            combined_mod = existing_mod * new_mod // g
+            (x, y) = bezout_thm(existing_mod, new_mod)  # solve for x,y such that m*x + n*y = 1
 
-            a_set, m = root, q
-        return a_set
+            # scale existing sets
+            existing_set_scale = (new_mod//g) * y
+            new_set_scale = (existing_mod//g) * x
+
+            root = SetInteger()
+            for mod_g_subset in (existing_set % g):
+                # if a%g != b%g then there are no solutions
+                existing_sub_set = SetInteger({x for x in existing_set if x % g == mod_g_subset})
+                new_sub_set = SetInteger({x for x in new_set if x % g == mod_g_subset})
+                primary_root = new_set_scale * new_sub_set + existing_set_scale * existing_sub_set
+                root = SetInteger(root.union(primary_root % combined_mod))
+
+            existing_set, existing_mod = root, combined_mod
+        return existing_set
