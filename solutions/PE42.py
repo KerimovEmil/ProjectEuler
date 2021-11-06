@@ -21,6 +21,7 @@ Solve time ~0.007 seconds
 
 import unittest
 from util.utils import timeit
+import os
 
 
 class Problem42:
@@ -52,7 +53,8 @@ class Problem42:
 
 class Solution42(unittest.TestCase):
     def setUp(self):
-        with open(r"..\problem_data\p042_words.txt", 'r+') as f:
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p042_words.txt')
+        with open(file_path, 'r+') as f:
             old_words = f.read().split(',')
         self.problem = Problem42(words=old_words, max_triangle_sum=100)
 
