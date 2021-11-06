@@ -2,6 +2,7 @@ import numpy as np
 import time
 from itertools import accumulate
 from functools import lru_cache, reduce
+from math import gcd
 
 
 class Hungarian:
@@ -429,6 +430,10 @@ def basic_factorial(x):
     return ans
 
 
+def lcm(x, y):
+    return x * y // gcd(x, y)
+
+
 class Matrix:
     def __init__(self, entries):
         self.entries = entries
@@ -582,34 +587,6 @@ class EulerNumber:
         if n >= self.prime:
             return 0
         return self.factorial_mod[n]
-
-
-class ChineseRemainderTheorem:
-    """
-    Solve x = a_i (mod n_i) where n_i are coprime.
-    """
-
-    def solve(self, a_list, n_list):
-        a = a_list[0]
-        m = n_list[0]
-        for i in range(1, len(n_list)):
-            n = n_list[i]
-            b = a_list[i]
-            q = m * n
-            (x, y) = self.__extended_gcd(m, n)
-            root = (a + (b - a) * x * m) % q
-            a, m = root, q
-        return a
-
-    def __extended_gcd(self, a, b):
-        (x, y) = (0, 1)
-        (last_x, last_y) = (1, 0)
-        while b != 0:
-            (q, r) = divmod(a, b)
-            (a, b) = (b, r)
-            (x, last_x) = (last_x - q * x, x)
-            (y, last_y) = (last_y - q * y, y)
-        return (last_x, last_y)
 
 
 def sieve(n):

@@ -3,7 +3,8 @@
 
 import sys
 
-from util.utils import ChineseRemainderTheorem, EulerNumber
+from util.utils import EulerNumber
+from util.crt import ChineseRemainderTheorem
 
 
 # 77777777 = 7 x 11 x 73 x 101 x 137
@@ -26,9 +27,8 @@ class Problem330:
             print("A(n) and B(n) mod", prime, "=>", A_mod, B_mod)
             A_mod_list.append(A_mod)
             b_mod_list.append(B_mod)
-        theorem = ChineseRemainderTheorem()
-        A = theorem.solve(A_mod_list, prime_list)
-        B = theorem.solve(b_mod_list, prime_list)
+        A = ChineseRemainderTheorem(A_mod_list, prime_list).solve()
+        B = ChineseRemainderTheorem(b_mod_list, prime_list).solve()
         print("A(n) mod 77777777 =>", A)
         print("B(n) mod 77777777 =>", B)
         return (A + B) % 77777777
