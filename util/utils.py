@@ -623,6 +623,11 @@ def is_pandigital(num):
     return True
 
 
+def is_palindrome(n: int) -> bool:
+    ls = list(str(n))
+    return ls == ls[::-1]
+
+
 def new_mod(str_a, m):  # todo: test for bugs
     """
     Returns a mod m.
