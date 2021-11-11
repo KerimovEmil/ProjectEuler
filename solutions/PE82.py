@@ -59,7 +59,7 @@ class Problem82:
         return min([x[0] for x in B])
 
 
-class Solution81(unittest.TestCase):
+class Solution82(unittest.TestCase):
     def setUp(self):
         file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p082_matrix.txt')
         self.problem = Problem82(file_path)
