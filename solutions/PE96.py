@@ -13,6 +13,7 @@ Solve time ~ 68 seconds
 import unittest
 from util.dlx import DancingLinks, LeftIterator
 from util.utils import timeit
+import os
 
 
 class Problem96:
@@ -110,7 +111,8 @@ class Problem96:
 
 class Solution96(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem96(r'../problem_data/p096_sudoku.txt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p096_sudoku.txt')
+        self.problem = Problem96(file_path)
 
     def test_solution(self):
         self.assertEqual(24702, self.problem.solve())
