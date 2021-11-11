@@ -67,29 +67,22 @@ class Problem144:
         return (2*n - m + m*n*n)/(2*m*n - n*n + 1)
 
     @staticmethod
-    def quadratic_solution(a, b, c) -> Tuple[float, float]:
-        """Solve x for ax^2 + bx + c = 0"""
-        disc = (b**2 - 4*a*c)**0.5 / (2*a)
-        b_term = -b / (2*a)
-        return b_term - disc, b_term + disc
-
-    @staticmethod
-    def move(m: float, c: float, x_old: float) -> Tuple[float, float]:
+    def next_point(m: float, c: float, x_old: float) -> Tuple[float, float]:
         """
-        Solving for x,y intercepts of 4x^2 + y^2 = 100 and y = mx + c
+        Solving for x,y intercepts of 4x^2 + y^2 = 100 and y = mx + c, given one of the solutions x_old
 
         Details
         4x^2 + (mx + c)^2 = 100
         4x^2 + m^2 x^2 + 2mxc + c^2  = 100
-        (4 + m^2)x^2 + (2mc)x + (c^2 - 100) = 0
-        """
-        x_solution = Problem144.quadratic_solution(4+m*m, 2*m*c, c*c-100)
-        for x in x_solution:
-            if abs(x_old - x) > 1e-10:  # get the solution that is not the previous x
-                y = m*x + c
-                return x, y
+        (m^2 + 4)x^2 + (2mc)x + (c^2 - 100) = 0
 
-        raise AssertionError('No solution found')
+        given that x_old is a solution, we have the following equation
+        (m^2 + 4)x^2 + (2mc)x + (c^2 - 100) = (x - x_old) * (x - x_new)
+        Therefore x_old * x_new = (c^2 - 100)/(m^2 + 4)
+        x_new = (c^2 - 100)/(m^2 + 4)/x_old
+        """
+        x_new = (c*c-100)/(m*m+4)/x_old
+        return x_new, m*x_new + c
 
     @timeit
     def solve(self):
@@ -100,7 +93,25 @@ class Problem144:
         while not (abs(x) <= 0.01 and y > 0):
             n = self.normal_slope(x=x, y=y)
             m = self.reflect_slope(initial_slope=m, normal_slope=n)
-            x, y = self.move(m, y - m*x, x)
+            x, y = self.next_point(m=m, c=y - m*x, x_old=x)
+            count += 1
+        return count
+
+    @staticmethod
+    def solve_with_no_description():
+        x, y = 1.4, -9.6
+        m = -197/14
+
+        count = 0
+        while not (abs(x) <= 0.01 and y > 0):
+            n = y/(4*x)
+            # get new slope
+            m = (2*n - m + m*n*n)/(2*m*n - n*n + 1)
+            # get new point
+            c = y - m*x
+            x = (c*c-100)/(m*m+4)/x
+            y = m*x + c
+
             count += 1
         return count
 
@@ -111,6 +122,9 @@ class Solution144(unittest.TestCase):
 
     def test_solution(self):
         self.assertEqual(354, self.problem.solve())
+
+    def test_no_description(self):
+        self.assertEqual(354, self.problem.solve_with_no_description())
 
 
 if __name__ == '__main__':
