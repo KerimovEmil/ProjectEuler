@@ -21,11 +21,9 @@ Solve time ~1.7 seconds
 # you don't have to check the primes with two or four recurring digits. If you form 8 different numbers with them,
 # at least once the sum of the digits (and the whole number) is divisible by three.
 
-from collections import Counter
-
-from primesieve import primes
-
 import unittest
+from collections import Counter
+from primesieve import primes
 from util.utils import timeit
 
 
