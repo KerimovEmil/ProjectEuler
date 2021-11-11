@@ -259,56 +259,7 @@ class Solution236(unittest.TestCase):
         self.problem = Problem236(a_total, b_total, max_den=60)  # max_den=100
 
     def test_all_solution(self):
-        # Check solution
         self.assertEqual(Fraction(123, 59), self.problem.solve())
-
-        # check that all found m are accurate
-        ls_all = [Fraction(41, 40),
-                  Fraction(328, 295),
-                  Fraction(369, 295),
-                  Fraction(451, 295),
-                  Fraction(492, 295),
-                  Fraction(574, 295),
-                  Fraction(123, 59),
-                  Fraction(60, 59),
-                  Fraction(63, 59),
-                  Fraction(80, 59),
-                  Fraction(81, 59),
-                  Fraction(82, 59),
-                  Fraction(108, 59),
-                  Fraction(123, 118),
-                  Fraction(205, 118),
-                  Fraction(697, 590),
-                  Fraction(861, 590),
-                  Fraction(902, 885),
-                  Fraction(1066, 885),
-                  Fraction(205, 177),
-                  Fraction(1353, 1180),
-                  Fraction(1599, 1180),
-                  Fraction(287, 236),
-                  Fraction(369, 236),
-                  Fraction(1476, 1475),
-                  Fraction(1722, 1475),
-                  Fraction(492, 413),
-                  Fraction(615, 413),
-                  Fraction(738, 413),
-                  Fraction(533, 472),
-                  Fraction(615, 472),
-                  Fraction(3321, 3245),
-                  Fraction(738, 649),
-                  Fraction(1230, 1003),
-                  Fraction(2460, 1711)
-                  ]
-
-        self.assertEqual(len(ls_all), 35)
-        print("Num found: {}/{}".format(self.problem.num_of_m_found, 35))
-        in_bool = True
-        # temp_ls = ls_all.copy()  # todo delete
-        for frac in self.problem.possible_m:
-            # temp_ls.remove(frac)  # todo delete
-            in_bool = in_bool and (frac in ls_all)
-        self.assertTrue(in_bool)
-        # print(temp_ls)  # todo delete
 
 
 if __name__ == '__main__':
