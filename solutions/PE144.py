@@ -104,9 +104,8 @@ class Problem144:
 
         count = 0
         while not (abs(x) <= 0.01 and y > 0):
-            n = y/(4*x)
             # get new slope
-            m = (2*n - m + m*n*n)/(2*m*n - n*n + 1)
+            m = y*x*(1 + m*m)/(2*x*x + m*y*x - y*y/8) - m
             # get new point
             c = y - m*x
             x = (c*c-100)/(m*m+4)/x
