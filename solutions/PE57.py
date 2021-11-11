@@ -18,12 +18,10 @@ is the first example where the number of digits in the numerator exceeds the num
 In the first one-thousand expansions, how many fractions contain a numerator with more digits than denominator?
 
 ANSWER: 153
-Solve time ~0.2 seconds
+Solve time ~0.004 seconds
 """
 import unittest
-import decimal
-
-decimal.getcontext().prec = 2000
+from util.utils import timeit
 
 
 class Problem57:
@@ -31,27 +29,15 @@ class Problem57:
         self.max_iter = max_iter
         self.num = digit
 
+    @timeit
     def solve(self):
-        old_p = decimal.Decimal(1).to_integral_exact(rounding=decimal.ROUND_FLOOR)
-        old_q = decimal.Decimal(0).to_integral_exact(rounding=decimal.ROUND_FLOOR)
-        p = decimal.Decimal(self.num).sqrt().to_integral_exact(rounding=decimal.ROUND_FLOOR)
-        q = decimal.Decimal(1).to_integral_exact(rounding=decimal.ROUND_FLOOR)
-        rem = decimal.Decimal(self.num).sqrt()
-        a = rem.to_integral_exact(rounding=decimal.ROUND_FLOOR)
+        dividend = self.num
+        divisor = 1
 
         count = 0
-
         for i in range(self.max_iter):
-            older_p = old_p
-            older_q = old_q
-            old_p = p
-            old_q = q
-            old_rem = rem
-            rem = 1 / (old_rem - a)
-            a = rem.to_integral_exact(rounding=decimal.ROUND_FLOOR)
-            p = a * old_p + older_p
-            q = a * old_q + older_q
-            if len(str(p)) > len(str(q)):
+            (dividend, divisor) = (self.num * dividend + divisor, dividend)
+            if len(str(dividend + divisor)) > len(str(dividend)):
                 count += 1
         return count
 
