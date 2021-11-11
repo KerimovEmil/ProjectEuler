@@ -113,9 +113,6 @@ class Solution204(unittest.TestCase):
     def test_solution_small_simple(self):
         self.assertEqual(1105, Problem204(hamming=5, limit=int(1e8)).simple_recursive_solve())
 
-    # def test_solution_simple(self): # ~ 10 seconds
-    #     self.assertEqual(2944730, Problem204(hamming=100, limit=int(1e9)).simple_recursive_solve())
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -24,8 +24,6 @@ Find the sum of digits in the numerator of the 100th convergent of the continued
 ANSWER: 272
 Solve time: ~0.001 seconds
 """
-
-
 import decimal
 import math
 import unittest

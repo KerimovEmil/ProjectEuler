@@ -27,7 +27,7 @@ Solve time ~ 0.037 seconds
 """
 
 import unittest
-
+import os
 from util.utils import timeit
 
 # Numerals must be arranged in descending order of size.
@@ -119,7 +119,8 @@ class Problem89:
 
 class Solution89(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem89(r'..\problem_data\p089_roman.txt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p089_roman.txt')
+        self.problem = Problem89(file_path)
 
     def test_solution(self):
         self.assertEqual(743, self.problem.solve())
