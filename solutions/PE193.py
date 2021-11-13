@@ -65,9 +65,10 @@ class Problem193:
         return total
 
     @timeit
-    def solve_inclusion_exclusion(self):
+    def solve_inclusion_exclusion(self):  # 25 seconds
         self.total = self.n - 1
         self.ls_primes = primes((self.n ** 0.5) + 1)
+        self.ls_sq_primes = [p * p for p in self.ls_primes]
         self.num_primes = len(self.ls_primes)
         self.helper_adjust(odd_even=-1, prev_prod=1, prime_index=0)
         return self.total
@@ -77,22 +78,21 @@ class Problem193:
             return
 
         # get next prime
-        next_prime = self.ls_primes[prime_index]
+        next_prime_sq = self.ls_sq_primes[prime_index]
 
-        next_prod = prev_prod * next_prime
-        while next_prod <= int(self.n ** 0.5):
-            print(next_prod, primes_of_n(next_prod))
-            self.total += (self.n - 1) // (next_prod * next_prod) * odd_even
+        next_prod = prev_prod * next_prime_sq
+        while next_prod <= self.n:
+            self.total += ((self.n - 1) // next_prod) * odd_even
             prime_index += 1
 
-            self.helper_adjust(-odd_even, next_prod, prime_index)
-            # next_prime = self.ls_primes[prime_index]
+            self.helper_adjust(odd_even=-odd_even, prev_prod=next_prod, prime_index=prime_index)
+            # next_prime = self.ls_sq_primes[prime_index]
 
             if prime_index < self.num_primes:
-                next_prime = self.ls_primes[prime_index]
+                next_prime_sq = self.ls_sq_primes[prime_index]
             else:
                 break
-            next_prod = prev_prod * next_prime  # 1*2, 1*3, 1*5
+            next_prod = prev_prod * next_prime_sq  # 1*2, 1*3, 1*5
 
     def GetResult(self, Index, odd_even, sq_primes, UpperLimit):
         self.count += odd_even * UpperLimit
@@ -127,8 +127,7 @@ class Problem193:
 
 class Solution193(unittest.TestCase):
     def setUp(self):
-        # self.problem = Problem193(n=int(2 ** 50))
-        self.problem = Problem193(n=int(2 ** 10))
+        self.problem = Problem193(n=int(2 ** 50))
 
     def test_solution(self):
         # self.assertEqual(684465067343069, self.problem.solve())
