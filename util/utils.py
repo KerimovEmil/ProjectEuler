@@ -3,6 +3,7 @@ import time
 from itertools import accumulate
 from functools import lru_cache, reduce
 from math import gcd
+from typing import List, Union
 
 
 class Hungarian:
@@ -921,7 +922,7 @@ def sign(x):
 
 
 @timeit
-def mobius_sieve(n, ls_prime):
+def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     Returns a list of all mobius function values.
     mobius(n) = 1 if i is square-free with even number of primes,
@@ -936,7 +937,7 @@ def mobius_sieve(n, ls_prime):
     for p in ls_p:
         ls_m[p:n:p] = [-1 * x for x in ls_m[p:n:p]]
         p2 = p ** 2
-        ls_m[p2:n:p2] = [0] * len(ls_m[p2:n:p2])
+        ls_m[p2:n:p2] = [0] * ((n-1)//p2)  # len(ls_m[p2:n:p2]) == (n-1)//p2
     return ls_m
 
 
