@@ -8,7 +8,7 @@ Find the sum of all positive integers n not exceeding 100,000,000
 such that for every divisor d of n, d+n/d is prime.
 
 ANSWER: 1739023853137
-Solve time ~ 90 seconds
+Solve time ~ 73 seconds
 """
 
 # Since 1 is always a divisor of n, then
@@ -22,9 +22,12 @@ Solve time ~ 90 seconds
 # since if n = p_1 * p_2^2 then choose d = p_2
 # p_2 + p_1*p_2 = p_2 * (1 + p_1) != prime.
 
+# combining these findings we have, n%4 can only be 0 or 2 since n needs to be odd, however since n is squarefree
+# n%4 can only be equal to 2
 
 import unittest
-from util.utils import primes_of_n, sieve, timeit
+from util.utils import primes_of_n, timeit, divisors
+from primesieve import primes
 
 
 class Problem357:
@@ -36,7 +39,8 @@ class Problem357:
 
         if self.debug:
             print("Calculating Primes")
-        self.set_primes = set(sieve(max_int))
+        self.ls_primes = primes(max_int)
+        self.set_primes = set(self.ls_primes)
         if self.debug:
             print("Calculating square free sieve")
         if self.debug:
@@ -45,23 +49,26 @@ class Problem357:
 
     @timeit
     def solve(self):
-        for p in self.set_primes:
+        # for p in self.set_primes:
+        for p in self.ls_primes:  # faster to loop over a list than a set
             n = p - 1
             # simple filter 1
-            if n % 4 == 0 or n % 9 == 0:
+            if n % 4 != 2:  # n is even and square-free
                 continue
-            # simple filter 3
-            if not self.is_prime(n / 2 + 2):
+            if n % 9 == 0:  # square free
+                continue
+            # simple filter 2
+            if not self.is_prime(n // 2 + 2):
                 continue
             # Simple filter 3
-            if not all([self.is_prime(i + n / i) for i in range(3, 8) if n % i == 0]):
+            if not all([self.is_prime(i + n // i) for i in range(3, 8) if n % i == 0]):
                 continue
 
             # Full filter
             prime_factors = primes_of_n(n)
-            if any([t[1] > 1 for t in prime_factors.items()]):
+            if any([t[1] > 1 for t in prime_factors.items()]):  # square-free
                 continue
-            all_divisors = self.divisors(prime_factors)
+            all_divisors = divisors(prime_factors)
             all_primes = True
             for d in all_divisors:
                 if not self.is_prime(d + n / d):
@@ -74,43 +81,13 @@ class Problem357:
 
         return self.ans
 
-    @staticmethod
-    def basic_is_prime(n):
-        if int(n) & 1 == 0:
-            return False  # 2 is a divisor
-        d = 3
-        while d * d <= n:
-            if n % d == 0:
-                return False  # d is a divisor
-            d = d + 2
-        return True
-
     def is_prime(self, n):
         return n in self.set_primes
-
-    def divisors(self, prime_factors):
-        primes = list(prime_factors.keys())
-
-        # generates factors from primes[k:] subset
-        def generate(k):
-            if k == len(primes):
-                yield 1
-            else:
-                rest = generate(k + 1)
-                prime = primes[k]
-                for factor in rest:
-                    prime_to_i = 1
-                    # prime_to_i iterates prime**i values, i being all possible exponents
-                    for _ in range(prime_factors[prime] + 1):
-                        yield factor * prime_to_i
-                        prime_to_i *= prime
-
-        yield from generate(0)
 
 
 class Solution357(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem357(max_int=int(1e8), debug=True)
+        self.problem = Problem357(max_int=int(1e8), debug=False)
 
     def test_solution(self):
         self.assertEqual(1739023853137, self.problem.solve())
