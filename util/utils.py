@@ -3,7 +3,7 @@ import time
 from itertools import accumulate
 from functools import lru_cache, reduce
 from math import gcd
-from typing import List, Union
+from typing import List, Union, Dict, Generator
 
 
 class Hungarian:
@@ -949,3 +949,30 @@ def num_of_divisors(n):
     """
     dc_primes = primes_of_n(n)
     return reduce(lambda a, b: a * b, (v + 1 for v in dc_primes.values()))
+
+
+def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
+    """
+    Given the prime factorization of a number, return a generator of all of it's divisors.
+    Args:
+        prime_factors: a dictionary with the key being the prime and the value being the multiplicity of the prime.
+    For example if n=12 then then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
+    1,2,4,3,6,12
+    """
+    ls_primes = list(prime_factors.keys())
+
+    # generates factors from ls_primes[k:] subset
+    def generate(k):
+        if k == len(ls_primes):
+            yield 1
+        else:
+            rest = generate(k + 1)
+            prime = ls_primes[k]
+            for factor in rest:
+                prime_to_i = 1
+                # prime_to_i iterates prime**i values, i being all possible exponents
+                for _ in range(prime_factors[prime] + 1):
+                    yield factor * prime_to_i
+                    prime_to_i *= prime
+
+    yield from generate(0)
