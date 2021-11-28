@@ -1,11 +1,15 @@
-# Consider the divisors of 30: 1,2,3,5,6,10,15,30.
-# It can be seen that for every divisor d of 30, d+30/d is prime.
-#
-# Find the sum of all positive integers n not exceeding 100,000,000
-# such that for every divisor d of n, d+n/d is prime.
+"""
+PROBLEM
 
-# ANSWER
-# 1739023853137
+Consider the divisors of 30: 1,2,3,5,6,10,15,30.
+It can be seen that for every divisor d of 30, d+30/d is prime.
+
+Find the sum of all positive integers n not exceeding 100,000,000
+such that for every divisor d of n, d+n/d is prime.
+
+ANSWER: 1739023853137
+Solve time ~ 90 seconds
+"""
 
 # Since 1 is always a divisor of n, then
 # 1 + n/1 = 1 + n = prime
@@ -19,9 +23,8 @@
 # p_2 + p_1*p_2 = p_2 * (1 + p_1) != prime.
 
 
-from util.utils import primes_of_n
-from util.utils import sieve
-from util.utils import timeit
+import unittest
+from util.utils import primes_of_n, sieve, timeit
 
 
 class Problem357:
@@ -103,12 +106,15 @@ class Problem357:
                         prime_to_i *= prime
 
         yield from generate(0)
-        # python 2
-        # for factor in generate(0):
-        #     yield factor
 
 
-if __name__ == "__main__":
-    obj = Problem357(max_int=int(1e8), debug=False)
-    sol = obj.solve()
-    print(sol)
+class Solution357(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem357(max_int=int(1e8), debug=True)
+
+    def test_solution(self):
+        self.assertEqual(1739023853137, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()
