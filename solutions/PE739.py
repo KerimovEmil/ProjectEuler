@@ -23,11 +23,11 @@ You are also given f(20)=742296999 modulo 1,000,000,007
 
 Find f(10^8). Give your answer modulo 1,000,000,007.
 
-ANSWER:
-Solve time ~ seconds
+ANSWER: 711399016
+Solve time ~37 minutes
 """
 
-from util.utils import timeit, cumsum, combin, fibonacci_n_term, fibonacci_k_n_term, basic_factorial, fib, basic_falling_factorial
+from util.utils import timeit, cumsum, combin, fibonacci_n_term, fibonacci_k_n_term, basic_factorial, fib, basic_falling_factorial, binomial_recursive
 import unittest
 from typing import List, Optional
 from functools import lru_cache
@@ -73,23 +73,6 @@ from functools import lru_cache
 # coefficient on b: 1,2,6,19,63,215,749,2650
 
 
-# def factorialMod(n, modulus):
-#     ans=1
-#     if n <= modulus//2:
-#         # calculate the factorial normally (right argument of range() is exclusive)
-#         for i in range(1,n+1):
-#             ans = (ans * i) % modulus
-#     else:
-#         # Fancypants method for large n
-#         for i in range(1,modulus-n):
-#             ans = (ans * i) % modulus
-#         ans = modinv(ans, modulus)
-#
-#         # Since m is an odd-prime, (-1)^(m-n) = -1 if n is even, +1 if n is odd
-#         if n % 2 == 0:
-#             ans = -1*ans + modulus
-#     return ans % modulus
-
 def catalan_transform(n: int = 1, seq: List[int] = None, mod_m: Optional[int] = None) -> int:
     if n == 0:
         return 0
@@ -123,22 +106,19 @@ def inv_catalan_transform(n: int = 1, seq: List[int] = None, mod_m: Optional[int
 
 # n*(n-3)*a(n) +2*(-4*n^2+15*n-10)*a(n-1) +(15*n^2-69*n+80)*a(n-2) +2*(n-2)*(2*n-5)*a(n-3)=0
 
-@lru_cache(maxsize=None)
-def a(n: int, mod_m: int) -> int:
-    """n*(n-3)*a(n) +2*(-4*n^2+15*n-10)*a(n-1) +(15*n^2-69*n+80)*a(n-2) +2*(n-2)*(2*n-5)*a(n-3)=0"""
-    if n == 2:
-        return 1
-    elif n == 3:
-        return 3
-    elif n == 4:
-        return 10
-    d = n*(n-3)
-    return int(-2*(-4*n**2+15*n-10)/d * a(n-1, mod_m)
-               - (15*n**2-69*n+80)/d * a(n-2, mod_m)
-               - 2*(n-2)*(2*n-5)/d * a(n-3, mod_m)) % mod_m
-
-
-# 0, 0, 1,3,10,34,118,416,1485
+# @lru_cache(maxsize=None)
+# def a(n: int, mod_m: int) -> int:
+#     """n*(n-3)*a(n) +2*(-4*n^2+15*n-10)*a(n-1) +(15*n^2-69*n+80)*a(n-2) +2*(n-2)*(2*n-5)*a(n-3)=0"""
+#     if n == 2:
+#         return 1
+#     elif n == 3:
+#         return 3
+#     elif n == 4:
+#         return 10
+#     d = n*(n-3)
+#     return int(-2*(-4*n**2+15*n-10)/d * a(n-1, mod_m)
+#                - (15*n**2-69*n+80)/d * a(n-2, mod_m)
+#                - 2*(n-2)*(2*n-5)/d * a(n-3, mod_m)) % mod_m
 
 
 class Problem739:
@@ -163,73 +143,49 @@ class Problem739:
         coef_b = catalan_transform(n=n-1, seq=ls_fib, mod_m=self.mod_n)
         print('finished computing b coeff')
 
-        # n = 20
-        # m = n-1 = 19
-        # total_sum = 0
-        # for i in [1 to m]:
-        #    total_sum += i / (2 * m - i) * combin(2 * m - i, m - i) * fib(i) * B
-
-        # for i in [1 to m-1]:
-        #    total_sum += i / (2 * m - 2 - i) * combin(2 * m - 2 - i, m - 1 - i) * (fib(i+2) -1) * A
-        #
-
-        # total_sum = fib(m) * B
-        # for i in [1 to m-1]:
-        #    total_sum += fac(2*m-i-1)/fac(m-i)/fac(m) * i * fib(i) * B
-        #    total_sum += fac(2*m-i-3)/fac(m-i-1)/fac(m-1) * i * (fib(i+2) -1) * A
-
-
-        # total_sum = fib(m) * B
-        # for i in [1 to m-1]:
-        #    total_sum += (2*m-i-1) * (2*m-i-2)/(m-i)/m * fac(2*m-i-3)/fac(m-i-1)/fac(m-1) * i * fib(i) * B
-        #    total_sum += fac(2*m-i-3)/fac(m-i-1)/fac(m-1) * i * (fib(i+2) -1) * A
-
-        # total_sum = fib(m) * B
-        # for i in [1 to m-1]:
-        #    same = fac(2*m-i-3)/fac(m-i-1)/fac(m-1) * i
-        #    same = i * combin(2*m-i-3, m-1) // (m-i-1)
-        #    total_sum += (2*m-i-1) * (2*m-i-2)/(m-i)/m * same * fib(i) * B
-        #    total_sum += same * (fib(i+2) - 1) * A
-
         return (coef_a * self.a + coef_b * self.b) % self.mod_n
 
     @timeit
     def solve_3(self, n: int):
         m = n-1
-        # fac = basic_factorial
 
-        ls_fib = [fib(i, self.mod_n) for i in range(n)]
+        ls_fib = [fib(i, self.mod_n) for i in range(2, n)]
         print(f'finish computing {m} fibonacci numbers')
 
+        m_sq = pow(m, 2, self.mod_n)
+
         bio_coeff = 1
-        # total_sum = 0
         total_sum_a = 0
         total_sum_b = 0
-        # for i in range(1, m):
-        # for i in range(m-1, 0, -1):
         for i in range(m-2, 0, -1):
-            # if i % (m//10):
-            print(f'{100*(1-i/m):.2f} % complete')
+            if (i % 10000) == 0:
+                print(f'{100*(1-i/m):.2f} % complete')
 
-            bio_coeff = bio_coeff * (2*m-2-i) // (m-1-i)
+            # a^-1 = a^{phi(m) - 1} mod m if gcd(m,a) = 1.  Note tht phi(prime) = prime - 1
+            inv_m_i_1 = pow(m-1-i, self.mod_n - 2, self.mod_n)
+
+            bio_coeff = (bio_coeff * (2*m-2-i) * inv_m_i_1) % self.mod_n
             common = i * bio_coeff
-            # total_sum += (common * (2*m-i-1) // (m-i) // m * fib(i, self.mod_n) * self.b) % self.mod_n
-            total_sum_b += (common * (2*m-i-1) // (m-i) // m * fib(i, self.mod_n)) % self.mod_n
-            # total_sum += (common // (2*m-i-2) * (fib(i+2, self.mod_n) - 1) * self.a) % self.mod_n
-            total_sum_a += (common // (2*m-i-2) * (fib(i+2, self.mod_n) - 1)) % self.mod_n
+
+            inv_m_x_m_i = pow(m_sq - m*i, self.mod_n - 2, self.mod_n)
+            inv_2m_i_2 = pow(2*m-i-2, self.mod_n - 2, self.mod_n)
+
+            total_sum_b += (common * ((2*m-i-1) * inv_m_x_m_i) % self.mod_n * fib(i, self.mod_n)) % self.mod_n
+            total_sum_a += (common * inv_2m_i_2 * (fib(i+2, self.mod_n) - 1)) % self.mod_n
+
+            total_sum_b %= self.mod_n
+            total_sum_a %= self.mod_n
 
         # i = 0
-        # total_sum += fib(m, self.mod_n) * self.b
         total_sum_b += fib(m, self.mod_n)
 
         # i = m-1
-        # total_sum += fib(m-1, self.mod_n) * self.b * (m-1) + (fib(m+1, self.mod_n) - 1) * self.a
         total_sum_a += (fib(m+1, self.mod_n) - 1)
-        total_sum_b += fib(m-1, self.mod_n) * (m-1)
+        total_sum_b += (fib(m-1, self.mod_n) * (m-1)) % self.mod_n
 
+        # multiply by a and b and add up
         total_sum = (total_sum_a * self.a + total_sum_b * self.b) % self.mod_n
 
-        # return total_sum % self.mod_n
         return total_sum
 
 
@@ -253,31 +209,17 @@ class Solution739(unittest.TestCase):
         self.assertEqual(742296999, self.problem.solve_3(n=20))
 
     def test_solution_1e3(self):
-        # or 537806289 or 967471640
         self.assertEqual(537806289, self.problem.solve_3(n=int(1e3)))
 
     def test_solution_1e4(self):
-        # or 304246173
         self.assertEqual(304246173, self.problem.solve_3(n=int(1e4)))
 
-    # def test_solution_1e5(self):
-    #     self.assertEqual(587213414, self.problem.solve_3(n=int(1e5)))
+    def test_solution_1e5(self):
+        self.assertEqual(587213414, self.problem.solve_3(n=int(1e5)))
 
-    # def test_solution_1e8(self):
-    #     self.assertEqual(None, self.problem.solve_3(n=int(1e8)))
+    def test_solution_1e8(self):
+        self.assertEqual(711399016, self.problem.solve_3(n=int(1e8)))
 
 
 if __name__ == '__main__':
     unittest.main()
-
-# m = 9
-# ls = []
-# for i in range(1, m):
-#     print(i, basic_falling_factorial(2 * m - i - 3, m - i - 1))
-#     # print(i, i * basic_falling_factorial(2 * m - i - 3, m - i - 1) // fac(m - 1))
-#     ls.append(basic_falling_factorial(2 * m - i - 3, m - i - 1))
-
-# [(x/y) for x,y in zip(ls, ls[1:])]
-# m=9 -> 14/7, 13/6, 12/5, 11/4, 10/3, 9/2, 8/1
-
-# m=8 -> 12/6, 11/5, 10/4, 9/3, 8/2, 7/1

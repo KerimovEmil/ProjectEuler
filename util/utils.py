@@ -992,6 +992,19 @@ def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
 
 
 @lru_cache(maxsize=None)
+def binomial_recursive(n: int, k: int, mod_m: int) -> int:
+    if k == 0:
+        return 1
+    if n == 0:
+        return 0
+    if n == k:
+        return 1
+    if k > (n-k):
+        return binomial_recursive(n, n-k, mod_m)
+    return (binomial_recursive(n-1, k, mod_m) + binomial_recursive(n-1, k-1, mod_m)) % mod_m
+
+
+@lru_cache(maxsize=None)
 def fib(n: int, mod_m: int = int(1e12)) -> int:
     if n < 2:
         return n
@@ -1007,16 +1020,6 @@ def fibonacci_n_term(n: int) -> Union[int, NotImplementedError]:
     # phi_neg = (1 - sq_5) / 2
     # return round((phi_pos**n - phi_neg**n) / sq_5)
     return round(phi_pos**n / sq_5)
-
-
-def fibonacci_n_term_mod(n: int) -> Union[int, NotImplementedError]:
-    """Returns the nth fibonacci number"""
-    if n < 0:
-        return NotImplementedError('negative n is not implemented')
-    sq_5 = 5**0.5
-    phi_pos = (1 + sq_5) / 2
-    phi_neg = (1 - sq_5) / 2
-    return round((phi_pos**n - phi_neg**n) / sq_5)
 
 
 def fibonacci_k_n_term(n: int, k: int) -> Union[int, NotImplementedError]:
