@@ -431,6 +431,19 @@ def basic_factorial(x):
     return ans
 
 
+def basic_falling_factorial(high, low):
+    """Returns the high! / low! """
+    if low == high:
+        return 1
+    if high < low:
+        return 0
+    i = low + 1
+    ans = 1
+    while i <= high:
+        ans *= i
+        i += 1
+    return ans
+
 def lcm(x, y):
     return x * y // gcd(x, y)
 
@@ -976,3 +989,45 @@ def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
                     prime_to_i *= prime
 
     yield from generate(0)
+
+
+@lru_cache(maxsize=None)
+def fib(n: int, mod_m: int = int(1e12)) -> int:
+    if n < 2:
+        return n
+    return (fib(n-1, mod_m) + fib(n-2, mod_m)) % mod_m
+
+
+def fibonacci_n_term(n: int) -> Union[int, NotImplementedError]:
+    """Returns the nth fibonacci number"""
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    sq_5 = 5**0.5
+    phi_pos = (1 + sq_5) / 2
+    # phi_neg = (1 - sq_5) / 2
+    # return round((phi_pos**n - phi_neg**n) / sq_5)
+    return round(phi_pos**n / sq_5)
+
+
+def fibonacci_n_term_mod(n: int) -> Union[int, NotImplementedError]:
+    """Returns the nth fibonacci number"""
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    sq_5 = 5**0.5
+    phi_pos = (1 + sq_5) / 2
+    phi_neg = (1 - sq_5) / 2
+    return round((phi_pos**n - phi_neg**n) / sq_5)
+
+
+def fibonacci_k_n_term(n: int, k: int) -> Union[int, NotImplementedError]:
+    """
+    Returns the nth fibonacci_k number.
+    Where F_{k,n+1} = k*F_{k,n} + F_{k,n−1} for n ≥ 1
+    """
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    if n in [0, 1]:
+        return n
+
+    root = (k+(k**2 + 4)**0.5) / 2
+    return round((root**n - (-root)**(-n)) / (root + 1/root))
