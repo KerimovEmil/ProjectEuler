@@ -24,7 +24,7 @@ You are also given f(20)=742296999 modulo 1,000,000,007
 Find f(10^8). Give your answer modulo 1,000,000,007.
 
 ANSWER: 711399016
-Solve time ~37 minutes
+Solve time ~2 minutes and 46 seconds
 """
 
 from util.utils import timeit, cumsum, combin, fibonacci_n_term, fibonacci_k_n_term, basic_factorial, fib, basic_falling_factorial, binomial_recursive
@@ -188,6 +188,60 @@ class Problem739:
 
         return total_sum
 
+    @timeit
+    def solve_4(self, n: int):
+        m = n - 2
+
+        def modinv(x, p): return pow(x, p-2, p)
+
+        a, b = self.a, self.b
+        c = 1
+
+        for ix in range(m):  # todo simplify this
+            a, b = b, (a + b) % self.mod_n
+
+        total = 0
+
+        for k in range(n):
+            if (k % 10000) == 0:
+                print(f'{100*(1-k/m):.2f} % complete')
+            total += c * b
+            a, b = (b - a) % self.mod_n, a
+            c = (c * (m + k + 1) * (m - (k + 1) + 1) * modinv((k + 1) * (m - k + 1), self.mod_n)) % self.mod_n
+            total %= self.mod_n
+
+        return total
+
+    @timeit
+    def solve_5(self, n: int):
+
+        f1, f2, s, n = 0, 1, 0, n - 1
+
+        for k in range(1, n):
+            if (k % 100000) == 0:
+                print(f'{100 * (k / n):.2f} % complete')
+            s = (2 * s * n + k * (f1 + 3 * f2 - s)) * pow(n - k, self.mod_n - 2, self.mod_n) % self.mod_n
+            f1 = f2
+            f2 = (f1 + f2) % self.mod_n
+
+        return (s + f1 + 3 * f2) % self.mod_n
+
+    @timeit
+    def solve_6(self, n: int):
+        # OEIS A081696:
+        # n*f(n) = 2*(4*n-3)*f(n-1) - 3*(5*n-8)*f(n-2) - 2*(2*n-3)*f(n-3)
+
+        f0, f1, f2 = 1, 1, 3
+        denom = 1
+        for k in range(3, n):
+            if (k % 100000) == 0:
+                print(f'{100 * (k / n):.2f} % complete')
+            f0, f1, f2 = k * f1 % self.mod_n, k * f2 % self.mod_n, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % self.mod_n
+            denom = denom * k % self.mod_n  # denom gets the value of N!/2
+
+        f = (2 * f2 + f1) * pow(denom, self.mod_n - 2, self.mod_n) % self.mod_n  # (2*f2 + f1)/denom % P
+        return f
+
 
 class Solution739(unittest.TestCase):
     def setUp(self):
@@ -206,19 +260,19 @@ class Solution739(unittest.TestCase):
 
     def test_larger_solution(self):
         """f(20)=74229699 modulo 1,000,000,007"""
-        self.assertEqual(742296999, self.problem.solve_3(n=20))
+        self.assertEqual(742296999, self.problem.solve_6(n=20))
 
     def test_solution_1e3(self):
-        self.assertEqual(537806289, self.problem.solve_3(n=int(1e3)))
+        self.assertEqual(537806289, self.problem.solve_6(n=int(1e3)))
 
     def test_solution_1e4(self):
-        self.assertEqual(304246173, self.problem.solve_3(n=int(1e4)))
+        self.assertEqual(304246173, self.problem.solve_6(n=int(1e4)))
 
     def test_solution_1e5(self):
-        self.assertEqual(587213414, self.problem.solve_3(n=int(1e5)))
+        self.assertEqual(587213414, self.problem.solve_6(n=int(1e5)))
 
     def test_solution_1e8(self):
-        self.assertEqual(711399016, self.problem.solve_3(n=int(1e8)))
+        self.assertEqual(711399016, self.problem.solve_6(n=int(1e8)))
 
 
 if __name__ == '__main__':
