@@ -1071,3 +1071,13 @@ def get_all_mod_inverse_list(m: int, max_n: int) -> List[int]:
     for i in range(2, max_n+1):
         ls_inv.append(m - (m // i) * ls_inv[m % i] % m)
     return ls_inv
+
+
+def cycle_length(k):
+    """1/x has a cycle of d digits if 10^d == 1 mod x = 0"""
+    if k % 2 == 0 or k % 5 == 0:
+        return 0
+    d = 1
+    while pow(10, d, k) != 1:
+        d += 1
+    return d
