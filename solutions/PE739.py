@@ -27,10 +27,9 @@ ANSWER: 711399016
 Solve time ~2 minutes and 46 seconds
 """
 
-from util.utils import timeit, cumsum, combin, fibonacci_n_term, fibonacci_k_n_term, basic_factorial, fib, basic_falling_factorial, binomial_recursive
+from util.utils import timeit, cumsum, fibonacci_n_term, catalan_transform, get_all_mod_inverse_list
 import unittest
-from typing import List, Optional
-from functools import lru_cache
+from typing import List
 
 # 1, 3, 4, 7, 11, 18, 29, 47
 # 3, 7, 14, 25, 43, 72, 119
@@ -41,7 +40,7 @@ from functools import lru_cache
 # 763, 2663
 # 2663
 
-# 1, 3, 7, 21, 67, 223, 763, 2663, 9435
+# f(n) = 1, 3, 7, 21, 67, 223, 763, 2663, 9435
 
 # 1  2   3      4      5         6        7            8           9
 # a, b, a+b,   a+2b, 2a+3b,     3a+5b,   5a+8b,       8a+13b    13a+21b
@@ -69,63 +68,17 @@ from functools import lru_cache
 # 8   416a+749b
 # 9   1485a+2650b
 
-# coefficient on a: 1,3,10,34,118,416,1485
-# coefficient on b: 1,2,6,19,63,215,749,2650
-
-
-def catalan_transform(n: int = 1, seq: List[int] = None, mod_m: Optional[int] = None) -> int:
-    if n == 0:
-        return 0
-    if mod_m is not None:
-        return int(sum((i * combin(2*n-i, n-i) * seq[i] // (2*n-i)) % mod_m for i in range(1, n+1)))
-    else:
-        return int(sum(i * combin(2*n-i, n-i) * seq[i] // (2*n-i) for i in range(1, n+1)))
-
-
-def inv_catalan_transform(n: int = 1, seq: List[int] = None, mod_m: Optional[int] = None) -> int:
-    """http://www.kurims.kyoto-u.ac.jp/EMIS/journals/JIS/VOL8/Barry/barry84.pdf"""
-    return sum(combin(i, n-i) * (-1)**(n-i) * seq[i] for i in range(n+1))
-
-
-# a_n = [0, 1, 1, 2, 3, 5, 8, 13, 21]
-# b_n = [catalan_transform(n=x, seq=[1, 1, 2, 3, 5, 8, 13, 21]) for x in range(8)]
-# b_n = [0, 1, 2, 6, 19, 63, 215, 749]
-# a_new_n = [inv_catalan_transform(n=x, seq=b_n) for x in range(8)]
-# a_new_n = [0, 1, 1, 2, 3, 5, 8, 13]
-
-
-# [0, 1, 2, 4, 7, 12, 20] = [1, 2, 3, 5, 8, 13, 21] - 1
-# b_n = [catalan_transform(n=x, seq=[0, 1, 2, 4, 7, 12, 20]) for x in range(8)]
-# [0, 1, 3, 10, 34, 118, 416]
-
-# a_i = [0, 1, 1, 2, 3, 5, 8, 13, 21] = f_i
-# b_n = sum for i from 0 to n:
-#        i/(2*n-i) * combin(2*n - i, n-i) * f_i
-
-# basic_factorial(2*n-i-1) /basic_factorial(n - i)/ basic_factorial(n) * i
-
-# n*(n-3)*a(n) +2*(-4*n^2+15*n-10)*a(n-1) +(15*n^2-69*n+80)*a(n-2) +2*(n-2)*(2*n-5)*a(n-3)=0
-
-# @lru_cache(maxsize=None)
-# def a(n: int, mod_m: int) -> int:
-#     """n*(n-3)*a(n) +2*(-4*n^2+15*n-10)*a(n-1) +(15*n^2-69*n+80)*a(n-2) +2*(n-2)*(2*n-5)*a(n-3)=0"""
-#     if n == 2:
-#         return 1
-#     elif n == 3:
-#         return 3
-#     elif n == 4:
-#         return 10
-#     d = n*(n-3)
-#     return int(-2*(-4*n**2+15*n-10)/d * a(n-1, mod_m)
-#                - (15*n**2-69*n+80)/d * a(n-2, mod_m)
-#                - 2*(n-2)*(2*n-5)/d * a(n-3, mod_m)) % mod_m
+# f(n+1) = sum_{k=0}^{k=n} k/(2n-k) * C(2n-k, n-k)   (F_{k-1} + 3*F_{k})
+# f(n+1) = sum_{k=0}^{k=n} k/(2n-k) * C(2n-k, n)     (F_{k-1} + 3*F_{k})
+# f(n+1) = sum_{k=0}^{k=n} k/(n-1)  * C(2n-k-1, n-1) (F_{k-1} + 3*F_{k})
 
 
 class Problem739:
-    def __init__(self, mod_n: int = 1000000007, a=1, b=3):
+    def __init__(self, mod_n: int = 1000000007, a=1, b=3, debug=False):
         self.mod_n = mod_n
         self.a = a
         self.b = b
+        self.debug = debug
 
     @timeit
     def naive_solve(self, n: int, seq: List[int]):
@@ -134,118 +87,58 @@ class Problem739:
         return seq[0]
 
     @timeit
-    def solve(self, n: int):
-        # ls_fib = [fibonacci_n_term(i) for i in range(n+1)]
-        ls_fib = [fib(i) for i in range(n+1)]
-        print('finished computing fibonacci terms')
-        coef_a = catalan_transform(n=n-2, seq=[f-1 for f in ls_fib[2:]], mod_m=self.mod_n)
-        print('finished computing a coeff')
-        coef_b = catalan_transform(n=n-1, seq=ls_fib, mod_m=self.mod_n)
-        print('finished computing b coeff')
+    def solve_catalan_transform(self, n: int):  # takes ~3 min 14 seconds
+        """
+        Took from thread solutions.
 
-        return (coef_a * self.a + coef_b * self.b) % self.mod_n
+        f(n+1) = sum_{k=0}^{k=n} k/(n-1)  * C(2n-k-1, n-1) (F_{k-1} + 3*F_{k})
+        """
 
-    @timeit
-    def solve_3(self, n: int):
-        m = n-1
+        f1, f2 = 0, 1
+        s, m = 0, n - 1
 
-        ls_fib = [fib(i, self.mod_n) for i in range(2, n)]
-        print(f'finish computing {m} fibonacci numbers')
+        if self.debug:
+            print('computing inverses')
+        ls_inv = get_all_mod_inverse_list(m=self.mod_n, max_n=m-1)
+        if self.debug:
+            print('finished computing inverses')
 
-        m_sq = pow(m, 2, self.mod_n)
-
-        bio_coeff = 1
-        total_sum_a = 0
-        total_sum_b = 0
-        for i in range(m-2, 0, -1):
-            if (i % 10000) == 0:
-                print(f'{100*(1-i/m):.2f} % complete')
-
-            # a^-1 = a^{phi(m) - 1} mod m if gcd(m,a) = 1.  Note tht phi(prime) = prime - 1
-            inv_m_i_1 = pow(m-1-i, self.mod_n - 2, self.mod_n)
-
-            bio_coeff = (bio_coeff * (2*m-2-i) * inv_m_i_1) % self.mod_n
-            common = i * bio_coeff
-
-            inv_m_x_m_i = pow(m_sq - m*i, self.mod_n - 2, self.mod_n)
-            inv_2m_i_2 = pow(2*m-i-2, self.mod_n - 2, self.mod_n)
-
-            total_sum_b += (common * ((2*m-i-1) * inv_m_x_m_i) % self.mod_n * fib(i, self.mod_n)) % self.mod_n
-            total_sum_a += (common * inv_2m_i_2 * (fib(i+2, self.mod_n) - 1)) % self.mod_n
-
-            total_sum_b %= self.mod_n
-            total_sum_a %= self.mod_n
-
-        # i = 0
-        total_sum_b += fib(m, self.mod_n)
-
-        # i = m-1
-        total_sum_a += (fib(m+1, self.mod_n) - 1)
-        total_sum_b += (fib(m-1, self.mod_n) * (m-1)) % self.mod_n
-
-        # multiply by a and b and add up
-        total_sum = (total_sum_a * self.a + total_sum_b * self.b) % self.mod_n
-
-        return total_sum
-
-    @timeit
-    def solve_4(self, n: int):
-        m = n - 2
-
-        def modinv(x, p): return pow(x, p-2, p)
-
-        a, b = self.a, self.b
-        c = 1
-
-        for ix in range(m):  # todo simplify this
-            a, b = b, (a + b) % self.mod_n
-
-        total = 0
-
-        for k in range(n):
-            if (k % 10000) == 0:
-                print(f'{100*(1-k/m):.2f} % complete')
-            total += c * b
-            a, b = (b - a) % self.mod_n, a
-            c = (c * (m + k + 1) * (m - (k + 1) + 1) * modinv((k + 1) * (m - k + 1), self.mod_n)) % self.mod_n
-            total %= self.mod_n
-
-        return total
-
-    @timeit
-    def solve_5(self, n: int):
-
-        f1, f2, s, n = 0, 1, 0, n - 1
-
-        for k in range(1, n):
-            if (k % 100000) == 0:
-                print(f'{100 * (k / n):.2f} % complete')
-            s = (2 * s * n + k * (f1 + 3 * f2 - s)) * pow(n - k, self.mod_n - 2, self.mod_n) % self.mod_n
-            f1 = f2
-            f2 = (f1 + f2) % self.mod_n
+        for k in range(1, m):
+            # if (k % 100000) == 0:
+            #     print(f'{100 * (k / m):.2f} % complete')
+            s = (s * (2 * m - k) + k * (f1 + 3 * f2)) * ls_inv[m - k] % self.mod_n
+            f1, f2 = f2, (f1 + f2) % self.mod_n
 
         return (s + f1 + 3 * f2) % self.mod_n
 
     @timeit
-    def solve_6(self, n: int):
-        # OEIS A081696:
-        # n*f(n) = 2*(4*n-3)*f(n-1) - 3*(5*n-8)*f(n-2) - 2*(2*n-3)*f(n-3)
+    def solve_recursive(self, n: int):
+        """
+        Took from thread solutions.
 
+        OEIS A081696
+        f(0), f(1), f(2) = 1, 1, 3
+
+        n*f(n) = 2*(4*n-3)*f(n-1) - 3*(5*n-8)*f(n-2) - 2*(2*n-3)*f(n-3)
+
+        n*f(n) = n*(8f(n-1) - 15f(n-2) - 4f(n-3)) + 6*(4f(n-2) - f(n-1) + f(n-3))
+        """
+        m = self.mod_n
         f0, f1, f2 = 1, 1, 3
-        denom = 1
+        den = 1
         for k in range(3, n):
-            if (k % 100000) == 0:
-                print(f'{100 * (k / n):.2f} % complete')
-            f0, f1, f2 = k * f1 % self.mod_n, k * f2 % self.mod_n, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % self.mod_n
-            denom = denom * k % self.mod_n  # denom gets the value of N!/2
+            # if (k % 100000) == 0:
+            #     print(f'{100 * (k / n):.2f} % complete')
+            f0, f1, f2 = k * f1 % m, k * f2 % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % self.mod_n  # denominator = N!/2!
 
-        f = (2 * f2 + f1) * pow(denom, self.mod_n - 2, self.mod_n) % self.mod_n  # (2*f2 + f1)/denom % P
+        f = (2 * f2 + f1) * pow(den, self.mod_n - 2, self.mod_n) % self.mod_n  # (2*f2 + f1) / denominator % mod_n
         return f
 
 
 class Solution739(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem739()
+        self.problem = Problem739(mod_n=1000000007)
 
     def test_sample_solution(self):
         self.assertEqual(429, self.problem.naive_solve(n=8, seq=[1, 1, 1, 1, 1, 1, 1, 1]))
@@ -260,19 +153,19 @@ class Solution739(unittest.TestCase):
 
     def test_larger_solution(self):
         """f(20)=74229699 modulo 1,000,000,007"""
-        self.assertEqual(742296999, self.problem.solve_6(n=20))
+        self.assertEqual(742296999, self.problem.solve_recursive(n=20))
 
     def test_solution_1e3(self):
-        self.assertEqual(537806289, self.problem.solve_6(n=int(1e3)))
+        self.assertEqual(537806289, self.problem.solve_recursive(n=int(1e3)))
 
     def test_solution_1e4(self):
-        self.assertEqual(304246173, self.problem.solve_6(n=int(1e4)))
+        self.assertEqual(304246173, self.problem.solve_recursive(n=int(1e4)))
 
     def test_solution_1e5(self):
-        self.assertEqual(587213414, self.problem.solve_6(n=int(1e5)))
+        self.assertEqual(587213414, self.problem.solve_recursive(n=int(1e5)))
 
-    def test_solution_1e8(self):
-        self.assertEqual(711399016, self.problem.solve_6(n=int(1e8)))
+    # def test_solution_1e8(self):  # takes ~ 2 mins 45 seconds
+    #     self.assertEqual(711399016, self.problem.solve_recursive(n=int(1e8)))
 
 
 if __name__ == '__main__':
