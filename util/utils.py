@@ -1071,3 +1071,27 @@ def get_all_mod_inverse_list(m: int, max_n: int) -> List[int]:
     for i in range(2, max_n+1):
         ls_inv.append(m - (m // i) * ls_inv[m % i] % m)
     return ls_inv
+
+
+def cycle_length(k: int) -> int:
+    """
+    Computes the repeated cycle length of the decimal expansion of 1/k.
+    e.g.
+    1/6 = 0.1(6)  -> 1
+    1/7 = 0.(142857) -> 6
+
+    For k not equal to a multiple of 2 or 5,
+    1/k has a cycle of d digits if 10^d == 1 mod k = 0
+    """
+    while k % 2 == 0:
+        k //= 2  # remove factors of 2
+    while k % 5 == 0:
+        k //= 5  # remove factors of 5
+    if k == 1:
+        return 0  # this is not a repeating decimal
+    d = 1
+    x = 10 % k
+    while x != 1:
+        x = (x*10) % k
+        d += 1
+    return d
