@@ -3,7 +3,7 @@ import time
 from itertools import accumulate
 from functools import lru_cache, reduce
 from math import gcd
-from typing import List, Union, Dict, Generator
+from typing import List, Union, Dict, Generator, Optional
 
 
 class Hungarian:
@@ -430,6 +430,19 @@ def basic_factorial(x):
         x -= 1
     return ans
 
+
+def basic_falling_factorial(high, low):
+    """Returns the high! / low! """
+    if low == high:
+        return 1
+    if high < low:
+        return 0
+    i = low + 1
+    ans = 1
+    while i <= high:
+        ans *= i
+        i += 1
+    return ans
 
 def lcm(x, y):
     return x * y // gcd(x, y)
@@ -976,3 +989,85 @@ def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
                     prime_to_i *= prime
 
     yield from generate(0)
+
+
+@lru_cache(maxsize=None)
+def binomial_recursive(n: int, k: int, mod_m: int) -> int:
+    if k == 0:
+        return 1
+    if n == 0:
+        return 0
+    if n == k:
+        return 1
+    if k > (n-k):
+        return binomial_recursive(n, n-k, mod_m)
+    return (binomial_recursive(n-1, k, mod_m) + binomial_recursive(n-1, k-1, mod_m)) % mod_m
+
+
+@lru_cache(maxsize=None)
+def fib(n: int, mod_m: int = int(1e12)) -> int:
+    if n < 2:
+        return n
+    return (fib(n-1, mod_m) + fib(n-2, mod_m)) % mod_m
+
+
+def fibonacci_n_term(n: int) -> Union[int, NotImplementedError]:
+    """Returns the nth fibonacci number"""
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    sq_5 = 5**0.5
+    phi_pos = (1 + sq_5) / 2
+    return round(phi_pos**n / sq_5)
+
+
+def fibonacci_k_n_term(n: int, k: int) -> Union[int, NotImplementedError]:
+    """
+    Returns the nth fibonacci_k number.
+    Where F_{k,n+1} = k*F_{k,n} + F_{k,n−1} for n ≥ 1
+    """
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    if n in [0, 1]:
+        return n
+
+    root = (k+(k**2 + 4)**0.5) / 2
+    return round((root**n - (-root)**(-n)) / (root + 1/root))
+
+
+def catalan_transform(n: int = 1, seq: List[int] = None, mod_m: Optional[int] = None) -> int:
+    """http://www.kurims.kyoto-u.ac.jp/EMIS/journals/JIS/VOL8/Barry/barry84.pdf"""
+    if n == 0:
+        return 0
+    if mod_m is not None:
+        return int(sum((i * combin(2*n-i, n-i) * seq[i] // (2*n-i)) % mod_m for i in range(1, n+1)))
+    else:
+        return int(sum(i * combin(2*n-i, n-i) * seq[i] // (2*n-i) for i in range(1, n+1)))
+
+
+def inv_catalan_transform(n: int = 1, seq: List[int] = None) -> int:
+    """http://www.kurims.kyoto-u.ac.jp/EMIS/journals/JIS/VOL8/Barry/barry84.pdf"""
+    return sum(combin(i, n-i) * (-1)**(n-i) * seq[i] for i in range(n+1))
+
+
+def get_all_mod_inverse_dict(m: int, max_n: int) -> Dict[int, int]:
+    """
+    Computes a^-1 mod m for all a in [1, a-1]
+    https://cp-algorithms.com/algebra/module-inverse.html#mod-inv-all-num
+
+    Taking the key * value mod m for each key value would result in 1
+    """
+    dc_inv = {1: 1}
+    for i in range(2, max_n+1):
+        dc_inv[i] = m - (m // i) * dc_inv[m % i] % m
+    return dc_inv
+
+
+def get_all_mod_inverse_list(m: int, max_n: int) -> List[int]:
+    """
+    Computes a^-1 mod m for all a in [1, a-1]
+    https://cp-algorithms.com/algebra/module-inverse.html#mod-inv-all-num
+    """
+    ls_inv = [0, 1]
+    for i in range(2, max_n+1):
+        ls_inv.append(m - (m // i) * ls_inv[m % i] % m)
+    return ls_inv
