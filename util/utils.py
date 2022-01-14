@@ -1073,9 +1073,21 @@ def get_all_mod_inverse_list(m: int, max_n: int) -> List[int]:
     return ls_inv
 
 
-def cycle_length(k):
-    """1/x has a cycle of d digits if 10^d == 1 mod x = 0"""
-    if k % 2 == 0 or k % 5 == 0:
+def cycle_length(k: int) -> int:
+    """
+    Computes the repeated cycle length of the decimal expansion of 1/k.
+    e.g.
+    1/6 = 0.1(6)  -> 1
+    1/7 = 0.(142857) -> 6
+
+    For k not equal to a multiple of 2 or 5,
+    1/k has a cycle of d digits if 10^d == 1 mod k = 0
+    """
+    while k % 2 == 0:
+        k //= 2
+    while k % 5 == 0:
+        k //= 5
+    if k == 1:
         return 0
     d = 1
     while pow(10, d, k) != 1:
