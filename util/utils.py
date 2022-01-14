@@ -1084,12 +1084,14 @@ def cycle_length(k: int) -> int:
     1/k has a cycle of d digits if 10^d == 1 mod k = 0
     """
     while k % 2 == 0:
-        k //= 2
+        k //= 2  # remove factors of 2
     while k % 5 == 0:
-        k //= 5
+        k //= 5  # remove factors of 5
     if k == 1:
-        return 0
+        return 0  # this is not a repeating decimal
     d = 1
-    while pow(10, d, k) != 1:
+    x = 10 % k
+    while x != 1:
+        x = (x*10) % k
         d += 1
     return d
