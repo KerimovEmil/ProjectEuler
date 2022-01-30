@@ -1,12 +1,14 @@
-# PROBLEM
+"""
+PROBLEM
 
+x,y > 0 and integers
+1/x + 1/y = 1/n
+What is the least value of n for which the number of distinct solutions exceeds one-thousand?
 
-# x,y > 0 and integers
-# 1/x + 1/y = 1/n
-# What is the least value of n for which the number of distinct solutions exceeds one-thousand?
-
-# ANSWER
-# 180180
+ANSWER: 180180
+Solve time ~0.003 seconds
+"""
+import unittest
 
 # Math proof:
 # Use the fact that:
@@ -52,15 +54,23 @@
 # 7^2 * 3^3 = 1323 < 1999 hence not good enough.
 # Hence smallest n found was 180180.
 
+
 class Problem108:
     def __init__(self):
         pass
 
-    def solve(self):
+    @staticmethod
+    def solve():
         return 2 * 2 * 3 * 3 * 5 * 7 * 11 * 13
 
 
-if __name__ == "__main__":
-    obj = Problem108()
-    sol = obj.solve()
-    print(sol)
+class Solution108(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem108()
+
+    def test_solution(self):
+        self.assertEqual(180180, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()
