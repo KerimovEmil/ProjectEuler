@@ -1,12 +1,12 @@
-# PROBLEM
+"""
+The 5-digit number, 16807=7^5, is also a fifth power. Similarly, the 9-digit number, 134217728=8^9, is a ninth power.
 
-# The 5-digit number, 16807=7^5, is also a fifth power.
-#  Similarly, the 9-digit number, 134217728=8^9, is a ninth power.
+How many n-digit positive integers exist which are also an nth power?
 
-# How many n-digit positive integers exist which are also an nth power?
+ANSWER: 49
+Solve time: ~0.003 seconds
+"""
 
-# ANSWER:
-# 49
 
 # MATH PART
 # n-digit-number = x^n
@@ -26,6 +26,7 @@
 # only need to check 1<=x<=9 and n < 22 for n digit number = x^n
 
 import math
+import unittest
 
 
 class Problem63:
@@ -40,7 +41,13 @@ class Problem63:
         return self.count
 
 
-if __name__ == "__main__":
-    obj = Problem63()
-    sol = obj.solve()
-    print(sol)
+class Solution63(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem63()
+
+    def test_solution(self):
+        self.assertEqual(49, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()

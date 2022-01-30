@@ -9,10 +9,10 @@ There are ten composites below thirty containing precisely two, not necessarily 
 How many composite integers, n < 10^8, have precisely two, not necessarily distinct, prime factors?
 ANSWER:
 17427258
-Solve time ~ 4.843s seconds
+Solve time ~ 0.04 seconds
 """
-from primesieve import primes
 
+from primesieve import primes, count_primes
 import unittest
 from util.utils import timeit
 
@@ -23,18 +23,13 @@ class Problem187:
 
     @timeit
     def solve(self):
-        ls_all_p = primes(self.n)
-        ls_small_p = primes(self.n ** 0.5)
+        """pi(n/q) - pi(q) + 1 for all prime q not greater than sqrt(n)"""
+        ls_p = primes(self.n ** 0.5)
 
         count = 0
-        for p in ls_small_p:
-            for q in ls_all_p:
-                if q < p:
-                    continue
-                if p * q > 1e8:
-                    break
-                else:
-                    count += 1
+        for p in ls_p:
+            count += count_primes(self.n / p) - count_primes(p) + 1
+
         return count
 
 

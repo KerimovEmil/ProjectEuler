@@ -1,11 +1,15 @@
-# Consider the divisors of 30: 1,2,3,5,6,10,15,30.
-# It can be seen that for every divisor d of 30, d+30/d is prime.
-#
-# Find the sum of all positive integers n not exceeding 100,000,000
-# such that for every divisor d of n, d+n/d is prime.
+"""
+PROBLEM
 
-# ANSWER
-# 1739023853137
+Consider the divisors of 30: 1,2,3,5,6,10,15,30.
+It can be seen that for every divisor d of 30, d+30/d is prime.
+
+Find the sum of all positive integers n not exceeding 100,000,000
+such that for every divisor d of n, d+n/d is prime.
+
+ANSWER: 1739023853137
+Solve time ~27 seconds
+"""
 
 # Since 1 is always a divisor of n, then
 # 1 + n/1 = 1 + n = prime
@@ -18,10 +22,16 @@
 # since if n = p_1 * p_2^2 then choose d = p_2
 # p_2 + p_1*p_2 = p_2 * (1 + p_1) != prime.
 
+# combining the last two findings we have, n%4 can only be 0 or 2 since n needs to be odd,
+# however since n is squarefree, n%4 can only be equal to 2
 
-from util.utils import primes_of_n
-from util.utils import sieve
+# combining this with the fact that n + 1 must be a prime, it results in us only needing
+# to loop over primes such that p%4 == 3
+
+
+import unittest
 from util.utils import timeit
+from primesieve import primes
 
 
 class Problem357:
@@ -33,82 +43,41 @@ class Problem357:
 
         if self.debug:
             print("Calculating Primes")
-        self.set_primes = set(sieve(max_int))
-        if self.debug:
-            print("Calculating square free sieve")
+
+        self.set_primes = set(primes(max_int))
+
         if self.debug:
             print("Finished Calculating Primes")
-            print("{} is the total number of primes to check".format(len(self.set_primes)))
+            print("{} is the total number of primes to check".format(len(self.set_primes)))  # under 6 million
 
     @timeit
     def solve(self):
-        for p in self.set_primes:
-            n = p - 1
-            # simple filter 1
-            if n % 4 == 0 or n % 9 == 0:
-                continue
-            # simple filter 3
-            if not self.is_prime(n / 2 + 2):
-                continue
-            # Simple filter 3
-            if not all([self.is_prime(i + n / i) for i in range(3, 8) if n % i == 0]):
+        # n+1 = prime = 4k+3 (see explanation above)
+        candidate_n = (p - 1 for p in self.set_primes if p % 4 == 3)
+
+        for n in candidate_n:
+
+            # quick initial check
+            if not self.is_prime(n // 2 + 2):
                 continue
 
-            # Full filter
-            prime_factors = primes_of_n(n)
-            if any([t[1] > 1 for t in prime_factors.items()]):
-                continue
-            all_divisors = self.divisors(prime_factors)
-            all_primes = True
-            for d in all_divisors:
-                if not self.is_prime(d + n / d):
-                    all_primes = False
-                    break
-            if all_primes:
-                if self.debug:
-                    print("{0} is a cool number".format(n))
+            # full check
+            if all(self.is_prime(i + n // i) for i in range(3, int(n**0.5)+1) if not n % i):
                 self.ans += n
 
         return self.ans
 
-    @staticmethod
-    def basic_is_prime(n):
-        if int(n) & 1 == 0:
-            return False  # 2 is a divisor
-        d = 3
-        while d * d <= n:
-            if n % d == 0:
-                return False  # d is a divisor
-            d = d + 2
-        return True
-
     def is_prime(self, n):
         return n in self.set_primes
 
-    def divisors(self, prime_factors):
-        primes = list(prime_factors.keys())
 
-        # generates factors from primes[k:] subset
-        def generate(k):
-            if k == len(primes):
-                yield 1
-            else:
-                rest = generate(k + 1)
-                prime = primes[k]
-                for factor in rest:
-                    prime_to_i = 1
-                    # prime_to_i iterates prime**i values, i being all possible exponents
-                    for _ in range(prime_factors[prime] + 1):
-                        yield factor * prime_to_i
-                        prime_to_i *= prime
+class Solution357(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem357(max_int=int(1e8), debug=True)
 
-        yield from generate(0)
-        # python 2
-        # for factor in generate(0):
-        #     yield factor
+    def test_solution(self):
+        self.assertEqual(1739023853137, self.problem.solve())
 
 
-if __name__ == "__main__":
-    obj = Problem357(max_int=int(1e8), debug=False)
-    sol = obj.solve()
-    print(sol)
+if __name__ == '__main__':
+    unittest.main()
