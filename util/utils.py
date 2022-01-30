@@ -1,8 +1,9 @@
 import numpy as np
 import time
 from itertools import accumulate
-from functools import lru_cache
+from functools import lru_cache, reduce
 from math import gcd
+from typing import List, Union, Dict, Generator, Optional
 
 
 class Hungarian:
@@ -883,3 +884,225 @@ def euler_totient_function(n):
 def is_coprime(a, b):
     """Returns True if a and b are co-prime, False otherwise"""
     return gcd(a,b) == 1
+
+
+@lru_cache(maxsize=None)
+def sum_phi(n):
+    """Returns sum_{i=1 to n} phi(i) where phi is the euler totient function"""
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    v = int(n**0.5)
+    nv = n//(v+1)
+
+    return n*(n+1)//2 - sum(sum_phi(x) * (n//x - n//(x+1)) for x in range(1, v+1)) - sum(sum_phi(n//k) for k in range(2, nv+1))
+
+
+def farey(n, descending=False):
+    """Print the n'th Farey sequence. Allow for either ascending or descending."""
+    a, b, c, d = 0, 1, 1, n
+    if descending:
+        a, c = 1, n - 1
+    ls_farey = [(a, b)]
+    while (c <= n and not descending) or (a > 0 and descending):
+        k = int((n + b) / d)
+        a, b, c, d = c, d, k * c - a, k * d - b
+        ls_farey.append((a, b))
+    return ls_farey
+
+
+@lru_cache(maxsize=None, typed=False)
+def len_faray_seq(n):
+    """
+    Calculates the length of the n'th Faray Sequence.
+    Args:
+        n: <int>
+
+    Returns: <int>
+
+    Using the recursive relation |F_{n}| = |F_{n-1}| + euler_totient(n),
+    Expanding for all n and then inverting the relation, after using |F_1| = 2 we get
+    |F_{n}| = 1/2 * (n+3) * n  - sum_{d=2}^{n} |F_{floor(n/d)}|
+    See Also: https://en.wikipedia.org/wiki/Farey_sequence
+    """
+
+    if n == 1:
+        return 2
+    elif n < 1:
+        raise NotImplementedError("What happened??")
+    else:
+
+        return int(0.5*(n+3)*n) - sum(len_faray_seq(int(n/d)) for d in range(2, n+1))
+
+
+def sign(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    else:
+        return 0
+
+
+@timeit
+def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
+    """
+    Returns a list of all mobius function values.
+    mobius(n) = 1 if i is square-free with even number of primes,
+               -1 if odd number,
+                0 if contains square
+    """
+    ls_m = [1]*n
+    if ls_prime is None:
+        ls_p = list(sieve(n))
+    else:
+        ls_p = ls_prime
+    for p in ls_p:
+        ls_m[p:n:p] = [-1 * x for x in ls_m[p:n:p]]
+        p2 = p ** 2
+        ls_m[p2:n:p2] = [0] * ((n-1)//p2)  # len(ls_m[p2:n:p2]) == (n-1)//p2
+    return ls_m
+
+
+# @lru_cache(maxsize=None)
+def num_of_divisors(n):
+    """
+    Return the number of positive divisors of n.
+    e.g. sigma(12) = 6
+    """
+    dc_primes = primes_of_n(n)
+    return reduce(lambda a, b: a * b, (v + 1 for v in dc_primes.values()))
+
+
+def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
+    """
+    Given the prime factorization of a number, return a generator of all of it's divisors.
+    Args:
+        prime_factors: a dictionary with the key being the prime and the value being the multiplicity of the prime.
+    For example if n=12 then then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
+    1,2,4,3,6,12
+    """
+    ls_primes = list(prime_factors.keys())
+
+    # generates factors from ls_primes[k:] subset
+    def generate(k):
+        if k == len(ls_primes):
+            yield 1
+        else:
+            rest = generate(k + 1)
+            prime = ls_primes[k]
+            for factor in rest:
+                prime_to_i = 1
+                # prime_to_i iterates prime**i values, i being all possible exponents
+                for _ in range(prime_factors[prime] + 1):
+                    yield factor * prime_to_i
+                    prime_to_i *= prime
+
+    yield from generate(0)
+
+
+@lru_cache(maxsize=None)
+def binomial_recursive(n: int, k: int, mod_m: int) -> int:
+    if k == 0:
+        return 1
+    if n == 0:
+        return 0
+    if n == k:
+        return 1
+    if k > (n-k):
+        return binomial_recursive(n, n-k, mod_m)
+    return (binomial_recursive(n-1, k, mod_m) + binomial_recursive(n-1, k-1, mod_m)) % mod_m
+
+
+@lru_cache(maxsize=None)
+def fib(n: int, mod_m: int = int(1e12)) -> int:
+    if n < 2:
+        return n
+    return (fib(n-1, mod_m) + fib(n-2, mod_m)) % mod_m
+
+
+def fibonacci_n_term(n: int) -> Union[int, NotImplementedError]:
+    """Returns the nth fibonacci number"""
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    sq_5 = 5**0.5
+    phi_pos = (1 + sq_5) / 2
+    return round(phi_pos**n / sq_5)
+
+
+def fibonacci_k_n_term(n: int, k: int) -> Union[int, NotImplementedError]:
+    """
+    Returns the nth fibonacci_k number.
+    Where F_{k,n+1} = k*F_{k,n} + F_{k,n−1} for n ≥ 1
+    """
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    if n in [0, 1]:
+        return n
+
+    root = (k+(k**2 + 4)**0.5) / 2
+    return round((root**n - (-root)**(-n)) / (root + 1/root))
+
+
+def catalan_transform(n: int = 1, seq: List[int] = None, mod_m: Optional[int] = None) -> int:
+    """http://www.kurims.kyoto-u.ac.jp/EMIS/journals/JIS/VOL8/Barry/barry84.pdf"""
+    if n == 0:
+        return 0
+    if mod_m is not None:
+        return int(sum((i * combin(2*n-i, n-i) * seq[i] // (2*n-i)) % mod_m for i in range(1, n+1)))
+    else:
+        return int(sum(i * combin(2*n-i, n-i) * seq[i] // (2*n-i) for i in range(1, n+1)))
+
+
+def inv_catalan_transform(n: int = 1, seq: List[int] = None) -> int:
+    """http://www.kurims.kyoto-u.ac.jp/EMIS/journals/JIS/VOL8/Barry/barry84.pdf"""
+    return sum(combin(i, n-i) * (-1)**(n-i) * seq[i] for i in range(n+1))
+
+
+def get_all_mod_inverse_dict(m: int, max_n: int) -> Dict[int, int]:
+    """
+    Computes a^-1 mod m for all a in [1, a-1]
+    https://cp-algorithms.com/algebra/module-inverse.html#mod-inv-all-num
+
+    Taking the key * value mod m for each key value would result in 1
+    """
+    dc_inv = {1: 1}
+    for i in range(2, max_n+1):
+        dc_inv[i] = m - (m // i) * dc_inv[m % i] % m
+    return dc_inv
+
+
+def get_all_mod_inverse_list(m: int, max_n: int) -> List[int]:
+    """
+    Computes a^-1 mod m for all a in [1, a-1]
+    https://cp-algorithms.com/algebra/module-inverse.html#mod-inv-all-num
+    """
+    ls_inv = [0, 1]
+    for i in range(2, max_n+1):
+        ls_inv.append(m - (m // i) * ls_inv[m % i] % m)
+    return ls_inv
+
+
+def cycle_length(k: int) -> int:
+    """
+    Computes the repeated cycle length of the decimal expansion of 1/k.
+    e.g.
+    1/6 = 0.1(6)  -> 1
+    1/7 = 0.(142857) -> 6
+
+    For k not equal to a multiple of 2 or 5,
+    1/k has a cycle of d digits if 10^d == 1 mod k = 0
+    """
+    while k % 2 == 0:
+        k //= 2  # remove factors of 2
+    while k % 5 == 0:
+        k //= 5  # remove factors of 5
+    if k == 1:
+        return 0  # this is not a repeating decimal
+    d = 1
+    x = 10 % k
+    while x != 1:
+        x = (x*10) % k
+        d += 1
+    return d
