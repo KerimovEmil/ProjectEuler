@@ -1,9 +1,16 @@
-# PE 356
+"""
+PROBLEM
 
-# ANSWER
-# 28010159
+Let a_n be the largest real root of a polynomial g(x) = x^3 - 2^n·x^2 + n.
+For example, a_2 = 3.86619826...
 
-from util.utils import LinearHomogeneousRecurrence
+Find the last eight digits of sum_{i=0}^{30} floor(a_i^987654321)
+
+ANSWER: 28010159
+Solve time ~ 0.003 seconds
+"""
+from util.utils import LinearHomogeneousRecurrence, timeit
+import unittest
 
 
 # Note that every linear relation has a corresponding generating function
@@ -44,20 +51,21 @@ class Problem356:
         result = 0
         for i in range(1, self.terms + 1):
             result = (result + self.get(i, self.exp, self.modN)) % self.modN
-        print(result)
+        return result
 
-    def get(self, n, power, mod):
+    @staticmethod
+    def get(n, power, mod):
         recurrence = LinearHomogeneousRecurrence([2 ** n, 0, -n], [4 ** n, 2 ** n, 3])
         return recurrence.get(power, mod) - 1
 
 
-def main():
-    terms = 30
-    exp = 987654321  # 987654321 = 3*3*17*17*379721
-    modN = int(1e8)
-    problem = Problem356(terms, exp, modN)
-    problem.solve()
+class Solution356(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem356(terms=30, exp=987654321, modN=int(1e8))
+
+    def test_solution(self):
+        self.assertEqual(28010159, self.problem.solve())
 
 
 if __name__ == '__main__':
-    main()
+    unittest.main()

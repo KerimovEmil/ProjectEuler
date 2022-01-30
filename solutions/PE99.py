@@ -1,15 +1,21 @@
-# PROBLEM
+"""
+PROBLEM
 
-# Using base_exp.txt (right click and 'Save Link/Target As...'), a 22K text file containing
-# one thousand lines with a base/exponent pair on each line,
-# determine which line number has the greatest numerical value.
+Using base_exp.txt (right click and 'Save Link/Target As...'), a 22K text file containing
+one thousand lines with a base/exponent pair on each line,
+determine which line number has the greatest numerical value.
 
-# NOTE: The first two lines in the file represent the numbers in the example given above.
+NOTE: The first two lines in the file represent the numbers in the example given above.
 
-# ANSWER
-# 709
+ANSWER: 709
+Solve time ~0.006 seconds
+"""
+
 
 import math
+import os
+import unittest
+from util.utils import timeit
 
 
 class Problem99:
@@ -23,6 +29,7 @@ class Problem99:
             for line in input_file:
                 self.problem_data.append(line.strip().split(','))
 
+    @timeit
     def solve(self):
         max_i = None
         for i, line in enumerate(self.problem_data):
@@ -34,7 +41,14 @@ class Problem99:
         return max_i
 
 
-if __name__ == "__main__":
-    obj = Problem99(r'..\problem_data\p099_base_exp.txt')
-    sol = obj.solve()
-    print(sol)
+class Solution99(unittest.TestCase):
+    def setUp(self):
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p099_base_exp.txt')
+        self.problem = Problem99(file_path)
+
+    def test_solution(self):
+        self.assertEqual(709, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()

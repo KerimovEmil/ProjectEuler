@@ -1,12 +1,14 @@
-# PROBLEM
+"""
+PROBLEM
 
+x,y > 0 and integers
+1/x + 1/y = 1/n
+What is the least value of n for which the number of distinct solutions exceeds 4 million?
 
-# x,y > 0 and integers
-# 1/x + 1/y = 1/n
-# What is the least value of n for which the number of distinct solutions exceeds 4 million?
-
-# ANSWER
-# 9350130049860600
+ANSWER: 9350130049860600
+Solve time ~0.003 seconds
+"""
+import unittest
 
 # Math proof:
 # Use the fact that:
@@ -66,11 +68,18 @@ class Problem110:
     def __init__(self):
         pass
 
-    def solve(self):
+    @staticmethod
+    def solve():
         return 2 * 2 * 2 * 3 * 3 * 3 * 5 * 5 * 7 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31 * 37
 
 
-if __name__ == "__main__":
-    obj = Problem110()
-    sol = obj.solve()
-    print(sol)
+class Solution110(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem110()
+
+    def test_solution(self):
+        self.assertEqual(9350130049860600, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()

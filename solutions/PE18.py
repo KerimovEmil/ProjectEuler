@@ -13,6 +13,7 @@ Related Problems: 67
 
 import unittest
 from util.utils import timeit
+import os
 
 
 class Problem18:
@@ -40,7 +41,8 @@ class Problem18:
 
 class Solution18(unittest.TestCase):
     def setUp(self):
-        with open(r'../problem_data/p018_triangle.txt') as f:
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p018_triangle.txt')
+        with open(file_path) as f:
             triangle = [[int(n) for n in s.split()] for s in f.readlines()]
 
         self.problem = Problem18(triangle)

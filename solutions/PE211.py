@@ -1,10 +1,15 @@
-# For a positive integer n, let σ2(n) be the sum of the squares of its divisors. For example,
+"""
+PROBLEM
 
-# σ2(10) = 1 + 4 + 25 + 100 = 130.
-# Find the sum of all n, 0 < n < 64,000,000 such that σ2(n) is a perfect square.
+For a positive integer n, let σ2(n) be the sum of the squares of its divisors. For example,
 
-# Answer = 1922364685
-# solve time ~ way too long.
+σ2(10) = 1 + 4 + 25 + 100 = 130.
+Find the sum of all n, 0 < n < 64,000,000 such that σ2(n) is a perfect square.
+
+ANSWER: 1922364685
+Solve time ~ way too long
+"""
+
 
 # n = p1^x p2^y p3^z
 # σ2(n) = (1 + p1^2 + p1^4 + ... + p1^2x) * (1 + p2^2 + p2^4 + ... + p2^2y) * (1 + p3^2 + p3^4 + ... + p3^2z)
@@ -20,10 +25,6 @@ import unittest
 from util.utils import primes_of_n
 from util.utils import sieve
 from util.utils import timeit
-
-
-# import math
-# from functools import lru_cache
 
 
 class Problem211:

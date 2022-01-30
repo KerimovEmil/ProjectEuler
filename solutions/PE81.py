@@ -11,7 +11,7 @@ Related problems: 82
 """
 
 import copy
-
+import os
 import unittest
 from util.utils import timeit
 
@@ -47,7 +47,8 @@ class Problem81:
 
 class Solution81(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem81(r'..\problem_data\p081_matrix.txt')
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p081_matrix.txt')
+        self.problem = Problem81(file_path)
 
     def test_solution(self):
         self.assertEqual(427337, self.problem.solve())
