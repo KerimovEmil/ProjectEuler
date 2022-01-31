@@ -12,13 +12,18 @@ the remaining two being: {2,3,4,6,7,9,10,20,28,35,36,45} and
 How many ways are there to write the number 1/2 as a sum of inverse squares using distinct integers between 2 and 80 inclusive?
 
 ANSWER: 301
-Solve time ~56 seconds
+Solve time ~56 seconds  # todo work on speeding this up
 """
-
-
 from util.utils import timeit
 import unittest
 from fractions import Fraction
+
+# ls_candidates = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, 24, 28,
+#                  30, 35, 36, 39, 40, 42, 45, 52, 56, 60, 63, 70, 72]
+# list of candidates can be reduced from range(1, 81) to this list by considering the only prime factors must be
+# 2, 3, 5, 7 and 13, and multiples of those primes.
+# Further additional numbers can be eliminated by considering mod n for the final equation.
+# see https://projecteuler.net/thread=152 for further discussion on this.
 
 
 def sum_of_recip_sq_frac(s):
@@ -56,16 +61,15 @@ class Solution152(unittest.TestCase):
     def setUp(self):
         self.problem = Problem152(target=Fraction(1, 2))
 
-    def test_simple_solution(self):  # 1.8 seconds
+    def test_simple_solution(self):
         """Only three solution with numbers from 2 to 45"""
-        SMALL_CANDIDATES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, 24, 28,
-                            30, 35, 36, 39, 40, 42, 45]
-        self.assertEqual(3, self.problem.solve(ls_numbers=SMALL_CANDIDATES))
+        ls_candidates = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, 24, 28, 30, 35, 36, 39, 40, 42, 45]
+        self.assertEqual(3, self.problem.solve(ls_numbers=ls_candidates))
 
     def test_solution(self):
-        CANDIDATES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, 24, 28,
-                      30, 35, 36, 39, 40, 42, 45, 52, 56, 60, 63, 70, 72]
-        self.assertEqual(301, self.problem.solve(ls_numbers=CANDIDATES))
+        ls_candidates = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, 24, 28,
+                         30, 35, 36, 39, 40, 42, 45, 52, 56, 60, 63, 70, 72]
+        self.assertEqual(301, self.problem.solve(ls_numbers=ls_candidates))
 
 
 if __name__ == '__main__':
