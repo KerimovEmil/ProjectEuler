@@ -67,6 +67,7 @@ class Solution152(unittest.TestCase):
         self.assertEqual(3, self.problem.solve(ls_numbers=ls_candidates))
 
     def test_solution(self):
+        # todo add calculation of ls_candidates in the code
         ls_candidates = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 18, 20, 21, 24, 28,
                          30, 35, 36, 39, 40, 42, 45, 52, 56, 60, 63, 70, 72]
         self.assertEqual(301, self.problem.solve(ls_numbers=ls_candidates))
