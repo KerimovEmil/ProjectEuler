@@ -8,9 +8,7 @@ file_path = path.join(path.dirname(__file__), '..', 'solutions',)
 
 for file in listdir(file_path):
     # ignore known files that don't follow convention
-    if file in ['new_problem.py', '__init__.py', '__pycache__',
-                'PE345_Hungarian_Algorithm.py', 'PE345_recursive.py']:
-        # todo combine PE345 into one file
+    if file in ['new_problem.py', '__init__.py', '__pycache__']:
         continue
 
     # get project euler problem number from file name
