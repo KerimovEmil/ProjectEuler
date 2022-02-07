@@ -47,8 +47,10 @@ Find the unique 16-digit secret sequence.
 
 ANSWER: 4640261571849533
 
-Solve time ~TOO LONG seconds
+Solve time ~21 seconds to 3 minutes
 """
+
+# See many possible algorithm solutions to this here: https://github.com/raphey/number-mind
 
 import unittest
 from util.utils import timeit
@@ -102,10 +104,10 @@ class Problem185:
                 possible_sol = mutate_guess_i(best_guess, i)
                 dist = check_all_guesses(self.ls_attempts, possible_sol)
                 if dist < min_dist:
+                    # print(min_dist, best_guess)
                     min_dist = dist
                     w = self.max_try_wo_improvement
                     best_guess = possible_sol
-                    # print(best_guess, dist)
                     if min_dist == 0:
                         return best_guess, min_dist
 
@@ -128,7 +130,7 @@ class Solution185(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_solution_small(self):
+    def test_1_solution_small(self):
 
         ls_attempts = [
             (90342, 2),
@@ -140,7 +142,7 @@ class Solution185(unittest.TestCase):
         ]
         ls_attempts_str = [(str(x), y) for (x, y) in ls_attempts]
         problem = Problem185(ls_attempts_str)
-        self.assertEqual(39542, problem.solve())
+        self.assertEqual('39542', problem.solve())
 
     def test_solution(self):
         ls_attempts = [
@@ -170,7 +172,7 @@ class Solution185(unittest.TestCase):
 
         ls_attempts_str = [(str(x), y) for (x, y) in ls_attempts]
         problem = Problem185(ls_attempts_str)
-        self.assertEqual(4640261571849533, problem.solve())
+        self.assertEqual('4640261571849533', problem.solve())
 
 
 if __name__ == '__main__':
