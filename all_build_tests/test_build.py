@@ -14,7 +14,7 @@ for file in listdir(file_path):
     # get project euler problem number from file name
     problem_number = int(file.split('.')[0][2:])
 
-    # don't run slow o bad solutions
+    # don't run slow or bad solutions
     if problem_number in bad_or_slow_solutions:
         continue
 
