@@ -79,7 +79,9 @@ class Problem785:
             for y in range(int(0.2 * z), int(0.6 * z) + 1 + 1):  # never 2 mod 4
                 # x^2 - x*(34/17)*(z+y) + (z^2 + y^2 - (34/17)*y*z) = 0
                 # 15x = 17(y+z) +/- 8*sqrt(z^2 + 17zy + y^2)
-                sq_r_disc = 8 * (z ** 2 + 17 * z * y + y ** 2) ** 0.5
+                sq_r_disc = 8 * (z ** 2 + 17 * z * y + y ** 2) ** 0.5  # (z+y)^2 + 15zy = k^2, 15zy = k^2 - (z+y)^2
+                # 15zy = k^2 - (z+y)^2 = (k+z+y)*(k-z-y)
+                # 3|(k+z+y) or 3|(k-(z+y)) or 5|(k+z+y) or 5|(k-(z+y))
                 # todo don't test every y, just the y's that make z^2+17zy+y^2 into a perfect square
                 if is_int(sq_r_disc):
                     sq_r_disc = int(sq_r_disc)
@@ -152,3 +154,20 @@ if __name__ == '__main__':
 # (13, 40, 115)
 # (15, 65, 168)
 # (3, 104, 189)
+
+
+# sq_r = (z**2 + 17*z*y + y**2)**0.5
+# z=48, y=3, sq_r=69
+# z=48, y=14, sq_r=118
+# z=48, y=21, sq_r=141
+# z=48, y=31, sq_r=169
+
+# z = 48, y^2 + 816y + 2304 = square = k^2
+# (y+408+k)*(y+408-k) = 408^2 - 2304
+
+# in general, x,y,z,k all int
+# (2y+17z)^2 - (2k)^2 = 285*z^2 = 3*5*19*z^2
+# and
+# 15x - 17(y+z) = +/- 8k
+
+# therefore x+y+z == 0 mod 8
