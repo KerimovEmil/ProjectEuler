@@ -39,7 +39,7 @@ class Problem254:
 
         i = 0
         while len(s_needed) > 0:
-            i += 1
+            i += 1  # todo replace this with only looping over ordered numbers, i.e smaller digits first
             v = sf(i)
             if v not in dc_g.keys():
                 if v in s_needed:
@@ -74,6 +74,8 @@ if __name__ == '__main__':
 # = 488889 -> 4+8+8+8+8+9 = 45
 # sf(12378889) = 45
 
+# 342 -> 3!+4!+2! = 6+24+2 = 32  -> 3+2   = 5
+# 25  -> 2!+5!    = 2+120  = 122 -> 1+2+2 = 5
 
 # {
 # 1: 1,
