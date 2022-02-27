@@ -29,11 +29,13 @@ from math import factorial
 # 342 -> 3!+4!+2! = 6+24+2 = 32  -> 3+2   = 5
 # 25  -> 2!+5!    = 2+120  = 122 -> 1+2+2 = 5
 
+# 1+2+6+5040+40320+40320+40320+362880 = 488889 -> 4+8+8+8+8+9 = 45
+# 1+2+6+9+9+9+9+27 = 72
 
 def gen_combos(elements, length, start_idx=0):
     # ignore elements before start_idx
     for i in range(start_idx, len(elements)):
-        elem, count = elements[i]
+        elem, count = elements[i]  # todo add case for i=len(elements)
         if count == 0:
             continue
         # base case: only one element needed
@@ -48,7 +50,6 @@ def gen_combos(elements, length, start_idx=0):
                 yield elem + combo
             # fix the list
             elements[i] = (elem, count)
-
 
 
 def non_decreasing_digits_unique_factorial_sum_generator():
@@ -67,11 +68,22 @@ def non_decreasing_digits_unique_factorial_sum_generator():
     max_elements = [(str(i), i) for i in range(1, 9)]
     max_elements.append(('9', digits))
     while True:
-        # for i in combos(max_elements, digits):
+
         for i in gen_combos(elements=max_elements, length=digits):
             yield int(i)
         digits += 1
         max_elements[8] = ('9', digits)
+
+        # forced_nine = 0
+        # end = ''
+        # if digits > 36:
+        #     forced_nine = digits - 36
+        #     end = '9'*forced_nine
+        # for i in gen_combos(elements=max_elements, length=digits-forced_nine):
+        #     yield int(i + end)
+        # # max_elements[8] = ('9', digits-forced_nine)
+        # digits += 1
+        # max_elements[8] = ('9', digits - forced_nine)
 
 
 class Problem254:
@@ -80,7 +92,7 @@ class Problem254:
 
     @timeit
     def solve(self, max_num: int = 20) -> int:
-        dc_factorial = {i: factorial(i) for i in range(10)}
+        dc_factorial = {i: factorial(i) for i in range(1, 10)}
 
         def f(n: int) -> int:
             return sum(dc_factorial[int(i)] for i in str(n))
@@ -128,8 +140,8 @@ class Solution254(unittest.TestCase):
     def test_50_solution(self):
         self.assertEqual(997, self.problem.solve(50))
 
-    def test_100_solution(self):
-        self.assertEqual(None, self.problem.solve(100))
+    # def test_100_solution(self):
+    #     self.assertEqual(None, self.problem.solve(100))
 
 
 if __name__ == '__main__':
@@ -200,15 +212,59 @@ if __name__ == '__main__':
 # g(61) = 13444667779999999999999999999999
 # g(62) = 12245555588888999999999999999999999999999
 # g(63) = 123345555588888999999999999999999999999999
+# g(64) = 134445555689999999999999999999999999999999999999999999999999999999
 
-#         122333444455555666666777777788888888
+#         122333444455555666666777777788888888 = 36 digits
+
+# g(150) = 1233456666668888888899999... {in total: 192,901,234,567 nines}
 
 
+# the reason it only works for values over 63 is because when it is less than g(63) the smallest value is not
+# necessarily the smallest value for the inverse of s(n) followed by the inverse of f(n). for example for g(27)
+# the smallest value possible for the inverse of s(n) is 999 however if we complete the calculation by doing the
+# inverse of f(n) we would find g(27) to be 12334556 however 3+6+2+8+8+0 is also 27 and if we find the inverse of f(n)
+# for 362880 we simply get g(27) to be 9 even though 362880 is much larger than 999
 
-# non-smallest g(12588)=g(49)=24
-# non-smallest g(12589)=g(36)=15
-# non-smallest g(12599)=g(39)=33
-# non-smallest g(12666)=g(44)=12
-# non-smallest g(12667)=g(349)=21
-# non-smallest g(12668)=g(349)=21
-# non-smallest g(12669)=g(349)=21
+# def f(n:int):
+#     a = sum(dc_factorial[int(i)] for i in str(n))
+#     return sum(int(i) for i in str(a))
+
+
+# f(9) = 1*362880 = 362880 = 27 = 9*3
+# f(99) = 2*362880 = 725760 = 27 = 9*3
+# f(999) = 3*362880 = 1088640 = 27 = 9*3
+# f(9999) = 4*362880 = 1451520 = 18 = 9*2
+# f(99999) = 5*362880 = 1814400 = 18 = 9*2
+# f(999999) = 6*362880 = 2177280 = 27 = 9*3
+# f(9999999) = 7*362880 = 2540160 = 18 = 9*2
+# f(99999999) = 8*362880 = 2903040 = 18 = 9*2
+# f(999999999) = 9*362880 = 3265920 = 27 = 9*3
+# f(9999999999) = 10*362880 = 3628800 = 27 = 9*3
+# f(99999999999) = 11*362880 = 3991680 = 36 = 9*4
+# f(999999999999) = 12*362880 = 4354560 = 27 = 9*3
+# f(9999999999999) = 13*362880 = 4717440 = 27 = 9*3
+# f(99999999999999) = 14*362880 = 5080320 = 18 = 9*2
+# f(999999999999999) = 15*362880 = 5443200 = 18 = 9*2
+# f(9999999999999999) = 16*362880 = 5806080 = 27 = 9*3
+# f(99999999999999999) = 17*362880 = 6168960 = 36 = 9*4
+# f(999999999999999999) = 18*362880 = 6531840 = 27 = 9*3
+# f(9999999999999999999) = 19*362880 = 6894720 = 36 = 9*4
+# f(99999999999999999999) = 20*362880 = 7257600 = 27 = 9*3
+# f(999999999999999999999) = 21*362880 = 7620480 = 27 = 9*3
+# f(9999999999999999999999) = 22*362880 = 7983360 = 36 = 9*4
+# f(99999999999999999999999) = 23*362880 = 8346240 = 27 = 9*3
+# f(999999999999999999999999) = 24*362880 = 8709120 = 27 = 9*3
+# f(9999999999999999999999999) = 25*362880 = 9072000 = 18 = 9*2
+# f(99999999999999999999999999) = 26*362880 = 9434880 = 36 = 9*4
+# f(999999999999999999999999999) = 27*362880 = 9797760 = 45 = 9*5
+# f(9999999999999999999999999999) = 28*362880 = 10160640 = 18 = 9*2
+# f(99999999999999999999999999999) = 29*362880 = 10523520 = 18 = 9*2
+
+# def f9(n:int):
+#     return n * dc_factorial[9]
+
+# def s(n:int):
+#     return sum(int(i) for i in str(n))
+
+# for i in range(1, 30):
+#     print(f'f({int("".join("9"*i))}) = {i}*{dc_factorial[9]} = {f9(i)} -> {s(f9(i))} = 9*{s(f9(i))//9}')
