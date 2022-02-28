@@ -18,6 +18,7 @@ Solve time ~ seconds
 from util.utils import timeit
 import unittest
 from math import factorial
+from typing import List, Tuple
 # from itertools import combinations_with_replacement
 
 
@@ -32,25 +33,47 @@ from math import factorial
 # 1+2+6+5040+40320+40320+40320+362880 = 488889 -> 4+8+8+8+8+9 = 45
 # 1+2+6+9+9+9+9+27 = 72
 
-def gen_combos(elements, length, start_idx=0):
+def gen_combos(elements: List[Tuple[str, int]], length: int, start_idx: int = 0):
     # ignore elements before start_idx
     for i in range(start_idx, len(elements)):
-        elem, count = elements[i]  # todo add case for i=len(elements)
+        elem, count = elements[i]
         if count == 0:
             continue
         # base case: only one element needed
         if length == 1:
             yield elem
         else:
-            # need more than one elem: mutate the list and recurse
-            elements[i] = (elem, count - 1)
-            # when we recurse, we ignore elements before this one
-            # this ensures we find combinations, not permutations
-            for combo in gen_combos(elements, length - 1, i):
-                yield elem + combo
-            # fix the list
-            elements[i] = (elem, count)
+            if i == len(elements) - 1:  # one option left. This works because we can have as many 9's as needed
+                yield elem*length
+            else:
+                # need more than one elem: mutate the list and recurse
+                elements[i] = (elem, count - 1)
+                # when we recurse, we ignore elements before this one
+                # this ensures we find combinations, not permutations
+                for combo in gen_combos(elements, length - 1, i):
+                    yield elem + combo
+                # fix the list
+                elements[i] = (elem, count)
 
+
+# todo fix this to return proper outputs
+# def gen_combos_2(elements: List[Tuple[str, int]], length: int):
+#     if length == 0:
+#         yield ''
+#
+#     elem, count = elements[0]
+#     for j in range(count, -1, -1):
+#         if j <= length:
+#             for c in gen_combos_2(elements[1:], length=length-j):
+#                 yield elem * j + c
+#
+# digits = 2
+# max_elements = [(str(i), i) for i in range(1, 9)]
+# max_elements.append(('9', digits))
+# w = gen_combos_2(max_elements, digits)
+# print(next(w))
+# for i in range(10):
+#     print(next(w))
 
 def non_decreasing_digits_unique_factorial_sum_generator():
     """
@@ -62,6 +85,7 @@ def non_decreasing_digits_unique_factorial_sum_generator():
     8!*9 = 9!  # therefore max eight 8s
     """
     digits = 1
+    # digits = 65
     # max_elements = {str(i): 1 for i in range(1, 10)}
     # yield from range(1, 10)
     # digits = 2
@@ -70,6 +94,7 @@ def non_decreasing_digits_unique_factorial_sum_generator():
     while True:
 
         for i in gen_combos(elements=max_elements, length=digits):
+        # for i in gen_combos_2(elements=max_elements, length=digits):
             yield int(i)
         digits += 1
         max_elements[8] = ('9', digits)
@@ -205,14 +230,68 @@ if __name__ == '__main__':
 # g(54) = 123345578899999999
 # g(55) = 1333666799999999999
 # g(56) = 12245556666799999999999
-# g(57) = 123345556666799999999999
-# g(58) = 1333579999999999999999999
-# g(59) = 122456679999999999999999999999
-# g(60) = 1233456679999999999999999999999
-# g(61) = 13444667779999999999999999999999
-# g(62) = 12245555588888999999999999999999999999999
-# g(63) = 123345555588888999999999999999999999999999
-# g(64) = 134445555689999999999999999999999999999999999999999999999999999999
+# g(57) = 123345556666799999999999 -> 11 nine's
+# g(58) = 1333579999999999999999999  -> 19 nine's
+# g(59) = 122456679999999999999999999999  -> 22 nine's
+# g(60) = 1233456679999999999999999999999  -> 22 nine's
+# g(61) = 13444667779999999999999999999999  -> 22 nine's
+# g(62) = 12245555588888999999999999999999999999999  -> 27 nine's
+# g(63) = 123345555588888999999999999999999999999999  -> 27 nine's
+# g(64) = 134445555689999999999999999999999999999999999999999999999999999999  -> 55 nine's
+# g(65) = 1223334444555668888889999999999999999999999999999999999999999999999999999999999999999999999999999999999 -> 82 nine's
+# g(66) = 123345556668899999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+# g(67) = 13444556666888888899999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+# g(68) = 1223334444566666888999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+
+
+# g(62) = 12245555588888 + 27 nine's
+# = 9999989 -> 8*1 + 9*6 = 62
+
+# g(63) = 123345555588888 + 27 nine's
+# = 9999999 -> 9*7 = 63
+
+# g(64) = 13444555568 + 55 nine's
+# = 19999999 -> 1*1 + 9*7 = 64
+
+# todo compute g(n>=64) a different way
+# g(65) = 122333444455566888888 + 82 nine's
+#  -> 1!*1 + 2!*2 + 3!*3 + 4!*4 + 5!*3 + 6!*2 + 7!*0 + 8!*6 + 9!*82
+#  = 1*1 + 2*2 + 6*3 + 24*4 + 120*3 + 720*2 + 5040*0 + 40320*6 + 362880*82
+# = 29999999 -> 1*2 + 9*7 = 65
+
+# g(66) = 1233455566688 + 110 nine's
+#  -> 1!*1 + 2!*1 + 3!*2 + 4!*1 + 5!*3 + 6!*3 + 7!*0 + 8!*2 + 9!*110
+#  = 1*1 + 2*1 + 6*2 + 24*1 + 120*3 + 720*3 + 5040*0 + 40320*2 + 362880*110
+# = 39999999 -> 1*3 + 9*7 = 66
+
+# g(67) = 134445566668888888 + 137 nine's
+#  -> 1!*1 + 2!*0 + 3!*1 + 4!*3 + 5!*2 + 6!*4 + 7!*0 + 8!*7 + 9!*137
+#  = 1*1 + 2*0 + 6*1 + 24*3 + 120*2 + 720*4 + 5040*0 + 40320*7 + 362880*137
+# = 49999999 -> 1*4 + 9*7 = 67
+
+# 1223334444566666888
+
+# 1*{0,1} + 2*{0,1,2} + 6*{0,1,2,3} + 24*{0,1,2,3,4} + 120*{0,1,2,3,4,5} + 720*{0,1,2,3,4,5,6} +
+# + 5040*{0,1,2,3,4,5,6,7} + 40320*{0,1,2,3,4,5,6,7,8} + 362880*K
+
+# {0,1} + {0,2,4} + {0,6,12,18} + {0,24,48,72,96} + {0,120,240,360,480,600} + {0,720,1440,2160,2880,3600,4320} +
+# + {0,5040,10080,15120,20160,25200,30240,35280} + 40320*{0,1,2,3,4,5,6,7,8} + 362880*K
+
+
+# g(57) -> 11 nine's
+# g(58) -> 19 nine's
+# g(59) -> 22 nine's
+# g(60) -> 22 nine's
+# g(61) -> 22 nine's
+# g(62) -> 27 nine's
+# g(63) -> 27 nine's
+# g(64) -> 55 nine's
+# g(65) -> 82 nine's
+# g(66) -> 110 nine's
+# g(67) -> 137 nine's
+# g(68) -> 165 nine's
+
+
 
 #         122333444455555666666777777788888888 = 36 digits
 
