@@ -12,7 +12,7 @@ Further, it can be verified that g(20) is 267 and ∑sg(i) for 1 ≤ i ≤ 20 is
 What is ∑sg(i) for 1 ≤ i ≤ 150?
 
 ANSWER: 8184523820510
-Solve time ~ seconds
+Solve time ~2 seconds
 """
 
 from util.utils import timeit
@@ -20,7 +20,7 @@ import unittest
 from math import factorial
 from typing import List, Tuple
 
-
+# example:
 # g(45) = 12378889
 # 12378889 -> 1!+2!+3!+7!+8!+8!+8!+9! = 1+2+6+5040+40320+40320+40320+362880
 # = 488889 -> 4+8+8+8+8+9 = 45
@@ -32,49 +32,27 @@ from typing import List, Tuple
 # 1+2+6+5040+40320+40320+40320+362880 = 488889 -> 4+8+8+8+8+9 = 45
 # 1+2+6+9+9+9+9+27 = 72
 
-def gen_combos(elements: List[Tuple[str, int]], length: int, start_idx: int = 0):
-    # ignore elements before start_idx
-    for i in range(start_idx, len(elements)):
-        elem, count = elements[i]
-        if count == 0:
-            continue
-        # base case: only one element needed
-        if length == 1:
-            yield elem
-        else:
-            if i == len(elements) - 1:  # one option left. This works because we can have as many 9's as needed
-                yield elem*length
-            else:
-                # need more than one elem: mutate the list and recurse
-                elements[i] = (elem, count - 1)
-                # when we recurse, we ignore elements before this one
-                # this ensures we find combinations, not permutations
-                for combo in gen_combos(elements, length - 1, i):
-                    yield elem + combo
-                # fix the list
-                elements[i] = (elem, count)
 
-
-def gen_combos_2(elements: List[Tuple[str, int]], length: int):
+def gen_combos(elements: List[Tuple[str, int]], length: int):
     if length == 0:
         yield ''
         return
-    if len(elements) == 0:
-        return
+
     if len(elements) == 1:  # last element, aka '9'
         elem, count = elements[0]
         yield elem * length
         return
+
     elem, count = elements[0]
     for j in range(count, -1, -1):
         if j <= length:
-            for c in gen_combos_2(elements[1:], length=length-j):
+            for c in gen_combos(elements[1:], length=length-j):
                 yield elem * j + c
 
 
 def non_decreasing_digits_unique_factorial_sum_generator():
     """
-    First few values: todo
+    First few values: 1,2,3,4,5,6,7,8,9,12,13,14,15,16,17,18,19,22,23,...
     1! + 1! = 2! = 2  # therefore max one 1's
     2! + 2! + 2! = 6 = 3!  # therefore max two 2's
     3! * 4 = 4!  # therefore max three 3's
@@ -86,8 +64,7 @@ def non_decreasing_digits_unique_factorial_sum_generator():
     max_elements.append(('9', digits))
     while True:
 
-        # for i in gen_combos(elements=max_elements, length=digits):
-        for i in gen_combos_2(elements=max_elements, length=digits):
+        for i in gen_combos(elements=max_elements, length=digits):
             yield int(i)
         digits += 1
         max_elements[8] = ('9', digits)
@@ -127,7 +104,33 @@ class Problem254:
         dc_out[9] = (n - explained) // self.dc_factorial[9]
         return sum(v * k for k, v in dc_out.items())
 
-    @timeit
+    @staticmethod
+    def solve_above_50_under_63(max_num: int) -> int:
+        """for 51 <= max_num < 63, just use hard-coded values"""
+        assert 51 <= max_num
+        assert max_num < 63
+
+        dc_g = {
+            51: 34446666888899,
+            52: 134446666888899,
+            53: 12245578899999999,
+            54: 123345578899999999,
+            55: 1333666799999999999,
+            56: 12245556666799999999999,
+            57: 123345556666799999999999,
+            58: 1333579999999999999999999,
+            59: 122456679999999999999999999999,
+            60: 1233456679999999999999999999999,
+            61: 13444667779999999999999999999999,
+            62: 12245555588888999999999999999999999999999,
+        }
+
+        def s(n: int) -> int:
+            return sum(int(i) for i in str(n))
+
+        ans = sum(s(dc_g[i]) for i in range(51, max_num + 1))
+        return ans
+
     def solve_under_63(self, max_num: int) -> int:
         """for max_num < 63, no quick solutions, must run through all cases"""
         assert max_num < 63
@@ -137,8 +140,8 @@ class Problem254:
         def f(n: int) -> int:
             return sum(dc_factorial[int(i)] for i in str(n))
 
-        def sf(n: int) -> int:
-            return sum(int(i) for i in str(f(n)))
+        def s(n: int) -> int:
+            return sum(int(i) for i in str(n))
 
         dc_g = {}
         s_needed = {i for i in range(1, max_num + 1)}
@@ -146,24 +149,27 @@ class Problem254:
         gen_candidates = non_decreasing_digits_unique_factorial_sum_generator()
         while len(s_needed) > 0:
             i = next(gen_candidates)
-            v = sf(i)
+            v = s(f(i))
             if v not in dc_g.keys():
                 if v in s_needed:
                     s_needed.remove(v)
-                    # print(f'g({v}) = {i}')
+                    print(f'g({v}) = {i}')
                 dc_g[v] = i
 
-        def sg(n: int) -> int:
-            return sum(int(i) for i in str(dc_g[n]))
-
-        ans = sum(sg(i) for i in range(1, max_num + 1))
+        ans = sum(s(dc_g[i]) for i in range(1, max_num + 1))
         return ans
 
     @timeit
     def solve(self, max_num) -> int:
         if max_num < 63:
-            return self.solve_under_63(max_num)
-        ans = self.solve_under_63(62)
+            if max_num <= 50:
+                return self.solve_under_63(max_num)
+            else:
+                ans = self.solve_under_63(50)
+                ans += self.solve_above_50_under_63(max_num)
+            return ans
+        ans = self.solve_under_63(50)
+        ans += self.solve_above_50_under_63(62)
         ans += sum(self.g_large_digit_sum(i) for i in range(63, max_num + 1))
         return ans
 
@@ -181,11 +187,11 @@ class Solution254(unittest.TestCase):
     def test_50_solution(self):
         self.assertEqual(997, self.problem.solve(50))
 
-    # def test_100_solution(self):
-    #     self.assertEqual(19846950, self.problem.solve(100))
+    def test_100_solution(self):
+        self.assertEqual(19846950, self.problem.solve(100))
 
-    # def test_150_solution(self):
-    #     self.assertEqual(8184523820510, self.problem.solve(150))
+    def test_150_solution(self):
+        self.assertEqual(8184523820510, self.problem.solve(150))
 
 
 if __name__ == '__main__':
@@ -260,31 +266,5 @@ if __name__ == '__main__':
 # g(66) = 123345556668899999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
 # g(67) = 13444556666888888899999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
 # g(68) = 1223334444566666888999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
-
-
-# g(62) = 12245555588888 + 27 nine's
-# = 9999989 -> 8*1 + 9*6 = 62
-
-# g(63) = 123345555588888 + 27 nine's
-# = 9999999 -> 9*7 = 63
-
-# g(64) = 13444555568 + 55 nine's
-# = 19999999 -> 1*1 + 9*7 = 64
-
-# g(65) = 122333444455566888888 + 82 nine's
-#  -> 1!*1 + 2!*2 + 3!*3 + 4!*4 + 5!*3 + 6!*2 + 7!*0 + 8!*6 + 9!*82
-#  = 1*1 + 2*2 + 6*3 + 24*4 + 120*3 + 720*2 + 5040*0 + 40320*6 + 362880*82
-# = 29999999 -> 1*2 + 9*7 = 65
-
-# g(66) = 1233455566688 + 110 nine's
-#  -> 1!*1 + 2!*1 + 3!*2 + 4!*1 + 5!*3 + 6!*3 + 7!*0 + 8!*2 + 9!*110
-#  = 1*1 + 2*1 + 6*2 + 24*1 + 120*3 + 720*3 + 5040*0 + 40320*2 + 362880*110
-# = 39999999 -> 1*3 + 9*7 = 66
-
-# g(67) = 134445566668888888 + 137 nine's
-#  -> 1!*1 + 2!*0 + 3!*1 + 4!*3 + 5!*2 + 6!*4 + 7!*0 + 8!*7 + 9!*137
-#  = 1*1 + 2*0 + 6*1 + 24*3 + 120*2 + 720*4 + 5040*0 + 40320*7 + 362880*137
-# = 49999999 -> 1*4 + 9*7 = 67
-
-
+# ...
 # g(150) = 1233456666668888888899999... {in total: 192,901,234,567 nines}
