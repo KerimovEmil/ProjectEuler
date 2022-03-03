@@ -97,21 +97,23 @@ class Problem254:
     def __init__(self):
         self.dc_factorial = {i: factorial(i) for i in range(1, 10)}
 
-    def g_large(self, n: int):
-        if n < 63:
-            raise NotImplementedError
-        nine, other = divmod(n, 9)
-        n = int(str(other) + nine * '9')
-        dc_out = {}
-        explained = 0
-        for i in range(1, 9):
-            new_explained = n % self.dc_factorial[i + 1]
-            dc_out[i] = (new_explained - explained) // self.dc_factorial[i]
-            explained = new_explained
-        dc_out[9] = (n - explained) // self.dc_factorial[9]
-        return ''.join(v * str(k) for k, v in dc_out.items())
-
     def g_large_digit_sum(self, n: int) -> int:
+        """
+        Examples
+            n = 67 -> 67%9==4 -> '4','9'*7
+            solution = (1,0,1,3,2,4,0,7,137)
+            x = 1!*a + 2!*b + 3!*c + 4!*d + 5!*e + 6!*f + 7!*g + 8!*h + 9!*i = 49999999
+            a<=1, b<=2, c<=3, d<=4, e<=5, f<=6, g<=7, h<=9
+            49999999==1 mod 2 -> a = 1
+            49999999==1 mod 3! = 1 + 2b -> b=0
+            49999999==7 mod 4! = 1 + 6c -> c=1
+            49999999==79 mod 5! = 7 + d*24 -> d=3
+            49999999==319 mod 6! = 79 + e*120 -> e=2
+            49999999==3199 mod 7! = 319 + f*720 -> f=4
+            49999999==3199 mod 8! = 3199 + g*7! -> g=0
+            49999999==285439 mod 9! = 3199 + h*40320 -> h=7
+            49999999=285439 + i*362880 -> i=137
+        """
         if n < 63:
             raise NotImplementedError
         nine, other = divmod(n, 9)
@@ -126,8 +128,11 @@ class Problem254:
         return sum(v * k for k, v in dc_out.items())
 
     @timeit
-    def solve(self, max_num: int = 20) -> int:
-        dc_factorial = {i: factorial(i) for i in range(1, 10)}
+    def solve_under_63(self, max_num: int) -> int:
+        """for max_num < 63, no quick solutions, must run through all cases"""
+        assert max_num < 63
+
+        dc_factorial = self.dc_factorial
 
         def f(n: int) -> int:
             return sum(dc_factorial[int(i)] for i in str(n))
@@ -136,7 +141,6 @@ class Problem254:
             return sum(int(i) for i in str(f(n)))
 
         dc_g = {}
-        # todo split into two functions, one for <63 and one for >=63
         s_needed = {i for i in range(1, max_num + 1)}
 
         gen_candidates = non_decreasing_digits_unique_factorial_sum_generator()
@@ -146,25 +150,20 @@ class Problem254:
             if v not in dc_g.keys():
                 if v in s_needed:
                     s_needed.remove(v)
-                    print(f'g({v}) = {i}')
-                else:
-                    pass
+                    # print(f'g({v}) = {i}')
                 dc_g[v] = i
-                if v == 62:
-                    break
-            else:
-                pass
-                # print(f'non-smallest g({i})=g({dc_g[v]})={v}')
-        # for i in range(63, max_num+1):
-        #     # g = self.g_large(i)
-        #     # print(f'g({i}) = {g}')
-        #     dc_g[i] = self.g_large(i)
 
         def sg(n: int) -> int:
             return sum(int(i) for i in str(dc_g[n]))
 
-        # ans = sum(sg(i) for i in range(1, max_num + 1))
-        ans = sum(sg(i) for i in range(1, min(63, max_num + 1)))
+        ans = sum(sg(i) for i in range(1, max_num + 1))
+        return ans
+
+    @timeit
+    def solve(self, max_num) -> int:
+        if max_num < 63:
+            return self.solve_under_63(max_num)
+        ans = self.solve_under_63(62)
         ans += sum(self.g_large_digit_sum(i) for i in range(63, max_num + 1))
         return ans
 
@@ -287,24 +286,5 @@ if __name__ == '__main__':
 #  = 1*1 + 2*0 + 6*1 + 24*3 + 120*2 + 720*4 + 5040*0 + 40320*7 + 362880*137
 # = 49999999 -> 1*4 + 9*7 = 67
 
-# n = 67 -> 67%9==4 -> '4','9'*7
-# solution = (1,0,1,3,2,4,0,7,137)
-# x = 1!*a + 2!*b + 3!*c + 4!*d + 5!*e + 6!*f + 7!*g + 8!*h + 9!*i = 49999999
-# a<=1, b<=2, c<=3, d<=4, e<=5, f<=6, g<=7, h<=9
-# 49999999==1 mod 2 -> a = 1
-# 49999999==1 mod 3! = 1 + 2b -> b=0
-# 49999999==7 mod 4! = 1 + 6c -> c=1
-# 49999999==79 mod 5! = 7 + d*24 -> d=3
-# 49999999==319 mod 6! = 79 + e*120 -> e=2
-# 49999999==3199 mod 7! = 319 + f*720 -> f=4
-# 49999999==3199 mod 8! = 3199 + g*7! -> g=0
-# 49999999==285439 mod 9! = 3199 + h*40320 -> h=7
-# 49999999=285439 + i*362880 -> i=137
-
 
 # g(150) = 1233456666668888888899999... {in total: 192,901,234,567 nines}
-
-
-# def f(n:int):
-#     a = sum(dc_factorial[int(i)] for i in str(n))
-#     return sum(int(i) for i in str(a))
