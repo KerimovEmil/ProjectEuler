@@ -153,7 +153,7 @@ class Problem254:
             if v not in dc_g.keys():
                 if v in s_needed:
                     s_needed.remove(v)
-                    print(f'g({v}) = {i}')
+                    # print(f'g({v}) = {i}')
                 dc_g[v] = i
 
         ans = sum(s(dc_g[i]) for i in range(1, max_num + 1))
