@@ -14,7 +14,7 @@ Let S(N) be the sum of all distinct M(p,q,N). S(100)=2262.
 Find S(10 000 000).
 
 ANSWER: 11109800204052
-Solve time ~5 seconds
+Solve time ~2 seconds
 """
 from util.utils import timeit
 import unittest
@@ -28,6 +28,26 @@ class Problem347:
 
     @staticmethod
     def max_multiplier(p: int, q: int, limit: int):
+        """
+        For primes, p,q, find the maximum n = p^x*q^y such that n <= limit
+        """
+        multiplier = 1
+        # get high-est power of p
+        while multiplier * p <= limit:
+            multiplier *= p
+        max_mult = multiplier
+
+        # reduce one power of p and get high-est available power of q
+        while multiplier % p == 0:
+            multiplier //= p
+            while multiplier * q <= limit:
+                multiplier *= q
+            max_mult = max(multiplier, max_mult)
+
+        return max_mult
+
+    @staticmethod
+    def max_multiplier_log_version(p: int, q: int, limit: int):
         """
         For primes, p,q, find the maximum n = p^x*q^y such that n <= limit
         """
