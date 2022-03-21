@@ -14,7 +14,7 @@ Let S(N) be the sum of all distinct M(p,q,N). S(100)=2262.
 Find S(10 000 000).
 
 ANSWER: 11109800204052
-Solve time ~9 seconds
+Solve time ~6.5 seconds
 """
 from util.utils import timeit
 import unittest
@@ -25,6 +25,25 @@ from primesieve import primes
 class Problem347:
     def __init__(self):
         pass
+
+    @staticmethod
+    def max_multiplier(p: int, q: int, limit: int):
+        """
+        For primes, p,q, find the maximum n = p^x*q^y such that n <= limit
+        """
+        max_mult = 1
+        log_limit = log(limit)
+        log_p = log(p)
+        log_q = log(q)
+        # x log(p) + y log(q) <= log(limit)
+        for x in range(int(log_limit / log_p) + 2):
+            y = int((log_limit - x*log_p) / log_q)
+            possible_n = pow(p, x) * pow(q, y)
+            if possible_n > limit:
+                break
+            max_mult = max(max_mult, possible_n)
+
+        return max_mult
 
     @timeit
     def solve(self, limit):
@@ -45,17 +64,8 @@ class Problem347:
                     break
 
                 multiplier_limit = limit // n
-                # add all p*q*p^x*q^y <= L
-                # p^x <= R
-                # x logp <= logR
-                # x <= logR / logp
-                max_mult = 1
-                for x in range(int(log(multiplier_limit) / log(p)) + 2):
-                    for y in range(int(log(multiplier_limit) / log(q)) + 2):
-                        possible_k = pow(p, x) * pow(q, y)
-                        if possible_k > multiplier_limit:
-                            break
-                        max_mult = max(max_mult, possible_k)
+
+                max_mult = self.max_multiplier(p, q, multiplier_limit)
                 sol_set.add(n * max_mult)
         return sum(sol_set)
 
