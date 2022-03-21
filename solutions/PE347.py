@@ -32,12 +32,12 @@ class Problem347:
         For primes, p,q, find the maximum n = p^x*q^y such that n <= limit
         """
         multiplier = 1
-        # get high-est power of p
+        # get the highest power of p
         while multiplier * p <= limit:
             multiplier *= p
         max_mult = multiplier
 
-        # reduce one power of p and get high-est available power of q
+        # reduce one power of p and replace with powers of q
         while multiplier % p == 0:
             multiplier //= p
             while multiplier * q <= limit:
@@ -70,12 +70,11 @@ class Problem347:
         # get relevant list of primes
         ls_primes = primes(limit // 2)
 
-        # store unique solutions into set
+        # store unique solutions into set to then sum up unique solutions only
         sol_set = set()
 
         # loop over pairs of primes p,q
-        for i in range(len(ls_primes)):
-            p = ls_primes[i]
+        for i, p in enumerate(ls_primes):
             for j in range(i + 1, len(ls_primes)):
                 q = ls_primes[j]
 
@@ -83,9 +82,7 @@ class Problem347:
                 if n > limit:
                     break
 
-                multiplier_limit = limit // n
-
-                max_mult = self.max_multiplier(p, q, multiplier_limit)
+                max_mult = self.max_multiplier(p=p, q=q, limit=limit // n)
                 sol_set.add(n * max_mult)
         return sum(sol_set)
 
