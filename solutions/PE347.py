@@ -14,7 +14,7 @@ Let S(N) be the sum of all distinct M(p,q,N). S(100)=2262.
 Find S(10 000 000).
 
 ANSWER: 11109800204052
-Solve time ~6.5 seconds
+Solve time ~5 seconds
 """
 from util.utils import timeit
 import unittest
@@ -36,7 +36,7 @@ class Problem347:
         log_p = log(p)
         log_q = log(q)
         # x log(p) + y log(q) <= log(limit)
-        for x in range(int(log_limit / log_p) + 2):
+        for x in range(round(log_limit / log_p) + 1):
             y = int((log_limit - x*log_p) / log_q)
             possible_n = pow(p, x) * pow(q, y)
             if possible_n > limit:
