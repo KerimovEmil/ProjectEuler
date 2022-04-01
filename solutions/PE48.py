@@ -1,11 +1,14 @@
-# PROBLEM
+"""
+PROBLEM
 
-# The series, 1^1 + 2^2 + 3^3 + ... + 10^10 = 10405071317.
+The series, 1^1 + 2^2 + 3^3 + ... + 10^10 = 10405071317.
 
-# Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
+Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
 
-# ANSWER
-# 9110846700
+ANSWER: 9110846700
+Solve time ~ 0.015 seconds
+"""
+import unittest
 from util.utils import timeit
 
 
@@ -29,9 +32,13 @@ class Problem48:
         return self.ans
 
 
-if __name__ == "__main__":
-    last_n_digits = 10
-    n = 1000
-    obj = Problem48(n=n, last_n_digits=last_n_digits)
-    sol = obj.solve()
-    print(sol)
+class Solution48(unittest.TestCase):
+    def setUp(self):
+        self.problem = Problem48(n=1000, last_n_digits=10)
+
+    def test_solution(self):
+        self.assertEqual(9110846700, self.problem.solve())
+
+
+if __name__ == '__main__':
+    unittest.main()

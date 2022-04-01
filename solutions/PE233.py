@@ -10,7 +10,7 @@ What is the sum of all positive integers N ≤ 10^11 such that f(N) = 42
 
 ANSWER: 271204031455541309
 
-Solve time ~3.5 seconds
+Solve time ~2.5 seconds
 """
 
 import unittest
@@ -115,15 +115,17 @@ class Problem233:
             gg.append(val)
         return int(self.n / min(gg)) + 1
 
-    def generate_ls_all_possible_multiples(self, largest_3mod4_prime):
+    def generate_ls_all_possible_multiples(self, largest_3mod4_prime, debug=False):
         """
         Args:
             largest_3mod4_prime: largest 3mod4 prime to consider
+            debug: <bool> to print logging or not
         Returns: a set of all possible multiples
         """
 
         all_multiples = set(range(largest_3mod4_prime))
-        print("{} is the number of available multiples".format(len(all_multiples)))
+        if debug:
+            print("{} is the number of available multiples".format(len(all_multiples)))
 
         # Get list of ALL numbers which are not multiples of 1mod4 primes
         for prime in self.ls_1mod4_primes:
@@ -132,27 +134,31 @@ class Problem233:
                 all_multiples.discard(num)
                 num += prime
 
-        print("{} is the number of available multiples left".format(len(all_multiples)))
+        if debug:
+            print("{} is the number of available multiples left".format(len(all_multiples)))
 
         return all_multiples
 
     @timeit
-    def solve(self):
+    def solve(self, debug=False):
         opts = [(3, 2, 1), (7, 3), (10, 2), (52,), (17, 1)]
         mins = (5, 13, 17)
 
         # filter the options by the minimum possible factor being less than N
         true_opts = [x for x in opts if Problem233.compute(mins, x) <= self.n]
-        print("{} are the only possible (1 mod 4) prime powers.".format(true_opts))
+        if debug:
+            print("{} are the only possible (1 mod 4) prime powers.".format(true_opts))
 
         # Compute the largest 3 mod 4 prime to consider
         min_factor_option = min([Problem233.compute(mins, x) for x in true_opts])
         largest_3mod4_prime = int(self.n / min_factor_option) + 1
-        print("Largest 3mod4 prime to consider is: {}".format(largest_3mod4_prime))
+        if debug:
+            print("Largest 3mod4 prime to consider is: {}".format(largest_3mod4_prime))
 
         # Compute the largest 1 mod 4 prime to consider
         largest_1mod4_prime = self.find_max_good(true_opts, mins)
-        print("Largest 1mod4 prime to consider is: {}".format(largest_1mod4_prime))
+        if debug:
+            print("Largest 1mod4 prime to consider is: {}".format(largest_1mod4_prime))
 
         # Generate list of primes
         available_primes = list(sieve(max(largest_1mod4_prime, largest_3mod4_prime)))
@@ -160,10 +166,11 @@ class Problem233:
         # Filter to get the list of relevant 1mod4 primes
         self.ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]
 
-        self.available_multiples = self.generate_ls_all_possible_multiples(largest_3mod4_prime)
+        self.available_multiples = self.generate_ls_all_possible_multiples(largest_3mod4_prime, debug)
         self.available_multiples = sorted(self.available_multiples)  # to ensure the order
 
-        print('Starting looping over every combination')
+        if debug:
+            print('Starting looping over every combination')
         for opt in true_opts:
             self.calc(opt)
         return self.ans_sum

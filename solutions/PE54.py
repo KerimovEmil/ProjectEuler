@@ -46,11 +46,12 @@ How many hands does Player 1 win?
 
 ANSWER: 376
 
-Solve time ~0.15  seconds
+Solve time ~0.09 seconds
 """
 
 from collections import Counter
 from enum import IntEnum
+import os
 
 import unittest
 from util.utils import timeit
@@ -301,7 +302,8 @@ class Problem54:
 
 class Solution54(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem54(txt_file=r"..\problem_data\p054_poker.txt")
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p054_poker.txt')
+        self.problem = Problem54(txt_file=file_path)
 
     def test_solution(self):
         self.assertEqual(376, self.problem.solve())
