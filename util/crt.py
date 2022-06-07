@@ -116,3 +116,18 @@ class ChineseRemainderTheoremSets:
 
             existing_set, existing_mod = root, combined_mod
         return existing_set
+
+
+def simple_crt_all_primes(ls_a: list[int], ls_p: list[int]) -> int:
+    """
+    Solve x = a_i (mod p_i)
+    """
+    a = ls_a[0]
+    m = ls_p[0]
+    for n, b in zip(ls_p[1:], ls_a[1:]):
+        new_mod = m * n
+        (x, y) = bezout_thm(m, n)  # solve for x,y such that m*x + n*y = 1
+        primary_root = b * x * m + a * y * n
+        root = primary_root % new_mod
+        a, m = root, new_mod
+    return a
