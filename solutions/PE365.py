@@ -53,7 +53,18 @@ class Problem365:
     def solve(self):
         # get mod p for each p in self.ls_p
         ls_p_mod_p = [(p, self.get_combin_mod_p(p)) for p in self.ls_p]
+        total_len = len(ls_p_mod_p)
+
         ans = 0
+
+        # for p_i in range(total_len):
+        #     p, mod_p = ls_p_mod_p[p_i]
+        #     print(p)
+        #     for q_i in range(p_i + 1, total_len):
+        #         q, mod_q = ls_p_mod_p[q_i]
+        #         for r_i in range(q_i + 1, total_len):
+        #             r, mod_r = ls_p_mod_p[r_i]
+        #             ans += simple_crt_all_primes([mod_p, mod_q, mod_r], [p, q, r])
 
         for p, mod_p in ls_p_mod_p:
             print(p)
@@ -61,7 +72,6 @@ class Problem365:
                 if p < q:
                     for r, mod_r in ls_p_mod_p:
                         if q < r:
-                            # ans += ChineseRemainderTheorem([mod_p, mod_q, mod_r], [p, q, r]).solve()
                             ans += simple_crt_all_primes([mod_p, mod_q, mod_r], [p, q, r])
         return ans
 

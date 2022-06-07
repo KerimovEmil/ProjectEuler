@@ -118,7 +118,7 @@ class ChineseRemainderTheoremSets:
         return existing_set
 
 
-def simple_crt_all_primes(ls_a: list[int], ls_p: list[int]) -> int:
+def simple_crt_all_primes(ls_a: List[int], ls_p: List[int]) -> int:
     """
     Solve x = a_i (mod p_i)
     """
