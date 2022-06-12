@@ -40,30 +40,12 @@ class FieldExtensionD:
         self.x = x
         self.y = y
         self.d = d
-        self.u_float = x + y * (d ** 0.5)
-
-    def conjugate(self):
-        return FieldExtensionD(x=self.x, y=-self.y, d=self.d)
-
-    def norm(self):
-        return self*self.conjugate()
 
     def __mul__(self, other):
         assert self.d == other.d
         f = self.x * other.x + self.y * self.d * other.y
         s = self.y * other.x + self.x * other.y
         return FieldExtensionD(x=f, y=s, d=self.d)
-
-    def __pow__(self, power: int):
-        # power is always greater than 0
-        if power <= 0:
-            raise NotImplementedError('Negative powers are not implemented.')
-        result = self
-        num_to_mult = power - 1
-        while num_to_mult > 0:
-            result *= self
-            num_to_mult -= 1
-        return result
 
 
 class Problem100:
