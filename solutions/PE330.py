@@ -37,7 +37,7 @@ class Problem330:
         A_mod_list = []
         b_mod_list = []
         for prime in self.prime_list:
-            print("curr prime =>", prime)
+            print("current prime =>", prime)
             euler_number = EulerNumber(prime)
             n_mod = (self.n - prime) % (prime * (prime - 1)) + prime if self.n >= prime else self.n
             print("n_mod =>", n_mod)
