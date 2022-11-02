@@ -6,7 +6,7 @@ where each “_” is a single digit.
 
 ANSWER:
 1389019170
-Solve time ~20 seconds
+Solve time < 0.1 seconds
 """
 
 from util.utils import timeit
@@ -20,14 +20,19 @@ class Problem206:
     @timeit
     def solve(self):
         template = '1_2_3_4_5_6_7_8_9'
-
         lower = int(int(template.replace('_', '0'))**0.5)
-        upper = int(int(template.replace('_', '9'))**0.5) + 1
+        compare = template.replace('_', '')
 
-        for n in range(lower, upper):
-            test = str(n ** 2)
-            if all(test[i] == template[i] for i in range(0, len(test), 2)):
-                return 10*n
+        i = 138902657
+        while i > lower:
+            if str(i * i)[::2] == compare:
+                break
+            i -= 4
+            if str(i * i)[::2] == compare:
+                break
+            i -= 6
+
+        return i * 10
 
 
 class Solution206(unittest.TestCase):
