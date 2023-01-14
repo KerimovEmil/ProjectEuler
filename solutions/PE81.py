@@ -7,7 +7,7 @@ a 31K text file containing a 80 by 80 matrix, from the top left to the bottom ri
 ANSWER:
 427337
 Solve time ~0.012 seconds
-Related problems: 82
+Related problems: 82, 83
 """
 
 import copy
