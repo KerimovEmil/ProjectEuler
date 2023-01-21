@@ -14,9 +14,8 @@ SKY is 19 + 11 + 25 = 55 = t10. If the word value is a triangle number then we s
 Using words.txt (right click and 'Save Link/Target As...'), a 16K text file containing
 nearly two-thousand common English words, how many are triangle words?
 
-ANSWER:
-162
-Solve time ~0.007 seconds
+ANSWER: 162
+Solve time: ~0.007 seconds
 """
 
 import unittest

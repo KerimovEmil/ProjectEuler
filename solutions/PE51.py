@@ -12,8 +12,7 @@ Find the smallest prime which, by replacing part of the number (not necessarily 
  is part of an eight prime value family.
 
 ANSWER: 121313
-
-Solve time ~1.7 seconds
+Solve time: ~1.7 seconds
 """
 
 # Useful insights from project euler solutions thread

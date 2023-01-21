@@ -5,7 +5,7 @@ Find the minimal path sum, in matrix.txt (right click and "Save Link/Target As..
 a 31K text file containing a 80 by 80 matrix, from the left column to the right column.
 
 ANSWER: 260324
-Solve time ~2.2 seconds
+Solve time: ~2.2 seconds
 Related problems: 81, 83
 """
 

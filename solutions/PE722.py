@@ -17,7 +17,7 @@ Find the value of E_{15}(1 - 2^-25).
 Give the answer in scientific notation rounded to twelve digits after the decimal point.
 
 ANSWER: 3.376792776502e132
-Solve time < 1 ms
+Solve time: < 1 ms
 """
 from util.utils import timeit
 import unittest

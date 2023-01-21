@@ -8,7 +8,7 @@ For example, R(10) = 1111111111 = 11×41×271×9091, and the sum of these prime 
 Find the sum of the first forty prime factors of R(10^9).
 
 ANSWER: 843296
-Solve time ~0.05 seconds
+Solve time: ~0.05 seconds
 """
 from util.utils import timeit
 import unittest

@@ -21,7 +21,7 @@ a(10) = (328161643 e - 652694486)/(10!)
 Find A(10^9) + B(10^9) and give your answer mod 77 777 777.
 
 ANSWER: 15955822
-Solve time ~268 seconds
+Solve time: ~268 seconds
 """
 import unittest
 from util.utils import EulerNumber

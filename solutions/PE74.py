@@ -23,7 +23,7 @@ number below one million is sixty terms.
 How many chains, with a starting number below one million, contain exactly sixty non-repeating terms?
 
 ANSWER: 402
-Solve time: ~4.4 seconds
+Solve time: ~4 seconds
 """
 from util.utils import timeit
 import unittest

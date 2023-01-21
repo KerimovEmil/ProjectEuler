@@ -5,9 +5,8 @@ By solving all fifty puzzles find the sum of the 3-digit numbers found in the to
 of each solution grid; for example, 483 is the 3-digit number found in the top left corner of
 the solution grid above.
 
-ANSWER:
-24702
-Solve time ~ 68 seconds
+ANSWER: 24702
+Solve time: ~68 seconds
 """
 
 import unittest
