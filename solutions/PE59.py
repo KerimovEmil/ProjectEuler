@@ -13,9 +13,8 @@ Your task has been made easy, as the encryption key consists of three lower case
  plain text must contain common English words, decrypt the message and find the sum of the ASCII values in the
  original text.
 
-
 ANSWER: 129448
-Solve time ~1.6 seconds
+Solve time: ~1.6 seconds
 """
 
 from util.utils import timeit

@@ -12,9 +12,8 @@ We can verify that F(50) = 7 and F(1000) = 1019.
 
 Find F(10^7).
 
-ANSWER:
-145159332
-Solve time ~1113 seconds ~ 19 mins
+ANSWER: 145159332
+Solve time: ~1113 seconds ~ 19 mins
 """
 
 from math import gcd

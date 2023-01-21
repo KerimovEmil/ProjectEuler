@@ -4,7 +4,7 @@ Given 7 different coloured balls, 10 of each, so 70 in totol. If we pick 20 ball
 number of unique colours chosen. Given your answer to the 9th decimal place.
 
 ANSWER: 6.818741802
-Solve time < 1 ms
+Solve time: < 1 ms
 """
 
 from util.utils import timeit

@@ -6,7 +6,7 @@ The series, 1^1 + 2^2 + 3^3 + ... + 10^10 = 10405071317.
 Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000.
 
 ANSWER: 9110846700
-Solve time ~ 0.015 seconds
+Solve time: ~0.015 seconds
 """
 import unittest
 from util.utils import timeit

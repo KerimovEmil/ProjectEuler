@@ -18,7 +18,7 @@ is the first example where the number of digits in the numerator exceeds the num
 In the first one-thousand expansions, how many fractions contain a numerator with more digits than denominator?
 
 ANSWER: 153
-Solve time ~0.004 seconds
+Solve time: ~0.004 seconds
 """
 import unittest
 from util.utils import timeit

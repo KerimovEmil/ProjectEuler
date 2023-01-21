@@ -6,7 +6,7 @@ primes, 792, represents the lowest sum for a set of four primes with this proper
 Find the lowest sum for a set of five primes for which any two primes concatenate to produce another prime.
 
 ANSWER: 26033
-Solve time ~3.8 seconds
+Solve time: ~3.8 seconds
 """
 
 from util.utils import timeit

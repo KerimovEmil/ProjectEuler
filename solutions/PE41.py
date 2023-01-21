@@ -6,9 +6,8 @@ For example, 2143 is a 4-digit pandigital and is also prime.
 
 What is the largest n-digit pandigital prime that exists?
 
-ANSWER:
-7652413
-Solve time ~0.5 seconds
+ANSWER: 7652413
+Solve time: ~0.5 seconds
 """
 
 # Note that:

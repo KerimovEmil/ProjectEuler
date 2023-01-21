@@ -24,7 +24,7 @@ Find the sum of the only ordered set of six cyclic 4-digit numbers for which eac
 square, pentagonal, hexagonal, heptagonal, and octagonal, is represented by a different number in the set.
 
 ANSWER: 28684
-Solve time ~0.03 seconds
+Solve time: ~0.03 seconds
 """
 
 from util.utils import timeit

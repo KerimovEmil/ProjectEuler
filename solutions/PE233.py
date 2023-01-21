@@ -9,8 +9,7 @@ It can be shown that f(10000) = 36.
 What is the sum of all positive integers N ≤ 10^11 such that f(N) = 420 ?
 
 ANSWER: 271204031455541309
-
-Solve time ~2.5 seconds
+Solve time: ~2.5 seconds
 """
 
 import unittest

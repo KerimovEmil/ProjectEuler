@@ -5,9 +5,8 @@ PROBLEM
 
 What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?
 
-ANSWER:
-232792560
-Solve time ~ 0.003 seconds
+ANSWER: 232792560
+Solve time: ~0.003 seconds
 """
 
 from collections import defaultdict
