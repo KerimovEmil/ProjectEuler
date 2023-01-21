@@ -24,10 +24,8 @@ ANSWER: 161667
 Solve time: ~1.1 seconds
 Related problems: 39
 """
-from util.utils import timeit
+from util.utils import timeit, coprime
 import unittest
-# from primesieve import primes
-from math import gcd
 
 
 # a^2 + b^2 = c^2, is primitive if and only if m and n are co-prime and one of them is even, m>n.
@@ -49,41 +47,25 @@ class Problem75:
     @timeit
     def solve(self, max_p=1_500_000):
         # perimeter = 2m(m+n)
-        # count number of product of two primes less than 1,500,000 // 2
-        # ls_p = list(primes(max_p // 2))
-        # ls_p = list(primes(int((max_p//2)**0.5)))
 
         count = 0
 
         dc = dict()
         for m in range(1, int((max_p//2) ** 0.5)):
-        # for m in range(1, max_p):
-            # for n in range(1, int(max_p ** 0.5)):
-            # for n in range(1, ((max_p//2)//m) - m):
-            for n in range(1, m):  # n<m
-                p0 = 2 * m * (m + n)
+            for n in range(1, m):  # 1 <= n < m
 
-                if (gcd(m, n) != 1) or ((m + n) % 2 == 0):
+                if not coprime(m, n) or (m + n) % 2 == 0:
                     continue
 
-                max_k = max_p // p0
-                for k in range(1, max_k + 1):
-
-                    # a = k * (m * m - n * n)
-                    # b = k * 2 * n * m
-                    # c = k * (m * m + n * n)
-
+                p0 = 2 * m * (m + n)
+                for k in range(1, max_p // p0 + 1):
                     p = k*p0
-                    if p > max_p:
-                        continue
 
                     prev_count = dc.get(p, 0)
                     if prev_count == 0:
                         count += 1
-                        # print(f'adding, p={p}, b,a,c={b, a, c}, m={m}, n={n}, k={k}')
                     elif prev_count == 1:
                         count -= 1
-                        # print(f'removing, p={c}, b,a,c={b, a, c}, m={m}, n={n}, k={k}')
                     dc[p] = prev_count + 1
 
         return count
