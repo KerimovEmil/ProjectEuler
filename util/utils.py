@@ -1095,3 +1095,9 @@ def cycle_length(k: int) -> int:
         x = (x*10) % k
         d += 1
     return d
+
+
+def coprime(a: int, b: int) -> bool:
+    while b != 0:
+        a, b = b, a % b
+    return a == 1

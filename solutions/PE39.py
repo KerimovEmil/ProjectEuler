@@ -10,6 +10,7 @@ For which value of p <= 1000, is the number of solutions maximised?
 
 ANSWER: 840
 Solve time: ~0.05 seconds
+Related problems: 75
 """
 
 # (a,b,c) int s.t. a^2 + b^2 = c^2
