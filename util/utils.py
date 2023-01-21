@@ -620,7 +620,7 @@ def timeit(method):
         ts = time.time()
         result = method(*args, **kw)
         te = time.time()
-        print('{} took: {:.3f} seconds'.format(method.__name__, (te - ts)))
+        print('{} took: {:.3f} seconds'.format(method.__module__, (te - ts)))
         return result
     return timed
 
