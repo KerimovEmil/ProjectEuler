@@ -32,10 +32,6 @@ import unittest
 factorials_0_to_9 = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
 
 
-def next_term(n):
-    return sum(factorials_0_to_9[int(i)] for i in str(n))
-
-
 class Problem74:
     def __init__(self):
         pass
