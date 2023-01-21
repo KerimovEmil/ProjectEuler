@@ -23,7 +23,7 @@ number below one million is sixty terms.
 How many chains, with a starting number below one million, contain exactly sixty non-repeating terms?
 
 ANSWER: 402
-Solve time: ~69 seconds
+Solve time: ~4.4 seconds
 """
 from util.utils import timeit
 import unittest
@@ -34,29 +34,34 @@ factorials_0_to_9 = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
 
 class Problem74:
     def __init__(self):
-        pass
+        self.dc = dict()
 
     @staticmethod
     def next_term(n: int) -> int:
         return sum(factorials_0_to_9[int(i)] for i in str(n))
 
-    @staticmethod
-    def num_of_non_repeating_terms(n: int) -> int:
+    def num_of_non_repeating_terms(self, n: int) -> int:
         count = 0
         seen = set()
 
         while n not in seen:
             seen.add(n)
             count += 1
-            n = Problem74.next_term(n)
+            n = self.next_term(n)
+
+            if n in self.dc.keys():
+                return count + self.dc[n]
 
         return count
 
     @timeit
     def solve(self, target=60, max_n=1_000_000):
         ans = 0
+
         for i in range(1, max_n+1):
             non_repeat = self.num_of_non_repeating_terms(i)
+            self.dc[i] = non_repeat
+
             if non_repeat == target:
                 ans += 1
         return ans
