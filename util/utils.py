@@ -844,9 +844,9 @@ def generate_ascending_sub_sequence(options, num):
 
 
 @lru_cache(maxsize=None, typed=False)
-def partition_number(n):
+def partition_number(n, mod=None):
     """
-    Compute the partition number of n.
+    Compute the partition number of n, mod m
     Using recursive equation found here: http://www.cs.utsa.edu/~wagner/python/fp/part.html
     p(n) = sum_{k=1}^{n} (-1)^{k+1} (p(x) + p(y))
     x = n - k*(3k-1)/2
@@ -856,13 +856,20 @@ def partition_number(n):
         return 0
     if n == 0:
         return 1
-    sign = 1
+
+    m_sign = 1
     summation = 0
+
     for k in range(1, n+1):
-        x = n - int(k*(3*k-1)/2)
-        y = n - int(k*(3*k+1)/2)
-        summation += sign*(partition_number(x) + partition_number(y))
-        sign *= -1
+        if k*(3*k-1) // 2 > n:
+            break
+
+        x = n - k*(3*k-1) // 2
+        y = n - k*(3*k+1) // 2
+        summation += m_sign*(partition_number(x, mod=mod) + partition_number(y, mod=mod))
+        m_sign *= -1
+    if mod:
+        summation = summation % mod
     return summation
 
 
