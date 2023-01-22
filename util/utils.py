@@ -626,7 +626,7 @@ def timeit(method):
 
 
 def is_pandigital(num):
-    """Return true if integer num uses all of the digits from 1 to n exactly once. False otherwise."""
+    """Return true if integer num uses the digits from 1 to n exactly once. False otherwise."""
     str_num = str(num)
     if str_num.count('0') > 0:
         return False
@@ -861,13 +861,14 @@ def partition_number(n, mod=None):
     summation = 0
 
     for k in range(1, n+1):
-        if k*(3*k-1) // 2 > n:
+        if k*(3*k-1) > 2*n:
             break
 
         x = n - k*(3*k-1) // 2
         y = n - k*(3*k+1) // 2
-        summation += m_sign*(partition_number(x, mod=mod) + partition_number(y, mod=mod))
+        summation += m_sign * (partition_number(x, mod=mod) + partition_number(y, mod=mod))
         m_sign *= -1
+
     if mod:
         summation = summation % mod
     return summation
@@ -973,10 +974,10 @@ def num_of_divisors(n):
 
 def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
     """
-    Given the prime factorization of a number, return a generator of all of it's divisors.
+    Given the prime factorization of a number, return a generator of the divisors.
     Args:
         prime_factors: a dictionary with the key being the prime and the value being the multiplicity of the prime.
-    For example if n=12 then then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
+    For example if n=12 then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
     1,2,4,3,6,12
     """
     ls_primes = list(prime_factors.keys())
