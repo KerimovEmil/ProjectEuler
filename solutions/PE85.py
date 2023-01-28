@@ -11,26 +11,6 @@ Solve time: ~2ms
 from util.utils import timeit
 import unittest
 
-# min_{m, n}  x
-# s.t.
-#   (m+1)*m*(n+1)*n - 4*t <= x
-#   4*t - (m+1)*m*(n+1)*n <= x
-
-# min (m+1)*m*(n+1)*n - 4*t
-# s.t.
-#   (m+1)*m*(n+1)*n <= x + 4*t
-#   4*t - x <= (m+1)*m*(n+1)*n
-
-# r = (m+1)*m*(n+1)*n / 4
-# r = (m^2+m)(n^2+n) / 4
-# r = [(m^2+m)n^2 + (m^2+m)n] / 4
-# r = [m^2*n^2 + m*n^2 + m^2*n + m*n] / 4
-# a = m*n
-# r = [a^2 + a + m*n(n + m)] / 4
-# r = [a^2 + a*(n + m + 1)] / 4
-# r = a * [a + n + m + 1] / 4
-# r = a * [a + n + m + 1] ~= 4t
-
 
 class Problem85:
     def __init__(self):
@@ -63,8 +43,8 @@ class Problem85:
         # n^2 < 2828.4 < (n + 1)^2
         # n < 53.18 < (n + 1)
         # n = 53
-        sample_n = int((target*4)**0.25)
 
+        sample_n = int((target*4)**0.25)
         max_n = 2*sample_n
 
         min_distance = self.num_of_rect(sample_n, sample_n)
