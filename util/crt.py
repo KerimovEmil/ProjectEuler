@@ -53,6 +53,18 @@ class SetInteger(Set):
         else:
             return NotImplementedError
 
+    def __pow__(self, other: int):
+        if isinstance(other, int):
+            return SetInteger(pow(x, other) for x in self)
+        else:
+            return NotImplementedError
+
+    def get_all_under(self, max_limit):
+        if isinstance(max_limit, int):
+            return SetInteger(x for x in self if x <= max_limit)
+        else:
+            return NotImplementedError
+
 
 class ChineseRemainderTheorem:
     """
