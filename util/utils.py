@@ -444,6 +444,7 @@ def basic_falling_factorial(high, low):
         i += 1
     return ans
 
+
 def lcm(x, y):
     return x * y // gcd(x, y)
 
@@ -816,7 +817,7 @@ def generate_ascending_sub_sequence(options, num):
         options: <list> of objects, ordered in ascending order
         num: <int> the size of the sub-sequence to return
 
-    Returns: an generator of sub-sequences of options in ascending order
+    Returns: a generator of sub-sequences of options in ascending order
 
     e.g.
      options = ['0', '1', '2']
@@ -997,6 +998,112 @@ def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
                     prime_to_i *= prime
 
     yield from generate(0)
+
+
+def all_possible_factorizations(prime_factors: dict[int, int]) -> set[tuple[int]]:
+    """
+    Returns all unique ways to factorize a number given its prime factors and multiplicities.
+
+    Args:
+        prime_factors (dict[int, int]): A dictionary where the keys are prime factors and the values are their
+        multiplicities.
+
+    Returns:
+        set[tuple[int]]: A set of tuples, where each tuple represents a unique way to factorize the number.
+
+    Example:
+    >>> all_possible_factorizations({2:2, 3:1})
+    {(2, 2, 3), (2, 4, 3), (4, 3), (2, 2, 2, 3)}
+    """
+    num = 1
+    for prime, power in prime_factors.items():
+        num *= prime**power
+    factorizations = set()
+    factorizations.add((num,))
+
+    # number is just a prime number
+    if len(prime_factors) == 1:
+        prime, multiplicity = list(prime_factors.items())[0]
+        if multiplicity == 1:
+            return factorizations
+        # if multiplicity == 2:  # n = p^2
+        #     factorizations.add((prime, prime))
+        #     return factorizations
+        # if multiplicity == 3:  # n = p^3
+        #     factorizations.add((prime, prime, prime))
+        #     factorizations.add((prime, prime*prime))
+        #     return factorizations
+
+    # if a power of a prime (n = p^x)
+    if len(prime_factors) == 1:
+        prime, power = list(prime_factors.items())[0]
+        # factorization -> (p, p^{x-1}), (p, p, p, ..., p), ...
+        # euler_totient_function(x) options of factorization
+        for i in range(1, power//2 + 1):
+            min_power = min(i, power-i)
+            max_power = max(i, power-i)
+
+            factors_1 = all_possible_factorizations({prime: min_power})
+            factors_2 = all_possible_factorizations({prime: max_power})
+
+            for f1 in factors_1:
+                for f2 in factors_2:
+                    factorizations.add(tuple(sorted(f1 + f2)))
+        return factorizations
+
+    for prime, power in prime_factors.items():
+        for i in range(1, power+1):
+            factors_1 = all_possible_factorizations({prime: i})
+            dc_f2 = {p: e for p, e in prime_factors.items() if p != prime}
+            if i != power:
+                dc_f2[prime] = power - i
+            factors_2 = all_possible_factorizations(dc_f2)
+
+            for f1 in factors_1:
+                for f2 in factors_2:
+                    factorizations.add(tuple(sorted(f1 + f2)))
+
+    return factorizations
+
+
+def factorize(num: int, primes: set[int], cache: dict[int, set[tuple[int]]]) -> set[tuple[int]]:
+    """
+    Returns all unique ways to factorize a given number `num` into prime factors.
+
+    Parameters:
+    num (int): The number to factorize.
+    primes (set[int]): A set of prime numbers.
+    cache (dict[int, set[tuple[int]]]): A cache to store previously computed factorizations.
+
+    Returns:
+    set[tuple[int]]: A set of tuples, where each tuple represents a unique way to factorize `num` into prime factors.
+
+    Example:
+    >>> factorize(12, {2, 3, 5}, {})
+    {(2, 2, 3), (12,), (2, 6), (3, 4)}
+    """
+    if num in primes:
+        cache[num] = {(num,)}
+        return cache[num]
+
+    factorizations = cache.get(num, set())
+    if len(factorizations) > 0:  # number was a prime. i.e. one prime factor with multiplicity of 1
+        return factorizations
+
+    for i in range(2, int(num ** 0.5) + 1):
+        q, r = divmod(num, i)
+        if r == 0:
+            factors1 = factorize(i, primes, cache)
+            factors2 = factorize(q, primes, cache)
+            for f1 in factors1:
+                for f2 in factors2:
+                    tmp = list(f1 + f2)
+                    tmp.sort()
+                    factorizations.add(tuple(tmp))
+
+    factorizations.add((num,))
+    cache[num] = factorizations
+    return factorizations
 
 
 @lru_cache(maxsize=None)
