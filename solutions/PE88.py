@@ -25,10 +25,8 @@ What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
 ANSWER: 7587457
 Solve time: ~ seconds
 """
-from util.utils import timeit, all_possible_factorizations, primes_of_n
+from util.utils import timeit
 import unittest
-# from math import prod
-from primesieve import primes
 
 # NOTE 1: the product of positive integers will always be greater than the sum, unless it is 2x2=2+2 or contains 1's.
 
@@ -41,6 +39,15 @@ from primesieve import primes
 
 # Note 4: given Note 1, we should always have some 1 terms (except for 2x2) and at least 2 non-one terms.
 
+# k=66: 132 = 2 × 66 × 1^64 = 2 + 66 + 1*66                 -> 1+1+64 = 66
+# k=100: 108 = 2^2 × 3^3 × 1^95 = 2 + 2 + 3 + 3 + 3 + 1*95  -> 2+3+95=100
+
+
+def small_factor_generator(n):
+    for i in range(2, 1 + int(n ** 0.5)):
+        if n % i == 0:
+            yield i
+
 
 class Problem88:
     def __init__(self):
@@ -48,23 +55,24 @@ class Problem88:
 
     @timeit
     def solve(self, n):
-        ls_primes = list(primes(n))
+        """
+        Get the sum of the minimum n = prod(S(k)) = sum(S(k)) where S(k) is a set of k numbers between 2 <= k <= max_k.
 
-        # min_factorization = [2 * n] * (n + 1)
-        # min_factorization[1] = 0
+        Fact: n = prod(S(k)) = sum(S(k)) > k.
+        Fact: n is not prime.
+        """
 
-        pairs = {}
-        for num in range(4, 2*n + 1):
-            ways = all_possible_factorizations(primes_of_n(num, ls_primes))
-            for w in ways:
-                if len(w) > 1:
-                    k = num - sum(w) + len(w)
-                    if k <= n:
-                        pairs.setdefault(k, num)
-        res = sum(set(pairs.values()))
-        print(pairs)
-
-        return res
+        best = [0] * (n + 1)
+        sum_decomp = {}
+        for i in range(2, 2 * n + 1):
+            sum_decomp[i] = set([(1, i)])
+            for k in small_factor_generator(i):
+                for a, b in sum_decomp[i // k]:
+                    sum_decomp[i].add((a + 1, b + k))
+                    dex = i + (a + 1) - (b + k)
+                    if dex <= n and best[dex] == 0:
+                        best[dex] = i
+        return sum(set(best[2:]))
 
 
 class Solution88(unittest.TestCase):
@@ -80,11 +88,11 @@ class Solution88(unittest.TestCase):
     def test_n_100_solution(self):
         self.assertEqual(2061, Problem88().solve(n=100))
 
-    # def test_n_1200_solution(self):
-    #     self.assertEqual(125128, Problem88().solve(n=1200))
+    def test_n_1200_solution(self):
+        self.assertEqual(125128, Problem88().solve(n=1200))
 
-    # def test_solution(self):
-    #     self.assertEqual(7587457, Problem88().solve(n=12000))
+    def test_solution(self):
+        self.assertEqual(7587457, Problem88().solve(n=12000))
 
 
 if __name__ == '__main__':
