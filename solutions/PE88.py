@@ -83,19 +83,19 @@ class Solution88(unittest.TestCase):
         self.problem = Problem88()
 
     def test_n_6_solution(self):
-        self.assertEqual(30, Problem88().solve(n=6))
+        self.assertEqual(30, self.problem.solve(n=6))
 
     def test_n_12_solution(self):
-        self.assertEqual(61, Problem88().solve(n=12))
+        self.assertEqual(61, self.problem.solve(n=12))
 
     def test_n_100_solution(self):
-        self.assertEqual(2061, Problem88().solve(n=100))
+        self.assertEqual(2061, self.problem.solve(n=100))
 
     def test_n_1200_solution(self):
-        self.assertEqual(125128, Problem88().solve(n=1200))
+        self.assertEqual(125128, self.problem.solve(n=1200))
 
     def test_solution(self):
-        self.assertEqual(7587457, Problem88().solve(n=12000))
+        self.assertEqual(7587457, self.problem.solve(n=12000))
 
 
 if __name__ == '__main__':
