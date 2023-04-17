@@ -444,6 +444,7 @@ def basic_falling_factorial(high, low):
         i += 1
     return ans
 
+
 def lcm(x, y):
     return x * y // gcd(x, y)
 
@@ -816,7 +817,7 @@ def generate_ascending_sub_sequence(options, num):
         options: <list> of objects, ordered in ascending order
         num: <int> the size of the sub-sequence to return
 
-    Returns: an generator of sub-sequences of options in ascending order
+    Returns: a generator of sub-sequences of options in ascending order
 
     e.g.
      options = ['0', '1', '2']
