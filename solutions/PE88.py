@@ -44,7 +44,7 @@ import unittest
 
 
 def small_factor_generator(n):
-    for i in range(2, 1 + int(n ** 0.5)):
+    for i in range(2, int(n ** 0.5) + 1):
         if n % i == 0:
             yield i
 
@@ -61,14 +61,17 @@ class Problem88:
         Fact: n = prod(S(k)) = sum(S(k)) > k.
         Fact: n is not prime.
         """
-
+        # from thread answer:
+        # For each N, we want A(N): all (f, s) such that there are f integers >= 1 whose sum is s and product is N
+        # If (f, s) is in A(N), then N is a solution to the problem for k = N+f-s.
         best = [0] * (n + 1)
         sum_decomp = {}
-        for i in range(2, 2 * n + 1):
-            sum_decomp[i] = set([(1, i)])
-            for k in small_factor_generator(i):
-                for a, b in sum_decomp[i // k]:
+        for i in range(2, 2 * n + 1):  # e.g. i = 36
+            sum_decomp[i] = {(1, i)}  # e.g. 36 = 1 x 36
+            for k in small_factor_generator(i):  # e.g. k = [2, 3, 4, 6]
+                for a, b in sum_decomp[i // k]:  # i//k -> [18, 12, 9, 6]
                     sum_decomp[i].add((a + 1, b + k))
+                    # store best digit result
                     dex = i + (a + 1) - (b + k)
                     if dex <= n and best[dex] == 0:
                         best[dex] = i
