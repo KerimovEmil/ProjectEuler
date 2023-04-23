@@ -19,7 +19,7 @@ We shall call A(x) a golden nugget if x is rational, because they become increas
 Find the sum of the first thirty golden nuggets.
 
 ANSWER: 5673835352990
-Solve time ~0.001 seconds
+Solve time: ~0.001 seconds
 """
 import unittest
 from util.utils import timeit

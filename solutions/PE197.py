@@ -7,9 +7,8 @@ the sequence u(n) is defined by u(0) = -1 and u(n+1) = f(u(n)).
 Find u(n) + u(n+1) for n = 10^12.
 Give your answer with 9 digits after the decimal point.
 
-ANSWER:
-1.710637717
-Solve time ~ 0.001 seconds
+ANSWER: 1.710637717
+Solve time: ~0.001 seconds
 """
 
 import unittest

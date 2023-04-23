@@ -11,7 +11,7 @@ but there is one other 4-digit increasing sequence.
 What 12-digit number do you form by concatenating the three terms in this sequence?
 
 ANSWER: 2969, 6299, 9629: 296962999629
-Solve time ~0.2 seconds
+Solve time: ~0.2 seconds
 """
 
 import unittest

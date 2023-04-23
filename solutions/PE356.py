@@ -7,7 +7,7 @@ For example, a_2 = 3.86619826...
 Find the last eight digits of sum_{i=0}^{30} floor(a_i^987654321)
 
 ANSWER: 28010159
-Solve time ~ 0.003 seconds
+Solve time: ~0.003 seconds
 """
 from util.utils import LinearHomogeneousRecurrence, timeit
 import unittest

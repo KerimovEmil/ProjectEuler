@@ -24,7 +24,7 @@ The normal line is perpendicular to this tangent line at the point of incidence.
 How many times does the beam hit the internal surface of the white cell before exiting?
 
 ANSWER: 354
-Solve time ~0.004 seconds
+Solve time: ~0.004 seconds
 """
 
 from util.utils import timeit

@@ -9,9 +9,8 @@ There are 120 reversible numbers below one-thousand.
 
 How many reversible numbers are there below one-billion (10^9)?
 
-ANSWER:
-608720
-Solve time ~ 0.003s seconds
+ANSWER: 608720
+Solve time: ~0.003 seconds
 """
 import math
 

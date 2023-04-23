@@ -21,8 +21,7 @@ Find the expected value of the number represented by what we have written down w
 down then count that as zero.) Give your answer rounded to 8 places after the decimal point.
 
 ANSWER: 319.30207833
-
-Solve time ~0.58 seconds
+Solve time: ~0.58 seconds
 """
 
 import numpy as np

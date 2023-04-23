@@ -23,8 +23,7 @@ There are 75373 such numbers that do not exceed 10^7.
 How many such numbers are there that do not exceed 2×10^9?
 
 ANSWER: 11325263
-
-Solve time ~5.6 seconds
+Solve time: ~5.6 seconds
 """
 import numpy as np
 from primesieve.numpy import primes  # much faster than primesieve.primes

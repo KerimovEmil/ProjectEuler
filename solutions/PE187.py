@@ -7,9 +7,8 @@ There are ten composites below thirty containing precisely two, not necessarily 
 4, 6, 9, 10, 14, 15, 21, 22, 25, 26.
 
 How many composite integers, n < 10^8, have precisely two, not necessarily distinct, prime factors?
-ANSWER:
-17427258
-Solve time ~ 0.04 seconds
+ANSWER: 17427258
+Solve time: ~ 0.04 seconds
 """
 
 from primesieve import primes, count_primes
