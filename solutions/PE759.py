@@ -318,9 +318,6 @@ def new_s2(n, m=1000000007):  # up to 10^6 is fast
     return ans % m
 
 
-
-
-
 # general for sum of numbers with a particular hamming weight, less then 2^x
 # f(n) = sum([i for i in range(int(2**x)) if hamming_weight(i)==n])
 # f(1) = f(x) = 2^x - 1
