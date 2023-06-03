@@ -5,73 +5,34 @@ Let T be the sequence of triangular numbers, i.e. T(n) = n(n+1)/2
 Find the sum of all indices n such that T(n) is 47-smooth.
 
 ANSWER: 2,227,616,372,734
-Solve time: ~38 seconds
+Solve time: ~24 seconds
+
+Key Idea:
+Størmer's theorem - that is, all P-smooth consecutive numbers can be generated using the solution to Pell's equation
+x^2 - dy^2 = 1.
+Essentially, for every squarefree 47-smooth q not equal to 2, we solve sufficiently many solutions to x^2-dq y^2 = 1
+For each solution, (x-1)/2 is a candidate for this problem's n.
+
+See here for more details: https://en.wikipedia.org/wiki/St%C3%B8rmer%27s_theorem
+
+Using that theorem and https://oeis.org/A117581 we get:
+ the upperbound on consecutive 47-smooth numbers is 1,109,496,723,126
 """
-from util.utils import timeit
+from util.utils import timeit, smooth_numbers
 import unittest
-from typing import List
-import heapq
-from math import log
-
-
-def generate_prime_min_heap(ls_p: List[int] = [2, 3, 5], max_n=20):
-    """
-    Given a list of prime numbers, generate a list of increasing numbers such that numbers only have the inputted
-    list of prime factors.
-    """
-    heap = [1]
-    generated_numbers = set([1])
-
-    while len(generated_numbers) < max_n:  # Set the desired number of generated values
-        num = heapq.heappop(heap)
-
-        for factor in ls_p:
-            multiplied = num * factor
-
-            if multiplied not in generated_numbers:
-                generated_numbers.add(multiplied)
-                heapq.heappush(heap, multiplied)
-
-    return generated_numbers
-
-
-def k_smooth_numbers(primes, limit):
-    k_s_n = [1]
-    p = primes
-
-    while len(p) != 0:
-        temp_k_s_n = []
-        curr_p = p.pop(0)
-        power_limit = int(log(limit, curr_p)) + 1
-        curr_multiples = [curr_p ** x for x in range(1, power_limit + 1)]
-        for x in curr_multiples:
-            for y in k_s_n:
-                temp = x * y
-                if temp <= limit:
-                    temp_k_s_n.append(temp)
-        k_s_n += temp_k_s_n
-    return sorted(k_s_n)
 
 
 class Problem581:
     def __init__(self):
-        # self.ls_prime = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
         self.ls_prime = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
 
     @timeit
     def solve(self):
-        # ls_47_smooth = generate_prime_min_heap(ls_p=self.ls_prime, max_n=10_000_000)
-        # 1,109,496,723,126 taken from https://oeis.org/A117581
-        ls_47_smooth = k_smooth_numbers(primes=self.ls_prime, limit=1_109_496_723_127)
-
-        ans = 0
-        prev = -1
-        for n in ls_47_smooth:
-            # 2 consecutive smooth numbers implies that t(prev) was also smooth, since n and n-1 are smooth
-            if n == prev+1:
-                ans += prev
-            prev = n
-        return ans
+        ls_47_smooth = smooth_numbers(current_prime_index=0, current_value=1, ls_primes=self.ls_prime,
+                                      max_n=1_109_496_723_127)
+        set_47_smooth = set(ls_47_smooth)
+        # 2 consecutive smooth numbers implies that t(n) was also smooth, since n and n+1 are smooth
+        return sum([n for n in set_47_smooth if n + 1 in set_47_smooth])
 
 
 class Solution581(unittest.TestCase):
