@@ -1151,7 +1151,7 @@ def pisano_period(m: int) -> int:
         return 1
 
     prev, curr = 0, 1
-    for i in range(0, m * m):  # The loop will run for at most m*m times
+    for i in range(0, m * m):
         prev, curr = curr, (prev + curr) % m
         if (prev, curr) == (0, 1):
             return i + 1
