@@ -1138,3 +1138,21 @@ def smooth_numbers(current_prime_index, current_value, ls_primes, max_n):
         current_value *= current_prime
 
     return results
+
+
+def pisano_period(m: int) -> int:
+    """
+    Returns the pisano period of integer m.
+    The period with which the sequence of Fibonacci numbers taken modulo n repeats.
+
+    See Also: https://en.wikipedia.org/wiki/Pisano_period
+    """
+    if m == 1:
+        return 1
+
+    prev, curr = 0, 1
+    for i in range(0, m * m):
+        prev, curr = curr, (prev + curr) % m
+        if (prev, curr) == (0, 1):
+            return i + 1
+    return m
