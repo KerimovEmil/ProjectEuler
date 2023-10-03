@@ -1110,3 +1110,49 @@ def coprime(a: int, b: int) -> bool:
     while b != 0:
         a, b = b, a % b
     return a == 1
+
+
+def smooth_numbers(current_prime_index, current_value, ls_primes, max_n):
+    """
+    Return a list of all smooth numbers up to the given limit.
+
+    A smooth number is a natural number that is divisible by no primes other than 2 and 3.
+
+    Args:
+      current_prime_index: The index of the current prime in the list primes.
+      current_value: The current value.
+      ls_primes: A list of primes.
+      max_n: The maximum number to consider.
+
+    Returns:
+      A list of all smooth numbers up to the given limit.
+    """
+
+    if current_prime_index == len(ls_primes):
+        return [current_value]
+
+    current_prime = ls_primes[current_prime_index]
+    results = []
+    while current_value <= max_n:
+        results.extend(smooth_numbers(current_prime_index + 1, current_value, ls_primes, max_n))
+        current_value *= current_prime
+
+    return results
+
+
+def pisano_period(m: int) -> int:
+    """
+    Returns the pisano period of integer m.
+    The period with which the sequence of Fibonacci numbers taken modulo n repeats.
+
+    See Also: https://en.wikipedia.org/wiki/Pisano_period
+    """
+    if m == 1:
+        return 1
+
+    prev, curr = 0, 1
+    for i in range(0, m * m):
+        prev, curr = curr, (prev + curr) % m
+        if (prev, curr) == (0, 1):
+            return i + 1
+    return m
