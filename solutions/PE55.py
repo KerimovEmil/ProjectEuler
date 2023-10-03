@@ -25,7 +25,7 @@ Surprisingly, there are palindromic numbers that are themselves Lychrel numbers;
 How many Lychrel numbers are there below ten-thousand?
 
 ANSWER: 249
-Solve time ~ 0.12 seconds
+Solve time: ~0.12 seconds
 """
 import unittest
 from util.utils import timeit, is_palindrome

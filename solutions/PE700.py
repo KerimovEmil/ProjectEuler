@@ -12,9 +12,8 @@ is greater than 1504170715041707 so is not an Eulercoin. However, the third term
 The sum of the first 2 Eulercoins is therefore 1513083232796311.
 Find the sum of all Eulercoins.
 
-ANSWER:
-1517926517777556
-Solve time ~0.003 seconds
+ANSWER: 1517926517777556
+Solve time: ~0.003 seconds
 """
 import unittest
 from util.utils import timeit

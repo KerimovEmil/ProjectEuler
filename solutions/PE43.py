@@ -15,9 +15,8 @@ d7d8d9=728 is divisible by 13
 d8d9d10=289 is divisible by 17
 Find the sum of all 0 to 9 pandigital numbers with this property.
 
-ANSWER:
-16695334890
-Solve time ~0.007 seconds
+ANSWER: 16695334890
+Solve time: ~0.007 seconds
 """
 
 # d2 d3 d4 is divisible by 2 implies d4 = 0,2,4,6,8

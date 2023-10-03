@@ -8,9 +8,8 @@ Therefore any chain that arrives at 1 or 89 will become stuck in an endless loop
 What is most amazing is that EVERY starting number will eventually arrive at 1 or 89.
 How many starting numbers below ten million will arrive at 89?
 
-ANSWER:
-8581146
-Solve time ~0.12 seconds
+ANSWER: 8581146
+Solve time: ~0.12 seconds
 """
 
 import functools

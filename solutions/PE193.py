@@ -6,9 +6,8 @@ square-free, but not 4, 8, 9, 12.
 
 How many square-free numbers are there below 2^50?
 
-ANSWER:
-684465067343069
-Solve time ~23 seconds
+ANSWER: 684465067343069
+Solve time: ~23 seconds
 
 References:
   https://arxiv.org/pdf/1107.4890.pdf

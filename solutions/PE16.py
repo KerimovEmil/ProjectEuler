@@ -5,9 +5,8 @@ PROBLEM
 
 What is the sum of the digits of the number 2^1000?
 
-ANSWER:
-1366
-Solve time ~0.003 seconds
+ANSWER: 1366
+Solve time: ~0.003 seconds
 """
 
 import unittest

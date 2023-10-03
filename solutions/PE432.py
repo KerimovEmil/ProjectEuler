@@ -7,9 +7,8 @@ You are given that S(510510,10^6)= 45480596821125120.
 Find S(510510,10^11).
 Give the last 9 digits of your answer.
 
-ANSWER:
-754862080
-Solve time 618 seconds ~ 10 mins + 20 seconds
+ANSWER: 754862080
+Solve time: 618 seconds ~ 10 mins + 20 seconds
 """
 
 import unittest

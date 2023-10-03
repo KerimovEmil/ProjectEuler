@@ -11,7 +11,6 @@ ANSWER: 709
 Solve time ~0.006 seconds
 """
 
-
 import math
 import os
 import unittest

@@ -8,9 +8,8 @@ to right, and remain prime at each stage: 3797, 797, 97, and 7. Similarly we can
 Find the sum of the only eleven primes that are both truncatable from left to right and right to left.
 NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
 
-ANSWER:
-748317
-Solve time ~0.3 seconds
+ANSWER: 748317
+Solve time: ~0.3 seconds
 """
 
 import unittest

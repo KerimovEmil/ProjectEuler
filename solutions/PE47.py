@@ -15,7 +15,7 @@ The first three consecutive numbers to have three distinct prime factors are:
 Find the first four consecutive integers to have four distinct prime factors. What is the first of these numbers?
 
 ANSWER: 134043
-Solve time ~ 0.14 seconds
+Solve time: ~ 0.14 seconds
 """
 
 import unittest

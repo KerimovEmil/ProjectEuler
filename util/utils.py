@@ -3,7 +3,7 @@ import time
 from itertools import accumulate
 from functools import lru_cache, reduce
 from math import gcd
-from typing import List, Union, Dict, Generator
+from typing import List, Union, Dict, Generator, Optional
 
 
 class Hungarian:
@@ -431,6 +431,20 @@ def basic_factorial(x):
     return ans
 
 
+def basic_falling_factorial(high, low):
+    """Returns the high! / low! """
+    if low == high:
+        return 1
+    if high < low:
+        return 0
+    i = low + 1
+    ans = 1
+    while i <= high:
+        ans *= i
+        i += 1
+    return ans
+
+
 def lcm(x, y):
     return x * y // gcd(x, y)
 
@@ -607,13 +621,13 @@ def timeit(method):
         ts = time.time()
         result = method(*args, **kw)
         te = time.time()
-        print('{} took: {:.3f} seconds'.format(method.__name__, (te - ts)))
+        print('{} took: {:.3f} seconds'.format(method.__module__, (te - ts)))
         return result
     return timed
 
 
 def is_pandigital(num):
-    """Return true if integer num uses all of the digits from 1 to n exactly once. False otherwise."""
+    """Return true if integer num uses the digits from 1 to n exactly once. False otherwise."""
     str_num = str(num)
     if str_num.count('0') > 0:
         return False
@@ -803,7 +817,7 @@ def generate_ascending_sub_sequence(options, num):
         options: <list> of objects, ordered in ascending order
         num: <int> the size of the sub-sequence to return
 
-    Returns: an generator of sub-sequences of options in ascending order
+    Returns: a generator of sub-sequences of options in ascending order
 
     e.g.
      options = ['0', '1', '2']
@@ -831,9 +845,9 @@ def generate_ascending_sub_sequence(options, num):
 
 
 @lru_cache(maxsize=None, typed=False)
-def partition_number(n):
+def partition_number(n, mod=None):
     """
-    Compute the partition number of n.
+    Compute the partition number of n, mod m
     Using recursive equation found here: http://www.cs.utsa.edu/~wagner/python/fp/part.html
     p(n) = sum_{k=1}^{n} (-1)^{k+1} (p(x) + p(y))
     x = n - k*(3k-1)/2
@@ -843,13 +857,21 @@ def partition_number(n):
         return 0
     if n == 0:
         return 1
-    sign = 1
+
+    m_sign = 1
     summation = 0
+
     for k in range(1, n+1):
-        x = n - int(k*(3*k-1)/2)
-        y = n - int(k*(3*k+1)/2)
-        summation += sign*(partition_number(x) + partition_number(y))
-        sign *= -1
+        if k*(3*k-1) > 2*n:
+            break
+
+        x = n - k*(3*k-1) // 2
+        y = n - k*(3*k+1) // 2
+        summation += m_sign * (partition_number(x, mod=mod) + partition_number(y, mod=mod))
+        m_sign *= -1
+
+    if mod:
+        summation = summation % mod
     return summation
 
 
@@ -953,10 +975,10 @@ def num_of_divisors(n):
 
 def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
     """
-    Given the prime factorization of a number, return a generator of all of it's divisors.
+    Given the prime factorization of a number, return a generator of the divisors.
     Args:
         prime_factors: a dictionary with the key being the prime and the value being the multiplicity of the prime.
-    For example if n=12 then then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
+    For example if n=12 then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
     1,2,4,3,6,12
     """
     ls_primes = list(prime_factors.keys())
@@ -976,3 +998,161 @@ def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
                     prime_to_i *= prime
 
     yield from generate(0)
+
+
+@lru_cache(maxsize=None)
+def binomial_recursive(n: int, k: int, mod_m: int) -> int:
+    if k == 0:
+        return 1
+    if n == 0:
+        return 0
+    if n == k:
+        return 1
+    if k > (n-k):
+        return binomial_recursive(n, n-k, mod_m)
+    return (binomial_recursive(n-1, k, mod_m) + binomial_recursive(n-1, k-1, mod_m)) % mod_m
+
+
+@lru_cache(maxsize=None)
+def fib(n: int, mod_m: int = int(1e12)) -> int:
+    if n < 2:
+        return n
+    return (fib(n-1, mod_m) + fib(n-2, mod_m)) % mod_m
+
+
+def fibonacci_n_term(n: int) -> Union[int, NotImplementedError]:
+    """Returns the nth fibonacci number"""
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    sq_5 = 5**0.5
+    phi_pos = (1 + sq_5) / 2
+    return round(phi_pos**n / sq_5)
+
+
+def fibonacci_k_n_term(n: int, k: int) -> Union[int, NotImplementedError]:
+    """
+    Returns the nth fibonacci_k number.
+    Where F_{k,n+1} = k*F_{k,n} + F_{k,n−1} for n ≥ 1
+    """
+    if n < 0:
+        return NotImplementedError('negative n is not implemented')
+    if n in [0, 1]:
+        return n
+
+    root = (k+(k**2 + 4)**0.5) / 2
+    return round((root**n - (-root)**(-n)) / (root + 1/root))
+
+
+def catalan_transform(n: int = 1, seq: List[int] = None, mod_m: Optional[int] = None) -> int:
+    """http://www.kurims.kyoto-u.ac.jp/EMIS/journals/JIS/VOL8/Barry/barry84.pdf"""
+    if n == 0:
+        return 0
+    if mod_m is not None:
+        return int(sum((i * combin(2*n-i, n-i) * seq[i] // (2*n-i)) % mod_m for i in range(1, n+1)))
+    else:
+        return int(sum(i * combin(2*n-i, n-i) * seq[i] // (2*n-i) for i in range(1, n+1)))
+
+
+def inv_catalan_transform(n: int = 1, seq: List[int] = None) -> int:
+    """http://www.kurims.kyoto-u.ac.jp/EMIS/journals/JIS/VOL8/Barry/barry84.pdf"""
+    return sum(combin(i, n-i) * (-1)**(n-i) * seq[i] for i in range(n+1))
+
+
+def get_all_mod_inverse_dict(m: int, max_n: int) -> Dict[int, int]:
+    """
+    Computes a^-1 mod m for all a in [1, a-1]
+    https://cp-algorithms.com/algebra/module-inverse.html#mod-inv-all-num
+
+    Taking the key * value mod m for each key value would result in 1
+    """
+    dc_inv = {1: 1}
+    for i in range(2, max_n+1):
+        dc_inv[i] = m - (m // i) * dc_inv[m % i] % m
+    return dc_inv
+
+
+def get_all_mod_inverse_list(m: int, max_n: int) -> List[int]:
+    """
+    Computes a^-1 mod m for all a in [1, a-1]
+    https://cp-algorithms.com/algebra/module-inverse.html#mod-inv-all-num
+    """
+    ls_inv = [0, 1]
+    for i in range(2, max_n+1):
+        ls_inv.append(m - (m // i) * ls_inv[m % i] % m)
+    return ls_inv
+
+
+def cycle_length(k: int) -> int:
+    """
+    Computes the repeated cycle length of the decimal expansion of 1/k.
+    e.g.
+    1/6 = 0.1(6)  -> 1
+    1/7 = 0.(142857) -> 6
+
+    For k not equal to a multiple of 2 or 5,
+    1/k has a cycle of d digits if 10^d == 1 mod k = 0
+    """
+    while k % 2 == 0:
+        k //= 2  # remove factors of 2
+    while k % 5 == 0:
+        k //= 5  # remove factors of 5
+    if k == 1:
+        return 0  # this is not a repeating decimal
+    d = 1
+    x = 10 % k
+    while x != 1:
+        x = (x*10) % k
+        d += 1
+    return d
+
+
+def coprime(a: int, b: int) -> bool:
+    while b != 0:
+        a, b = b, a % b
+    return a == 1
+
+
+def smooth_numbers(current_prime_index, current_value, ls_primes, max_n):
+    """
+    Return a list of all smooth numbers up to the given limit.
+
+    A smooth number is a natural number that is divisible by no primes other than 2 and 3.
+
+    Args:
+      current_prime_index: The index of the current prime in the list primes.
+      current_value: The current value.
+      ls_primes: A list of primes.
+      max_n: The maximum number to consider.
+
+    Returns:
+      A list of all smooth numbers up to the given limit.
+    """
+
+    if current_prime_index == len(ls_primes):
+        return [current_value]
+
+    current_prime = ls_primes[current_prime_index]
+    results = []
+    while current_value <= max_n:
+        results.extend(smooth_numbers(current_prime_index + 1, current_value, ls_primes, max_n))
+        current_value *= current_prime
+
+    return results
+
+
+def pisano_period(m: int) -> int:
+    """
+    Returns the pisano period of integer m.
+    The period with which the sequence of Fibonacci numbers taken modulo n repeats.
+
+    See Also: https://en.wikipedia.org/wiki/Pisano_period
+    """
+    if m == 1:
+        return 1
+
+    prev, curr = 0, 1
+    for i in range(0, m * m):
+        prev, curr = curr, (prev + curr) % m
+        if (prev, curr) == (0, 1):
+            return i + 1
+    return m
