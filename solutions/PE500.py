@@ -14,12 +14,10 @@ Solve time ~ seconds
 from util.utils import timeit
 import unittest
 
+# 500500 = 2^2 × 5^3 × 7 × 11 × 13
+# divisors(p1^{k1} x p2^{k2} x p3^{k3} x ... x pn^{kn}) = (k1+1) x (k2+1) x (k3+1) x ... x (kn+1)
 # divisors(p1*p2*p3*...*pn) = (1+1)^n = 2^n
 
-# from functools import reduce
-# from primesieve import n_primes
-# reduce((lambda x, y: x * y % 500500507), n_primes(500500))
-# 427102806
 
 # d(2*3*5*7) = d(210) = (1+1)*(1+1)*(1+1)*(1+1) = 2^4 = 16
 # d(2^3*3*5) = d(120) = (1+3)*(1+1)*(1+1) = 2^4
