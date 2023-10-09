@@ -14,9 +14,8 @@ giving the pandigital, 918273645, which is the concatenated product of 9 and (1,
 What is the largest 1 to 9 pandigital 9-digit number that can be formed as the concatenated product of an integer
 with (1,2, ... , n) where n > 1?
 
-ANSWER:
-932718654
-Solve time ~0.02 seconds
+ANSWER: 932718654
+Solve time: ~0.02 seconds
 """
 
 import unittest

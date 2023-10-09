@@ -7,9 +7,8 @@ rad(504) = 2 × 3 × 7 = 42.
 Let E(k) be the kth element in the sorted n column; for example, E(4) = 8 and E(6) = 9.
 If rad(n) is sorted for 1 ≤ n ≤ 100000, find E(10000).
 
-ANSWER:
-21417
-Solve time ~2 seconds
+ANSWER: 21417
+Solve time: ~2 seconds
 """
 
 import functools

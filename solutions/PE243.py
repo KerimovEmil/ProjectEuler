@@ -12,9 +12,8 @@ In fact, d = 12 is the smallest denominator having a resilience R(d) < 4/10 
 
 Find the smallest denominator d, having a resilience R(d) < 15499/94744 .
 
-ANSWER:
-892371480
-Solve time 0.003 seconds (over estimate)
+ANSWER: 892371480
+Solve time: ~0.003 seconds
 """
 
 # note that this problem and problem 69 both require the Euler totient function

@@ -9,8 +9,7 @@ Find the value of r for which s(5000) = -600,000,000,000.
 Give your answer rounded to 12 places behind the decimal point.
 
 ANSWER: 1.002322108633, more precise: 1.00232210863287
-
-Solve time ~ 0.003 seconds
+Solve time: ~0.003 seconds
 """
 
 import math

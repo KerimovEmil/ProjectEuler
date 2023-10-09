@@ -21,7 +21,7 @@ a(10) = (328161643 e - 652694486)/(10!)
 Find A(10^9) + B(10^9) and give your answer mod 77 777 777.
 
 ANSWER: 15955822
-Solve time ~268 seconds
+Solve time: ~268 seconds
 """
 import unittest
 from util.utils import EulerNumber
@@ -37,7 +37,7 @@ class Problem330:
         A_mod_list = []
         b_mod_list = []
         for prime in self.prime_list:
-            print("curr prime =>", prime)
+            print("current prime =>", prime)
             euler_number = EulerNumber(prime)
             n_mod = (self.n - prime) % (prime * (prime - 1)) + prime if self.n >= prime else self.n
             print("n_mod =>", n_mod)

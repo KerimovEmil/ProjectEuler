@@ -46,8 +46,7 @@ Based on the following guesses,
 Find the unique 16-digit secret sequence.
 
 ANSWER: 4640261571849533
-
-Solve time ~21 seconds to 3 minutes
+Solve time: ~21 seconds to 3 minutes
 """
 
 # See many possible algorithm solutions to this here: https://github.com/raphey/number-mind

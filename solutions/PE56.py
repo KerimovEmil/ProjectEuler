@@ -8,7 +8,7 @@ Despite their size, the sum of the digits in each number is only 1.
 Considering natural numbers of the form, a^b, where a, b < 100, what is the maximum digital sum?
 
 ANSWER: 972
-Solve time ~ 0.35 seconds
+Solve time: ~ 0.35 seconds
 """
 import unittest
 from util.utils import timeit

@@ -4,9 +4,8 @@ PROBLEM
 The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 Find the sum of all the primes below two million.
 
-ANSWER:
-142913828922
-Solve time ~ 0.02 seconds
+ANSWER: 142913828922
+Solve time: ~ 0.02 seconds
 """
 
 from primesieve import primes

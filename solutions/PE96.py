@@ -5,9 +5,8 @@ By solving all fifty puzzles find the sum of the 3-digit numbers found in the to
 of each solution grid; for example, 483 is the 3-digit number found in the top left corner of
 the solution grid above.
 
-ANSWER:
-24702
-Solve time ~ 68 seconds
+ANSWER: 24702
+Solve time: ~68 seconds
 """
 
 import unittest
@@ -19,7 +18,6 @@ import os
 class Problem96:
     def __init__(self, filename):
         self.filename = filename
-        pass
 
     def load_sudoku(self):
         with open(self.filename, 'r') as f:
@@ -66,7 +64,7 @@ class Problem96:
                 for value in range(1, 10):
                     constraint_row = Problem96.gen_row(row_id, col_id, value)
                     mat_ref[constraint_row] = (row_id, col_id, value)
-                    if (value == e):
+                    if value == e:
                         existing_rows.append(constraint_row)
                     else:
                         other_rows.append(constraint_row)
@@ -76,18 +74,17 @@ class Problem96:
     def solve_sudoku(sudoku_matrix):
         sudoku = [['0' for _ in range(9)] for _ in range(9)]
 
-        existing_rows, other_rows, mat_ref = Problem96.to_exact_cover(
-            sudoku_matrix)
+        existing_rows, other_rows, mat_ref = Problem96.to_exact_cover(sudoku_matrix)
         solver = DancingLinks(other_rows)
 
         cols_to_cover = set()
         for row in existing_rows:
             for col_id in range(len(row)):
-                if (row[col_id]):
+                if row[col_id]:
                     cols_to_cover.add(col_id)
 
         for head in LeftIterator(solver.smat.ghead):
-            if (head.col_idx in cols_to_cover):
+            if head.col_idx in cols_to_cover:
                 solver._cover(head)
 
         solving_nodes = solver.solve()

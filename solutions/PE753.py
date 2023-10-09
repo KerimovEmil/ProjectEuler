@@ -13,7 +13,7 @@ You are given F(5)=12 and F(7)=0.
 Find the sum of F(p) over all primes p less than 6,000,000.
 
 ANSWER: 4714126766770661630
-Solve time ~2.5 seconds
+Solve time: ~2.5 seconds
 """
 
 from primesieve import primes

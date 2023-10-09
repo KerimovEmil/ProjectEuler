@@ -12,7 +12,7 @@ Further, it can be verified that g(20) is 267 and ∑sg(i) for 1 ≤ i ≤ 20 is
 What is ∑sg(i) for 1 ≤ i ≤ 150?
 
 ANSWER: 8184523820510
-Solve time ~2 seconds
+Solve time: ~2 seconds
 """
 
 from util.utils import timeit

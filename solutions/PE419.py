@@ -17,7 +17,7 @@ Give your answer modulo 230 and separate your values for A, B and C by a comma.
 E.g. for n = 40 the answer would be 31254,20259,11625
 
 ANSWER: 998567458,1046245404,43363922
-Solve time ~21 seconds
+Solve time: ~21 seconds
 """
 
 import unittest

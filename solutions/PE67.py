@@ -7,9 +7,8 @@ top to bottom is 23.
 Find the maximum total from top to bottom of the triangle in p067.txt
 (a 15K text file containing a triangle with one-hundred rows.)
 
-ANSWER:
-7273
-Solve time ~0.007 seconds
+ANSWER: 7273
+Solve time: ~0.007 seconds
 Related Problems: 18
 """
 

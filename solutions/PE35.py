@@ -6,9 +6,8 @@ are themselves prime.
 There are thirteen such primes below 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
 How many circular primes are there below one million?
 
-ANSWER:
-55
-Solve time ~0.4 seconds
+ANSWER: 55
+Solve time: ~0.4 seconds
 """
 
 import unittest
