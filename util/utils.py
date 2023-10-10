@@ -453,20 +453,68 @@ class Matrix:
     def __init__(self, entries):
         self.entries = entries
 
-    def __mul__(self, other):
-        result = [[0 for j in range(len(other.entries[0]))] for i in range(len(self.entries))]
-        for i in range(len(self.entries)):
-            for j in range(len(other.entries[0])):
-                for k in range(len(other.entries)):
-                    result[i][j] += self.entries[i][k] * other.entries[k][j]
+        self.len_row = len(self.entries)
+        self.len_col = len(self.entries[0])
+
+    def __mul__(self, other, mod=None):
+        if isinstance(other, (int, float, complex)):
+            result = self.zero_ls_entries(row_dim=self.len_row, col_dim=self.len_col)
+
+            for row in range(self.len_row):
+                for col in range(self.len_col):
+                    result[row][col] = self.entries[row][col] * other
+                    if mod is not None:
+                        result[row][col] = result[row][col] % mod
+
+        elif isinstance(other, Matrix):
+            result = self.zero_ls_entries(row_dim=self.len_row, col_dim=other.len_col)
+
+            for i in range(self.len_row):
+                for j in range(other.len_col):
+                    for k in range(other.len_row):
+                        result[i][j] += self.entries[i][k] * other.entries[k][j]
+                        if mod is not None:
+                            result[i][j] = result[i][j] % mod
+        else:
+            raise TypeError(f'type: {type(other)} multiplication not supported.')
+
         return Matrix(result)
 
+    def __rmul__(self, other):
+        # other * self
+        if isinstance(other, (int, float, complex)):
+            return self * other
+        elif isinstance(other, Matrix):
+            # A * B = (B^T * A^T)^T
+            return (self.transpose() * other.transpose()).transpose()
+
+    def transpose(self):
+        """ Returns the ls_entries for the transposed matrix """
+        return Matrix([[self[j][i] for j in range(self.len_row)] for i in range(self.len_col)])
+
+    def __matmul__(self, other):
+        return self.__mul__(other)
+
     def __mod__(self, mod):
+        result = [[self.entries[i][j] for j in range(self.len_col)] for i in range(self.len_row)]
         if mod:
-            for i in range(len(self.entries)):
-                for j in range(len(self.entries[0])):
-                    self.entries[i][j] %= mod
-        return self
+            for i in range(len(result)):
+                for j in range(len(result[0])):
+                    result[i][j] %= mod
+        return Matrix(result)
+
+    @staticmethod
+    def zero_ls_entries(row_dim, col_dim):
+        """
+        Returns a Zero matrix with row and columns
+        Args:
+            row_dim: <int> a positive integer representing the number of rows
+            col_dim: <int> a positive integer representing the number of rows
+
+        Returns: <list> of zeros
+        """
+        assert isinstance(row_dim, int) and isinstance(col_dim, int)
+        return [[0] * col_dim for _ in range(row_dim)]
 
     def __pow__(self, n, mod=None):
         assert (n > 0)
@@ -480,6 +528,33 @@ class Matrix:
 
     def __str__(self):
         return str(self.entries)
+
+    def __repr__(self):
+        return str(self)
+
+    def __getitem__(self, key):
+        if isinstance(key, (int, slice)):
+            return self.entries[key]
+        if len(key) == 2:
+            row, col = key
+            if isinstance(row, slice):  # for if either row only or row and col are slices
+                return [x[col] for x in self.entries[row]]
+            elif all(isinstance(i, int) for i in key) or isinstance(col, slice):  # for if only col is a slice or neither row and col are slices
+                return self.entries[row][col]
+            else:
+                raise NotImplemented
+        else:
+            raise NotImplemented
+
+    def __add__(self, other):
+        assert self.len_row == other.len_row
+        assert self.len_col == other.len_col
+        ls_new_entries = self.zero_ls_entries(row_dim=self.len_row, col_dim=self.len_col)
+
+        for row in range(self.len_row):
+            for column in range(self.len_col):
+                ls_new_entries[row][column] = self[row][column] + other[row][column]
+        return Matrix(ls_new_entries)
 
 
 class LinearHomogeneousRecurrence:
