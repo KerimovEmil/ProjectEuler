@@ -21,7 +21,7 @@ import unittest
 import os
 
 
-def is_in_triangle(p: tuple[int, int], v1: tuple[int, int], v2: tuple[int, int], v3: tuple[int, int]) -> bool:
+def is_in_triangle(p, v1, v2, v3) -> bool:
     """
     Return True if point p is in the triangle defined by the vertices v1,v2, & v3.
     Args:
