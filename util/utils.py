@@ -556,6 +556,9 @@ class Matrix:
                 ls_new_entries[row][column] = self[row][column] + other[row][column]
         return Matrix(ls_new_entries)
 
+    def __eq__(self, other):
+        return self.entries == other.entries
+
 
 class LinearHomogeneousRecurrence:
     """
