@@ -1156,3 +1156,7 @@ def pisano_period(m: int) -> int:
         if (prev, curr) == (0, 1):
             return i + 1
     return m
+
+
+def is_int(n):
+    return abs(n - int(n)) < 1e-13

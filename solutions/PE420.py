@@ -19,21 +19,13 @@ Solve time: ~1113 seconds ~ 19 mins
 from math import gcd
 
 import unittest
-from util.utils import timeit
+from util.utils import timeit, lcm, is_int
 
 
 # https://en.wikipedia.org/wiki/Square_root_of_a_2_by_2_matrix
 # https://projecteuler.net/problem=420
 
 # See the whole explanation of solution in the first answer in this thread https://projecteuler.net/thread=420
-
-def lcm(x, y):
-    return x * y // gcd(x, y)
-
-
-def is_int(n):
-    return abs(n - int(n)) < 1e-13
-
 
 class Problem420:
     def __init__(self, n, debug=False):
