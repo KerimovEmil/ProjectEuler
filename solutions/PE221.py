@@ -12,8 +12,8 @@ For example, 630 is an Alexandrian integer (a=5, b=-7, c=-18). In fact, 630 is t
 
 Find the 150000th Alexandrian integer
 
-ANSWER: < 1932137894906016
-Solve time:
+ANSWER: < 1884378295539060
+Solve time: >25.5 mins
 """
 from util.utils import timeit, is_int, primes_of_n
 import unittest
@@ -37,7 +37,6 @@ import unittest
 # k = (1 - b*c) / (b+c)
 
 # PRIME FACTORIZATION APPROACH
-# wlog let |a| >= |b| >= |c|
 # fix k, k*b + b*c + k*c = 1
 # (k+b)*(k+c) - k^2 = 1
 # 1 + k^2 = p*q = (k+b)*(k+c), with b=p-k, c=q-k
@@ -57,15 +56,6 @@ import unittest
 # A = k*(k*(q + p) - 1 - 2*k^2)
 # A = (q + p)*k^2 - k - 2*k^3
 # A = (q + p - 2k)*k^2 - k
-
-
-def factor_pairs(n):
-    pairs = []
-    for p in range(1, int(abs(n)**0.5) + 1):
-        if n % p == 0:  # p is a factor of N
-            q = n // p
-            pairs.append((p, q))
-    return pairs
 
 
 class Problem221:
@@ -126,16 +116,9 @@ class Problem221:
             for p in range(1, a):
                 if n % p == 0:  # p is a factor of N
                     q = n // p
-
                     # note that p < a and q > a based on how p and q are found
                     print(f'{a=}, {a-p=}, {q-a=}, {p=}, {q=}')
                     add(a, a - p, q - a)
-
-            # ls_factor_pair = factor_pairs(a**2 + 1)
-            # for p, q in ls_factor_pair:
-            #     # note that p < a and q > a based on how p and q are found
-            #     print(f'{a=}, {a-p=}, {q-a=}')
-            #     add(a, a-p, q-a)
 
         ls_sol = list(set_sol_seen)
         ls_sol.sort()
@@ -146,7 +129,7 @@ class Problem221:
         seen = set()  # Set to track seen numbers
 
         k = 1
-        while len(seen) < 5*self.n:
+        while len(seen) < 6*self.n:
             n = k ** 2 + 1
             for p in range(1, k):
                 if n % p == 0:
