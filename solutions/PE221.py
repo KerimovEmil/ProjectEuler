@@ -12,12 +12,11 @@ For example, 630 is an Alexandrian integer (a=5, b=-7, c=-18). In fact, 630 is t
 
 Find the 150000th Alexandrian integer
 
-ANSWER:
+ANSWER: < 2809171098941424
 Solve time:
 """
 from util.utils import timeit, is_int, primes_of_n
 import unittest
-import heapq
 
 # 1/(a*b*c) = 1/a + 1/b + 1/c
 # a*b + b*c + a*c = 1
@@ -143,24 +142,24 @@ class Problem221:
         print(ls_sol)
         return ls_sol[self.n - 1]
 
-    def solve_2(self):  # less calls
-        heap = []  # Min-heap to store Alexandrian integers in order
+    def solve_2(self):  # fewer calls than solve
         seen = set()  # Set to track seen numbers
 
         k = 1
-        while len(seen) < 2*self.n:
+        while len(seen) < 4*self.n:
             n = k ** 2 + 1
             for p in range(1, k):
                 if n % p == 0:
-                    q = n // p
-                    a, b, c = k, k - p, q - k
-                    product = a * b * c
+                    # q = n // p
+                    # a, b, c = k, k - p, q - k
+                    # product = a * b * c
+                    product = k * (k - p) * (n // p - k)
                     if product not in seen:
-                        heapq.heappush(heap, product)
                         seen.add(product)
+                        print(f'{k=}, {product=}, {len(seen)=}')
             k += 1
 
-        return sorted(seen)[self.n - 1]
+        return sorted(list(seen))[self.n - 1]
 
 
 class Solution221(unittest.TestCase):
@@ -169,13 +168,13 @@ class Solution221(unittest.TestCase):
 
     def test_small_solution(self):
         # self.assertEqual(630, Problem221(n=6).naive_solve())
-        self.assertEqual(630, Problem221(n=6).solve())
-        # self.assertEqual(630, Problem221(n=6).solve_2())
+        # self.assertEqual(630, Problem221(n=6).solve())
+        self.assertEqual(630, Problem221(n=6).solve_2())
 
     def test_solution(self):
         # Fill this in once you've got a working solution!
-        self.assertEqual(1, self.problem.solve())
-        # self.assertEqual(1, self.problem.solve_2())
+        # self.assertEqual(1, self.problem.solve())
+        self.assertEqual(2809171098941424, self.problem.solve_2())
 
 
 if __name__ == '__main__':
@@ -209,22 +208,3 @@ if __name__ == '__main__':
 # p=133152, x=-73, y=-57, z=32, len(ls_sol)=23
 # p=28050, x=-75, y=-22, z=17, len(ls_sol)=24
 # p=57684, x=-76, y=-33, z=23, len(ls_sol)=25
-
-
-# p=6, x=-3, y=-2, z=1, len(ls_sol)=0
-# p=42, x=-7, y=-3, z=2, len(ls_sol)=1
-# p=120, x=-8, y=-5, z=3, len(ls_sol)=2
-# p=156, x=-13, y=-4, z=3, len(ls_sol)=3
-# p=1428, x=-17, y=-12, z=7, len(ls_sol)=4
-# p=630, x=-18, y=-7, z=5, len(ls_sol)=5
-# p=420, x=-21, y=-5, z=4, len(ls_sol)=6
-# p=2184, x=-21, y=-13, z=8, len(ls_sol)=7
-# p=8970, x=-30, y=-23, z=13, len(ls_sol)=8
-# p=930, x=-31, y=-6, z=5, len(ls_sol)=9
-# p=2016, x=-32, y=-9, z=7, len(ls_sol)=10
-
-# a=9, a-p=7, q-a=32
-# p=2016, x=7, y=-9, z=-32, len(ls_sol)=10
-
-# a=32, a-p=7, q-a=9
-# p=2016, x=7, y=-9, z=-32
