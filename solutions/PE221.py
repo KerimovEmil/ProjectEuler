@@ -47,6 +47,9 @@ import unittest
 # case 1: p=13-8=5, q=5-8=-3, (a,b,c) = (3,-5,-8)
 # case 2: p=65-8=57, q=1-8=-7, (a,b,c) = (7,-8,-57)
 
+# note that p-k < 0 and q-k > 0
+# therefore |q-k| < |k|, so k must always be one of the negative options
+
 
 def factor_pairs(n):
     pairs = []
@@ -54,8 +57,6 @@ def factor_pairs(n):
         if n % p == 0:  # p is a factor of N
             q = n // p
             pairs.append((p, q))
-            # if p != q:  # Avoid duplicate pairs when p == q (e.g., N = 4, (2,2))
-            #     pairs.append((-p, -q))  # Include negative factors as well
     return pairs
 
 
@@ -105,6 +106,7 @@ class Problem221:
             a_3 = max(x, y, z)
             a_2 = sum([x, y, z]) - a_1 - a_3
             if (a_1, a_2, a_3) in set_sol_seen:
+                print(f'LOOK HERE (p={product}, x={a_1}, y=-{a_2}, z=-{a_3})')
                 return
             else:
                 print(f'p={product}, x={a_1}, y=-{a_2}, z=-{a_3}, {len(ls_sol)=}')
