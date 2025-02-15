@@ -49,6 +49,14 @@ import unittest
 
 # note that p-k < 0 and q-k > 0
 # therefore |q-k| < |k|, so k must always be one of the negative options
+# either (k-p) or (q-k) can be the smallest numbers
+
+# note A = k*(k-p)*(q-k) = k*(kq - k^2 - pq + kp)
+# A = k*(kq - k^2 - (1+k^2) + kp)
+# A = k*(kq + kp - 1 - 2*k^2)
+# A = k*(k*(q + p) - 1 - 2*k^2)
+# A = (q + p)*k^2 - k - 2*k^3
+# A = (q + p - 2k)*k^2 - k
 
 
 def factor_pairs(n):
@@ -96,32 +104,40 @@ class Problem221:
 
     @timeit
     def solve(self):
-        ls_sol = []
         set_sol_seen = set()
 
         def add(x, y, z):
             product = x*y*z
-            # print(f'{p=}, {x=}, {y=}, {z=}, {len(ls_sol)=}')
             a_1 = min(x, y, z)
             a_3 = max(x, y, z)
             a_2 = sum([x, y, z]) - a_1 - a_3
-            if (a_1, a_2, a_3) in set_sol_seen:
+            if product in set_sol_seen:
                 print(f'LOOK HERE (p={product}, x={a_1}, y=-{a_2}, z=-{a_3})')
                 return
             else:
-                print(f'p={product}, x={a_1}, y=-{a_2}, z=-{a_3}, {len(ls_sol)=}')
-                ls_sol.append(product)
-                set_sol_seen.add((a_1, a_2, a_3))
+                print(f'p={product}, x={a_1}, y=-{a_2}, z=-{a_3}, {len(set_sol_seen)=}')
+                set_sol_seen.add(product)
 
         a = 1
-        while len(ls_sol) < 2*self.n:
+        while len(set_sol_seen) < 2*self.n:
             a += 1
-            ls_factor_pair = factor_pairs(a**2 + 1)
-            for p, q in ls_factor_pair:
-                # note that p < a and q > a based on how p and q are found
-                print(f'{a=}, {a-p=}, {q-a=}')
-                add(a, a-p, q-a)
 
+            n = a**2 + 1
+            for p in range(1, a):
+                if n % p == 0:  # p is a factor of N
+                    q = n // p
+
+                    # note that p < a and q > a based on how p and q are found
+                    print(f'{a=}, {a-p=}, {q-a=}, {p=}, {q=}')
+                    add(a, a - p, q - a)
+
+            # ls_factor_pair = factor_pairs(a**2 + 1)
+            # for p, q in ls_factor_pair:
+            #     # note that p < a and q > a based on how p and q are found
+            #     print(f'{a=}, {a-p=}, {q-a=}')
+            #     add(a, a-p, q-a)
+
+        ls_sol = list(set_sol_seen)
         ls_sol.sort()
         print(ls_sol)
         return ls_sol[self.n - 1]
@@ -184,3 +200,9 @@ if __name__ == '__main__':
 # p=8970, x=-30, y=-23, z=13, len(ls_sol)=8
 # p=930, x=-31, y=-6, z=5, len(ls_sol)=9
 # p=2016, x=-32, y=-9, z=7, len(ls_sol)=10
+
+# a=9, a-p=7, q-a=32
+# p=2016, x=7, y=-9, z=-32, len(ls_sol)=10
+
+# a=32, a-p=7, q-a=9
+# p=2016, x=7, y=-9, z=-32
