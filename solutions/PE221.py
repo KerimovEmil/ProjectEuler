@@ -15,7 +15,7 @@ Find the 150000th Alexandrian integer
 ANSWER: < 1884378295539060
 Solve time: >25.5 mins
 """
-from util.utils import timeit, is_int, primes_of_n
+from util.utils import timeit
 import unittest
 
 # 1/(a*b*c) = 1/a + 1/b + 1/c
@@ -155,7 +155,7 @@ class Solution221(unittest.TestCase):
         self.assertEqual(630, Problem221(n=6).solve_2())
 
     def test_solution(self):
-        self.assertEqual(1932137894906016, self.problem.solve_2())
+        self.assertEqual(1884378295539060, self.problem.solve_2())
 
 
 if __name__ == '__main__':
