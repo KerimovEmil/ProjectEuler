@@ -17,6 +17,7 @@ Solve time:
 """
 from util.utils import timeit, is_int, primes_of_n
 import unittest
+import heapq
 
 # 1/(a*b*c) = 1/a + 1/b + 1/c
 # a*b + b*c + a*c = 1
@@ -142,6 +143,25 @@ class Problem221:
         print(ls_sol)
         return ls_sol[self.n - 1]
 
+    def solve_2(self):  # less calls
+        heap = []  # Min-heap to store Alexandrian integers in order
+        seen = set()  # Set to track seen numbers
+
+        k = 1
+        while len(seen) < 2*self.n:
+            n = k ** 2 + 1
+            for p in range(1, k):
+                if n % p == 0:
+                    q = n // p
+                    a, b, c = k, k - p, q - k
+                    product = a * b * c
+                    if product not in seen:
+                        heapq.heappush(heap, product)
+                        seen.add(product)
+            k += 1
+
+        return sorted(seen)[self.n - 1]
+
 
 class Solution221(unittest.TestCase):
     def setUp(self):
@@ -150,10 +170,12 @@ class Solution221(unittest.TestCase):
     def test_small_solution(self):
         # self.assertEqual(630, Problem221(n=6).naive_solve())
         self.assertEqual(630, Problem221(n=6).solve())
+        # self.assertEqual(630, Problem221(n=6).solve_2())
 
     def test_solution(self):
         # Fill this in once you've got a working solution!
         self.assertEqual(1, self.problem.solve())
+        # self.assertEqual(1, self.problem.solve_2())
 
 
 if __name__ == '__main__':
