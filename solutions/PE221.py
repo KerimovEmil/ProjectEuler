@@ -12,7 +12,7 @@ For example, 630 is an Alexandrian integer (a=5, b=-7, c=-18). In fact, 630 is t
 
 Find the 150000th Alexandrian integer
 
-ANSWER: < 2134329764599620
+ANSWER: < 1932137894906016
 Solve time:
 """
 from util.utils import timeit, is_int, primes_of_n
@@ -146,7 +146,7 @@ class Problem221:
         seen = set()  # Set to track seen numbers
 
         k = 1
-        while len(seen) < 4*self.n:
+        while len(seen) < 5*self.n:
             n = k ** 2 + 1
             for p in range(1, k):
                 if n % p == 0:
@@ -172,7 +172,7 @@ class Solution221(unittest.TestCase):
         self.assertEqual(630, Problem221(n=6).solve_2())
 
     def test_solution(self):
-        self.assertEqual(2134329764599620, self.problem.solve_2())
+        self.assertEqual(1932137894906016, self.problem.solve_2())
 
 
 if __name__ == '__main__':
