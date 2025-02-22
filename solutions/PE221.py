@@ -12,8 +12,8 @@ For example, 630 is an Alexandrian integer (a=5, b=-7, c=-18). In fact, 630 is t
 
 Find the 150000th Alexandrian integer
 
-ANSWER: < 1884378295539060
-Solve time: >25.5 mins
+ANSWER: = 1884161251122450
+Solve time: 11 mins
 """
 from util.utils import timeit
 import unittest
@@ -40,6 +40,7 @@ import unittest
 # fix k, k*b + b*c + k*c = 1
 # (k+b)*(k+c) - k^2 = 1
 # 1 + k^2 = p*q = (k+b)*(k+c), with b=p-k, c=q-k
+# note that k will be negative, k=-k*
 
 # e.g. k=8,
 # 8^2 + 1 = 65 = 13*5 = 65*1
@@ -62,84 +63,19 @@ class Problem221:
     def __init__(self, n):
         self.n = n
 
-    @timeit
-    def naive_solve(self):
-        ls_sol = []
-
-        def check(x, y, z):
-            if y == -z:
-                return False
-            return x == (1 - y*z) / (y+z)
-
-        def add(x, y, z):
-            p = x*y*z
-            print(f'{p=}, {x=}, {y=}, {z=}, {len(ls_sol)=}')
-            ls_sol.append(p)
-
-        a = 1
-        while len(ls_sol) < 2*self.n:
-            a += 1
-            for b in range(1, a + 1):
-                for c in range(1, b + 1):
-                    a_neg, b_neg, c_neg = -a, -b, -c
-                    if check(a_neg, b, c_neg):
-                        add(a_neg, b, c_neg)
-                    elif check(a_neg, b_neg, c):
-                        add(a_neg, b_neg, c)
-                    elif check(a, b_neg, c_neg):
-                        add(a, b_neg, c_neg)
-        ls_sol.sort()
-        print(ls_sol)
-        return ls_sol[self.n - 1]
-
-    @timeit
     def solve(self):
-        set_sol_seen = set()
-
-        def add(x, y, z):
-            product = x*y*z
-            a_1 = min(x, y, z)
-            a_3 = max(x, y, z)
-            a_2 = sum([x, y, z]) - a_1 - a_3
-            if product in set_sol_seen:
-                print(f'LOOK HERE (p={product}, x={a_1}, y=-{a_2}, z=-{a_3})')
-                return
-            else:
-                print(f'p={product}, x={a_1}, y=-{a_2}, z=-{a_3}, {len(set_sol_seen)=}')
-                set_sol_seen.add(product)
-
-        a = 1
-        while len(set_sol_seen) < 2*self.n:
-            a += 1
-
-            n = a**2 + 1
-            for p in range(1, a):
-                if n % p == 0:  # p is a factor of N
-                    q = n // p
-                    # note that p < a and q > a based on how p and q are found
-                    print(f'{a=}, {a-p=}, {q-a=}, {p=}, {q=}')
-                    add(a, a - p, q - a)
-
-        ls_sol = list(set_sol_seen)
-        ls_sol.sort()
-        print(ls_sol)
-        return ls_sol[self.n - 1]
-
-    def solve_2(self):  # fewer calls than solve
-        seen = set()  # Set to track seen numbers
+        #  Set to track seen numbers
+        seen = set()
 
         k = 1
-        while len(seen) < 6*self.n:
+        while len(seen) < 4*self.n:
             n = k ** 2 + 1
-            for p in range(1, k):
+            for p in range(1, k+1):
                 if n % p == 0:
-                    # q = n // p
-                    # a, b, c = k, k - p, q - k
-                    # product = a * b * c
-                    product = k * (k - p) * (n // p - k)
+                    # a, b, c = k, k - p, n // p - k
+                    product = k * (k + p) * (n // p + k)
                     if product not in seen:
                         seen.add(product)
-                        # print(f'{k=}, {product=}, {len(seen)=}')
             k += 1
 
         return sorted(list(seen))[self.n - 1]
@@ -150,12 +86,10 @@ class Solution221(unittest.TestCase):
         self.problem = Problem221(n=150_000)
 
     def test_small_solution(self):
-        # self.assertEqual(630, Problem221(n=6).naive_solve())
-        # self.assertEqual(630, Problem221(n=6).solve())
-        self.assertEqual(630, Problem221(n=6).solve_2())
+        self.assertEqual(630, Problem221(n=6).solve())
 
     def test_solution(self):
-        self.assertEqual(1884378295539060, self.problem.solve_2())
+        self.assertEqual(1884161251122450, self.problem.solve())
 
 
 if __name__ == '__main__':
