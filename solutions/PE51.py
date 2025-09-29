@@ -22,14 +22,15 @@ Solve time: ~1.7 seconds
 
 import unittest
 from collections import Counter
-from util.utils import primes_upto as primes
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 
 
 class Problem51:
     def __init__(self, max_dig):
         self.max_dig_num = max_dig
-        self.ls_str_primes = [str(x) for x in primes(pow(10, self.max_dig_num - 1), pow(10, self.max_dig_num))]
+        ls_all_prime = primes_upto(pow(10, self.max_dig_num))
+        ls_prime = ls_all_prime[ls_all_prime >= pow(10, self.max_dig_num - 1)]
+        self.ls_str_primes = [str(x) for x in ls_prime]
 
     @timeit
     def solve(self):
