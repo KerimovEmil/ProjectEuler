@@ -1,6 +1,6 @@
 """
 For a non-negative integer k, define
-E_{k}(q) = sum_{n=1}^{inf} \sigma_{k}(n) q^n
+E_{k}(q) = sum_{n=1}^{inf} sigma_{k}(n) q^n
 where \sigma_{k}(n) is the sum of the k-th powers of the positive divisors of n.
 
 It can be shown that, for every k, the series E_{k}(q) converges for any 0<q<1.
