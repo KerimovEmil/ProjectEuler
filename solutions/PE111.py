@@ -36,8 +36,7 @@ Solve time ~ 0.29 seconds
 
 import unittest
 import itertools
-from util.utils import sieve
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 
 
 class Problem111:
@@ -51,7 +50,7 @@ class Problem111:
         max_int = int(10 ** (self.n / 2))
         if self.debug:
             print("Calculating Primes")
-        self.sqrt_primes = list(sieve(max_int))
+        self.sqrt_primes = primes_upto(max_int)
         if self.debug:
             print("Finished Calculating Primes")
 

@@ -22,9 +22,7 @@ Solve time: ~ way too long
 # S = (x^8 - 1) / (x^2 - 1)
 
 import unittest
-from util.utils import primes_of_n
-from util.utils import sieve
-from util.utils import timeit
+from util.utils import timeit, primes_of_n, primes_upto
 
 
 class Problem211:
@@ -37,7 +35,7 @@ class Problem211:
     @timeit
     def solve(self):
 
-        ls_primes = list(sieve(int(self.max_int)))
+        ls_primes = primes_upto(int(self.max_int))
         # max_lg = math.log2(self.max_int)
         # dc_max_factors = {p: int(max_lg/math.log2(p)) for p in ls_primes}
         #

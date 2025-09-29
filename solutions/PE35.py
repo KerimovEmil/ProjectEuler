@@ -11,7 +11,7 @@ Solve time: ~0.4 seconds
 """
 
 import unittest
-from util.utils import timeit, sieve
+from util.utils import timeit, primes_upto
 
 
 class Problem35:
@@ -19,7 +19,7 @@ class Problem35:
 
     def __init__(self, n):
         self.count = 0
-        self.set_primes = set(sieve(n))
+        self.set_primes = set(primes_upto(n))
 
     def is_circular_prime(self, prime):
         """Given a prime, rotate the digits of the prime to see if the numbers are still prime"""

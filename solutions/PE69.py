@@ -9,7 +9,7 @@ ANSWER: 510510
 Solve time: ~0.002 seconds
 """
 import unittest
-from util.utils import timeit, sieve
+from util.utils import timeit, primes_upto
 
 
 # Note that you can show that phi(n) = n*(1-1/p1)*(1-1/p2)*... for all of the prime factors of n
@@ -20,7 +20,7 @@ from util.utils import timeit, sieve
 class Problem69:
     def __init__(self, limit, max_prime=100):
         self.limit = limit
-        self.primes = sieve(max_prime)
+        self.primes = primes_upto(max_prime)
 
     @timeit
     def solve(self):

@@ -13,7 +13,7 @@ Solve time: ~0.3 seconds
 """
 
 import unittest
-from util.utils import timeit, sieve
+from util.utils import timeit, primes_upto
 
 
 def trunc_left(num):
@@ -31,7 +31,7 @@ class Problem37:
 
     @timeit
     def solve(self):
-        set_primes = set(sieve(self.max_int))
+        set_primes = set(primes_upto(self.max_int))
         for prime in set_primes:
             if prime in {2, 3, 5, 7}:  # problem statement
                 continue

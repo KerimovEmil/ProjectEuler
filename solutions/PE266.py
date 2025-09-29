@@ -29,9 +29,7 @@
 # 7*3*2 = 42 < 48 (pass)
 
 import itertools
-
-from util.utils import sieve
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 
 
 class Problem266:
@@ -41,7 +39,7 @@ class Problem266:
         self.debug = debug
         self.ans = 0
 
-        self.ls_primes = list(sieve(prime_max))
+        self.ls_primes = primes_upto(prime_max)
         if self.debug:
             print("Primes are:{}".format(self.ls_primes))
         self.num_total_primes = len(self.ls_primes)

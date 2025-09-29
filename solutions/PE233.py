@@ -13,7 +13,7 @@ Solve time: ~2.5 seconds
 """
 
 import unittest
-from util.utils import timeit, sieve
+from util.utils import timeit, primes_upto
 
 
 # Examining f(N)
@@ -160,7 +160,7 @@ class Problem233:
             print("Largest 1mod4 prime to consider is: {}".format(largest_1mod4_prime))
 
         # Generate list of primes
-        available_primes = list(sieve(max(largest_1mod4_prime, largest_3mod4_prime)))
+        available_primes = primes_upto(max(largest_1mod4_prime, largest_3mod4_prime))
 
         # Filter to get the list of relevant 1mod4 primes
         self.ls_1mod4_primes = [x for x in available_primes if Problem233.is_1mod4(x) and x <= largest_1mod4_prime]

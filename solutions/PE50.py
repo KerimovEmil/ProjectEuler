@@ -17,14 +17,14 @@ Solve time: ~0.9 seconds
 """
 
 import unittest
-from util.utils import sieve
+from util.utils import primes_upto
 from util.utils import timeit
 
 
 class Problem50:
     def __init__(self, max_int):
         self.max_int = max_int
-        self.ls_primes = list(sieve(max_int))
+        self.ls_primes = primes_upto(max_int)
 
     @timeit
     def solve(self):

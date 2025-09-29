@@ -21,7 +21,7 @@ Solve time: ~0.003 seconds
 
 
 import unittest
-from util.utils import timeit, sieve
+from util.utils import timeit, primes_upto
 
 
 # The number of fractions with a denominator d that cannot get simplified is equal to the euler totient function of d,
@@ -60,7 +60,7 @@ from util.utils import timeit, sieve
 class Problem243:
     def __init__(self, limit, max_prime=100):
         self.limit = limit
-        self.primes = sieve(max_prime)
+        self.primes = primes_upto(max_prime)
 
     @timeit
     def solve(self):
