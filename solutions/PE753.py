@@ -16,7 +16,7 @@ ANSWER: 4714126766770661630
 Solve time: ~2.5 seconds
 """
 
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 import unittest
 from util.utils import timeit

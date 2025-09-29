@@ -16,7 +16,7 @@ Solve time: ~0.6 seconds
 
 import math
 
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 import unittest
 from util.utils import timeit

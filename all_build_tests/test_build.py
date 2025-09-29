@@ -8,7 +8,7 @@ file_path = path.join(path.dirname(__file__), '..', 'solutions',)
 
 for file in listdir(file_path):
     # ignore known files that don't follow convention
-    if file in ['new_problem.py', '__init__.py', '__pycache__']:
+    if file in ['new_problem.py', '__init__.py', '__pycache__', '.ruff_cache']:
         continue
 
     # get project euler problem number from file name

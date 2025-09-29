@@ -14,7 +14,7 @@ References:
   http://www.numericana.com/answer/numbers.htm#moebius
   https://arxiv.org/pdf/1107.4890.pdf
 """
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 import unittest
 from util.utils import timeit, mobius_sieve
@@ -67,7 +67,7 @@ class Problem193:
         self.limit = self.n - 1
         self.total = self.n - 1
         self.ls_primes = primes((self.n ** 0.5) + 1)
-        self.ls_sq_primes = [p * p for p in self.ls_primes]
+        self.ls_sq_primes = [int(p * p) for p in self.ls_primes]
         self.num_primes = len(self.ls_primes)
         self.inclusion_exclusion_helper(odd_even=-1, prev_prod=1, prime_index=0, next_prod=4)
         return self.total

@@ -7,11 +7,8 @@ Find the sum of all the primes below two million.
 ANSWER: 142913828922
 Solve time: ~ 0.02 seconds
 """
-
-from primesieve import primes
-
 import unittest
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 
 
 class Problem10:
@@ -20,7 +17,7 @@ class Problem10:
 
     @timeit
     def solve(self):
-        return sum(primes(self.n))
+        return sum(primes_upto(self.n))
 
     @timeit
     def lucy_algo(self):  # see comment below

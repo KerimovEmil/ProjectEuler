@@ -12,9 +12,8 @@ Find the sum of the values of n smaller than 1,000,000,000 for which p(n) equals
 ANSWER: 44,511,058,204
 Solve time: 0.17 seconds
 """
-from util.utils import timeit, primes_of_n, pisano_period
+from util.utils import timeit, primes_of_n, pisano_period, primes_upto
 import unittest
-from primesieve import primes
 from functools import reduce
 from itertools import combinations
 
@@ -80,7 +79,7 @@ class Problem853:
             print(f'{ls_n=}')
 
         ls_p = []
-        for p in primes(2600):
+        for p in primes_upto(2600):
             dc = primes_of_n(pisano_period(p))
             if set(dc.keys()) <= {2, 3, 5}:
                 # 0 <= k2 <= 3, 0 <= k3 <= 1, 0 <= k5 <= 1

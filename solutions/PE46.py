@@ -8,7 +8,7 @@ Solve time: < 1 ms
 
 from util.utils import timeit
 import unittest
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 
 class Problem46:

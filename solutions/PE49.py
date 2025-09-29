@@ -15,8 +15,7 @@ Solve time: ~0.2 seconds
 """
 
 import unittest
-from util.utils import timeit
-from primesieve import primes
+from util.utils import timeit, primes_upto
 
 
 class Problem49:
@@ -30,8 +29,10 @@ class Problem49:
         max_prime = int(10 ** self.n)
         min_prime = int(10 ** (self.n - 1))
 
-        ls_primes = primes(min_prime, max_prime)  # get all primes between 1,000 and 10,000
+        ls_all_primes = primes_upto(max_prime)  # get all primes between 1,000 and 10,000
+        ls_primes = ls_all_primes[ls_all_primes >= min_prime]
         set_primes = set(ls_primes)
+
         for x in ls_primes:
             if x in self.exclude:
                 continue  # skip this x
@@ -41,6 +42,7 @@ class Problem49:
                         if set(str(x)) == set(str(x + 2 * i)):
                             return int(str(x)+str(x+i)+str(x+2*i))
 
+        return None
 
 class Solution49(unittest.TestCase):
     def setUp(self):

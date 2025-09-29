@@ -33,7 +33,6 @@ If l(N) is odd then N has no prime factors of the form 4k + 3 and is not divisib
 """
 from util.utils import timeit
 import unittest
-# from primesieve import primes
 
 
 class Problem64:

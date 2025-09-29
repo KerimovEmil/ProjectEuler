@@ -604,16 +604,22 @@ class EulerNumber:
         return self.factorial_mod[n]
 
 
-def sieve(n):
-    """Return all primes <= n."""
-    np1 = n + 1
-    s = list(range(np1))
-    s[1] = 0
-    sqrtn = int(round(n ** 0.5))
-    for i in range(2, sqrtn + 1):
-        if s[i]:
-            s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
-    return filter(None, s)
+def prime_sieve(n):
+    n = int(n)
+    sieve = np.ones(n+1, dtype=bool)
+    sieve[:2] = False
+    for i in range(2, int(n**0.5) + 1):
+        if sieve[i]:
+            sieve[i*i:n+1:i] = False
+    return sieve
+
+
+def primes_upto(n):
+    return np.nonzero(prime_sieve(n))[0]
+
+
+def count_primes_upto(n):
+    return np.count_nonzero(prime_sieve(n))  # just count True values
 
 
 def timeit(method):
@@ -755,8 +761,8 @@ def square_free_sieve(limit):
 def square_primes_sieve(limit, primes=None):
     """Returns a list all prime squares less than limit"""
     if primes is None:
-        primes = sieve(int(limit))
-    return [i**2 for i in primes]
+        primes = primes_upto(int(limit))
+    return [int(i**2) for i in primes]
 
 
 def primes_of_n(n, ls_prime=None):
@@ -953,7 +959,7 @@ def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     ls_m = [1]*n
     if ls_prime is None:
-        ls_p = list(sieve(n))
+        ls_p = primes_upto(n)
     else:
         ls_p = ls_prime
     for p in ls_p:

@@ -15,9 +15,8 @@ ANSWER: 71
 Solve time: ~26 ms
 Related problems: 31, 76
 """
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 import unittest
-from primesieve import primes
 
 
 class Problem77:
@@ -29,7 +28,7 @@ class Problem77:
         dc_ways = dict()
         dc_ways[0] = 1
 
-        for i in primes(self.target):
+        for i in primes_upto(self.target):
             for j in range(i, self.target + 1):
                 new_ways = dc_ways.get(j, 0) + dc_ways.get(j - i, 0)
                 dc_ways[j] = new_ways

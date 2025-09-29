@@ -12,7 +12,7 @@ Solve time: ~0.05 seconds
 """
 from util.utils import timeit
 import unittest
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 
 # R(n) = (10^n - 1) / 9
@@ -31,7 +31,7 @@ class Problem132:
         count = 0
         ls_primes = primes(max_prime)
         for p in ls_primes:
-            if pow(10, n, 9 * p) == 1:
+            if pow(10, n, int(9 * p)) == 1:
                 count += 1
                 ans += p
             if count == max_count:

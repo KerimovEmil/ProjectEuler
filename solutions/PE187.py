@@ -11,9 +11,8 @@ ANSWER: 17427258
 Solve time: ~ 0.04 seconds
 """
 
-from primesieve import primes, count_primes
 import unittest
-from util.utils import timeit
+from util.utils import timeit, primes_upto, count_primes_upto
 
 
 class Problem187:
@@ -23,11 +22,11 @@ class Problem187:
     @timeit
     def solve(self):
         """pi(n/q) - pi(q) + 1 for all prime q not greater than sqrt(n)"""
-        ls_p = primes(self.n ** 0.5)
+        ls_p = primes_upto(self.n ** 0.5)
 
         count = 0
         for p in ls_p:
-            count += count_primes(self.n / p) - count_primes(p) + 1
+            count += count_primes_upto(self.n / p) - count_primes_upto(p) + 1
 
         return count
 

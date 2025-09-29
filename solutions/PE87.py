@@ -13,9 +13,8 @@ ANSWER: 1097343
 Solve time: ~1 seconds
 """
 
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 import unittest
-from primesieve import primes
 
 
 class Problem87:
@@ -24,7 +23,7 @@ class Problem87:
 
     @timeit
     def solve(self, n):
-        p = list(primes(int(n ** 0.5)))
+        p = list(primes_upto(int(n ** 0.5)))
 
         s = set()
         for p1 in p:
