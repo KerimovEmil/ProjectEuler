@@ -14,10 +14,8 @@ References:
   http://www.numericana.com/answer/numbers.htm#moebius
   https://arxiv.org/pdf/1107.4890.pdf
 """
-from util.utils import primes_upto as primes
-
 import unittest
-from util.utils import timeit, mobius_sieve
+from util.utils import timeit, mobius_sieve, primes_upto
 
 
 class Problem193:
@@ -31,7 +29,7 @@ class Problem193:
 
     @timeit
     def solve_mobius(self):  # 49 seconds
-        self.ls_primes = primes((self.n ** 0.5) + 1)
+        self.ls_primes = primes_upto((self.n ** 0.5) + 1)
         print("finished calculating primes")
         limit = self.n - 1
         sq_root_n = int(self.n ** 0.5) + 1
@@ -41,7 +39,7 @@ class Problem193:
 
     @timeit
     def solve_count_p_square(self):  # 30 seconds
-        self.ls_primes = primes((self.n ** 0.5) + 1)
+        self.ls_primes = primes_upto((self.n ** 0.5) + 1)
         self.ls_sq_primes = [p*p for p in self.ls_primes]
         len_primes = len(self.ls_primes)
         print("finished calculating primes")
@@ -66,7 +64,7 @@ class Problem193:
     def solve_inclusion_exclusion(self):  # 23 seconds
         self.limit = self.n - 1
         self.total = self.n - 1
-        self.ls_primes = primes((self.n ** 0.5) + 1)
+        self.ls_primes = primes_upto((self.n ** 0.5) + 1)
         self.ls_sq_primes = [int(p * p) for p in self.ls_primes]
         self.num_primes = len(self.ls_primes)
         self.inclusion_exclusion_helper(odd_even=-1, prev_prod=1, prime_index=0, next_prod=4)
