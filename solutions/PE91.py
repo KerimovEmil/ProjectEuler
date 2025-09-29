@@ -24,6 +24,7 @@ import unittest
 #   - if we define the line from O to P as "a" and the line from P to Q as "b"
 #     then the criteria is "a" dot "b" = 0 implies that the lines are perpendicular.
 #     therefore: x1 * (x2 - x1) + y2 * (y2 - y1) = 0
+#     solving for y2: y2 = y1 - (x1/y1) * (x2 - x1)
 
 
 class Problem91:
@@ -34,10 +35,10 @@ class Problem91:
     def solve(n: int):
         ans = 3 * (n**2)
 
-        for x1 in range(1, n + 1):
+        for x1 in range(1, n):
             for x2 in range(x1, n + 1):
                 for y1 in range(1, n + 1):
-                    for y2 in range(0, y1):
+                    for y2 in range(0, y1):  # y2 = y1 - (x1/y1) * (x2 - x1)
                         if x1 * (x2 - x1) == -y1 * (y2 - y1):
                             ans += 2
         return ans
