@@ -31,7 +31,7 @@ class Problem132:
         count = 0
         ls_primes = primes(max_prime)
         for p in ls_primes:
-            if pow(10, n, 9 * p) == 1:
+            if pow(10, n, int(9 * p)) == 1:
                 count += 1
                 ans += p
             if count == max_count:

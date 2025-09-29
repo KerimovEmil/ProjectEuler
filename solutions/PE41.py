@@ -21,17 +21,15 @@ Solve time: ~0.5 seconds
 
 # therefore since we know it's not a 4 digit number due to the problem, it must be a 7-digit number.
 
-from util.utils import primes_upto as primes
-
 import unittest
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 
 
 class Problem41:
     def __init__(self, n):
         self.n = n
         self.ans = 0
-        self.ls_prime = primes(int(10 ** (n - 1)), int(10 ** n))
+        self.ls_prime = primes_upto(pow(10, n))
 
     @timeit
     def solve(self):
@@ -42,6 +40,8 @@ class Problem41:
             correct_values = set(str(prime)) == digit_set
             if unique and correct_values:
                 return prime
+
+        return 0
 
 
 class Solution41(unittest.TestCase):
