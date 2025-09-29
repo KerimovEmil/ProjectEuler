@@ -1,2 +1,2 @@
-numpy==1.22.1
+numpy==2.0.2
 primesieve==2.3.0
