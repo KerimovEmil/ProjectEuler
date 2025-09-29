@@ -31,7 +31,7 @@ Solve time ~27 seconds
 
 import unittest
 from util.utils import timeit
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 
 class Problem357:

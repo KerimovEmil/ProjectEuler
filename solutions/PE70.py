@@ -16,7 +16,7 @@ Solve time: ~410 ms
 
 from util.utils import timeit
 import unittest
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 # n/phi(n) will be maximized for n = prime, which would be p/(p-1).
 # however, p-1 can never be a permutation of p, so the next best thing is to try numbers which are the product of

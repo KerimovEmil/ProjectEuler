@@ -16,7 +16,7 @@ References:
 
 from util.utils import timeit, combin
 import unittest
-from primesieve import primes
+from util.utils import primes_upto as primes
 from util.crt import simple_crt_all_primes
 
 

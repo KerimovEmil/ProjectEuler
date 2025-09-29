@@ -19,7 +19,7 @@ Solve time: ~2 seconds
 from util.utils import timeit
 import unittest
 from math import log
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 
 class Problem347:

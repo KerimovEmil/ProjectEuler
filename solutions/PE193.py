@@ -14,7 +14,7 @@ References:
   http://www.numericana.com/answer/numbers.htm#moebius
   https://arxiv.org/pdf/1107.4890.pdf
 """
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 import unittest
 from util.utils import timeit, mobius_sieve

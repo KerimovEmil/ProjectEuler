@@ -14,9 +14,8 @@ How many primes below one million have this remarkable property?
 ANSWER: 173
 Solve time: ~1 second
 """
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 import unittest
-from primesieve import primes
 
 # n^2 * (n+p) = m^3  -> therefore n+p must be a perfect cube and n must be a perfect cube
 # therefore p = perfect cube (m^3) - n (perfect cube)
@@ -32,7 +31,7 @@ class Problem131:
 
     @timeit
     def solve(self):
-        ls_primes = primes(self.max_p)
+        ls_primes = primes_upto(self.max_p)
         count = 0
         p, q = 1, 0
         while p <= self.max_p:

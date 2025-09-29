@@ -21,7 +21,7 @@ Solve time: ~0.5 seconds
 
 # therefore since we know it's not a 4 digit number due to the problem, it must be a 7-digit number.
 
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 import unittest
 from util.utils import timeit

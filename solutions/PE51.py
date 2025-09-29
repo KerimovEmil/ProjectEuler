@@ -22,7 +22,7 @@ Solve time: ~1.7 seconds
 
 import unittest
 from collections import Counter
-from primesieve import primes
+from util.utils import primes_upto as primes
 from util.utils import timeit
 
 

@@ -11,7 +11,7 @@ Solve time: ~3.8 seconds
 
 from util.utils import timeit
 import unittest
-from primesieve import primes
+from util.utils import primes_upto as primes
 from typing import List
 from itertools import permutations
 

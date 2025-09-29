@@ -604,7 +604,7 @@ class EulerNumber:
         return self.factorial_mod[n]
 
 
-def sieve(n):
+def sieve(n):  # todo remove
     """Return all primes <= n."""
     np1 = n + 1
     s = list(range(np1))
@@ -614,6 +614,23 @@ def sieve(n):
         if s[i]:
             s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
     return filter(None, s)
+
+def prime_sieve(n):
+    n = int(n)
+    sieve = np.ones(n+1, dtype=bool)
+    sieve[:2] = False
+    for i in range(2, int(n**0.5) + 1):
+        if sieve[i]:
+            sieve[i*i:n+1:i] = False
+    return sieve
+
+
+def primes_upto(n):
+    return np.nonzero(prime_sieve(n))[0]
+
+
+def count_primes_upto(n):
+    return np.count_nonzero(prime_sieve(n))  # just count True values
 
 
 def timeit(method):

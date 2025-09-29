@@ -26,10 +26,9 @@ ANSWER: 11325263
 Solve time: ~5.6 seconds
 """
 import numpy as np
-from primesieve.numpy import primes  # much faster than primesieve.primes
 
 import unittest
-from util.utils import timeit, primes_of_n
+from util.utils import timeit, primes_of_n, primes_upto
 
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
@@ -290,7 +289,8 @@ class Problem229:
     @timeit
     def solve(self):
         print("generating primes")
-        ls_primes = timeit(primes)(self.max_n)
+        # ls_primes = timeit(primes)(self.max_n)
+        ls_primes = timeit(primes_upto)(self.max_n)
         print("finished generating primes")  # 1.3 seconds
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
         p_168 = ls_primes % 168  # using numpy arrays for speed

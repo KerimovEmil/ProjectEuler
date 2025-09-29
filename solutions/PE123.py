@@ -7,16 +7,14 @@ by p_{n}^2.
 For example, when n = 3, p_3 = 5, and 4^3 + 6^3 = 280 ≡ 5 mod 25.
 
 The least value of n for which the remainder first exceeds 10^9 is 7037.
-
 Find the least value of n for which the remainder first exceeds 10^10.
 
 ANSWER: 21035
-Solve time ~ ms
+Solve time ~850 ms
 """
 
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 import unittest
-from primesieve import primes, nth_prime
 
 # r = (p_{n} − 1)^n + (p_{n} + 1)^n
 # r = sum_{i=0}^{n} p_{n}^i (1 + (-1)^(n-i)) * (n choose i)
@@ -34,10 +32,12 @@ class Problem123:
 
     @timeit
     def solve(self):
+        ls_primes = primes_upto(int(1e6))
         for n in range(1, 100000, 2):
-            r = n * nth_prime(n) * 2
+            r = n * ls_primes[n-1] * 2
             if r >= self.limit:
                 return n
+        return 0
 
 
 class Solution123(unittest.TestCase):

@@ -12,7 +12,7 @@ Solve time: ~0.05 seconds
 """
 from util.utils import timeit
 import unittest
-from primesieve import primes
+from util.utils import primes_upto as primes
 
 
 # R(n) = (10^n - 1) / 9
