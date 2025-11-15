@@ -43,7 +43,6 @@ class Problem145:
             i_sum = i + rev_i
             if all([int(x) % 2 == 1 for x in str(i_sum)]):
                 self.count += 2
-                # print(i)
         return self.count
 
 

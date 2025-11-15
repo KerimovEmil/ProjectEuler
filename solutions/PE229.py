@@ -287,10 +287,12 @@ class Problem229:
         return ls_good_triple_comp
 
     @timeit
-    def solve(self):
-        print("generating primes")
+    def solve(self, debug=False):
+        if debug:
+            print("generating primes")
         ls_primes = timeit(primes_upto)(self.max_n)
-        print("finished generating primes")  # 1.3 seconds
+        if debug:
+            print("finished generating primes")  # 1.3 seconds
         # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
         p_168 = ls_primes % 168  # using numpy arrays for speed
         ls_good_primes = (ls_primes[np.isin(p_168, [1, 25, 121])]).tolist()

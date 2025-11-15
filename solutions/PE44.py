@@ -11,7 +11,7 @@ Find the pair of pentagonal numbers, Pj and Pk, for which their sum and differen
 is minimised; what is the value of D?
 
 ANSWER: 5482660
-Solve time: ~0.8 seconds
+Solve time: ~0.002 seconds
 """
 
 # p(n) = n(3n−1)/2
@@ -45,7 +45,7 @@ class Problem44:
         return [int(i * (3 * i - 1) / 2) for i in range(1, self.max_pentagonal_sum)]
 
     @timeit
-    def solve(self):
+    def solve(self, debug=False):
         ls_pentagonal_numbers = self.generate_ls_pentagonal_numbers()
         set_pentagonal_numbers = set(ls_pentagonal_numbers)
         for m in range(1, self.max_pentagonal_number):
@@ -54,7 +54,8 @@ class Problem44:
                 if pent_sum in set_pentagonal_numbers:
                     pent_diff = ls_pentagonal_numbers[n] - ls_pentagonal_numbers[m]
                     if pent_diff in set_pentagonal_numbers:
-                        print(m, n, ls_pentagonal_numbers[m], ls_pentagonal_numbers[n], pent_diff)
+                        if debug:
+                            print(m, n, ls_pentagonal_numbers[m], ls_pentagonal_numbers[n], pent_diff)
                         self.ans = min(pent_diff, self.ans)
         return self.ans
 

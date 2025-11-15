@@ -3,7 +3,7 @@ PROBLEM
 What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?
 
 ANSWER: 5777
-Solve time: < 1 ms
+Solve time: ~0.038 seconds
 """
 
 from util.utils import timeit

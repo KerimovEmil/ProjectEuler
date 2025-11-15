@@ -8,7 +8,7 @@ determine which line number has the greatest numerical value.
 NOTE: The first two lines in the file represent the numbers in the example given above.
 
 ANSWER: 709
-Solve time ~0.006 seconds
+Solve time ~0.001 seconds
 """
 
 import math

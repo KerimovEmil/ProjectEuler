@@ -106,16 +106,16 @@ class Solution420(unittest.TestCase):
         self.problem = None
 
     def test_solution(self):
-        self.assertEqual(7, Problem420(n=50, debug=True).solve())
+        self.assertEqual(7, Problem420(n=50, debug=False).solve())
 
     def test_solution_2(self):
-        self.assertEqual(1019, Problem420(n=1000, debug=True).solve())
+        self.assertEqual(1019, Problem420(n=1000, debug=False).solve())
 
     def test_solution_3(self):
-        self.assertEqual(16021, Problem420(n=7000, debug=True).solve())
+        self.assertEqual(16021, Problem420(n=7000, debug=False).solve())
 
     def test_solution_4(self):
-        self.assertEqual(145159332, Problem420(n=10000000, debug=True).solve())
+        self.assertEqual(145159332, Problem420(n=10000000, debug=False).solve())
 
 
 if __name__ == '__main__':

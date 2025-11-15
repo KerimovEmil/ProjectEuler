@@ -28,21 +28,24 @@ class Problem193:
         self.num_primes = None
 
     @timeit
-    def solve_mobius(self):  # 49 seconds
+    def solve_mobius(self, debug=False):  # 49 seconds
         self.ls_primes = primes_upto((self.n ** 0.5) + 1)
-        print("finished calculating primes")
+        if debug:
+            print("finished calculating primes")
         limit = self.n - 1
         sq_root_n = int(self.n ** 0.5) + 1
         ls_m = mobius_sieve(n=sq_root_n, ls_prime=self.ls_primes)
-        print("finished calculating mobius values")
+        if debug:
+            print("finished calculating mobius values")
         return sum(ls_m[i] * (limit // (i ** 2)) for i in range(1, sq_root_n))
 
     @timeit
-    def solve_count_p_square(self):  # 30 seconds
+    def solve_count_p_square(self, debug=False):  # 30 seconds
         self.ls_primes = primes_upto((self.n ** 0.5) + 1)
         self.ls_sq_primes = [p*p for p in self.ls_primes]
         len_primes = len(self.ls_primes)
-        print("finished calculating primes")
+        if debug:
+            print("finished calculating primes")
         ls = [(i, p2) for i, p2 in enumerate(self.ls_sq_primes)]
         total = self.n - 1
         limit = self.n - 1

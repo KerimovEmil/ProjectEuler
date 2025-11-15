@@ -10,7 +10,7 @@ d1 × d10 × d100 × d1000 × d10000 × d100000 × d1000000
 
 ANSWER:
 210
-Solve time ~0.3 seconds
+Solve time ~0.063 seconds
 """
 
 import unittest

@@ -73,7 +73,7 @@ class Problem357:
 
 class Solution357(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem357(max_int=int(1e8), debug=True)
+        self.problem = Problem357(max_int=int(1e8), debug=False)
 
     def test_solution(self):
         self.assertEqual(1739023853137, self.problem.solve())

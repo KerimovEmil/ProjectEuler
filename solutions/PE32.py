@@ -10,7 +10,7 @@ Find the sum of all products whose multiplicand/multiplier/product identity can 
 HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
 
 ANSWER: 45228
-Solve time: ~1.8 seconds
+Solve time: ~0.681 seconds
 """
 
 import unittest

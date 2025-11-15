@@ -33,22 +33,26 @@ class Problem330:
         self.n = n
         self.prime_list = prime_list
 
-    def solve(self):
+    def solve(self, debug=False):
         A_mod_list = []
         b_mod_list = []
         for prime in self.prime_list:
-            print("current prime =>", prime)
+            if debug:
+                print("current prime =>", prime)
             euler_number = EulerNumber(prime)
             n_mod = (self.n - prime) % (prime * (prime - 1)) + prime if self.n >= prime else self.n
-            print("n_mod =>", n_mod)
+            if debug:
+                print("n_mod =>", n_mod)
             A_mod, B_mod = euler_number.get(n_mod)
-            print("A(n) and B(n) mod", prime, "=>", A_mod, B_mod)
+            if debug:
+                print("A(n) and B(n) mod", prime, "=>", A_mod, B_mod)
             A_mod_list.append(A_mod)
             b_mod_list.append(B_mod)
         A = ChineseRemainderTheorem(A_mod_list, self.prime_list).solve()
         B = ChineseRemainderTheorem(b_mod_list, self.prime_list).solve()
-        print("A(n) mod 77777777 =>", A)
-        print("B(n) mod 77777777 =>", B)
+        if debug:
+            print("A(n) mod 77777777 =>", A)
+            print("B(n) mod 77777777 =>", B)
         return (A + B) % 77777777
 
 

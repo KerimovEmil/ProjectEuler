@@ -113,14 +113,15 @@ class Problem185:
         return best_guess, min_dist
 
     @timeit
-    def solve(self):
+    def solve(self, debug=False):
         min_dist = self.digits * len(self.ls_attempts)
         is_solved = False
         while is_solved is False:
             best_guess, dist = self.solve_attempt()
             if dist < min_dist:
                 min_dist = dist
-                print(min_dist, best_guess)
+                if debug:
+                    print(min_dist, best_guess)
             if dist == 0:
                 return best_guess
 

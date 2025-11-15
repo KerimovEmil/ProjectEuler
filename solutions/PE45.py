@@ -11,7 +11,7 @@ It can be verified that T285 = P165 = H143 = 40755.
 Find the next triangle number that is also pentagonal and hexagonal.
 
 ANSWER: 1533776805
-Solve time: ~0.6 seconds
+Solve time: ~0.344 seconds
 """
 
 import unittest
@@ -26,15 +26,12 @@ class Problem45:
         self.occurrence = occurrence
         self.ans = None
 
-    @timeit
     def generate_triangle_numbers(self):
         return {int(i * (i + 1) / 2) for i in range(1, self.max_penta)}
 
-    @timeit
     def generate_pentagonal_numbers(self):
         return {int(i * (3 * i - 1) / 2) for i in range(1, self.max_penta)}
 
-    @timeit
     def generate_hexa_numbers(self):
         return {int(i * (2 * i - 1)) for i in range(1, self.max_penta)}
 

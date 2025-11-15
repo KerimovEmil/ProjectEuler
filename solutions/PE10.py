@@ -5,7 +5,7 @@ The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 Find the sum of all the primes below two million.
 
 ANSWER: 142913828922
-Solve time: ~ 0.02 seconds
+Solve time: ~ 0.016 seconds
 """
 import unittest
 from util.utils import timeit, primes_upto

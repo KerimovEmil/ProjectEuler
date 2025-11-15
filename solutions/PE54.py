@@ -45,7 +45,7 @@ ten cards (separated by a single space): the first five are Player 1's cards and
 How many hands does Player 1 win?
 
 ANSWER: 376
-Solve time: ~0.09 seconds
+Solve time: ~0.035 seconds
 """
 
 from collections import Counter
