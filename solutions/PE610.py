@@ -73,7 +73,6 @@ class Problem610:
         pass
 
     @staticmethod
-    @timeit
     def get_transition_matrix():
         # Get all Roman Numerals less than 1000 (not starting with M)
         options = [RomanNumeral.construct(n) for n in range(1000)]
@@ -86,19 +85,21 @@ class Problem610:
         np_val = np.array(ls_values)
         # normalize each row
         np_prob = (np_val.T / np_val.sum(axis=1)).T
-        print('Done computing the transition matrix')
         return np_prob, options
 
     @timeit
-    def solve(self):
+    def solve(self, debug=False):
         prob_matrix, states = self.get_transition_matrix()
+        if debug:
+            print('Done computing the transition matrix')
+
         # Get non-absorbing sub-matrix
         q_matrix = prob_matrix[:-1, :-1]
 
         # sum_{n=0}^{inf} Q^n = (I-Q)^-1
         inf_sum_q = np.linalg.inv(np.eye(len(states)) - q_matrix)
 
-        # prob(starting at '', ending at state_i)*prob(state_i, terminal state #)
+        # prob(starting at '', ending at state_i) * prob(state_i, terminal state #)
         w = inf_sum_q[0] * prob_matrix[:-1, -1]
 
         # The value of all roman numerals that don't start with M

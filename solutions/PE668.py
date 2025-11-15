@@ -7,7 +7,7 @@ Including the number 1, there are 29 square root smooth numbers not exceeding 10
 How many square root smooth numbers are there not exceeding 10000000000?
 
 ANSWER: 2811077773
-Solve time: ~6 seconds
+Solve time: ~2.868 seconds
 """
 
 import unittest

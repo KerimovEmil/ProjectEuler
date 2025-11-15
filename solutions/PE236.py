@@ -206,7 +206,7 @@ class Problem236:
         self.possible_m = self.find_all_m()
         return max(self.possible_m)
 
-    def test_m(self, m, debug=True):  # misses two valid possibilities: 574/295 and 738/413
+    def test_m(self, m, debug=False):  # misses two valid possibilities: 574/295 and 738/413
         """
         Note that this function does not work for a general a_totals and b_totals.
         Args:

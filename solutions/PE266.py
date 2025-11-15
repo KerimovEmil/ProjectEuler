@@ -52,7 +52,7 @@ class Problem266:
         return prod
 
     @staticmethod
-    def testing_removal_of_small_prime(num_iter, ls_test_iter, max_int, divisor_must=1, debug=True):
+    def testing_removal_of_small_prime(num_iter, ls_test_iter, max_int, divisor_must=1, debug=False):
         # Testing if removing small prime p, will next smallest divisor still be less than the max_int?
         # Given we use n divisors.
         # If not then small prime p, must be in the divisors.
@@ -80,7 +80,7 @@ class Problem266:
         return divisor_must, ls_test, num_iter
 
     @staticmethod
-    def testing_inclusion_of_big_prime(num_iter, ls_test_iter, max_int, divisor_must, debug=True):
+    def testing_inclusion_of_big_prime(num_iter, ls_test_iter, max_int, divisor_must, debug=False):
         # Testing the inclusion of big prime p, will the smallest possible divisor including p, still be less than the
         # max_int?
         # Given we use n divisors.
@@ -108,7 +108,7 @@ class Problem266:
         return ls_test
 
     @staticmethod
-    def testing_inclusion_of_small_prime(num_iter, ls_test_iter, prev_max, divisor_must, debug=True):
+    def testing_inclusion_of_small_prime(num_iter, ls_test_iter, prev_max, divisor_must, debug=False):
         # Testing the inclusion of small prime p, will the largest possible divisor including p, still be greater than \
         # the previous max divisor?
         # Given we use n divisors.
@@ -138,7 +138,7 @@ class Problem266:
         return ls_test
 
     @staticmethod
-    def testing_removal_of_big_prime(num_iter, ls_test_iter, prev_max, divisor_must, debug=True):
+    def testing_removal_of_big_prime(num_iter, ls_test_iter, prev_max, divisor_must, debug=False):
         # Testing the removal of large prime p, will the largest possible divisor not including p, still be greater
         # than the previous max divisor?
         # Given we use n divisors.
