@@ -58,7 +58,7 @@ class Problem111:
     def solve(self):
         for i in range(self.n):
             if self.debug:
-                print("Calculating S_{}_{}".format(self.n, i))
+                print(f"Calculating S_{self.n}_{i}")
             self.ans += self.new_s(str(i))
         return self.ans
 

@@ -17,7 +17,7 @@ cycle.
 Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
 
 ANSWER: 983
-Solve time ~ <0.01 seconds
+Solve time ~ 0.007 seconds
 """
 from util.utils import timeit, cycle_length
 import unittest

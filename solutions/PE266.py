@@ -203,8 +203,8 @@ class Problem266:
                                                                                   prev_max=previous_max_divisor,
                                                                                   divisor_must=divisor_must,
                                                                                   debug=self.debug)
-
-        print('Looping over all combinations of {} choices left out of {} primes.'.format(num_iter, len(ls_test)))
+        if self.debug:
+            print('Looping over all combinations of {} choices left out of {} primes.'.format(num_iter, len(ls_test)))
         # print('Compressing by product less than max_int')
         # x = itertools.combinations(ls_test, r=num_iter)
         # y = itertools.combinations(ls_test, r=num_iter)

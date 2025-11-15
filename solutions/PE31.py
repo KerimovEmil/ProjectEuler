@@ -11,7 +11,7 @@ It is possible to make £2 in the following way:
 How many different ways can £2 be made using any number of coins?
 
 ANSWER: 73682
-Solve time: ~7ms
+Solve time ~ 0.001 seconds
 Related problems: 76, 77
 """
 from util.utils import timeit

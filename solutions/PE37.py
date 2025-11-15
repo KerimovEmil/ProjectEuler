@@ -9,7 +9,7 @@ Find the sum of the only eleven primes that are both truncatable from left to ri
 NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
 
 ANSWER: 748317
-Solve time: ~0.3 seconds
+Solve time: ~0.071 seconds
 """
 
 import unittest

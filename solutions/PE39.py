@@ -9,7 +9,7 @@ If p is the perimeter of a right angle triangle with integral length sides,
 For which value of p <= 1000, is the number of solutions maximised?
 
 ANSWER: 840
-Solve time: ~0.05 seconds
+Solve time: ~0.002 seconds
 Related problems: 75
 """
 

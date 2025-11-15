@@ -16,7 +16,7 @@ d8d9d10=289 is divisible by 17
 Find the sum of all 0 to 9 pandigital numbers with this property.
 
 ANSWER: 16695334890
-Solve time: ~0.007 seconds
+Solve time: ~0.001 seconds
 """
 
 # d2 d3 d4 is divisible by 2 implies d4 = 0,2,4,6,8
@@ -81,13 +81,14 @@ class Problem43:
         return True
 
     @timeit
-    def solve(self):
+    def solve(self, debug=False):
         # all possible last two digits
         ls_possible = [(x, y) for x in range(10) for y in range(10) if y != x]
 
         # looping over divisor criteria to reduce space
         for condition in range(self.n_criteria + 1)[::-1]:
-            print("Condition: {} has {} starting solution space".format(condition, len(ls_possible)))
+            if debug:
+                print(f"Condition: {condition} has {len(ls_possible)} starting solution space")
             q = ls_possible
             ls_possible = []
             for tup in q:

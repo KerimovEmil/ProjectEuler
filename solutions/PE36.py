@@ -6,7 +6,7 @@ Find the sum of all numbers, less than one million, which are palindromic in bas
 (Please note that the palindromic number, in either base, may not include leading zeros.)
 
 ANSWER: 872187
-Solve time: ~0.6 seconds
+Solve time: ~0.216 seconds
 """
 
 import unittest

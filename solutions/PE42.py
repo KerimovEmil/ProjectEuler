@@ -15,7 +15,7 @@ Using words.txt (right click and 'Save Link/Target As...'), a 16K text file cont
 nearly two-thousand common English words, how many are triangle words?
 
 ANSWER: 162
-Solve time: ~0.007 seconds
+Solve time: ~0.001 seconds
 """
 
 import unittest

@@ -33,7 +33,7 @@ class Problem211:
         self.dc_prime_factor_sq_sum = {}
 
     @timeit
-    def solve(self):
+    def solve(self, debug=False):
 
         ls_primes = primes_upto(int(self.max_int))
         # max_lg = math.log2(self.max_int)
@@ -50,7 +50,8 @@ class Problem211:
             sum_sqs = self.sum_sq_divisors(dc_factors)
 
             if self.test_square(sum_sqs):
-                print(i, dc_factors, int(sum_sqs), int(sum_sqs ** 0.5))
+                if debug:
+                    print(i, dc_factors, int(sum_sqs), int(sum_sqs ** 0.5))
                 self.sum_n += i
         return self.sum_n
 

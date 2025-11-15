@@ -15,7 +15,7 @@ What is the largest 1 to 9 pandigital 9-digit number that can be formed as the c
 with (1,2, ... , n) where n > 1?
 
 ANSWER: 932718654
-Solve time: ~0.02 seconds
+Solve time: ~0.007 seconds
 """
 
 import unittest

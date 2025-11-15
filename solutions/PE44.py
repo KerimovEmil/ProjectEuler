@@ -11,7 +11,7 @@ Find the pair of pentagonal numbers, Pj and Pk, for which their sum and differen
 is minimised; what is the value of D?
 
 ANSWER: 5482660
-Solve time: ~0.8 seconds
+Solve time: ~0.002 seconds
 """
 
 # p(n) = n(3n−1)/2

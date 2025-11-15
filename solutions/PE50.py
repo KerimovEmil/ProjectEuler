@@ -13,7 +13,7 @@ Which prime, below one-million, can be written as the sum
 of the most consecutive primes?
 
 ANSWER: 997651
-Solve time: ~0.9 seconds
+Solve time: ~2.397 seconds
 """
 
 import unittest

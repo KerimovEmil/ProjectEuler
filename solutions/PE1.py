@@ -7,7 +7,7 @@ The sum of these multiples is 23.
 Find the sum of all the multiples of 3 or 5 below 1000.
 
 ANSWER: 233168
-Solve time ~ 0.002 seconds
+Solve time ~ 0.001 seconds
 """
 
 import unittest
