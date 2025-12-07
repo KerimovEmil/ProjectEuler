@@ -10,7 +10,7 @@ By considering the terms in the Fibonacci sequence whose values do not exceed fo
 find the sum of the even-valued terms.
 
 ANSWER: 4613732
-Solve time: ~0.001 seconds
+Solve time: ~0.000 seconds
 """
 
 import unittest

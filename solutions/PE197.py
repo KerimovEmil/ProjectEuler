@@ -8,7 +8,7 @@ Find u(n) + u(n+1) for n = 10^12.
 Give your answer with 9 digits after the decimal point.
 
 ANSWER: 1.710637717
-Solve time: ~0.001 seconds
+Solve time: ~0.000 seconds
 """
 
 import unittest

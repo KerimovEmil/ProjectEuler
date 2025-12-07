@@ -14,7 +14,7 @@ the 10th golden nugget is 74049690.
 Find the 15th golden nugget.
 
 ANSWER: 1120149658760
-Solve time: ~0.001 seconds
+Solve time: ~0.000 seconds
 """
 import unittest
 from solutions.PE140 import Problem140

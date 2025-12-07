@@ -11,7 +11,7 @@ Thus we have e.g. 3↑↑2 = 3^3 = 27, hence 3↑↑3 = 3^27 = 7625597484987 and
 Find the last 8 digits of 1777↑↑1855.
 
 ANSWER: 95962097
-Solve time: ~0.001 seconds
+Solve time: ~0.000 seconds
 """
 from util.utils import timeit
 import unittest
