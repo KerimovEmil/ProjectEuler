@@ -25,7 +25,7 @@ Using the numbers 1 to 10, and depending on arrangements, it is possible to form
  What is the maximum 16-digit string for a "magic" 5-gon ring?
 
 ANSWER: 6531031914842725
-Solve time: 0 seconds
+Solve time: ~0.001 seconds
 """
 
 from util.utils import timeit
