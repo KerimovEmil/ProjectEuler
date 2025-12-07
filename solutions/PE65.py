@@ -22,7 +22,7 @@ The sum of digits in the numerator of the 10th convergent is 1 + 4 + 5 + 7 = 17.
 Find the sum of digits in the numerator of the 100th convergent of the continued fraction for e.
 
 ANSWER: 272
-Solve time: ~0.000 seconds
+Solve time: ~0.001 seconds
 """
 import decimal
 import math

@@ -9,7 +9,7 @@ it turns out that rmax = 42.
 For 3 ≤ a ≤ 1000, find ∑ rmax.
 
 ANSWER: 333082500
-Solve time: ~0.000 seconds
+Solve time: ~0.001 seconds
 """
 
 import unittest

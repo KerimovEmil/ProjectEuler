@@ -7,7 +7,7 @@ top to bottom is 23.
 Find the maximum total from top to bottom of the triangle in p018_triangle.txt
 
 ANSWER: 1074
-Solve time: ~0.000 seconds
+Solve time: ~0.001 seconds
 Related Problems: 67
 """
 

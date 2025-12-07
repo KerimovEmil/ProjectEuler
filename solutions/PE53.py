@@ -11,7 +11,7 @@ It is not until n=23, that a value exceeds one-million: (23 choose 10) = 1144066
 How many, not necessarily distinct, values of (n choose r) for 1<=n<=100 are greater than one-million?
 
 ANSWER: 4075
-Solve time: ~0.000 seconds
+Solve time: ~0.001 seconds
 """
 import unittest
 from util.utils import combin
