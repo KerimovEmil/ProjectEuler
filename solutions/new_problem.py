@@ -44,7 +44,7 @@ def get_problem_description(n):
         print(f"Warning: Could not fetch problem description: {e}")
     return "PROBLEM DESCRIPTION COULD NOT BE AUTOMATICALLY RETRIEVED."
 
-TEMPLATE = """\"\"\"
+TEMPLATE = """r\"\"\"
 PROBLEM
 
 {1}
