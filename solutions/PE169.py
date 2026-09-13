@@ -14,7 +14,7 @@ For example, f(10) = 5 since there are five different ways to express 10:
 What is f(10^25)?
 
 ANSWER: 178653872807
-Solve time ~0.001 seconds
+Solve time: ~0.001 seconds
 """
 
 # 10 = 8 + 2 = 2^3 + 2^1 = 1010 in binary

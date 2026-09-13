@@ -14,7 +14,7 @@ Interestingly, S(n) is always an integer. For example, S(4)=51160
 Find S(10^6) modulo 1,000,000,007
 
 ANSWER: 191541795
-Solve time ~6 s
+Solve time: ~6 seconds
 """
 
 # re-arrange 1/x = (k/x)^2 (k+x^2) -kx to

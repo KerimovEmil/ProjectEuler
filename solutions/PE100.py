@@ -9,7 +9,7 @@ By finding the first arrangement to contain over 10^12 = 1,000,000,000,000 discs
  discs that the box would contain.
 
 ANSWER: 756872327473
-Solve time ~0.001 seconds
+Solve time: ~0.001 seconds
 """
 from util.utils import timeit
 import unittest

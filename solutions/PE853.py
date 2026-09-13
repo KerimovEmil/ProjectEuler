@@ -9,8 +9,8 @@ The sum of those smaller than 50 is 19+38=57.
 
 Find the sum of the values of n smaller than 1,000,000,000 for which p(n) equals 120.
 
-ANSWER: 44,511,058,204
-Solve time: 0.17 seconds
+ANSWER: 44511058204
+Solve time: ~0.17 seconds
 """
 from util.utils import timeit, primes_of_n, pisano_period, primes_upto
 import unittest

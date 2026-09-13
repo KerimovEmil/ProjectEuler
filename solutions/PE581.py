@@ -4,7 +4,7 @@ Let T be the sequence of triangular numbers, i.e. T(n) = n(n+1)/2
 
 Find the sum of all indices n such that T(n) is 47-smooth.
 
-ANSWER: 2,227,616,372,734
+ANSWER: 2227616372734
 Solve time: ~10.439 seconds
 
 Key Idea:

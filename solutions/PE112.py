@@ -16,7 +16,7 @@ numbers is equal to 90%.
 Find the least number for which the proportion of bouncy numbers is exactly 99%.
 
 ANSWER: 1587000
-Solve time ~6 seconds
+Solve time: ~6 seconds
 """
 
 from util.utils import timeit

@@ -14,7 +14,7 @@ It can be verified that sum S(p) = 480 for 5 <= p < 100.
 Find sum S(p) for 5 <= p < 10^8.
 
 ANSWER: 139602943319822
-Solve time: 3.661 seconds
+Solve time: ~3.661 seconds
 """
 
 import unittest 

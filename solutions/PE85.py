@@ -6,7 +6,7 @@ Although there exists no rectangular grid that contains exactly two million rect
 the nearest solution.
 
 ANSWER: 2772
-Solve time: ~2ms
+Solve time: ~0.002 seconds
 """
 from util.utils import timeit
 import unittest

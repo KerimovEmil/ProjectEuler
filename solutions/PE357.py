@@ -8,7 +8,7 @@ Find the sum of all positive integers n not exceeding 100,000,000
 such that for every divisor d of n, d+n/d is prime.
 
 ANSWER: 1739023853137
-Solve time ~27 seconds
+Solve time: ~27 seconds
 """
 
 # Since 1 is always a divisor of n, then

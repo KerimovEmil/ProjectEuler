@@ -11,7 +11,8 @@ It can be seen that there are 3 fractions between 1/3 and 1/2.
 How many fractions lie between 1/3 and 1/2 in the sorted set of reduced proper fractions for d ≤ 12,000?
 
 ANSWER: 7295372
-Solve time: ~0.004 seconds  # easy solution in ~9.7 seconds
+Solve time: ~0.004 seconds
+Solve time: ~9.7 seconds using easy solution
 """
 
 import unittest

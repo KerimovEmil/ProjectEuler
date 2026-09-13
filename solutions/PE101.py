@@ -35,7 +35,7 @@ u_n = 1 − n + n^2 − n^3 + n^4 − n^5 + n^6 − n^7 + n^8 − n^9 + n^10
 Find the sum of FITs for the BOPs.
 
 ANSWER: 37076114526
-Solve time ~ 0.098 seconds
+Solve time: ~0.098 seconds
 """
 import numpy as np
 import unittest

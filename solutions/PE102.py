@@ -13,7 +13,7 @@ It can be verified that triangle ABC contains the origin, whereas triangle XYZ d
 find the number of triangles for which the interior contains the origin.
 
 ANSWER: 228
-Solve time: ~14 milliseconds
+Solve time: ~0.014 seconds
 """
 
 from util.utils import timeit
