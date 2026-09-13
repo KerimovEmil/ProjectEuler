@@ -6,7 +6,7 @@ How many different ways can the grey tiles in a row measuring fifty units in len
  mixed and at least one coloured tile must be used?
 
 ANSWER: 20492570929
-Solve time: < 1 millisecond
+Solve time: ~0.001 seconds
 """
 
 from util.utils import timeit, combin
