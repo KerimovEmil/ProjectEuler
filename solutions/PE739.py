@@ -24,7 +24,7 @@ You are also given f(20)=742296999 modulo 1,000,000,007
 Find f(10^8). Give your answer modulo 1,000,000,007.
 
 ANSWER: 711399016
-Solve time: ~166 seconds
+Solve time: ~166 seconds (~3 minutes)
 """
 
 from util.utils import timeit, cumsum, fibonacci_n_term, catalan_transform, get_all_mod_inverse_list
