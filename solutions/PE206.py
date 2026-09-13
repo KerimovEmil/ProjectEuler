@@ -4,9 +4,8 @@ PROBLEM
 Find the unique positive integer whose square has the form 1_2_3_4_5_6_7_8_9_0,
 where each “_” is a single digit.
 
-ANSWER:
-1389019170
-Solve time < 0.1 seconds
+ANSWER: 1389019170
+Solve time: ~0.1 seconds
 """
 
 from util.utils import timeit

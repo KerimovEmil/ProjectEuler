@@ -18,7 +18,7 @@ Give your answer as a hexadecimal number.
 without leading zeroes , e.g. 1A3F and not: 1a3f and not 0x1a3f and not $1A3F and not #1A3F and not 0000001A3F)
 
 ANSWER: 3D58725572C62302  (int = 4420408745587516162)
-Solve time: < 0.01 seconds
+Solve time: ~0.01 seconds
 """
 
 from util.utils import timeit

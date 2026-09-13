@@ -14,7 +14,7 @@ one-million that are not bouncy and only 277032 non-bouncy numbers below 10^10.
 How many numbers below a googol (10^100) are not bouncy?
 
 ANSWER: 51161058134250
-Solve time ~0.001 seconds
+Solve time: ~0.001 seconds
 """
 
 # constant numbers

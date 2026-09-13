@@ -7,7 +7,7 @@ There are exactly fourteen triangles containing a right angle that can be formed
 Given that 0<= x1,x2,y1,y2 <=50, how many right triangles can be formed?
 
 ANSWER: 14234
-Solve time ~0.6 seconds
+Solve time: ~0.6 seconds
 """
 
 import unittest

@@ -12,7 +12,6 @@ Given that the perimeter of the right triangle is less than one-hundred million,
  allow such a tiling to take place?
 
 ANSWER: 10057761
-Solve time: ~9.5 seconds using brute force
 Solve time: ~0.003 seconds using pell equations
 """
 

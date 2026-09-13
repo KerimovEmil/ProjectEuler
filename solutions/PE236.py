@@ -28,7 +28,7 @@ What's the largest possible value of m?
 Give your answer as a fraction reduced to its lowest terms, in the form u/v.
 
 ANSWER: 123/59
-Solve time ~ 0.23 seconds
+Solve time: ~0.23 seconds
 """
 from fractions import Fraction
 from math import ceil

@@ -6,7 +6,7 @@ x,y > 0 and integers
 What is the least value of n for which the number of distinct solutions exceeds 4 million?
 
 ANSWER: 9350130049860600
-Solve time ~0.003 seconds
+Solve time: ~0.003 seconds
 """
 import unittest
 

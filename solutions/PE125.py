@@ -12,7 +12,7 @@ Find the sum of all the numbers less than 108 that are both palindromic and can 
 squares.
 
 ANSWER: 2906969179
-Solve time ~0.99 seconds
+Solve time: ~0.99 seconds
 """
 
 import unittest

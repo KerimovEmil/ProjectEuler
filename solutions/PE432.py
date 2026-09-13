@@ -8,7 +8,7 @@ Find S(510510,10^11).
 Give the last 9 digits of your answer.
 
 ANSWER: 754862080
-Solve time: 618 seconds ~ 10 mins + 20 seconds
+Solve time: ~618 seconds
 """
 
 import unittest

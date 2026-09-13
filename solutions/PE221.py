@@ -12,8 +12,8 @@ For example, 630 is an Alexandrian integer (a=5, b=-7, c=-18). In fact, 630 is t
 
 Find the 150000th Alexandrian integer
 
-ANSWER: = 1884161251122450
-Solve time: 11 mins
+ANSWER: 1884161251122450
+Solve time: ~660 seconds
 """
 from util.utils import timeit
 import unittest

@@ -13,7 +13,7 @@ For example, D(10^7) = 0 and D(5·10^9) = 51.
 Find D(10^18).
 
 ANSWER: 11408450515
-Solve time: 1.5 seconds
+Solve time: ~1.5 seconds
 """
 
 from util.utils import timeit, lcm

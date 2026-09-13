@@ -7,7 +7,7 @@ is 9009 = 91 × 99.
 Find the largest palindrome made from the product of two 3-digit numbers.
 
 ANSWER: 906609
-Solve time: ~ 0.274 seconds
+Solve time: ~0.274 seconds
 """
 
 from itertools import product
