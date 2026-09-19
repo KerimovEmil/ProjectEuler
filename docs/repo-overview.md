@@ -1,8 +1,9 @@
 # ProjectEuler Repo Overview
 
 This repository contains Python solutions to [Project Euler](https://projecteuler.net) problems.
-As of the latest commit, there are 137 solutions (PE1 through PE853), added incrementally via
-pull requests. The `README.md` is essentially empty, so this doc serves as the reference for
+As of the latest commit, there are 152 solutions (PE1 through PE853), added incrementally via
+pull requests. (The account has 161 problems solved in total; the remaining ten are tracked
+for future PRs.) The `README.md` is essentially empty, so this doc serves as the reference for
 the project's structure and conventions.
 
 ## Directory layout
@@ -120,20 +121,24 @@ Notes:
 
 `problem_data/` holds the input files referenced by solutions:
 
-| File                | Used by | Contents                              |
-|---------------------|---------|---------------------------------------|
-| `p018_triangle.txt` | PE18    | Number triangle                        |
-| `p042_words.txt`    | PE42    | Triangle words                         |
-| `p054_poker.txt`    | PE54    | 1000 poker hands (5 cards per player)  |
-| `p059_cipher.txt`   | PE59    | XOR-encrypted cipher                   |
-| `p067_triangle.txt` | PE67    | Large number triangle                  |
-| `p081_matrix.txt`   | PE81    | 80x80 matrix                           |
-| `p082_matrix.txt`   | PE82    | 80x80 matrix                           |
-| `p083_matrix.txt`   | PE83    | 80x80 matrix                           |
-| `p089_roman.txt`    | PE89    | Roman numerals                         |
-| `p096_sudoku.txt`   | PE96    | 50 sudoku puzzles                      |
-| `p099_base_exp.txt` | PE99    | 1000 base/exponent pairs               |
-| `p102_triangles.txt`| PE102   | Triangle coordinate triples            |
+| File                 | Used by | Contents                              |
+|----------------------|---------|--------------------------------------|
+| `p008_series.txt`    | PE8     | 1000-digit number series              |
+| `p011_grid.txt`      | PE11    | 20x20 number grid                     |
+| `p013_numbers.txt`   | PE13    | 100 x 50-digit numbers                |
+| `p018_triangle.txt`  | PE18    | Number triangle                       |
+| `p022_names.txt`     | PE22    | List of names                         |
+| `p042_words.txt`     | PE42    | Triangle words                        |
+| `p054_poker.txt`     | PE54    | 1000 poker hands (5 cards per player) |
+| `p059_cipher.txt`    | PE59    | XOR-encrypted cipher                  |
+| `p067_triangle.txt`  | PE67    | Large number triangle                 |
+| `p081_matrix.txt`    | PE81    | 80x80 matrix                          |
+| `p082_matrix.txt`    | PE82    | 80x80 matrix                          |
+| `p083_matrix.txt`    | PE83    | 80x80 matrix                          |
+| `p089_roman.txt`     | PE89    | Roman numerals                        |
+| `p096_sudoku.txt`    | PE96    | 50 sudoku puzzles                     |
+| `p099_base_exp.txt`  | PE99    | 1000 base/exponent pairs              |
+| `p102_triangles.txt` | PE102   | Triangle coordinate triples           |
 
 ## Testing and CI
 
