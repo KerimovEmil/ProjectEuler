@@ -53,6 +53,18 @@ class SetInteger(Set):
         else:
             return NotImplementedError
 
+    def __pow__(self, other: int):
+        if isinstance(other, int):
+            return SetInteger(pow(x, other) for x in self)
+        else:
+            return NotImplementedError
+
+    def get_all_under(self, max_limit):
+        if isinstance(max_limit, int):
+            return SetInteger(x for x in self if x <= max_limit)
+        else:
+            return NotImplementedError
+
 
 class ChineseRemainderTheorem:
     """
@@ -116,3 +128,18 @@ class ChineseRemainderTheoremSets:
 
             existing_set, existing_mod = root, combined_mod
         return existing_set
+
+
+def simple_crt_all_primes(ls_a: List[int], ls_p: List[int]) -> int:
+    """
+    Solve x = a_i (mod p_i)
+    """
+    a = ls_a[0]
+    m = ls_p[0]
+    for n, b in zip(ls_p[1:], ls_a[1:]):
+        new_mod = m * n
+        (x, y) = bezout_thm(m, n)  # solve for x,y such that m*x + n*y = 1
+        primary_root = b * x * m + a * y * n
+        root = primary_root % new_mod
+        a, m = root, new_mod
+    return a

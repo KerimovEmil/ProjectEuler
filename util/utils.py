@@ -444,6 +444,7 @@ def basic_falling_factorial(high, low):
         i += 1
     return ans
 
+
 def lcm(x, y):
     return x * y // gcd(x, y)
 
@@ -453,7 +454,7 @@ class Matrix:
         self.entries = entries
 
     def __mul__(self, other):
-        result = [[0 for j in range(len(other.entries[0]))] for i in range(len(self.entries))]
+        result = [[0 for _ in range(len(other.entries[0]))] for _ in range(len(self.entries))]
         for i in range(len(self.entries)):
             for j in range(len(other.entries[0])):
                 for k in range(len(other.entries)):
@@ -498,7 +499,7 @@ class LinearHomogeneousRecurrence:
         self.initial_state = self.__init__initial_state(initial_values)
 
     def __init__companion_matrix(self, coefficients):
-        entries = [[0 for j in range(self.dim)] for i in range(self.dim)]
+        entries = [[0 for _ in range(self.dim)] for _ in range(self.dim)]
         for i in range(self.dim):
             entries[0][i] = coefficients[i]
         for i in range(1, self.dim):
@@ -518,7 +519,8 @@ class LinearHomogeneousRecurrence:
 
 
 class BaseConverter:
-    def convert_decimal(self, n, base):
+    @staticmethod
+    def convert_decimal(n, base):
         reversed_rep = []
         d = n
         while d:
@@ -526,7 +528,8 @@ class BaseConverter:
             reversed_rep.append(r)
         return reversed_rep[::-1]
 
-    def convert_rep(self, rep, base):
+    @staticmethod
+    def convert_rep(rep, base):
         result = 0
         for digit in rep:
             result = result * base + digit
@@ -540,7 +543,8 @@ class BinomialCoefficient:
         self.cache_values = {}
         self.base_converter = BaseConverter()
 
-    def __init_base_values(self, prime):
+    @staticmethod
+    def __init_base_values(prime):
         curr = [1]
         result = [curr]
         for n in range(2, prime + 1):
@@ -603,16 +607,22 @@ class EulerNumber:
         return self.factorial_mod[n]
 
 
-def sieve(n):
-    """Return all primes <= n."""
-    np1 = n + 1
-    s = list(range(np1))
-    s[1] = 0
-    sqrtn = int(round(n ** 0.5))
-    for i in range(2, sqrtn + 1):
-        if s[i]:
-            s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
-    return filter(None, s)
+def prime_sieve(n):
+    n = int(n)
+    sieve = np.ones(n+1, dtype=bool)
+    sieve[:2] = False
+    for i in range(2, int(n**0.5) + 1):
+        if sieve[i]:
+            sieve[i*i:n+1:i] = False
+    return sieve
+
+
+def primes_upto(n):
+    return np.nonzero(prime_sieve(n))[0]
+
+
+def count_primes_upto(n):
+    return np.count_nonzero(prime_sieve(n))  # just count True values
 
 
 def timeit(method):
@@ -620,13 +630,13 @@ def timeit(method):
         ts = time.time()
         result = method(*args, **kw)
         te = time.time()
-        print('{} took: {:.3f} seconds'.format(method.__name__, (te - ts)))
+        print('{} took: {:.3f} seconds'.format(method.__module__, (te - ts)))
         return result
     return timed
 
 
 def is_pandigital(num):
-    """Return true if integer num uses all of the digits from 1 to n exactly once. False otherwise."""
+    """Return true if integer num uses the digits from 1 to n exactly once. False otherwise."""
     str_num = str(num)
     if str_num.count('0') > 0:
         return False
@@ -754,8 +764,8 @@ def square_free_sieve(limit):
 def square_primes_sieve(limit, primes=None):
     """Returns a list all prime squares less than limit"""
     if primes is None:
-        primes = sieve(int(limit))
-    return [i**2 for i in primes]
+        primes = primes_upto(int(limit))
+    return [int(i**2) for i in primes]
 
 
 def primes_of_n(n, ls_prime=None):
@@ -816,7 +826,7 @@ def generate_ascending_sub_sequence(options, num):
         options: <list> of objects, ordered in ascending order
         num: <int> the size of the sub-sequence to return
 
-    Returns: an generator of sub-sequences of options in ascending order
+    Returns: a generator of sub-sequences of options in ascending order
 
     e.g.
      options = ['0', '1', '2']
@@ -844,9 +854,9 @@ def generate_ascending_sub_sequence(options, num):
 
 
 @lru_cache(maxsize=None, typed=False)
-def partition_number(n):
+def partition_number(n, mod=None):
     """
-    Compute the partition number of n.
+    Compute the partition number of n, mod m
     Using recursive equation found here: http://www.cs.utsa.edu/~wagner/python/fp/part.html
     p(n) = sum_{k=1}^{n} (-1)^{k+1} (p(x) + p(y))
     x = n - k*(3k-1)/2
@@ -856,13 +866,21 @@ def partition_number(n):
         return 0
     if n == 0:
         return 1
-    sign = 1
+
+    m_sign = 1
     summation = 0
+
     for k in range(1, n+1):
-        x = n - int(k*(3*k-1)/2)
-        y = n - int(k*(3*k+1)/2)
-        summation += sign*(partition_number(x) + partition_number(y))
-        sign *= -1
+        if k*(3*k-1) > 2*n:
+            break
+
+        x = n - k*(3*k-1) // 2
+        y = n - k*(3*k+1) // 2
+        summation += m_sign * (partition_number(x, mod=mod) + partition_number(y, mod=mod))
+        m_sign *= -1
+
+    if mod:
+        summation = summation % mod
     return summation
 
 
@@ -934,7 +952,6 @@ def sign(x):
         return 0
 
 
-@timeit
 def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     Returns a list of all mobius function values.
@@ -944,7 +961,7 @@ def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     ls_m = [1]*n
     if ls_prime is None:
-        ls_p = list(sieve(n))
+        ls_p = primes_upto(n)
     else:
         ls_p = ls_prime
     for p in ls_p:
@@ -966,10 +983,10 @@ def num_of_divisors(n):
 
 def divisors(prime_factors: Dict[int, int]) -> Generator[int, None, None]:
     """
-    Given the prime factorization of a number, return a generator of all of it's divisors.
+    Given the prime factorization of a number, return a generator of the divisors.
     Args:
         prime_factors: a dictionary with the key being the prime and the value being the multiplicity of the prime.
-    For example if n=12 then then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
+    For example if n=12 then input would be {2:2, 3:1} since 12 = 2*2*3, and the generator would return
     1,2,4,3,6,12
     """
     ls_primes = list(prime_factors.keys())
@@ -1095,3 +1112,59 @@ def cycle_length(k: int) -> int:
         x = (x*10) % k
         d += 1
     return d
+
+
+def coprime(a: int, b: int) -> bool:
+    while b != 0:
+        a, b = b, a % b
+    return a == 1
+
+
+def smooth_numbers(current_prime_index, current_value, ls_primes, max_n):
+    """
+    Return a list of all smooth numbers up to the given limit.
+
+    A smooth number is a natural number that is divisible by no primes other than 2 and 3.
+
+    Args:
+      current_prime_index: The index of the current prime in the list primes.
+      current_value: The current value.
+      ls_primes: A list of primes.
+      max_n: The maximum number to consider.
+
+    Returns:
+      A list of all smooth numbers up to the given limit.
+    """
+
+    if current_prime_index == len(ls_primes):
+        return [current_value]
+
+    current_prime = ls_primes[current_prime_index]
+    results = []
+    while current_value <= max_n:
+        results.extend(smooth_numbers(current_prime_index + 1, current_value, ls_primes, max_n))
+        current_value *= current_prime
+
+    return results
+
+
+def pisano_period(m: int) -> int:
+    """
+    Returns the pisano period of integer m.
+    The period with which the sequence of Fibonacci numbers taken modulo n repeats.
+
+    See Also: https://en.wikipedia.org/wiki/Pisano_period
+    """
+    if m == 1:
+        return 1
+
+    prev, curr = 0, 1
+    for i in range(0, m * m):
+        prev, curr = curr, (prev + curr) % m
+        if (prev, curr) == (0, 1):
+            return i + 1
+    return m
+
+
+def is_int(n):
+    return abs(n - int(n)) < 1e-13
