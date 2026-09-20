@@ -1,7 +1,7 @@
 # ProjectEuler Repo Overview
 
 This repository contains Python solutions to [Project Euler](https://projecteuler.net) problems.
-As of the latest commit, there are 160 solutions (PE1 through PE853), added incrementally via
+As of the latest commit, there are 160 solutions (PE0001 through PE0853), added incrementally via
 pull requests. (The account has 161 problems solved in total; the remaining two — PE686 and PE836 —
 are tracked for future PRs.) The `README.md` is essentially empty, so
 this doc serves as the reference for the project's structure and conventions.
@@ -10,7 +10,7 @@ this doc serves as the reference for the project's structure and conventions.
 
 | Path                        | Purpose                                                                 |
 |-----------------------------|-------------------------------------------------------------------------|
-| `solutions/`                | One `PE<N>.py` file per solved problem (e.g. `PE1.py`, `PE381.py`)       |
+| `solutions/`                | One `PE0<N>.py` file per solved problem (e.g. `PE0001.py`, `PE0381.py`)  |
 | `solutions/new_problem.py`  | Scaffolding script: scrapes a problem description and writes a stub     |
 | `util/`                     | Shared math / number-theory helpers imported by solutions               |
 | `problem_data/`             | Input data files for problems that read from a file                     |
@@ -20,7 +20,7 @@ this doc serves as the reference for the project's structure and conventions.
 
 ## Solution file conventions
 
-Every `solutions/PE<N>.py` follows the same pattern:
+Every `solutions/PE0<N>.py` follows the same pattern:
 
 ```python
 """
@@ -65,8 +65,8 @@ Notes:
   `<module> took: X.XXX seconds`.
 - Correctness is verified via a `unittest.TestCase` assertion, never by `print`.
 - Intricate problems typically document their derivation in comments above the solution
-  (e.g. `PE381.py` works out the `S(p) = -3/8 mod p` simplification using Wilson's theorem;
-  `PE169.py` explains the binary-zero-count approach).
+  (e.g. `PE0381.py` works out the `S(p) = -3/8 mod p` simplification using Wilson's theorem;
+  `PE0169.py` explains the binary-zero-count approach).
 - Problems that read a file construct their data path with
   `os.path.join(os.path.dirname(__file__), '..', 'problem_data', 'p0NN_xxx.txt')`.
 
@@ -144,14 +144,14 @@ Notes:
 ## Testing and CI
 
 - Every solution file is itself a runnable `unittest` module:
-  `python -m unittest solutions.PE381` (or `python solutions/PE381.py`).
-- `all_build_tests/test_build.py` imports **every** `solutions.PE<N>` module dynamically,
+  `python -m unittest solutions.PE0381` (or `python solutions/PE0381.py`).
+- `all_build_tests/test_build.py` imports **every** `solutions.PE0<N>` module dynamically,
   registers each `Solution<N>` class, and runs the whole suite:
   `python -m unittest discover -s all_build_tests`.
 - A hardcoded list skips slow or broken solutions:
 
   ```python
-  bad_or_slow_solutions = [96, 179, 185, 211, 221, 266, 330, 365, 401, 419, 420, 432]
+  bad_or_slow_solutions = [96, 179, 185, 211, 221, 266, 330, 365, 401, 419, 420, 432, 678]
   ```
 
 - `all_build_tests/test_crt.py` unit-tests the CRT implementation (scalar, set-based, and
@@ -164,7 +164,7 @@ Notes:
 ## Adding a new solution (workflow)
 
 1. Run `python solutions/new_problem.py <N>` from the repo root. It scrapes
-   `https://projecteuler.net/problem=<N>` and writes a templated `solutions/PE<N>.py` stub
+   `https://projecteuler.net/problem=<N>` and writes a templated `solutions/PE0<N>.py` stub
    (requires `requests` and `beautifulsoup4`, which are NOT in `requirements.txt`). It refuses
    to overwrite an existing file.
 2. Implement `Problem<N>.solve()` and delete the placeholder
