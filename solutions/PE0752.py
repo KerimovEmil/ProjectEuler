@@ -25,6 +25,37 @@ import unittest
 from util.utils import timeit, tonelli_shanks
 
 
+# MATHEMATICAL DERIVATION:
+# Let u = 1 + sqrt(7).
+# Note that N(u) = (1 + sqrt(7))(1 - sqrt(7)) = -6.
+#
+# 1. Non-invertible elements (gcd(x, 6) > 1):
+#    If 2 | x or 3 | x, then N(u^n) = (-6)^n is divisible by 2 or 3.
+#    If a(n) == 1 mod x and b(n) == 0 mod x, then N(u^n) = a(n)^2 - 7*b(n)^2 == 1 mod x.
+#    Since (-6)^n = 0 mod gcd(x, 6), this has no solution for gcd(x, 6) > 1.
+#    Thus, g(x) = 0 whenever gcd(x, 6) > 1.
+#
+# 2. Multiplicative structure via Chinese Remainder Theorem:
+#    For gcd(x, 6) = 1, u is a unit in the ring (Z/xZ)[sqrt(7)].
+#    For x = p1^e1 * p2^e2 * ..., g(x) = lcm(g(p1^e1), g(p2^e2), ...).
+#
+# 3. Prime powers:
+#    For a prime p and power p^k: g(p^k) = g(p) * p^(k-1) (unless already satisfied mod p^k,
+#    verified by checking mat_pow((1,1), g(p), p^k) == (1,0)).
+#
+# 4. Primes p >= 5:
+#    - For p = 7: g(7) = 7 (since (1+sqrt(7))^7 == 1 + 7^(7/2) == 1 mod 7).
+#    - If (7/p) = 1 (7 is quadratic residue mod p):
+#      Let s = sqrt(7) mod p via Tonelli-Shanks. In F_p, sqrt(7) exists, so u = 1 + sqrt(7)
+#      and its conjugate 1 - sqrt(7) are the two eigenvalues of the recurrence matrix mod p.
+#      g(p) = lcm(ord_p(1 + s), ord_p(1 - s)), where both orders divide (p - 1).
+#    - If (7/p) = -1 (7 is quadratic non-residue mod p):
+#      The Frobenius automorphism of F_{p^2}/F_p maps sqrt(7) -> -sqrt(7), so u^p == 1-sqrt(7) mod p.
+#      Hence u^(p+1) == (1 + sqrt(7))(1 - sqrt(7)) = -6 in F_p (a scalar).
+#      The smallest d | (p + 1) such that b(d) == 0 mod p gives u^d == a_d in F_p.
+#      Then g(p) = d * ord_p(a_d), where ord_p(a_d) divides (p - 1).
+
+
 def mat_mul(A, B, mod):
     return (
         (A[0] * B[0] + 7 * A[1] * B[1]) % mod,
