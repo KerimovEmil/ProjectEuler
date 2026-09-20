@@ -1,10 +1,10 @@
 # ProjectEuler Repo Overview
 
 This repository contains Python solutions to [Project Euler](https://projecteuler.net) problems.
-As of the latest commit, there are 152 solutions (PE1 through PE853), added incrementally via
-pull requests. (The account has 161 problems solved in total; the remaining ten are tracked
-for future PRs.) The `README.md` is essentially empty, so this doc serves as the reference for
-the project's structure and conventions.
+As of the latest commit, there are 157 solutions (PE1 through PE853), added incrementally via
+pull requests. (The account has 161 problems solved in total; the remaining five — PE225, PE435,
+PE678, PE686, and PE836 — are tracked for future PRs.) The `README.md` is essentially empty, so
+this doc serves as the reference for the project's structure and conventions.
 
 ## Directory layout
 
@@ -132,6 +132,7 @@ Notes:
 | `p054_poker.txt`     | PE54    | 1000 poker hands (5 cards per player) |
 | `p059_cipher.txt`    | PE59    | XOR-encrypted cipher                  |
 | `p067_triangle.txt`  | PE67    | Large number triangle                 |
+| `p079_keylog.txt`    | PE79    | 50 keylog attempts                    |
 | `p081_matrix.txt`    | PE81    | 80x80 matrix                          |
 | `p082_matrix.txt`    | PE82    | 80x80 matrix                          |
 | `p083_matrix.txt`    | PE83    | 80x80 matrix                          |
