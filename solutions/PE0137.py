@@ -17,7 +17,7 @@ ANSWER: 1120149658760
 Solve time: ~0.001 seconds
 """
 import unittest
-from solutions.PE140 import Problem140
+from solutions.PE0140 import Problem140
 from util.utils import timeit
 
 

@@ -88,7 +88,7 @@ if __name__ == '__main__':
         type=int,
         help="The integer representing the problem that you're trying to solve!")
     args = parser.parse_args()
-    fn = f'PE{args.p}.py'
+    fn = f'PE{args.p:04d}.py'
     if os.path.exists(f'./{fn}'):
         raise AssertionError(
             f'{fn} already exists! Just update the file you lazy bastard!')

@@ -19,7 +19,7 @@ for file in listdir(file_path):
         continue
 
     # else import the solution class
-    _mod = import_module(f'solutions.PE{problem_number}')
+    _mod = import_module(f'solutions.PE{problem_number:04d}')
     globals()[f'Solution{problem_number}'] = getattr(_mod, f'Solution{problem_number}')
 
 
