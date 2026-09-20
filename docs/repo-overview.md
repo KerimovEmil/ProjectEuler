@@ -1,7 +1,7 @@
 # ProjectEuler Repo Overview
 
 This repository contains Python solutions to [Project Euler](https://projecteuler.net) problems.
-As of the latest commit, there are 165 solutions (PE0001 through PE0853), added incrementally via
+As of the latest commit, there are 166 solutions (PE0001 through PE0853), added incrementally via
 pull requests. The `README.md` is essentially empty, so
 this doc serves as the reference for the project's structure and conventions.
 
