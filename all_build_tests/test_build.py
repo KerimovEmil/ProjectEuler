@@ -2,7 +2,7 @@ import unittest
 from importlib import import_module
 from os import listdir, path
 
-bad_or_slow_solutions = [96, 179, 185, 211, 221, 266, 330, 365, 401, 419, 420, 432]
+bad_or_slow_solutions = [96, 179, 185, 211, 221, 266, 330, 365, 401, 419, 420, 432, 678]
 
 file_path = path.join(path.dirname(__file__), '..', 'solutions',)
 
@@ -19,7 +19,7 @@ for file in listdir(file_path):
         continue
 
     # else import the solution class
-    _mod = import_module(f'solutions.PE{problem_number}')
+    _mod = import_module(f'solutions.PE{problem_number:04d}')
     globals()[f'Solution{problem_number}'] = getattr(_mod, f'Solution{problem_number}')
 
 

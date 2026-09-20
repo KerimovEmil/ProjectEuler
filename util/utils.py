@@ -454,7 +454,7 @@ class Matrix:
         self.entries = entries
 
     def __mul__(self, other):
-        result = [[0 for j in range(len(other.entries[0]))] for i in range(len(self.entries))]
+        result = [[0 for _ in range(len(other.entries[0]))] for _ in range(len(self.entries))]
         for i in range(len(self.entries)):
             for j in range(len(other.entries[0])):
                 for k in range(len(other.entries)):
@@ -499,7 +499,7 @@ class LinearHomogeneousRecurrence:
         self.initial_state = self.__init__initial_state(initial_values)
 
     def __init__companion_matrix(self, coefficients):
-        entries = [[0 for j in range(self.dim)] for i in range(self.dim)]
+        entries = [[0 for _ in range(self.dim)] for _ in range(self.dim)]
         for i in range(self.dim):
             entries[0][i] = coefficients[i]
         for i in range(1, self.dim):
@@ -519,7 +519,8 @@ class LinearHomogeneousRecurrence:
 
 
 class BaseConverter:
-    def convert_decimal(self, n, base):
+    @staticmethod
+    def convert_decimal(n, base):
         reversed_rep = []
         d = n
         while d:
@@ -527,7 +528,8 @@ class BaseConverter:
             reversed_rep.append(r)
         return reversed_rep[::-1]
 
-    def convert_rep(self, rep, base):
+    @staticmethod
+    def convert_rep(rep, base):
         result = 0
         for digit in rep:
             result = result * base + digit
@@ -541,7 +543,8 @@ class BinomialCoefficient:
         self.cache_values = {}
         self.base_converter = BaseConverter()
 
-    def __init_base_values(self, prime):
+    @staticmethod
+    def __init_base_values(prime):
         curr = [1]
         result = [curr]
         for n in range(2, prime + 1):
@@ -603,17 +606,6 @@ class EulerNumber:
             return 0
         return self.factorial_mod[n]
 
-
-def sieve(n):  # todo remove
-    """Return all primes <= n."""
-    np1 = n + 1
-    s = list(range(np1))
-    s[1] = 0
-    sqrtn = int(round(n ** 0.5))
-    for i in range(2, sqrtn + 1):
-        if s[i]:
-            s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
-    return filter(None, s)
 
 def prime_sieve(n):
     n = int(n)
@@ -772,8 +764,8 @@ def square_free_sieve(limit):
 def square_primes_sieve(limit, primes=None):
     """Returns a list all prime squares less than limit"""
     if primes is None:
-        primes = sieve(int(limit))
-    return [i**2 for i in primes]
+        primes = primes_upto(int(limit))
+    return [int(i**2) for i in primes]
 
 
 def primes_of_n(n, ls_prime=None):
@@ -960,7 +952,6 @@ def sign(x):
         return 0
 
 
-@timeit
 def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     Returns a list of all mobius function values.
@@ -970,7 +961,7 @@ def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     ls_m = [1]*n
     if ls_prime is None:
-        ls_p = list(sieve(n))
+        ls_p = primes_upto(n)
     else:
         ls_p = ls_prime
     for p in ls_p:
