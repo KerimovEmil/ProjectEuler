@@ -453,68 +453,20 @@ class Matrix:
     def __init__(self, entries):
         self.entries = entries
 
-        self.len_row = len(self.entries)
-        self.len_col = len(self.entries[0])
-
-    def __mul__(self, other, mod=None):
-        if isinstance(other, (int, float, complex)):
-            result = self.zero_ls_entries(row_dim=self.len_row, col_dim=self.len_col)
-
-            for row in range(self.len_row):
-                for col in range(self.len_col):
-                    result[row][col] = self.entries[row][col] * other
-                    if mod is not None:
-                        result[row][col] = result[row][col] % mod
-
-        elif isinstance(other, Matrix):
-            result = self.zero_ls_entries(row_dim=self.len_row, col_dim=other.len_col)
-
-            for i in range(self.len_row):
-                for j in range(other.len_col):
-                    for k in range(other.len_row):
-                        result[i][j] += self.entries[i][k] * other.entries[k][j]
-                        if mod is not None:
-                            result[i][j] = result[i][j] % mod
-        else:
-            raise TypeError(f'type: {type(other)} multiplication not supported.')
-
+    def __mul__(self, other):
+        result = [[0 for _ in range(len(other.entries[0]))] for _ in range(len(self.entries))]
+        for i in range(len(self.entries)):
+            for j in range(len(other.entries[0])):
+                for k in range(len(other.entries)):
+                    result[i][j] += self.entries[i][k] * other.entries[k][j]
         return Matrix(result)
-
-    def __rmul__(self, other):
-        # other * self
-        if isinstance(other, (int, float, complex)):
-            return self * other
-        elif isinstance(other, Matrix):
-            # A * B = (B^T * A^T)^T
-            return (self.transpose() * other.transpose()).transpose()
-
-    def transpose(self):
-        """ Returns the ls_entries for the transposed matrix """
-        return Matrix([[self[j][i] for j in range(self.len_row)] for i in range(self.len_col)])
-
-    def __matmul__(self, other):
-        return self.__mul__(other)
 
     def __mod__(self, mod):
-        result = [[self.entries[i][j] for j in range(self.len_col)] for i in range(self.len_row)]
         if mod:
-            for i in range(len(result)):
-                for j in range(len(result[0])):
-                    result[i][j] %= mod
-        return Matrix(result)
-
-    @staticmethod
-    def zero_ls_entries(row_dim, col_dim):
-        """
-        Returns a Zero matrix with row and columns
-        Args:
-            row_dim: <int> a positive integer representing the number of rows
-            col_dim: <int> a positive integer representing the number of rows
-
-        Returns: <list> of zeros
-        """
-        assert isinstance(row_dim, int) and isinstance(col_dim, int)
-        return [[0] * col_dim for _ in range(row_dim)]
+            for i in range(len(self.entries)):
+                for j in range(len(self.entries[0])):
+                    self.entries[i][j] %= mod
+        return self
 
     def __pow__(self, n, mod=None):
         assert (n > 0)
@@ -528,36 +480,6 @@ class Matrix:
 
     def __str__(self):
         return str(self.entries)
-
-    def __repr__(self):
-        return str(self)
-
-    def __getitem__(self, key):
-        if isinstance(key, (int, slice)):
-            return self.entries[key]
-        if len(key) == 2:
-            row, col = key
-            if isinstance(row, slice):  # for if either row only or row and col are slices
-                return [x[col] for x in self.entries[row]]
-            elif all(isinstance(i, int) for i in key) or isinstance(col, slice):  # for if only col is a slice or neither row and col are slices
-                return self.entries[row][col]
-            else:
-                raise NotImplemented
-        else:
-            raise NotImplemented
-
-    def __add__(self, other):
-        assert self.len_row == other.len_row
-        assert self.len_col == other.len_col
-        ls_new_entries = self.zero_ls_entries(row_dim=self.len_row, col_dim=self.len_col)
-
-        for row in range(self.len_row):
-            for column in range(self.len_col):
-                ls_new_entries[row][column] = self[row][column] + other[row][column]
-        return Matrix(ls_new_entries)
-
-    def __eq__(self, other):
-        return self.entries == other.entries
 
 
 class LinearHomogeneousRecurrence:
@@ -577,7 +499,7 @@ class LinearHomogeneousRecurrence:
         self.initial_state = self.__init__initial_state(initial_values)
 
     def __init__companion_matrix(self, coefficients):
-        entries = [[0 for j in range(self.dim)] for i in range(self.dim)]
+        entries = [[0 for _ in range(self.dim)] for _ in range(self.dim)]
         for i in range(self.dim):
             entries[0][i] = coefficients[i]
         for i in range(1, self.dim):
@@ -597,7 +519,8 @@ class LinearHomogeneousRecurrence:
 
 
 class BaseConverter:
-    def convert_decimal(self, n, base):
+    @staticmethod
+    def convert_decimal(n, base):
         reversed_rep = []
         d = n
         while d:
@@ -605,7 +528,8 @@ class BaseConverter:
             reversed_rep.append(r)
         return reversed_rep[::-1]
 
-    def convert_rep(self, rep, base):
+    @staticmethod
+    def convert_rep(rep, base):
         result = 0
         for digit in rep:
             result = result * base + digit
@@ -619,7 +543,8 @@ class BinomialCoefficient:
         self.cache_values = {}
         self.base_converter = BaseConverter()
 
-    def __init_base_values(self, prime):
+    @staticmethod
+    def __init_base_values(prime):
         curr = [1]
         result = [curr]
         for n in range(2, prime + 1):
@@ -682,16 +607,22 @@ class EulerNumber:
         return self.factorial_mod[n]
 
 
-def sieve(n):
-    """Return all primes <= n."""
-    np1 = n + 1
-    s = list(range(np1))
-    s[1] = 0
-    sqrtn = int(round(n ** 0.5))
-    for i in range(2, sqrtn + 1):
-        if s[i]:
-            s[i * i: np1: i] = [0] * len(range(i * i, np1, i))
-    return filter(None, s)
+def prime_sieve(n):
+    n = int(n)
+    sieve = np.ones(n+1, dtype=bool)
+    sieve[:2] = False
+    for i in range(2, int(n**0.5) + 1):
+        if sieve[i]:
+            sieve[i*i:n+1:i] = False
+    return sieve
+
+
+def primes_upto(n):
+    return np.nonzero(prime_sieve(n))[0]
+
+
+def count_primes_upto(n):
+    return np.count_nonzero(prime_sieve(n))  # just count True values
 
 
 def timeit(method):
@@ -833,8 +764,8 @@ def square_free_sieve(limit):
 def square_primes_sieve(limit, primes=None):
     """Returns a list all prime squares less than limit"""
     if primes is None:
-        primes = sieve(int(limit))
-    return [i**2 for i in primes]
+        primes = primes_upto(int(limit))
+    return [int(i**2) for i in primes]
 
 
 def primes_of_n(n, ls_prime=None):
@@ -1021,7 +952,6 @@ def sign(x):
         return 0
 
 
-@timeit
 def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     Returns a list of all mobius function values.
@@ -1031,7 +961,7 @@ def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
     """
     ls_m = [1]*n
     if ls_prime is None:
-        ls_p = list(sieve(n))
+        ls_p = primes_upto(n)
     else:
         ls_p = ls_prime
     for p in ls_p:
@@ -1234,3 +1164,7 @@ def pisano_period(m: int) -> int:
         if (prev, curr) == (0, 1):
             return i + 1
     return m
+
+
+def is_int(n):
+    return abs(n - int(n)) < 1e-13

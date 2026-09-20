@@ -105,3 +105,6 @@ venv.bak/
 
 # vscode
 .vscode
+
+# IDE Ignores (This line is crucial for ignoring the PyCharm config folder)
+.idea/
