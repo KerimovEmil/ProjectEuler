@@ -158,7 +158,7 @@ class Problem678:
         return total
 
     @timeit
-    def solve_case2(self):
+    def solve_case2(self, per_e=None):
         """
         Count solutions with e >= 3. Assuming Beal's conjecture, a, b and c must
         all share a common prime factor, so every solution arises from scaling a
@@ -192,9 +192,12 @@ class Problem678:
                     exponent_gcd = 0
                     for _, exp, _ in factors:
                         exponent_gcd = gcd(exponent_gcd, exp)
-                    answers += Problem678.count_scaled(
+                    count = Problem678.count_scaled(
                         c, n, factors, primes_of_c, exponent_gcd, e, f_max
                     )
+                    answers += count
+                    if per_e is not None:
+                        per_e[e] = per_e.get(e, 0) + count
                     e += 1
                     c = a ** e + b ** e
         return answers
@@ -261,6 +264,17 @@ class Solution678(unittest.TestCase):
 
     def test_sample_solution_1000000000000(self):
         self.assertEqual(16066, Problem678(n=10 ** 12).solve())
+
+    def test_e_split(self):
+        per_e = {}
+        case2 = self.problem.solve_case2(per_e)
+        case1 = self.problem.solve_case1()
+        self.assertEqual(1985353, case1)
+        self.assertEqual(712, case2)
+        for e, value in ((3, 669), (4, 30), (5, 10), (6, 1), (7, 2)):
+            self.assertEqual(value, per_e[e])
+        self.assertEqual(0, sum(value for e, value in per_e.items() if e > 7))
+        self.assertEqual(1986065, case1 + case2)
 
     def test_solution(self):
         self.assertEqual(1986065, self.problem.solve())
