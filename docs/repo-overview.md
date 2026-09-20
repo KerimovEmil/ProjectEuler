@@ -1,9 +1,8 @@
 # ProjectEuler Repo Overview
 
 This repository contains Python solutions to [Project Euler](https://projecteuler.net) problems.
-As of the latest commit, there are 160 solutions (PE0001 through PE0853), added incrementally via
-pull requests. (The account has 161 problems solved in total; the remaining two — PE686 and PE836 —
-are tracked for future PRs.) The `README.md` is essentially empty, so
+As of the latest commit, there are 168 solutions (PE0001 through PE0853), added incrementally via
+pull requests. The `README.md` is essentially empty, so
 this doc serves as the reference for the project's structure and conventions.
 
 ## Directory layout
@@ -138,6 +137,7 @@ Notes:
 | `p083_matrix.txt`    | PE83    | 80x80 matrix                          |
 | `p089_roman.txt`     | PE89    | Roman numerals                        |
 | `p096_sudoku.txt`    | PE96    | 50 sudoku puzzles                     |
+| `p098_words.txt`     | PE98    | List of words                         |
 | `p099_base_exp.txt`  | PE99    | 1000 base/exponent pairs              |
 | `p102_triangles.txt` | PE102   | Triangle coordinate triples           |
 
