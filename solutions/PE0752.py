@@ -22,7 +22,7 @@ Solve time: ~4.1 seconds
 
 import math
 import unittest
-from util.utils import timeit
+from util.utils import timeit, tonelli_shanks
 
 
 # MATHEMATICAL DERIVATION:
@@ -40,17 +40,19 @@ from util.utils import timeit
 #    For x = p1^e1 * p2^e2 * ..., g(x) = lcm(g(p1^e1), g(p2^e2), ...).
 #
 # 3. Prime powers:
-#    For a prime p and power p^k: g(p^k) = g(p) * p^(k-1) (unless already satisfied mod p^k).
+#    For a prime p and power p^k: g(p^k) = g(p) * p^(k-1) (unless already satisfied mod p^k,
+#    verified by checking mat_pow((1,1), g(p), p^k) == (1,0)).
 #
 # 4. Primes p >= 5:
 #    - For p = 7: g(7) = 7 (since (1+sqrt(7))^7 == 1 + 7^(7/2) == 1 mod 7).
 #    - If (7/p) = 1 (7 is quadratic residue mod p):
-#      Let s = sqrt(7) mod p. Then u corresponds to eigenvalues (1 + s, 1 - s) in F_p.
+#      Let s = sqrt(7) mod p via Tonelli-Shanks. In F_p, sqrt(7) exists, so u = 1 + sqrt(7)
+#      and its conjugate 1 - sqrt(7) are the two eigenvalues of the recurrence matrix mod p.
 #      g(p) = lcm(ord_p(1 + s), ord_p(1 - s)), where both orders divide (p - 1).
 #    - If (7/p) = -1 (7 is quadratic non-residue mod p):
-#      Frobenius automorphism gives u^p == 1 - sqrt(7) mod p.
-#      Hence u^(p+1) == (1 + sqrt(7))(1 - sqrt(7)) = -6 mod p in F_p.
-#      The smallest d | (p + 1) such that b(d) == 0 mod p gives u^d == a_d mod p in F_p.
+#      The Frobenius automorphism of F_{p^2}/F_p maps sqrt(7) -> -sqrt(7), so u^p == 1-sqrt(7) mod p.
+#      Hence u^(p+1) == (1 + sqrt(7))(1 - sqrt(7)) = -6 in F_p (a scalar).
+#      The smallest d | (p + 1) such that b(d) == 0 mod p gives u^d == a_d in F_p.
 #      Then g(p) = d * ord_p(a_d), where ord_p(a_d) divides (p - 1).
 
 
@@ -70,45 +72,6 @@ def mat_pow(A, p, mod):
         base = mat_mul(base, base, mod)
         p >>= 1
     return res
-
-
-def tonelli_shanks(n, p):
-    """Finds r such that r^2 = n mod p."""
-    if pow(n, (p - 1) // 2, p) != 1:
-        return None
-    if p % 4 == 3:
-        return pow(n, (p + 1) // 4, p)
-    if p % 8 == 5:
-        v = pow(2 * n, (p - 5) // 8, p)
-        i = (2 * n * v * v) % p
-        return (n * v * (i - 1)) % p
-
-    q = p - 1
-    s = 0
-    while q % 2 == 0:
-        q //= 2
-        s += 1
-    z = 2
-    while pow(z, (p - 1) // 2, p) != p - 1:
-        z += 1
-    c = pow(z, q, p)
-    r = pow(n, (q + 1) // 2, p)
-    t = pow(n, q, p)
-    m = s
-    while t != 1:
-        temp = t
-        i = 0
-        while temp != 1 and i < m:
-            temp = (temp * temp) % p
-            i += 1
-        if i == m:
-            return None
-        b = pow(c, 1 << (m - i - 1), p)
-        r = (r * b) % p
-        c = (b * b) % p
-        t = (t * c) % p
-        m = i
-    return r
 
 
 class Problem752:
