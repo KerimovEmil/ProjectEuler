@@ -81,7 +81,7 @@ When creating a new solution or adding utilities, update the corresponding docum
 | File to Update | When to Update | Why / Purpose |
 |:---------------|:---------------|:--------------|
 | [`docs/solutions-index.md`](solutions-index.md) | **Every new solution** | Adds the problem ID, file link, problem topic/description, and measured solve time to the global ledger so contributors and AI pair programmers can search and cross-reference solved problems. |
-| [`docs/repo-overview.md`](repo-overview.md) | **Every new solution** | Increments the total solution count and maintains the high-level architecture overview. |
+| [`docs/repo-overview.md`](repo-overview.md) | **If architecture/structure changes** | Maintains the high-level architecture overview and directory map. |
 | [`all_build_tests/test_build.py`](../all_build_tests/test_build.py) | **If solution is slow (>~3–5 seconds)** | Adds `<N>` to `bad_or_slow_solutions` so GitHub Actions CI continues running in under 2 minutes. |
 | [`docs/problem-data.md`](problem-data.md) | **If problem uses an external data file** | Documents the new input file placed in `problem_data/`, its format, structure, and the problem that references it. |
 | [`docs/util-reference.md`](util-reference.md) | **If new reusable helpers are added to `util/`** | Documents function signatures, parameters, return types, and usage examples for shared algorithms (e.g. number theory tools, sieves) to prevent code duplication. |
