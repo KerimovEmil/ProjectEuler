@@ -22,6 +22,7 @@ This document serves as the high-level architecture overview and directory map. 
 |:-----|:--------|
 | `solutions/` | One `PE0<N>.py` file per solved problem (e.g. `PE0001.py`, `PE0752.py`) |
 | `solutions/new_problem.py` | Scaffolding script: scrapes problem description and generates a stub |
+| `experimental_solutions/` | Alternative, experimental, or pedagogical variants of problem solutions |
 | `util/` | Reusable math, number-theory, and matrix algorithms imported by solutions |
 | `problem_data/` | Input datasets, triangles, matrices, and word lists |
 | `all_build_tests/` | Comprehensive test package running every solution's `unittest.TestCase` |
