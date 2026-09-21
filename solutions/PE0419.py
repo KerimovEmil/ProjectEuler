@@ -19,7 +19,7 @@ Give your answer modulo 2^30 and separate your values for A, B and C by a comma.
 E.g. for n = 40 the answer would be 31254,20259,11625
 
 ANSWER: 998567458,1046245404,43363922
-Solve time: ~0.005 seconds (reduced from ~21 seconds)
+Solve time: ~0.005 seconds
 
 MATHEMATICAL DERIVATION:
 1. Conway's Cosmological Theorem:
