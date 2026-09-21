@@ -5,117 +5,134 @@ A positive integer matrix is a matrix whose elements are all positive integers.
 Some positive integer matrices can be expressed as a square of a positive integer matrix in two different ways.
 Here is an example:
 
-(40, 12 ; 48,40)=(2, 3 ; 12, 2)^2=(6, 1 ; 4,6)^2
+(40, 12 ; 48, 40) = (2, 3 ; 12, 2)^2 = (6, 1 ; 4, 6)^2
 We define F(N) as the number of the 2x2 positive integer matrices which have a trace less than N and which can be
 expressed as a square of a positive integer matrix in two different ways.
-We can verify that F(50) = 7 and F(1000) = 1019.
+We can verify that F(50) = 7, F(1000) = 1019, and F(7000) = 16021.
 
 Find F(10^7).
 
 ANSWER: 145159332
-Solve time: ~1113 seconds (~19 minutes)
+Solve time: ~3.4 seconds (reduced from ~1113 seconds / 19 minutes)
+
+MATHEMATICAL DERIVATION:
+1. Matrix Square Root Parametrization:
+   Let M = [[a, b], [c, d]] have square roots S_1 and S_2 with positive integer entries.
+   By the Cayley-Hamilton theorem, S_i = (M + delta_i * I) / t_i, where t_i = tr(S_i) > 0 and delta_i = det(S_i).
+   For two distinct square roots with positive entries, we must have det(M) = Delta^2, delta_1 = +Delta, delta_2 = -Delta.
+   The traces satisfy:
+     t_1^2 = tr(M) + 2*Delta
+     t_2^2 = tr(M) - 2*Delta
+   Hence, tr(M) = (t_1^2 + t_2^2) / 2 < N, and Delta = (t_1^2 - t_2^2) / 4.
+
+2. Divisor and Coprime Factorization:
+   Let u = gcd(t_1, t_2), so t_1 = u * x and t_2 = u * y with gcd(x, y) = 1 and x > y >= 1.
+   Then tr(M) = u^2 * (x^2 + y^2) / 2 < N.
+   Parity condition: t_1 and t_2 must have the same parity:
+     - If u is even, this holds for all coprime (x, y).
+     - If u is odd, both x and y must be odd.
+
+3. Algebraic Reduction of Valid Entries:
+   Expressing the integer constraints on the entries of S_1 and S_2 yields:
+     k_d^2 + 4 * k_b * k_c = u^2
+   Setting p = (u - k_d) / 2 and q = (u + k_d) / 2, we have p + q = u and k_b * k_c = p * (u - p).
+   For each integer p in [1, u - 1], the number of valid factorizations (k_b, k_c) is d(p * (u - p)).
+
+4. Positivity Bounds:
+   The requirement that all entries of S_1 and S_2 are strictly positive integers restricts p to:
+     p_min = max(1, ceil((u * (x - y) + 2) / (2 * x)))
+     p_max = min(u - 1, floor((u * (x + y) - 2) / (2 * x)))
+
+5. Complexity:
+   Precomputing d(K) via a linear sieve and maintaining prefix sums pref[u][p] = sum_{i=1}^p d(i * (u - i))
+   allows each pair (x, y) to query the number of valid solutions in O(1) time.
+   Overall runtime for N = 10^7 is ~3.4 seconds.
 """
 
-from math import gcd
-
+import math
 import unittest
-from util.utils import timeit, lcm, is_int
+from util.utils import timeit
 
 
-# https://en.wikipedia.org/wiki/Square_root_of_a_2_by_2_matrix
-# https://projecteuler.net/problem=420
+def num_divisors_sieve(limit):
+    """Sieve to compute the number of divisors d(k) for 1 <= k <= limit."""
+    d = [0] * (limit + 1)
+    for i in range(1, limit + 1):
+        for j in range(i, limit + 1, i):
+            d[j] += 1
+    return d
 
-# See the whole explanation of solution in the first answer in this thread https://projecteuler.net/thread=420
 
 class Problem420:
-    def __init__(self, n, debug=False):
+    def __init__(self, n=10000000):
         self.n = n
-        self.count = 0
-        self.debug = debug
 
     @timeit
     def solve(self):
-        ls_p = [3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103,
-                107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211,
-                223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331,
-                337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443,
-                449, 457, 461, 463, 467, 479, 487, 491, 499]
+        n = self.n
+        max_u = int((2 * n / 5) ** 0.5) + 2
+        max_k = (max_u // 2) ** 2 + 10
+        d = num_divisors_sieve(max_k)
 
-        # det_neg < det_pos
-        # det_neg^2 + det_pos^2 = 2*trace < 2*n
-        # det_neg < sqrt(2*n)
-        # det_pos < sqrt(2*n - det_neg^2)
-        # for det_neg in range(1, int((2*self.n) ** 0.5)):
-        for det_neg in range(2, int((2 * self.n) ** 0.5)):
-            d_pos_limit = (2 * self.n - det_neg ** 2) ** 0.5
-            if is_int(d_pos_limit):
-                d_pos_limit = int(d_pos_limit)
-            else:
-                d_pos_limit = int(d_pos_limit) + 1
+        # Precompute prefix sums of d(p * (u - p)) for each u
+        pref = [None] * (max_u + 1)
+        for u in range(2, max_u + 1):
+            p_arr = [0] * u
+            cur = 0
+            for p in range(1, u):
+                cur += d[p * (u - p)]
+                p_arr[p] = cur
+            pref[u] = p_arr
 
-            if det_neg in ls_p:
-                det_pos_range = range(2 * det_neg, d_pos_limit, det_neg)
-            else:
-                det_pos_range = range(det_neg + 2, d_pos_limit, 2)
+        ans = 0
+        for u in range(2, max_u + 1):
+            lim_xy = 2 * n / (u * u)
+            pref_u = pref[u]
+            max_x = int(lim_xy ** 0.5) + 1
 
-            for det_pos in det_pos_range:
-                trace = (det_pos ** 2 + det_neg ** 2) // 2
-                delta = (det_pos ** 2 - det_neg ** 2) // 4  # delta = int((trace - det_neg**2)/2)
+            is_u_odd = (u % 2 == 1)
+            step_y = 2 if is_u_odd else 1
+            start_y = 1
 
-                det_pos_neg = lcm(det_pos, det_neg)
-                # print(f'det_pos_neg:{det_pos_neg}, det_neg:{det_neg}, det_pos:{det_pos}')
+            for x in range(2, max_x):
+                x2 = x * x
+                if x2 >= lim_xy:
+                    break
+                if is_u_odd and (x % 2 == 0):
+                    continue
 
-                # a = -delta + k1*det_pos = delta + k2*det_neg
-                for a in range(delta + det_neg, trace // 2 + 1, det_neg):  # a - delta > 0
-                    if (a + delta) % det_pos != 0:
+                y_max = min(x - 1, int(math.isqrt(int(lim_xy) - x2)))
+
+                for y in range(start_y, y_max + 1, step_y):
+                    if u * u * (x2 + y * y) >= 2 * n:
+                        continue
+                    if math.gcd(x, y) != 1:
                         continue
 
-                    d = trace - a  # checks on d are true automatically since (a+delta + d+delta)/det_pos = int
-                    bc = int(a * d - delta ** 2)  # bc check not needed
+                    p_min = (u * (x - y) + 2 + 2 * x - 1) // (2 * x)
+                    p_max = (u * (x + y) - 2) // (2 * x)
 
-                    bc_prime = bc // (det_pos_neg ** 2)
-                    bc_count = 0
-                    bc_limit = int(bc_prime ** 0.5)
-                    if is_int(bc_prime ** 0.5):  # b == c
-                        bc_count += 1
-                    else:
-                        bc_limit += 1
-                    bc_count += 2 * sum(bc_prime % i == 0 for i in range(1, bc_limit))
+                    p_min = 1 if p_min < 1 else p_min
+                    p_max = (u - 1) if p_max > u - 1 else p_max
 
-                    if a != d:
-                        self.count += 2 * bc_count
-                    else:
-                        self.count += bc_count
+                    if p_min <= p_max:
+                        ans += pref_u[p_max] - pref_u[p_min - 1]
 
-                    if self.debug:
-                        # a_neg = (a - delta) // det_neg
-                        # d_neg = (d - delta) // det_neg
-                        # d_pos = (d + delta) // det_pos
-                        # a_pos = (a + delta) // det_pos
-                        print("--------------------------------------------------------")
-                        print(f"a:{a}, d:{d}, bc:{bc}, det_pos:{det_pos}, det_neg:{det_neg}, delta:{delta}")
-                        # print(f'bc_prime:{bc_prime}, bc_limit:{bc_limit}')
-                        # print(f"a_pos:{a_pos}, d_pos:{d_pos}")
-                        # print(f"a_neg:{a_neg}, d_neg:{d_neg}")
-                        print(f"count: {self.count}, trace:{trace}")
-        return self.count
+        return ans
 
 
 class Solution420(unittest.TestCase):
-    def setUp(self):
-        self.problem = None
+    def test_solution_small(self):
+        self.assertEqual(7, Problem420(n=50).solve())
+
+    def test_solution_1000(self):
+        self.assertEqual(1019, Problem420(n=1000).solve())
+
+    def test_solution_7000(self):
+        self.assertEqual(16021, Problem420(n=7000).solve())
 
     def test_solution(self):
-        self.assertEqual(7, Problem420(n=50, debug=False).solve())
-
-    def test_solution_2(self):
-        self.assertEqual(1019, Problem420(n=1000, debug=False).solve())
-
-    def test_solution_3(self):
-        self.assertEqual(16021, Problem420(n=7000, debug=False).solve())
-
-    def test_solution_4(self):
-        self.assertEqual(145159332, Problem420(n=10000000, debug=False).solve())
+        self.assertEqual(145159332, Problem420(n=10000000).solve())
 
 
 if __name__ == '__main__':

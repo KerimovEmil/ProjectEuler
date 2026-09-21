@@ -160,7 +160,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0381 | [PE0381.py](../solutions/PE0381.py) | For a prime p let S(p) = (sum (p-k)!) mod p for 1 <= k <= 5. | 3.661 seconds |
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | Problem 401 | ~0.000s |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Problem 419 | 21 seconds |
-| PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | 1113 seconds (~19 minutes) |
+| PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | ~3.4 seconds |
 | PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | 618 seconds (~10 minutes) |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~7.2 seconds |
