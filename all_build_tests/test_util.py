@@ -1,5 +1,9 @@
 import unittest
-from util.utils import tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital, mobius_sieve
+from util.utils import (
+    tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital,
+    mobius_sieve, is_prime_simple, continued_fraction_sqrt, pell_fundamental_solution,
+    digits, digits_sum
+)
 
 
 class UtilTestCase(unittest.TestCase):
@@ -37,6 +41,42 @@ class UtilTestCase(unittest.TestCase):
         expected = [0, 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1]
         self.assertEqual(mu, expected)
 
+    def test_is_prime_simple(self):
+        primes_below_50 = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47}
+        for n in range(-5, 50):
+            self.assertEqual(is_prime_simple(n), n in primes_below_50, f"Failed for n={n}")
+        # Large primes and composites
+        self.assertTrue(is_prime_simple(1000000007))
+        self.assertTrue(is_prime_simple(1000000009))
+        self.assertFalse(is_prime_simple(1000000007 * 1000000009))
+        self.assertTrue(is_prime_simple(2**31 - 1))  # Mersenne prime M31
+
+
+    def test_continued_fraction_sqrt(self):
+        self.assertEqual(continued_fraction_sqrt(4), (2, []))
+        self.assertEqual(continued_fraction_sqrt(2), (1, [2]))
+        self.assertEqual(continued_fraction_sqrt(3), (1, [1, 2]))
+        self.assertEqual(continued_fraction_sqrt(7), (2, [1, 1, 1, 4]))
+        self.assertEqual(continued_fraction_sqrt(13), (3, [1, 1, 1, 1, 6]))
+
+    def test_pell_fundamental_solution(self):
+        self.assertIsNone(pell_fundamental_solution(4))
+        self.assertEqual(pell_fundamental_solution(2), (3, 2))
+        self.assertEqual(pell_fundamental_solution(3), (2, 1))
+        self.assertEqual(pell_fundamental_solution(5), (9, 4))
+        self.assertEqual(pell_fundamental_solution(7), (8, 3))
+        self.assertEqual(pell_fundamental_solution(13), (649, 180))
+
+    def test_digits(self):
+        self.assertEqual(digits(12345), [1, 2, 3, 4, 5])
+        self.assertEqual(digits(0), [0])
+        self.assertEqual(digits(-987), [9, 8, 7])
+
+    def test_digits_sum(self):
+        self.assertEqual(digits_sum(12345), 15)
+        self.assertEqual(digits_sum(0), 0)
+        self.assertEqual(digits_sum(-987), 24)
+
     def test_coprime(self):
         self.assertTrue(coprime(14, 15))
         self.assertFalse(coprime(14, 21))
@@ -56,4 +96,5 @@ class UtilTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 
