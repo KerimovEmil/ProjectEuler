@@ -8,7 +8,7 @@ Let M(n,k,m) denote the binomial coefficient (n choose k) mod m.
 Calculate sum of M(10^18, 10^9, p*q*r) for 1000 < p < q < r < 5000 and p, q, r prime.
 
 ANSWER: 162619462356610313
-Solve time: ~1.5 seconds (reduced from ~270 seconds)
+Solve time: ~1.5 seconds
 
 MATHEMATICAL DERIVATION:
 1. By Lucas' Theorem, for a prime p,
