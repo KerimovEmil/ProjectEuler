@@ -13,8 +13,8 @@ So S(100) = 184.
 
 Find S(10^9).
 
-ANSWER: 30658851824780016
-Solve time: ~0.18 seconds
+ANSWER: 29526986315080920
+Solve time: ~0.15 seconds
 """
 
 import math
@@ -66,6 +66,8 @@ from util.utils import timeit, mobius_sieve
 #      Given gcd(a, b) = 1, gcd(x, y, z) divides 19.
 #      Specifically, 19 | gcd(x, y, z) if and only if b ≡ 7a (mod 19).
 #      Hence, primitive solutions are precisely those with b not ≡ 7a (mod 19).
+#    - Bound:
+#      5b^2 + 8ab + (3a^2 - N) <= 0 => b <= (-4a + sqrt(a^2 + 5N)) / 5.
 #
 # 5. Fast Summation via Mobius Inversion:
 #    To compute S(N) = sum_{gcd(a, b)=1, b > 2a/3, b not= 7a mod 19, z <= N} 8(a^2 + ab + b^2):
@@ -144,7 +146,7 @@ class Problem785:
             d_sum = 0
             for a in range(1, max_a + 1):
                 min_b = (2 * a) // 3 + 1
-                disc = 4 * a * a + 5 * m
+                disc = a * a + 5 * m
                 max_b = int((math.isqrt(disc) - 4 * a) // 5)
                 if max_b < min_b:
                     continue
@@ -178,11 +180,15 @@ class Solution785(unittest.TestCase):
         self.assertEqual(184, self.problem.solve(n=100))
 
     def test_solution_small_1000(self):
-        """S(1000) = 29624"""
-        self.assertEqual(29624, self.problem.solve(n=1000))
+        """S(1000) = 28176"""
+        self.assertEqual(28176, self.problem.solve(n=1000))
+
+    def test_solution_small_5000(self):
+        """S(5000) = 731352"""
+        self.assertEqual(731352, self.problem.solve(n=5000))
 
     def test_solution(self):
-        self.assertEqual(30658851824780016, self.problem.solve())
+        self.assertEqual(29526986315080920, self.problem.solve())
 
 
 if __name__ == '__main__':
