@@ -1,5 +1,5 @@
 import unittest
-from util.utils import tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital
+from util.utils import tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital, mobius_sieve
 
 
 class UtilTestCase(unittest.TestCase):
@@ -32,6 +32,11 @@ class UtilTestCase(unittest.TestCase):
                 self.assertIsNotNone(r, f"Expected modular square root for {n} mod {p}")
                 self.assertEqual((r * r) % p, n, f"Root {r}^2 mod {p} does not equal {n}")
 
+    def test_mobius_sieve(self):
+        mu = mobius_sieve(30)
+        expected = [0, 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1]
+        self.assertEqual(mu, expected)
+
     def test_coprime(self):
         self.assertTrue(coprime(14, 15))
         self.assertFalse(coprime(14, 21))
@@ -51,3 +56,4 @@ class UtilTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

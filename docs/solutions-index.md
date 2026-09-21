@@ -1,6 +1,6 @@
 # Solutions Index
 
-This table catalogs all 169 solved Project Euler problems in this repository.
+This table catalogs all 170 solved Project Euler problems in this repository.
 
 | Problem | Solution File | Topic / Summary | Solve Time |
 |:-------:|:--------------|:----------------|:-----------|
@@ -171,5 +171,6 @@ This table catalogs all 169 solved Project Euler problems in this repository.
 | PE0739 | [PE0739.py](../solutions/PE0739.py) | Take a sequence of length n. Discard the first term then make a seq... | 166 seconds (~3 minutes) |
 | PE0752 | [PE0752.py](../solutions/PE0752.py) | When (1+sqrt(7)) is raised to an integral power, n, we always get a... | 4.1 seconds |
 | PE0753 | [PE0753.py](../solutions/PE0753.py) | Problem 753 | 2.5 seconds |
+| PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.18 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
 | PE0853 | [PE0853.py](../solutions/PE0853.py) | For every positive integer n the Fibonacci sequence modulo n is per... | 0.17 seconds |
