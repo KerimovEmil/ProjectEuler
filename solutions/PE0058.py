@@ -26,49 +26,12 @@ Solve time: ~0.358 seconds
 """
 
 import unittest
-from util.utils import timeit
+from util.utils import timeit, is_prime
 
 
 class Problem58:
     def __init__(self, ratio):
         self.ratio = ratio
-        self.bases = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)
-
-    @staticmethod
-    def _power(x, y, mod):
-        result = 1
-        x %= mod
-        while y:
-            if y & 1:
-                result = (result * x) % mod
-            x = (x * x) % mod
-            y >>= 1
-        return result
-
-    def is_prime(self, n):
-        if n < 2:
-            return False
-        for p in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37):
-            if n % p == 0:
-                return n == p
-
-        d = n - 1
-        r = 0
-        while d % 2 == 0:
-            d //= 2
-            r += 1
-
-        for a in self.bases:
-            x = self._power(a, d, n)
-            if x == 1 or x == n - 1:
-                continue
-            for _ in range(r - 1):
-                x = (x * x) % n
-                if x == n - 1:
-                    break
-            else:
-                return False
-        return True
 
     @timeit
     def solve(self):
@@ -81,7 +44,7 @@ class Problem58:
             offsets = (2, 4, 6)
             corners = (squared,) + tuple(squared - i * layer for i in offsets)
             for corner in corners:
-                if self.is_prime(corner):
+                if is_prime(corner):
                     prime_count += 1
 
             total = 4 * layer + 1

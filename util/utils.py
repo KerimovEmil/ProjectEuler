@@ -2,8 +2,9 @@ import numpy as np
 import time
 from itertools import accumulate
 from functools import lru_cache, reduce
+import math
 from math import gcd
-from typing import List, Union, Dict, Generator, Optional
+from typing import List, Union, Dict, Generator, Optional, Tuple
 
 
 class Hungarian:
@@ -1290,22 +1291,134 @@ def mobius_sieve(n: int) -> list:
     """
     mu = [0] * (n + 1)
     primes = []
-    is_prime = [True] * (n + 1)
+    is_prime_flags = [True] * (n + 1)
     if n >= 1:
         mu[1] = 1
     for i in range(2, n + 1):
-        if is_prime[i]:
+        if is_prime_flags[i]:
             primes.append(i)
             mu[i] = -1
         for p in primes:
             if i * p > n:
                 break
-            is_prime[i * p] = False
+            is_prime_flags[i * p] = False
             if i % p == 0:
                 mu[i * p] = 0
                 break
             else:
                 mu[i * p] = -mu[i]
     return mu
+
+
+def is_prime(n: int) -> bool:
+    """
+    Deterministic Miller-Rabin primality test for integers up to 2^64.
+
+    Tests divisibility by small primes first, then runs Miller-Rabin witness checks
+    using the 12 prime bases (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37).
+
+    Args:
+        n: Integer to test for primality.
+
+    Returns:
+        True if n is prime, False otherwise.
+    """
+    if n < 2:
+        return False
+    small_primes = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)
+    for p in small_primes:
+        if n % p == 0:
+            return n == p
+
+    d = n - 1
+    r = 0
+    while d % 2 == 0:
+        d //= 2
+        r += 1
+
+    for a in small_primes:
+        x = pow(a, d, n)
+        if x == 1 or x == n - 1:
+            continue
+        for _ in range(r - 1):
+            x = (x * x) % n
+            if x == n - 1:
+                break
+        else:
+            return False
+    return True
+
+
+def continued_fraction_sqrt(d: int) -> Tuple[int, List[int]]:
+    """
+    Computes the continued fraction expansion of sqrt(d).
+
+    For an integer d > 0, returns (a0, period) where a0 is the integer part
+    and period is the list of repeating partial denominators [a1, a2, ..., a_k]
+    such that a_k = 2 * a0.
+    If d is a perfect square, period is an empty list.
+
+    Example:
+        continued_fraction_sqrt(7) -> (2, [1, 1, 1, 4])
+        continued_fraction_sqrt(13) -> (3, [1, 1, 1, 1, 6])
+    """
+    r0 = math.isqrt(d)
+    if r0 * r0 == d:
+        return r0, []
+    m = 0
+    den = 1
+    a = r0
+    period = []
+    while a != 2 * r0:
+        m = den * a - m
+        den = (d - m * m) // den
+        a = (r0 + m) // den
+        period.append(a)
+    return r0, period
+
+
+def pell_fundamental_solution(d: int) -> Optional[Tuple[int, int]]:
+    """
+    Finds the fundamental (minimal positive integer) solution (x1, y1) to Pell's equation:
+        x^2 - d * y^2 = 1
+
+    Uses the convergents of the continued fraction expansion of sqrt(d).
+    Returns None if d is a perfect square.
+
+    Example:
+        pell_fundamental_solution(13) -> (649, 180)  # 649^2 - 13 * 180^2 = 1
+        pell_fundamental_solution(2)  -> (3, 2)      # 3^2 - 2 * 2^2 = 1
+    """
+    r0, period = continued_fraction_sqrt(d)
+    if not period:
+        return None
+
+    p_prev, p_curr = 1, r0
+    q_prev, q_curr = 0, 1
+
+    if p_curr * p_curr - d * q_curr * q_curr == 1:
+        return p_curr, q_curr
+
+    seq = period * 2 if len(period) % 2 == 1 else period
+    for a in seq:
+        p_next = a * p_curr + p_prev
+        q_next = a * q_curr + q_prev
+        p_prev, p_curr = p_curr, p_next
+        q_prev, q_curr = q_curr, q_next
+        if p_curr * p_curr - d * q_curr * q_curr == 1:
+            return p_curr, q_curr
+
+    return p_curr, q_curr
+
+
+def digits(n: int) -> List[int]:
+    """Returns the list of base-10 digits of |n|."""
+    return [int(c) for c in str(abs(n))]
+
+
+def digits_sum(n: int) -> int:
+    """Returns the sum of base-10 digits of |n|."""
+    return sum(int(c) for c in str(abs(n)))
+
 
 

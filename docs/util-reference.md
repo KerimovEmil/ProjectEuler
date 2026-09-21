@@ -47,6 +47,33 @@ Computes the Möbius function $\mu(k)$ for all $0 \le k \le n$ using a linear si
 - Returns `-1` if $k$ is square-free with an odd number of prime factors.
 - Returns `0` if $k$ has a squared prime factor.
 
+### `is_prime(n: int) -> bool`
+Deterministic Miller-Rabin primality test for integers up to $2^{64}$.
+- Tests small prime divisibility first, then checks 12 prime bases $(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)$.
+- Runs in $O(\log^3 n)$ time without memory allocation.
+
+### `continued_fraction_sqrt(d: int) -> Tuple[int, List[int]]`
+Computes the continued fraction expansion of $\sqrt{d}$ using exact integer arithmetic.
+- Returns `(a0, period)` where $a_0 = \lfloor\sqrt{d}\rfloor$ and `period` is the repeating sequence $[a_1, a_2, \dots, a_k]$ (ending in $2a_0$).
+- Returns `(isqrt(d), [])` if $d$ is a perfect square.
+
+### `pell_fundamental_solution(d: int) -> Optional[Tuple[int, int]]`
+Finds the fundamental (minimal positive integer) solution $(x_1, y_1)$ to Pell's equation $x^2 - d y^2 = 1$.
+- Uses convergents of the continued fraction expansion of $\sqrt{d}$.
+- Returns `None` if $d$ is a perfect square.
+
+### `digits(n: int) -> List[int]`
+Returns the list of base-10 digits of $|n|$ (e.g. `digits(12345) -> [1, 2, 3, 4, 5]`).
+
+### `digits_sum(n: int) -> int`
+Returns the sum of base-10 digits of $|n|$ (e.g. `digits_sum(12345) -> 15`).
+
+### `is_palindrome(n: Union[int, str]) -> bool`
+Returns `True` if $n$ is a palindrome (reads identically forwards and backwards in base 10), else `False`.
+
+### `is_int(n: float, tol: float = 1e-12) -> bool`
+Returns `True` if floating-point number $n$ is within `tol` of an integer.
+
 ### `coprime(a: int, b: int) -> bool`
 Returns `True` if $\gcd(a, b) == 1$, else `False`.
 
@@ -55,6 +82,7 @@ Computes the Pisano period (the period length with which the sequence of Fibonac
 
 ### `cycle_length(k: int) -> int`
 Returns the period length of recurring decimal digits in $1/k$.
+
 
 ---
 
