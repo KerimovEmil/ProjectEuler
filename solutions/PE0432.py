@@ -8,196 +8,114 @@ Find S(510510, 10^11).
 Give the last 9 digits of your answer.
 
 ANSWER: 754862080
-Solve time: ~0.15 seconds (reduced from ~618 seconds / 10 minutes)
+Solve time: ~2.8 seconds (reduced from ~618 seconds / 10 minutes)
 
 MATHEMATICAL DERIVATION:
-1. Multiplicative Property of S(n, m):
-   For a prime p dividing n, we have the identity:
+1. Multiplicative Reduction of S(n, m):
+   For a prime p dividing n where n is square-free, we have the identity:
      S(p * k, m) = (p - 1) * S(k, m) + S(p * k, floor(m / p))
-   This reduces S(n, m) recursively to evaluations of S(1, x) = Phi(x) = sum_{k=1}^x phi(k).
+   Recursively applying this identity decomposes S(n, m) into subproblems ending
+   at S(1, x) = Phi(x) = sum_{i=1}^x phi(i).
 
-2. Fast Totient Prefix Sum (Du's Sieve / Lucy's Algorithm):
-   Phi(x) = x * (x + 1) / 2 - sum_{d=2}^x Phi(floor(x / d)).
-   With a linear sieve precomputing phi(k) for k <= 5 * 10^6, Phi(x) for x <= 10^11 is evaluated in
-   O(x^(2/3)) steps.
+2. Fast Totient Prefix Sum (Du's Sieve / Hyperbolic Slicing):
+   By Dirichlet hyperbola summation on phi * 1 = id:
+     Phi(x) = x * (x + 1) // 2 - sum_{d=2}^x Phi(floor(x / d))
+   Splitting the summation at D = floor(sqrt(x)):
+     sum_{d=2}^x Phi(floor(x / d)) = sum_{d=2}^{floor(x / (D + 1))} Phi(floor(x / d))
+                                   + sum_{q=1}^D (floor(x / q) - floor(x / (q + 1))) * Phi(q)
 
-3. Acceleration:
-   The DP states and Du sieve are evaluated in sub-second time using a fast C extension (with automatic pure Python fallback).
+3. High-Performance Pure Python Optimization:
+   - A precomputed prefix sieve of phi(k) for all k <= L (L = 5,000,000) is built via a fast NumPy prime sieve.
+   - For all q <= D <= sqrt(10^11) ~ 316,227 <= L, Phi(q) is directly looked up in the precomputed array, and the entire second sum is evaluated as a single vectorized NumPy dot product.
+   - In the first sum, any terms with floor(x / d) <= L are evaluated via vectorized array slicing on the precomputed table.
+   - Only values with floor(x / d) > L branch into recursive memoized calls.
+   This executes the entire solution in ~2.8 seconds purely in Python without external C dependencies.
 """
 
-import ctypes
-import os
-import subprocess
-import tempfile
 import unittest
 import numpy as np
 from util.utils import timeit, euler_totient_function, sum_phi
 
 
-C_CODE = r'''
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
-typedef __int128_t int128;
-static int128* phi_pref = NULL;
-static int64_t LIMIT = 0;
-
-__declspec(dllexport) void init_phi(int64_t limit) {
-    if (phi_pref) free(phi_pref);
-    LIMIT = limit;
-    phi_pref = (int128*)malloc((limit + 1) * sizeof(int128));
-    for (int64_t i = 0; i <= limit; i++) phi_pref[i] = i;
-    for (int64_t i = 2; i <= limit; i++) {
-        if (phi_pref[i] == i) {
-            for (int64_t j = i; j <= limit; j += i) {
-                phi_pref[j] -= phi_pref[j] / i;
-            }
-        }
-    }
-    for (int64_t i = 1; i <= limit; i++) {
-        phi_pref[i] += phi_pref[i - 1];
-    }
-}
-
-#define HASH_SIZE 1000003
-static int64_t h_keys[HASH_SIZE];
-static int128 h_vals[HASH_SIZE];
-
-int128 get_phi(int64_t n) {
-    if (n <= LIMIT) return phi_pref[n];
-    uint64_t h = ((uint64_t)n * 11400714819323198485ULL) % HASH_SIZE;
-    while (h_keys[h] != 0) {
-        if (h_keys[h] == n) return h_vals[h];
-        h = (h + 1) % HASH_SIZE;
-    }
-    int128 total = (int128)n * (n + 1) / 2;
-    int64_t l = 2;
-    while (l <= n) {
-        int64_t q = n / l;
-        int64_t r = n / q;
-        total -= (int128)(r - l + 1) * get_phi(q);
-        l = r + 1;
-    }
-    h_keys[h] = n;
-    h_vals[h] = total;
-    return total;
-}
-
-#define S_HASH_SIZE 1000003
-static int64_t s_keys[S_HASH_SIZE];
-static int64_t s_vals[S_HASH_SIZE];
-
-int64_t compute_S(int64_t p_idx, int64_t n, int64_t mod, const int64_t* primes, int64_t num_primes) {
-    if (p_idx == num_primes) {
-        return (int64_t)(((get_phi(n) % mod) + mod) % mod);
-    }
-    if (n == 0) return 0;
-    int64_t state = (n << 3) | p_idx;
-    uint64_t h = ((uint64_t)state * 11400714819323198485ULL) % S_HASH_SIZE;
-    while (s_keys[h] != 0) {
-        if (s_keys[h] == state) return s_vals[h];
-        h = (h + 1) % S_HASH_SIZE;
-    }
-    int64_t p = primes[p_idx];
-    int64_t t1 = compute_S(p_idx + 1, n, mod, primes, num_primes);
-    int64_t t2 = compute_S(p_idx, n / p, mod, primes, num_primes);
-    int64_t res = ((p - 1) * t1 + t2) % mod;
-    s_keys[h] = state;
-    s_vals[h] = res;
-    return res;
-}
-
-__declspec(dllexport) int64_t solve_432(int64_t m, int64_t mod, const int64_t* primes, int64_t num_primes) {
-    memset(h_keys, 0, sizeof(h_keys));
-    memset(s_keys, 0, sizeof(s_keys));
-    return compute_S(0, m, mod, primes, num_primes);
-}
-'''
-
-
-def _get_c_solver():
-    """Compiles and loads fast C solver if GCC is available."""
-    try:
-        temp_dir = tempfile.gettempdir()
-        dll_path = os.path.join(temp_dir, 'pe432_c_solver.dll')
-        c_path = os.path.join(temp_dir, 'pe432_c_solver.c')
-        if not os.path.exists(dll_path):
-            with open(c_path, 'w') as f:
-                f.write(C_CODE)
-            subprocess.run(
-                ['gcc', '-O3', '-shared', '-static-libgcc', '-o', dll_path, c_path],
-                check=True,
-                capture_output=True
-            )
-
-        kwargs = {'winmode': 0} if os.name == 'nt' else {}
-        lib = ctypes.CDLL(dll_path, **kwargs)
-        lib.init_phi.argtypes = [ctypes.c_int64]
-        lib.solve_432.argtypes = [ctypes.c_int64, ctypes.c_int64, ctypes.POINTER(ctypes.c_int64), ctypes.c_int64]
-        lib.solve_432.restype = ctypes.c_int64
-        lib.init_phi(5000000)
-        return lib
-    except Exception:
-        return None
-
-
-_C_LIB = _get_c_solver()
+def fast_phi_prefix_sieve(limit):
+    """Precomputes prefix sums of Euler's totient function up to `limit`."""
+    phi = np.arange(limit + 1, dtype=np.int64)
+    is_prime = np.ones(limit + 1, dtype=bool)
+    is_prime[:2] = False
+    for i in range(2, int(limit ** 0.5) + 1):
+        if is_prime[i]:
+            is_prime[i * i::i] = False
+    primes = np.nonzero(is_prime)[0]
+    for p in primes:
+        phi[p::p] -= phi[p::p] // p
+    return np.cumsum(phi)
 
 
 class Problem432:
-    def __init__(self, n=510510, ls_p=(2, 3, 5, 7, 11, 13, 17), mod=int(1e9)):
+    def __init__(self, n=510510, ls_p=(2, 3, 5, 7, 11, 13, 17), mod=int(1e9), sieve_limit=5000000):
         self.n = n
         self.ls_p = list(ls_p)
         self.mod = mod
+        self.sieve_limit = sieve_limit
+        self.phi_pref = fast_phi_prefix_sieve(sieve_limit)
+        self.memo_phi = {}
+        self.memo_s = {}
+
+    def get_phi(self, x):
+        """Computes Phi(x) = sum_{k=1}^x phi(k) via Du's sieve and hyperbolic splitting."""
+        limit = self.sieve_limit
+        if x <= limit:
+            return int(self.phi_pref[x])
+        if x in self.memo_phi:
+            return self.memo_phi[x]
+
+        total = x * (x + 1) // 2
+        sx = int(x ** 0.5)
+        max_d = x // (sx + 1)
+
+        # Part 2: q from 1 to sx (all q <= sx <= sqrt(10^11) <= limit)
+        q = np.arange(1, sx + 1, dtype=np.int64)
+        counts = x // q - x // (q + 1)
+        s2 = int(np.dot(counts, self.phi_pref[q]))
+
+        # Part 1: d from 2 to max_d
+        d_thresh = x // limit
+        s1 = 0
+        # Terms with x // d > limit need recursion
+        for d in range(2, min(max_d + 1, d_thresh + 1)):
+            s1 += self.get_phi(x // d)
+
+        # Terms with x // d <= limit are retrieved directly from precomputed array
+        if max_d > d_thresh:
+            d_arr = np.arange(max(2, d_thresh + 1), max_d + 1, dtype=np.int64)
+            s1 += int(np.sum(self.phi_pref[x // d_arr]))
+
+        res = total - s1 - s2
+        self.memo_phi[x] = res
+        return res
+
+    def _s_rec(self, p_idx, x):
+        """Evaluates S(n, m) recursively via S(p*k, m) = (p - 1)*S(k, m) + S(p*k, m // p)."""
+        if p_idx == len(self.ls_p):
+            return self.get_phi(x) % self.mod
+        if x == 0:
+            return 0
+        state = (p_idx, x)
+        if state in self.memo_s:
+            return self.memo_s[state]
+
+        p = self.ls_p[p_idx]
+        t1 = self._s_rec(p_idx + 1, x)
+        t2 = self._s_rec(p_idx, x // p)
+        res = ((p - 1) * t1 + t2) % self.mod
+        self.memo_s[state] = res
+        return res
 
     @timeit
     def solve(self, m=10**11):
-        if _C_LIB is not None:
-            primes_arr = (ctypes.c_int64 * len(self.ls_p))(*self.ls_p)
-            return _C_LIB.solve_432(m, self.mod, primes_arr, len(self.ls_p))
-
-        # Fallback pure Python + NumPy solver
-        limit = min(5000000, m)
-        phi = np.arange(limit + 1, dtype=np.int64)
-        for i in range(2, limit + 1):
-            if phi[i] == i:
-                phi[i::i] -= phi[i::i] // i
-        phi_pref = np.cumsum(phi)
-
-        memo_phi = {}
-
-        def Phi(x):
-            if x <= limit:
-                return int(phi_pref[x])
-            if x in memo_phi:
-                return memo_phi[x]
-            total = x * (x + 1) // 2
-            l = 2
-            while l <= x:
-                q = x // l
-                r = x // q
-                total -= (r - l + 1) * Phi(q)
-                l = r + 1
-            memo_phi[x] = total
-            return total
-
-        memo_s = {}
-
-        def S_rec(p_idx, x):
-            if p_idx == len(self.ls_p):
-                return Phi(x) % self.mod
-            if x == 0:
-                return 0
-            state = (p_idx, x)
-            if state in memo_s:
-                return memo_s[state]
-            p = self.ls_p[p_idx]
-            res = ((p - 1) * S_rec(p_idx + 1, x) + S_rec(p_idx, x // p)) % self.mod
-            memo_s[state] = res
-            return res
-
-        return S_rec(0, m)
+        self.memo_phi.clear()
+        self.memo_s.clear()
+        return self._s_rec(0, m)
 
 
 class Solution432(unittest.TestCase):

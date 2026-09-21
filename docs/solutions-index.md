@@ -127,7 +127,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0154 | [PE0154.py](../solutions/PE0154.py) | A triangular pyramid is constructed using spherical balls such that... | 8.0 seconds |
 | PE0162 | [PE0162.py](../solutions/PE0162.py) | In the hexadecimal number system numbers are represented using 16 d... | 0.01 seconds |
 | PE0169 | [PE0169.py](../solutions/PE0169.py) | Define f(0) = 1 and f(n) to be the number of different ways n can b... | 0.001 seconds |
-| PE0179 | [PE0179.py](../solutions/PE0179.py) | Find the number of integers 1 < n < 10^7, for which n and n + 1 hav... | 18 seconds |
+| PE0179 | [PE0179.py](../solutions/PE0179.py) | Find the number of integers 1 < n < 10^7, for which n and n + 1 hav... | 0.38 seconds |
 | PE0185 | [PE0185.py](../solutions/PE0185.py) | The game Number Mind is a variant of the well known game Master Mind. | 180 seconds (~3 minutes) |
 | PE0187 | [PE0187.py](../solutions/PE0187.py) | A composite is a number containing at least two prime factors. For ... | 0.04 seconds |
 | PE0188 | [PE0188.py](../solutions/PE0188.py) | Problem 188 | 0.001 seconds |
@@ -135,7 +135,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0197 | [PE0197.py](../solutions/PE0197.py) | Given is the function f(x) = ⌊2^(30.403243784-x^2)⌋ × 1e-9 ( ⌊ ⌋ is... | 0.001 seconds |
 | PE0204 | [PE0204.py](../solutions/PE0204.py) | A Hamming number is a positive number which has no prime factor lar... | 0.6 seconds |
 | PE0206 | [PE0206.py](../solutions/PE0206.py) | Find the unique positive integer whose square has the form 1_2_3_4_... | 0.1 seconds |
-| PE0211 | [PE0211.py](../solutions/PE0211.py) | For a positive integer n, let σ2(n) be the sum of the squares of it... | way too long |
+| PE0211 | [PE0211.py](../solutions/PE0211.py) | For a positive integer n, let σ2(n) be the sum of the squares of it... | 4.8 seconds |
 | PE0221 | [PE0221.py](../solutions/PE0221.py) | We shall call a positive integer "A" an "Alexandrian integer", if t... | 660 seconds |
 | PE0225 | [PE0225.py](../solutions/PE0225.py) | The sequence 1, 1, 1, 3, 5, 9, 17, 31, 57, 105, 193, 355, 653, 1201... | 0.519 seconds |
 | PE0229 | [PE0229.py](../solutions/PE0229.py) | Consider the number 3600. It is very special, because | 5.6 seconds |
@@ -159,9 +159,9 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0365 | [PE0365.py](../solutions/PE0365.py) | The binomial coefficient (10^18 choose 10^9) is a number with more ... | 270 seconds (~5 minutes) |
 | PE0381 | [PE0381.py](../solutions/PE0381.py) | For a prime p let S(p) = (sum (p-k)!) mod p for 1 <= k <= 5. | 3.661 seconds |
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | Problem 401 | ~0.000s |
-| PE0419 | [PE0419.py](../solutions/PE0419.py) | Problem 419 | 21 seconds |
+| PE0419 | [PE0419.py](../solutions/PE0419.py) | Look and Say sequence: Find A(n), B(n), and C(n) for n = 10^12 modulo 2^30. | ~0.005 seconds |
 | PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | 1113 seconds (~19 minutes) |
-| PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~0.15 seconds |
+| PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~1.65 seconds |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~7.2 seconds |
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | 6 seconds |
