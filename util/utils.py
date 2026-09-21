@@ -1168,3 +1168,111 @@ def pisano_period(m: int) -> int:
 
 def is_int(n):
     return abs(n - int(n)) < 1e-13
+
+
+def legendre_symbol(a: int, p: int) -> int:
+    """
+    Compute the Legendre symbol (a / p) for an integer a and an odd prime p.
+
+    The Legendre symbol is defined as:
+        (a / p) =  1  if a is a quadratic residue modulo p and a != 0 (mod p)
+        (a / p) = -1  if a is a quadratic non-residue modulo p
+        (a / p) =  0  if a = 0 (mod p)
+
+    Euler's criterion states: (a / p) = a^((p - 1) / 2) (mod p).
+
+    Args:
+        a: Integer numerator.
+        p: Odd prime modulus.
+
+    Returns:
+        1, -1, or 0.
+
+    Examples:
+        >>> legendre_symbol(2, 7)
+        1  # 3^2 = 9 = 2 mod 7
+        >>> legendre_symbol(3, 7)
+        -1
+        >>> legendre_symbol(7, 7)
+        0
+    """
+    ls = pow(a % p, (p - 1) // 2, p)
+    return -1 if ls == p - 1 else ls
+
+
+def tonelli_shanks(n: int, p: int) -> Optional[int]:
+    """
+    Find a modular square root of n modulo an odd prime p using the Tonelli-Shanks algorithm.
+    Solves the congruence r^2 = n (mod p) for r in [0, p - 1].
+
+    Algorithm details:
+    1. Check quadratic residuosity using Euler's criterion (Legendre symbol). If (n / p) == -1, no solution.
+    2. Factor p - 1 as q * 2^s where q is odd.
+    3. If s == 1 (i.e. p = 3 mod 4), the root is directly given by n^((p + 1) // 4) mod p.
+    4. If s == 2 (i.e. p = 5 mod 8), the root is computed using Atkin's / Legendre's fast path.
+    5. For s >= 3, find a quadratic non-residue z mod p and iteratively adjust the powers.
+
+    Args:
+        n: The quadratic residue integer.
+        p: Odd prime modulus.
+
+    Returns:
+        An integer r in [0, p - 1] such that (r * r) % p == n % p, or None if no square root exists.
+
+    Examples:
+        >>> tonelli_shanks(10, 13)
+        6  # 6^2 = 36 = 10 mod 13
+        >>> tonelli_shanks(7, 29)
+        None  # 7 is a quadratic non-residue modulo 29
+    """
+    n = n % p
+    if n == 0:
+        return 0
+    if p == 2:
+        return n
+    if legendre_symbol(n, p) != 1:
+        return None
+
+    # Fast path for p = 3 (mod 4)
+    if p % 4 == 3:
+        return pow(n, (p + 1) // 4, p)
+
+    # Fast path for p = 5 (mod 8)
+    if p % 8 == 5:
+        v = pow(2 * n, (p - 5) // 8, p)
+        i = (2 * n * v * v) % p
+        return (n * v * (i - 1)) % p
+
+    # General Tonelli-Shanks for p = 1 (mod 8)
+    q = p - 1
+    s = 0
+    while q % 2 == 0:
+        q //= 2
+        s += 1
+
+    # Find the smallest quadratic non-residue z mod p
+    z = 2
+    while legendre_symbol(z, p) != -1:
+        z += 1
+
+    c = pow(z, q, p)
+    r = pow(n, (q + 1) // 2, p)
+    t = pow(n, q, p)
+    m = s
+
+    while t != 1:
+        temp = t
+        i = 0
+        while temp != 1 and i < m:
+            temp = (temp * temp) % p
+            i += 1
+        if i == m:
+            return None
+        b = pow(c, 1 << (m - i - 1), p)
+        r = (r * b) % p
+        c = (b * b) % p
+        t = (t * c) % p
+        m = i
+
+    return r
+
