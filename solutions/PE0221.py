@@ -18,7 +18,7 @@ Solve time: ~0.95 seconds
 
 import math
 import unittest
-from util.utils import timeit, tonelli_shanks
+from util.utils import timeit, tonelli_shanks, primes_upto
 
 
 # MATHEMATICAL DERIVATION:
