@@ -161,7 +161,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | Problem 401 | ~0.000s |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Problem 419 | 21 seconds |
 | PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | 1113 seconds (~19 minutes) |
-| PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | 618 seconds (~10 minutes) |
+| PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~0.15 seconds |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~7.2 seconds |
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | 6 seconds |
