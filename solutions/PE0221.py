@@ -68,13 +68,7 @@ class Problem221:
             max_k = max(max_k, 120_000)
 
         # 1. Sieve primes up to max_k
-        is_p = bytearray([1]) * (max_k + 1)
-        is_p[0] = is_p[1] = 0
-        for p in range(2, math.isqrt(max_k) + 1):
-            if is_p[p]:
-                is_p[p * p::p] = bytearray(len(is_p[p * p::p]))
-
-        primes = [p for p in range(2, max_k + 1) if is_p[p] and (p == 2 or p % 4 == 1)]
+        primes = [int(p) for p in primes_upto(max_k) if p == 2 or p % 4 == 1]
 
         # 2. Sieve prime factorization of k^2 + 1
         rem = [k * k + 1 for k in range(max_k + 1)]
