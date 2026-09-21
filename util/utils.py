@@ -1276,3 +1276,36 @@ def tonelli_shanks(n: int, p: int) -> Optional[int]:
 
     return r
 
+
+def mobius_sieve(n: int) -> list:
+    """
+    Computes the Mobius function mu(k) for all 0 <= k <= n using a linear sieve.
+
+    mu(k) =  1 if k is a square-free integer with an even number of prime factors
+    mu(k) = -1 if k is a square-free integer with an odd number of prime factors
+    mu(k) =  0 if k has a squared prime factor
+
+    Returns:
+        A list mu of length n + 1 where mu[k] is the Mobius value of k.
+    """
+    mu = [0] * (n + 1)
+    primes = []
+    is_prime = [True] * (n + 1)
+    if n >= 1:
+        mu[1] = 1
+    for i in range(2, n + 1):
+        if is_prime[i]:
+            primes.append(i)
+            mu[i] = -1
+        for p in primes:
+            if i * p > n:
+                break
+            is_prime[i * p] = False
+            if i % p == 0:
+                mu[i * p] = 0
+                break
+            else:
+                mu[i * p] = -mu[i]
+    return mu
+
+

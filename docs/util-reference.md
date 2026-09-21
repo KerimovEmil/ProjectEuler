@@ -41,6 +41,12 @@ Computes Euler's totient $\phi(n) = n \prod_{p \mid n} (1 - 1/p)$.
 ### `sum_phi(n: int) -> int`
 Computes the summatory totient function $\sum_{i=1}^n \phi(i)$ using memoized sublinear recurrence.
 
+### `mobius_sieve(n: int) -> List[int]`
+Computes the Möbius function $\mu(k)$ for all $0 \le k \le n$ using a linear sieve in $O(n)$ time.
+- Returns `1` if $k$ is square-free with an even number of prime factors.
+- Returns `-1` if $k$ is square-free with an odd number of prime factors.
+- Returns `0` if $k$ has a squared prime factor.
+
 ### `coprime(a: int, b: int) -> bool`
 Returns `True` if $\gcd(a, b) == 1$, else `False`.
 
