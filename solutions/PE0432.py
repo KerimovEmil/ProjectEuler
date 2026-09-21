@@ -8,7 +8,7 @@ Find S(510510, 10^11).
 Give the last 9 digits of your answer.
 
 ANSWER: 754862080
-Solve time: ~0.15 seconds (reduced from ~618 seconds / 10 minutes)
+Solve time: ~0.15 seconds
 
 MATHEMATICAL DERIVATION:
 1. Multiplicative Property of S(n, m):
