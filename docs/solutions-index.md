@@ -99,7 +99,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0093 | [PE0093.py](../solutions/PE0093.py) | By using each of the digits from the set, $\{1, 2, 3, 4\}$, exactly... | 0.08 seconds |
 | PE0094 | [PE0094.py](../solutions/PE0094.py) | It is easily proved that no equilateral triangle exists with integr... | 0.001 seconds |
 | PE0095 | [PE0095.py](../solutions/PE0095.py) | The proper divisors of a number are all the divisors excluding the ... | 2.6 seconds |
-| PE0096 | [PE0096.py](../solutions/PE0096.py) | By solving all fifty puzzles find the sum of the 3-digit numbers fo... | 68 seconds |
+| PE0096 | [PE0096.py](../solutions/PE0096.py) | By solving all fifty puzzles find the sum of the 3-digit numbers fo... | 0.7 seconds |
 | PE0097 | [PE0097.py](../solutions/PE0097.py) | The first known prime found to exceed one million digits was discov... | 0.004 seconds |
 | PE0098 | [PE0098.py](../solutions/PE0098.py) | By replacing each of the letters in the word CARE with $1$, $2$, $9... | 0.03 seconds |
 | PE0099 | [PE0099.py](../solutions/PE0099.py) | Using base_exp.txt (right click and 'Save Link/Target As...'), a 22... | 0.001 seconds |
