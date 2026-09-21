@@ -144,7 +144,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0236 | [PE0236.py](../solutions/PE0236.py) | Suppliers 'A' and 'B' provided the following numbers of products fo... | 0.23 seconds |
 | PE0243 | [PE0243.py](../solutions/PE0243.py) | A positive fraction whose numerator is less than its denominator is... | 0.003 seconds |
 | PE0254 | [PE0254.py](../solutions/PE0254.py) | Define f(n) as the sum of the factorials of the digits of n. For ex... | 2 seconds |
-| PE0266 | [PE0266.py](../solutions/PE0266.py) | Problem 266 | ~0.000s |
+| PE0266 | [PE0266.py](../solutions/PE0266.py) | Pseudo Square Root: Find the largest divisor of the product of primes below 190 not exceeding its square root. | 4.4 seconds |
 | PE0267 | [PE0267.py](../solutions/PE0267.py) | Problem 267 | 0.1 seconds |
 | PE0269 | [PE0269.py](../solutions/PE0269.py) | A root or zero of a polynomial P(x) is a solution to the equation P... | 0.08 seconds |
 | PE0271 | [PE0271.py](../solutions/PE0271.py) | For a positive number N, find the sum of all x such that 1 < x < N and x^3 ≡ 1 mod N. | ~0.002 seconds |
@@ -161,7 +161,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | Problem 401 | ~0.000s |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Look and Say sequence: Find A(n), B(n), and C(n) for n = 10^12 modulo 2^30. | ~0.005 seconds |
 | PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | 1113 seconds (~19 minutes) |
-| PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | 618 seconds (~10 minutes) |
+| PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~1.65 seconds |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~7.2 seconds |
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | 6 seconds |
