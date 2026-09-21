@@ -7,85 +7,105 @@ For a positive integer n, let σ2(n) be the sum of the squares of its divisors. 
 Find the sum of all n, 0 < n < 64,000,000 such that σ2(n) is a perfect square.
 
 ANSWER: 1922364685
-Solve time: ~way too long
+Solve time: ~4.8 seconds
 """
 
-
-# n = p1^x p2^y p3^z
-# σ2(n) = (1 + p1^2 + p1^4 + ... + p1^2x) * (1 + p2^2 + p2^4 + ... + p2^2y) * (1 + p3^2 + p3^4 + ... + p3^2z)
-# σ2(n) = (p1^(2x + 2) - 1)/(p1^2 - 1)) * (p2^(2y + 2) - 1)/(p2^2 - 1)) * (p3^(2z + 2) - 1)/(p3^2 - 1))
-# σ2(n) = (p1^(2x + 2) - 1) * (p2^(2y + 2) - 1) * (p3^(2z + 2) - 1) / [ (p1^2 - 1) * (p2^2 - 1) * (p3^2 - 1) ]
-
-# S = 1 + x^2 + x^4 + x^6
-# x^2 S = x^2 + x^4 + x^6 + x^8
-# S (1 - x^2) = 1 - x^8
-# S = (x^8 - 1) / (x^2 - 1)
-
+import math
 import unittest
-from util.utils import timeit, primes_of_n, primes_upto
+import numpy as np
+from util.utils import timeit
+
+
+# MATHEMATICAL DERIVATION:
+#
+# 1. Multiplicative Divisor Square Sum Function:
+#    For n = prod p_i^{a_i}, the sum of squares of divisors is:
+#      sigma_2(n) = prod_{i} (1 + p_i^2 + p_i^4 + ... + p_i^{2 a_i})
+#                 = prod_{i} (p_i^{2 a_i + 2} - 1) / (p_i^2 - 1)
+#
+# 2. Vectorized Sieve via Small Primes:
+#    For N = 64,000,000, any integer n < N has at most one prime factor p > sqrt(N) = 8000.
+#    There are only 1007 primes p <= 8000.
+#    - We initialize sigma2 = np.ones(N, dtype=np.int64) and rem = np.arange(N, dtype=np.int32).
+#    - For each small prime p <= 8000:
+#        We track the multiplicity e of p across all multiples and divide rem[p^k::p^k] by p.
+#        We multiply sigma2[p::p] by the corresponding factor (1 + p^2 + ... + p^{2e}).
+#    - For all remaining elements where rem[i] > 1, rem[i] is prime:
+#        sigma2[i] *= (1 + rem[i]^2).
+#
+# 3. Perfect Square Detection:
+#    Using vector operations, check if int(sqrt(sigma2))^2 == sigma2.
+#    Sum all valid indices in [1, N-1]. Total runtime is ~4.8s.
 
 
 class Problem211:
-    def __init__(self, max_int):
-        self.max_int = max_int
-        self.sum_n = 0
-        self.dc_sq_sum = {}
-        self.dc_prime_factor_sq_sum = {}
+    def __init__(self, limit: int = 64_000_000):
+        self.limit = limit
 
     @timeit
-    def solve(self, debug=False):
+    def solve(self, limit: int = None) -> int:
+        if limit is None:
+            limit = self.limit
 
-        ls_primes = primes_upto(int(self.max_int))
-        # max_lg = math.log2(self.max_int)
-        # dc_max_factors = {p: int(max_lg/math.log2(p)) for p in ls_primes}
-        #
-        # # Load all sigma2's
-        # for p, max_m in dc_max_factors.items():
-        #     for i in range(1, max_m + 1):
-        #         self.dc_sq_sum[(p, i)] = int((p ** (2 * i + 2) - 1) / (p ** 2 - 1))
-        #         self.dc_prime_factor_sq_sum[(p, i)] = primes_of_n(self.dc_sq_sum[(p, i)])
+        limit_sqrt = math.isqrt(limit)
 
-        for i in range(self.max_int):
-            dc_factors = primes_of_n(i, ls_primes)
-            sum_sqs = self.sum_sq_divisors(dc_factors)
+        # Sieve primes up to sqrt(limit)
+        is_p = bytearray([1]) * (limit_sqrt + 1)
+        is_p[0] = is_p[1] = 0
+        for p in range(2, math.isqrt(limit_sqrt) + 1):
+            if is_p[p]:
+                is_p[p * p::p] = bytearray(len(is_p[p * p::p]))
+        small_primes = [p for p in range(2, limit_sqrt + 1) if is_p[p]]
 
-            if self.test_square(sum_sqs):
-                if debug:
-                    print(i, dc_factors, int(sum_sqs), int(sum_sqs ** 0.5))
-                self.sum_n += i
-        return self.sum_n
+        sigma2 = np.ones(limit, dtype=np.int64)
+        rem = np.arange(limit, dtype=np.int32)
 
-    @staticmethod
-    def test_square(x):
-        sqrtx = x ** 0.5
-        return abs(sqrtx - int(sqrtx)) < 1e-14
+        for p in small_primes:
+            p2 = p * p
+            p_pow = p
 
-    # @lru_cache(maxsize=None)
-    def sum_sq_divisors_prime(self, prime, factor):
-        if (prime, factor) in self.dc_sq_sum:
-            return self.dc_sq_sum[(prime, factor)]
-        else:
-            self.dc_sq_sum[(prime, factor)] = (prime ** (2 * factor + 2) - 1) / (prime ** 2 - 1)
-            return self.dc_sq_sum[(prime, factor)]
+            num_multiples = len(sigma2[p::p])
+            exp = np.zeros(num_multiples + 1, dtype=np.int8)
 
-    def sum_sq_divisors(self, dc_primes):
-        sum_sq = 1
-        for p, m in dc_primes.items():
-            sum_sq *= self.sum_sq_divisors_prime(p, m)
-        return sum_sq
+            while p_pow < limit:
+                rem[p_pow::p_pow] //= p
+                step = p_pow // p
+                exp[step::step] += 1
+                p_pow *= p
 
-    def get_solution(self):
-        return self.sum_n
+            max_e = int(exp.max())
+            factor_table = np.ones(max_e + 1, dtype=np.int64)
+            cur_term = 1
+            cur_p2 = 1
+            for e in range(1, max_e + 1):
+                cur_p2 *= p2
+                cur_term += cur_p2
+                factor_table[e] = cur_term
+
+            sigma2[p::p] *= factor_table[exp[1:num_multiples + 1]]
+
+        # Multiply primes > sqrt(limit)
+        mask = rem > 1
+        rem_primes = rem[mask].astype(np.int64)
+        sigma2[mask] *= (1 + rem_primes * rem_primes)
+
+        # Vectorized square check
+        sq = np.sqrt(sigma2[1:].astype(np.float64)).astype(np.int64)
+        is_square = (sq * sq == sigma2[1:])
+
+        return int(np.sum(np.flatnonzero(is_square).astype(np.int64) + 1))
 
 
-class Solution221(unittest.TestCase):
+class Solution211(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem211(max_int=64000000)
-        # self.problem = Problem211(max_int=100)
+        self.problem = Problem211()
+
+    def test_small(self):
+        # For n <= 100, 1 (sigma2=1=1^2), 42 (sigma2=2500=50^2) -> sum = 1 + 42 = 43
+        self.assertEqual(43, self.problem.solve(limit=100))
 
     def test_solution(self):
         self.assertEqual(1922364685, self.problem.solve())
-        # self.assertEqual(43, self.problem.solve())
 
 
 if __name__ == '__main__':
