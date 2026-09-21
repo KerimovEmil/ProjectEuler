@@ -26,7 +26,7 @@ Solve time: ~0.358 seconds
 """
 
 import unittest
-from util.utils import timeit, is_prime
+from util.utils import timeit, is_prime_simple
 
 
 class Problem58:
@@ -44,7 +44,7 @@ class Problem58:
             offsets = (2, 4, 6)
             corners = (squared,) + tuple(squared - i * layer for i in offsets)
             for corner in corners:
-                if is_prime(corner):
+                if is_prime_simple(corner):
                     prime_count += 1
 
             total = 4 * layer + 1

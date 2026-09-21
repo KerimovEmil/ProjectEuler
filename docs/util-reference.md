@@ -47,8 +47,8 @@ Computes the Möbius function $\mu(k)$ for all $0 \le k \le n$ using a linear si
 - Returns `-1` if $k$ is square-free with an odd number of prime factors.
 - Returns `0` if $k$ has a squared prime factor.
 
-### `is_prime(n: int) -> bool`
-Deterministic Miller-Rabin primality test for integers up to $2^{64}$.
+### `is_prime_simple(n: int) -> bool`
+Deterministic Miller-Rabin primality test for integers up to $2^{64}$ ($\approx 1.84 \times 10^{19}$).
 - Tests small prime divisibility first, then checks 12 prime bases $(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)$.
 - Runs in $O(\log^3 n)$ time without memory allocation.
 

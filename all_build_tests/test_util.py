@@ -1,7 +1,7 @@
 import unittest
 from util.utils import (
     tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital,
-    mobius_sieve, is_prime, continued_fraction_sqrt, pell_fundamental_solution,
+    mobius_sieve, is_prime_simple, continued_fraction_sqrt, pell_fundamental_solution,
     digits, digits_sum
 )
 
@@ -41,15 +41,16 @@ class UtilTestCase(unittest.TestCase):
         expected = [0, 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1]
         self.assertEqual(mu, expected)
 
-    def test_is_prime(self):
+    def test_is_prime_simple(self):
         primes_below_50 = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47}
         for n in range(-5, 50):
-            self.assertEqual(is_prime(n), n in primes_below_50, f"Failed for n={n}")
+            self.assertEqual(is_prime_simple(n), n in primes_below_50, f"Failed for n={n}")
         # Large primes and composites
-        self.assertTrue(is_prime(1000000007))
-        self.assertTrue(is_prime(1000000009))
-        self.assertFalse(is_prime(1000000007 * 1000000009))
-        self.assertTrue(is_prime(2**31 - 1))  # Mersenne prime M31
+        self.assertTrue(is_prime_simple(1000000007))
+        self.assertTrue(is_prime_simple(1000000009))
+        self.assertFalse(is_prime_simple(1000000007 * 1000000009))
+        self.assertTrue(is_prime_simple(2**31 - 1))  # Mersenne prime M31
+
 
     def test_continued_fraction_sqrt(self):
         self.assertEqual(continued_fraction_sqrt(4), (2, []))

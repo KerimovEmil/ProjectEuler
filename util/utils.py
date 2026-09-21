@@ -1310,12 +1310,13 @@ def mobius_sieve(n: int) -> list:
     return mu
 
 
-def is_prime(n: int) -> bool:
+def is_prime_simple(n: int) -> bool:
     """
     Deterministic Miller-Rabin primality test for integers up to 2^64.
 
     Tests divisibility by small primes first, then runs Miller-Rabin witness checks
     using the 12 prime bases (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37).
+    Guaranteed deterministic for all integers n < 2^64 (~1.84e19).
 
     Args:
         n: Integer to test for primality.
