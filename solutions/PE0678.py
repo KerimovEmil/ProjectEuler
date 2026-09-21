@@ -214,30 +214,74 @@ class Problem678:
         n = self.n
         n_log = log10(n)
         max_c = int(round(n ** (1 / 3)))
-        spf = self.smallest_prime_factor_sieve(max_c)
+
+        spf = [0] * (max_c + 1)
+        p_exp = [0] * (max_c + 1)
+        rest = [0] * (max_c + 1)
+        primes = []
+
+        for i in range(2, max_c + 1):
+            if spf[i] == 0:
+                spf[i] = i
+                p_exp[i] = 1
+                rest[i] = 1
+                primes.append(i)
+            for p in primes:
+                if i * p > max_c:
+                    break
+                spf[i * p] = p
+                if i % p == 0:
+                    p_exp[i * p] = p_exp[i] + 1
+                    rest[i * p] = rest[i]
+                    break
+                else:
+                    p_exp[i * p] = 1
+                    rest[i * p] = i
+
+        has_odd = [False] * (max_c + 1)
+        mod1_exps = [()] * (max_c + 1)
+        all_mod1_even = [True] * (max_c + 1)
+
+        for c in range(2, max_c + 1):
+            r = rest[c]
+            p = spf[c]
+            k = p_exp[c]
+
+            h = has_odd[r]
+            if p % 4 == 3 and (k % 2 == 1):
+                h = True
+            has_odd[c] = h
+
+            r_exps = mod1_exps[r]
+            if p % 4 == 1:
+                mod1_exps[c] = r_exps + (k,)
+                all_mod1_even[c] = all_mod1_even[r] and (k % 2 == 0)
+            else:
+                mod1_exps[c] = r_exps
+                all_mod1_even[c] = all_mod1_even[r]
+
+        import math
+        logs = [0.0] + [math.log10(c) for c in range(1, max_c + 1)]
 
         answer = 0
         for c in range(3, max_c + 1):
-            dc_prime = self.factorize(spf, c)
-            mod_1_exponents = []
-            has_odd_3_mod_4 = False
-            for p, v in dc_prime.items():
-                if p % 4 == 1:
-                    mod_1_exponents.append(v)
-                elif p % 4 == 3 and v % 2:
-                    has_odd_3_mod_4 = True
-            if not mod_1_exponents:
+            exps = mod1_exps[c]
+            if not exps:
                 continue
-            all_even = all(v % 2 == 0 for v in mod_1_exponents)
-            # largest f with c^f <= n
-            max_f = floor(round(n_log / log10(c), 12))
+            max_f = floor(round(n_log / logs[c], 12))
+            h_odd = has_odd[c]
+            a_even = all_mod1_even[c]
+
             for f in range(3, max_f + 1):
-                if has_odd_3_mod_4 and f % 2:
-                    # a prime == 3 (mod 4) would keep an odd exponent
+                if h_odd and (f % 2 == 1):
                     continue
-                partitions = (prod(v * f + 1 for v in mod_1_exponents) + 1) // 2
-                if all_even or f % 2 == 0:
-                    # a perfect square also has the form 0^2 + x^2
+
+                prod = 1
+                for v in exps:
+                    prod *= (v * f + 1)
+
+                partitions = (prod + 1) // 2
+                if a_even or (f % 2 == 0):
                     partitions -= 1
                 answer += partitions
         return answer
