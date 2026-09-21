@@ -13,6 +13,8 @@ class Head:
     def __init__(self, col_idx):
         self.col_idx = col_idx
         self.left, self.right = None, None
+        self.up, self.down = self, self
+        self.size = 0
 
     def remove_from_row(self):
         """
@@ -40,6 +42,8 @@ class Node:
         self.row_idx = row_idx
         self.col_idx = col_idx
         self.up, self.down = None, None
+        self.left, self.right = None, None
+        self.head = None
 
     def remove_from_column(self):
         """
@@ -47,12 +51,14 @@ class Node:
         """
         self.up.down = self.down
         self.down.up = self.up
+        self.head.size -= 1
 
     def readd_to_column(self):
         """
         Re-add a particular row element to a column.
         """
         self.up.down = self.down.up = self
+        self.head.size += 1
 
 
 class NodeIterator:
@@ -174,6 +180,7 @@ class SparseMatrix:
         """
         for scol in scols:
             n = len(scol)
+            scol[0].size = n - 1
             for j in range(n):
                 scol[j].down = scol[(j + 1) % n]
                 scol[j].up = scol[(j - 1 + n) % n]
@@ -217,9 +224,13 @@ class DancingLinks:
         None. Purely mutates internal state.
         """
         col.remove_from_row()
-        for rowInCol in DownIterator(col):
-            for rowCell in RightIterator(rowInCol):
-                rowCell.remove_from_column()
+        row_in_col = col.down
+        while row_in_col != col:
+            row_cell = row_in_col.right
+            while row_cell != row_in_col:
+                row_cell.remove_from_column()
+                row_cell = row_cell.right
+            row_in_col = row_in_col.down
 
     def _uncover(self, col):
         """Uncovers a particular column.
@@ -236,9 +247,13 @@ class DancingLinks:
         -------
         None. Purely mutates internal state.
         """
-        for rowInCol in UpIterator(col):
-            for rowCell in LeftIterator(rowInCol):
-                rowCell.readd_to_column()
+        row_in_col = col.up
+        while row_in_col != col:
+            row_cell = row_in_col.left
+            while row_cell != row_in_col:
+                row_cell.readd_to_column()
+                row_cell = row_cell.left
+            row_in_col = row_in_col.up
         col.readd_to_row()
 
     def solve(self):
@@ -252,99 +267,52 @@ class DancingLinks:
         -------
         The set of rows that satisfy all the required constraints
         """
-        if (self._backtrack()):
+        if self._backtrack():
             return self.solution
         else:
             return []
 
     def _backtrack(self):
-
-        # Select the first possible constrain to satisfy
-        col = self.smat.ghead.right
-
-        # No constraints left == solved
-        if (col == self.smat.ghead):
+        # All constraints covered == solved
+        if self.smat.ghead.right == self.smat.ghead:
             return True
 
-        # No rows left that fulfill this constraint == unsolvable, backtrack!
-        if (col.down == col):
+        # Choose the column with the minimum number of 1s (Knuth's S-heuristic)
+        best_col = None
+        min_size = float('inf')
+        curr = self.smat.ghead.right
+        while curr != self.smat.ghead:
+            if curr.size < min_size:
+                min_size = curr.size
+                best_col = curr
+                if min_size <= 1:
+                    break
+            curr = curr.right
+
+        if min_size == 0 or best_col is None:
             return False
 
-        # Remove the column from the column header list
-        #
-        # Remove all rows in the column, and keep them aside. These are the
-        # possible solutions to the constraint.
-        #
-        # The row-nodes in `col` are still accessible through `col.down`. Nodes
-        # to the left and right of them are still accessible through `row.left`
-        # and `row.right` etc. However, `row.left` and `row.right` will not be
-        # accessible through `row.left.head.up/down`.
-        #
-        # In plain english, while row-nodes in `col` are still accessible, and
-        # through these row-nodes, so too is the rest of the row; and while it
-        # is possible to reach the corresponding column via `row-node.head`;
-        # it is not possible to reach these nodes by traversing down the
-        # corresponding column.
+        col = best_col
         self._cover(col)
 
-        # select a row as a potential solution
-        # remember, all other competing solutions have already been set aside
-        for rowInCol in DownIterator(col):
+        row_in_col = col.down
+        while row_in_col != col:
+            row_cell = row_in_col.right
+            while row_cell != row_in_col:
+                self._cover(row_cell.head)
+                row_cell = row_cell.right
 
-            # this row satisfies more than just `col`, it also satisfies other
-            # constraints. this basically means that those columns can be
-            # removed/covered as well, since this solution already satisfies
-            # them.
-            #
-            # in addition to removing the fortuitously satisfied column,
-            # `self#cover` also removes all the other rows that also satisfy
-            # the the same constraint. this is because, for an exact cover
-            # problem, each constraint can only be satisfied once.
-            #
-            # Note 1: `rowInCol` is not removed in this step, since it was
-            # already removed in `self.cover(col)` earlier. This removes all
-            # other rows rendered redundant by rowInCol.
-            #
-            # Note 2: the removed rows are technically accessible by
-            # `rowCell.up/down` and then traversing left/right. However, this
-            # is irrelevant. We are simply looking at the reduced matrix, and
-            # aren't actually going to ever traverse in this manner.
-            # For all intents and purposes, those rows are removed.
-            for rowCell in RightIterator(rowInCol):
-                self._cover(rowCell.head)
-
-            # Is the reduced matrix solvable if `rowInCol` is selected as a
-            # potential solution?
             if self._backtrack():
-                # if so, `rowInCol` is one of the rows that is a part of the
-                # exact-cover solution
-                self.solution.append(rowInCol)
+                self.solution.append(row_in_col)
                 return True
 
-            # This row cannot be a part of a potential solution.
-            #
-            # Add back all the rows that were deleted as conflicting with the
-            # selected row. Add back all of the additional constraints that
-            # were solved by the selected row.
-            for rowCell in LeftIterator(rowInCol):
-                self._uncover(rowCell.head)
+            row_cell = row_in_col.left
+            while row_cell != row_in_col:
+                self._uncover(row_cell.head)
+                row_cell = row_cell.left
 
-            # Go to the next possible row (rinse and repeat for all possible
-            # rows)
-            continue
+            row_in_col = row_in_col.down
 
-        # Choosing to satisfy this column and going through all possible rows
-        # did not lead to a single solution. This problem/subproblem is
-        # unsolvable.
-        #
-        # Add back the column, and return False to indicate that a solution
-        # wasn't found
-        #
-        # Note: in the case that we were dealing with the actual overall
-        # problem, we wouldn't need to add the column back, however, since
-        # we're actually recursing, we might actually be in a subproblem, and a
-        # different path may end up being chosen. In this case we need to set
-        # the matrix back to the way it looked to start with.
         self._uncover(col)
         return False
 
