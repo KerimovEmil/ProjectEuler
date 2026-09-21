@@ -136,7 +136,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0204 | [PE0204.py](../solutions/PE0204.py) | A Hamming number is a positive number which has no prime factor lar... | 0.6 seconds |
 | PE0206 | [PE0206.py](../solutions/PE0206.py) | Find the unique positive integer whose square has the form 1_2_3_4_... | 0.1 seconds |
 | PE0211 | [PE0211.py](../solutions/PE0211.py) | For a positive integer n, let σ2(n) be the sum of the squares of it... | way too long |
-| PE0221 | [PE0221.py](../solutions/PE0221.py) | We shall call a positive integer "A" an "Alexandrian integer", if t... | 660 seconds |
+| PE0221 | [PE0221.py](../solutions/PE0221.py) | We shall call a positive integer "A" an "Alexandrian integer", if t... | 0.95 seconds |
 | PE0225 | [PE0225.py](../solutions/PE0225.py) | The sequence 1, 1, 1, 3, 5, 9, 17, 31, 57, 105, 193, 355, 653, 1201... | 0.519 seconds |
 | PE0229 | [PE0229.py](../solutions/PE0229.py) | Consider the number 3600. It is very special, because | 5.6 seconds |
 | PE0233 | [PE0233.py](../solutions/PE0233.py) | Let f(N) be the number of points with integer coordinates that are ... | 2.5 seconds |
