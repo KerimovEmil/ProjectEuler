@@ -128,7 +128,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0162 | [PE0162.py](../solutions/PE0162.py) | In the hexadecimal number system numbers are represented using 16 d... | 0.01 seconds |
 | PE0169 | [PE0169.py](../solutions/PE0169.py) | Define f(0) = 1 and f(n) to be the number of different ways n can b... | 0.001 seconds |
 | PE0179 | [PE0179.py](../solutions/PE0179.py) | Find the number of integers 1 < n < 10^7, for which n and n + 1 hav... | 18 seconds |
-| PE0185 | [PE0185.py](../solutions/PE0185.py) | The game Number Mind is a variant of the well known game Master Mind. | 180 seconds (~3 minutes) |
+| PE0185 | [PE0185.py](../solutions/PE0185.py) | The game Number Mind is a variant of the well known game Master Mind. | 0.26 seconds |
 | PE0187 | [PE0187.py](../solutions/PE0187.py) | A composite is a number containing at least two prime factors. For ... | 0.04 seconds |
 | PE0188 | [PE0188.py](../solutions/PE0188.py) | Problem 188 | 0.001 seconds |
 | PE0193 | [PE0193.py](../solutions/PE0193.py) | A positive integer n is called square-free, if no square of a prime... | 23 seconds |

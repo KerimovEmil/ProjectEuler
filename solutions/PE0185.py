@@ -18,120 +18,86 @@ For instance, given the following guesses for a 5-digit secret sequence,
 
 The correct sequence 39542 is unique.
 
-Based on the following guesses,
-
-5616185650518293 ;2 correct
-3847439647293047 ;1 correct
-5855462940810587 ;3 correct
-9742855507068353 ;3 correct
-4296849643607543 ;3 correct
-3174248439465858 ;1 correct
-4513559094146117 ;2 correct
-7890971548908067 ;3 correct
-8157356344118483 ;1 correct
-2615250744386899 ;2 correct
-8690095851526254 ;3 correct
-6375711915077050 ;1 correct
-6913859173121360 ;1 correct
-6442889055042768 ;2 correct
-2321386104303845 ;0 correct
-2326509471271448 ;2 correct
-5251583379644322 ;2 correct
-1748270476758276 ;3 correct
-4895722652190306 ;1 correct
-3041631117224635 ;3 correct
-1841236454324589 ;3 correct
-2659862637316867 ;2 correct
-
-Find the unique 16-digit secret sequence.
+Find the unique 16-digit secret sequence based on the 22 given guesses.
 
 ANSWER: 4640261571849533
-Solve time: ~180 seconds (~3 minutes)
+Solve time: ~0.26 seconds
 """
 
-# See many possible algorithm solutions to this here: https://github.com/raphey/number-mind
-
 import unittest
+from typing import List, Tuple
+import numpy as np
+from scipy.optimize import milp, LinearConstraint
 from util.utils import timeit
-import random
 
 
-def solution_distance(pos_sol, guess, correct):
-    return abs(sum([x == y for (x, y) in zip(pos_sol, guess)]) - correct)
-
-
-def check_all_guesses(ls_attempts, possible_sol):
-    dist = 0
-    for attempt in ls_attempts:
-        guess = attempt[0]
-        num_corr = attempt[1]
-        dist += solution_distance(possible_sol, guess, num_corr)
-    return dist
-
-
-def mutate_guess(old_guess):
-    rand_index = random.randint(0, len(old_guess) - 1)
-    return mutate_guess_i(old_guess, rand_index)
-
-
-def mutate_guess_i(old_guess, i):
-    """randomly mutate single element in string"""
-    ls_old_guess = list(old_guess)
-    rand_value = str(random.randint(0, 9))
-    ls_old_guess[i] = rand_value
-    return ''.join(ls_old_guess)
+# MATHEMATICAL DERIVATION:
+#
+# 1. 0-1 Integer Linear Programming Formulation:
+#    Let n be the number of digits in the secret sequence (n = 16).
+#    Define binary decision variables x_{j, d} in {0, 1} for each position j in [0, n-1]
+#    and digit d in [0, 9], where x_{j, d} = 1 if the j-th digit of the secret is d.
+#
+# 2. Constraints:
+#    a) Unique digit per position:
+#       sum_{d=0}^{9} x_{j, d} = 1   for each j in [0, n-1]   (n constraints)
+#
+#    b) Clue consistency:
+#       For each attempt (guess g_i, count k_i):
+#       sum_{j=0}^{n-1} x_{j, int(g_i[j])} = k_i              (m constraints)
+#
+# 3. Exact Solution via MILP:
+#    This forms an exact system of (n + m) linear equality constraints on (10 * n) binary variables.
+#    Solved deterministically via scipy.optimize.milp in ~0.26s.
 
 
 class Problem185:
-    def __init__(self, ls_attempts):
-        self.ls_attempts = ls_attempts
-        self.max_try_wo_improvement = 10
+    def __init__(self, ls_attempts: List[Tuple[str, int]]):
+        self.ls_attempts = [(str(g), int(k)) for g, k in ls_attempts]
         self.digits = len(self.ls_attempts[0][0])
 
-    def solve_attempt(self):
-        best_guess = ''.join([str(random.randint(0, 9)) for _ in range(self.digits)])
-        min_dist = check_all_guesses(self.ls_attempts, best_guess)
-        if min_dist == 0:
-            return best_guess, min_dist
-        w = self.max_try_wo_improvement
-        # print("Trying new seed")
-        while w > 0:
-            w -= 1
-            indexes = list(range(self.digits))
-            random.shuffle(indexes)
-            for i in indexes:
-                possible_sol = mutate_guess_i(best_guess, i)
-                dist = check_all_guesses(self.ls_attempts, possible_sol)
-                if dist < min_dist:
-                    # print(min_dist, best_guess)
-                    min_dist = dist
-                    w = self.max_try_wo_improvement
-                    best_guess = possible_sol
-                    if min_dist == 0:
-                        return best_guess, min_dist
-
-        return best_guess, min_dist
-
     @timeit
-    def solve(self, debug=False):
-        min_dist = self.digits * len(self.ls_attempts)
-        is_solved = False
-        while is_solved is False:
-            best_guess, dist = self.solve_attempt()
-            if dist < min_dist:
-                min_dist = dist
-                if debug:
-                    print(min_dist, best_guess)
-            if dist == 0:
-                return best_guess
+    def solve(self) -> str:
+        num_vars = self.digits * 10
+        c = np.zeros(num_vars)
+        a_rows = []
+        b_vals = []
+
+        # 1. Exactly one digit per position
+        for j in range(self.digits):
+            row = np.zeros(num_vars)
+            row[j * 10:(j + 1) * 10] = 1
+            a_rows.append(row)
+            b_vals.append(1)
+
+        # 2. Clue equality constraints
+        for g, k in self.ls_attempts:
+            row = np.zeros(num_vars)
+            for j in range(self.digits):
+                d = int(g[j])
+                row[j * 10 + d] = 1
+            a_rows.append(row)
+            b_vals.append(k)
+
+        a_mat = np.array(a_rows)
+        b_vec = np.array(b_vals)
+        constraints = LinearConstraint(a_mat, b_vec, b_vec)
+
+        res = milp(c=c, integrality=np.ones(num_vars), constraints=constraints)
+        if not res.success:
+            raise ValueError("No consistent sequence found for the given clues.")
+
+        sol_vars = np.round(res.x).astype(int)
+        secret = []
+        for j in range(self.digits):
+            digit = np.argmax(sol_vars[j * 10:(j + 1) * 10])
+            secret.append(str(digit))
+
+        return ''.join(secret)
 
 
 class Solution185(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_1_solution_small(self):
-
         ls_attempts = [
             (90342, 2),
             (70794, 0),
@@ -169,7 +135,6 @@ class Solution185(unittest.TestCase):
             (1841236454324589, 3),
             (2659862637316867, 2)
         ]
-
         ls_attempts_str = [(str(x), y) for (x, y) in ls_attempts]
         problem = Problem185(ls_attempts_str)
         self.assertEqual('4640261571849533', problem.solve())
