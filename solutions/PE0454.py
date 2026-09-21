@@ -9,11 +9,12 @@ We can verify that F(15) = 4 and F(1000) = 1069.
 Find F(10^12).
 
 ANSWER: 5435004633092
-Solve time: ~85.0 seconds
+Solve time: ~7.2 seconds
 """
 
 import math
 import unittest
+import numpy as np
 from util.utils import timeit
 
 
@@ -48,34 +49,82 @@ from util.utils import timeit
 #      floor(L / (v * (u + v)))
 #
 #    Therefore:
-#      F(L) = sum_{v >= 2} sum_{1 <= u < v, gcd(u, v) = 1, v(u+v) <= L} floor(L / (v * (u + v)))
+#      F(L) = sum_{1 <= u < v, gcd(u, v) = 1, v(u+v) <= L} floor(L / (v * (u + v)))
 #
-# 4. Substitution and Summation:
-#    Let s = u + v. Since 1 <= u < v, we have v < s < 2v (i.e. s in [v + 1, 2v - 1]).
-#    Also, gcd(u, v) = gcd(s - v, v) = gcd(s, v) = 1.
-#    So:
-#      F(L) = sum_{v >= 2} sum_{s=v+1, gcd(s, v)=1}^{min(2v-1, floor(L/v))} floor(L / (v * s))
+# 4. Möbius Inversion to Remove Coprimality:
+#    Applying Möbius inversion sum_{d | gcd(u, v)} mu(d) gives:
+#      F(L) = sum_{d=1}^{floor(sqrt(L))} mu(d) * G(floor(L / d^2))
+#    where G(M) is the unconstrained sum over all positive integers (w, u, v) with u < v < 2u:
+#      G(M) = sum_{w >= 1} sum_{u < v < 2u, w * u * v <= M} 1
 #
-# 5. Dual Summation via Square-free Counting:
-#    Notice that summing floor(L / (v * (u + v))) over gcd(u, v) = 1 is equivalent to:
-#      F(L) = sum_{k=1}^{floor(L/6)} |mu(k)| * T(floor(L / k))
-#    where T(N) is the number of pairs (x, y) with 1 <= x < y and y * (x + y) <= N.
-#    Swapping the order of summation gives:
-#      F(L) = sum_{1 <= x < y, y(x+y) <= L} Q(floor(L / (y * (x + y))))
-#    where Q(X) = sum_{k=1}^X |mu(k)| is the number of square-free integers up to X.
+# 5. 3D Dirichlet Hyperbola Method for G(M) in O(M^(2/3)):
+#    To evaluate G(M) in sublinear O(M^(2/3)) time, we partition the region w * u * v <= M
+#    by the smallest variable w <= floor(M^(1/3)):
+#      - For a fixed w in [1, floor(M^(1/3))]:
+#          1. Range 1 (v > w): sum floor(M / (w * v)) for v in [w + 1, 2w - 1].
+#          2. Range 2 (k > floor(M^(1/3)) where k = u):
+#             For k in [floor(M^(1/3)) + 1, floor(sqrt(M / w))]:
+#               add max(0, min(floor(M / (w * k)), 2k - 1) - k).
+#             When 2k - 1 <= floor(M / (w * k)) (i.e. k <= floor(sqrt(M / (2w)))),
+#             the term is simply (k - 1), which is summed in O(1) via arithmetic progression.
+#             The remaining values of k are evaluated using vectorized NumPy operations.
 #
-# 6. Fast Evaluation with Quotient Chunking:
-#    Let s = x + y in [y + 1, 2y - 1].
-#    - For y > floor(sqrt(L / 2)):
-#        s ranges from y + 1 to floor(L / y), and floor(L / (y * s)) is always 1.
-#        Since Q(1) = 1, this contribution is simply:
-#          sum_{y = floor(sqrt(L/2)) + 1}^{y_max} (floor(L / y) - y)
-#    - For y <= floor(sqrt(L / 2)):
-#        s ranges from y + 1 to 2y - 1. We chunk the interval of s by constant quotients
-#        q = floor(floor(L / y) / s), and add (count_s) * Q(q).
-#    - Q(X) is precomputed up to Q_LIMIT = 5 * 10^6 via a linear square-free sieve and prefix sums.
-#      For rare queries X > Q_LIMIT (which occur only when y < 448), Q(X) is computed via
-#      Möbius inversion: Q(X) = sum_{d=1}^{floor(sqrt(X))} mu(d) * floor(X / d^2).
+#    Across all d >= 1, the total time complexity is:
+#      sum_{d >= 1} O((L / d^2)^(2/3)) = O(L^(2/3) * zeta(4/3)) = O(L^(2/3)),
+#    which solves L = 10^12 in ~7 seconds.
+
+
+def _innertriple(limit: int) -> int:
+    """Computes G(limit) in O(limit^(2/3)) using the 3D Dirichlet hyperbola method."""
+    if limit < 6:
+        return 0
+
+    cbrt = int(limit**(1 / 3))
+    while (cbrt + 1)**3 <= limit:
+        cbrt += 1
+    while cbrt**3 > limit:
+        cbrt -= 1
+
+    total = 0
+    for w in range(1, cbrt + 1):
+        limit_w = limit // w
+
+        # Loop 1: sum floor(limit_w / v) for v in [w + 1, 2w - 1]
+        if w > 1:
+            if w <= 16:
+                for v in range(w + 1, 2 * w):
+                    total += limit_w // v
+            else:
+                v = np.arange(w + 1, 2 * w, dtype=np.int64)
+                total += int(np.sum(limit_w // v))
+
+        # Loop 2: k in [cbrt + 1, rt]
+        rt = math.isqrt(limit_w)
+        k_split = math.isqrt(limit_w // 2)
+
+        # Range A: k in [cbrt + 1, min(rt, k_split)] where mini2 = 2k - 1
+        k_a_start = cbrt + 1
+        k_a_end = min(rt, k_split)
+        if k_a_start <= k_a_end:
+            n_k = k_a_end - k_a_start + 1
+            total += (k_a_start + k_a_end - 2) * n_k // 2
+
+        # Range B: k in [max(cbrt + 1, k_split + 1), rt] where mini2 = limit_w // k
+        k_b_start = max(cbrt + 1, k_split + 1)
+        k_b_end = rt
+        if k_b_start <= k_b_end:
+            if k_b_end - k_b_start <= 16:
+                for k in range(k_b_start, k_b_end + 1):
+                    mini2 = limit_w // k
+                    if mini2 >= k:
+                        total += mini2 - k
+            else:
+                k = np.arange(k_b_start, k_b_end + 1, dtype=np.int64)
+                mini2 = limit_w // k
+                mask = mini2 >= k
+                total += int(np.sum(mini2[mask] - k[mask]))
+
+    return total
 
 
 class Problem454:
@@ -87,18 +136,17 @@ class Problem454:
         if limit is None:
             limit = self.limit
 
-        # 1. Precompute mu up to sqrt(limit / 6) for large Q(X) queries
-        max_d = int(math.isqrt(limit // 6)) + 1
-        mu = [0] * (max_d + 1)
+        rt = math.isqrt(limit)
+        mu = [0] * (rt + 1)
         mu[1] = 1
         primes = []
-        is_prime = [True] * (max_d + 1)
-        for i in range(2, max_d + 1):
+        is_prime = [True] * (rt + 1)
+        for i in range(2, rt + 1):
             if is_prime[i]:
                 primes.append(i)
                 mu[i] = -1
             for p in primes:
-                if i * p > max_d:
+                if i * p > rt:
                     break
                 is_prime[i * p] = False
                 if i % p == 0:
@@ -107,53 +155,15 @@ class Problem454:
                 else:
                     mu[i * p] = -mu[i]
 
-        # 2. Precompute Q_table (number of square-free integers up to X)
-        q_limit = min(5 * 10**6, limit // 6 + 1)
-        is_sqfree = [1] * (q_limit + 1)
-        is_sqfree[0] = 0
-        for p in primes:
-            p2 = p * p
-            if p2 > q_limit:
-                break
-            for j in range(p2, q_limit + 1, p2):
-                is_sqfree[j] = 0
+        ans = 0
+        for d in range(1, rt + 1):
+            if mu[d] != 0:
+                sub_limit = limit // (d * d)
+                if sub_limit < 6:
+                    break
+                ans += mu[d] * _innertriple(sub_limit)
 
-        q_table = [0] * (q_limit + 1)
-        for i in range(1, q_limit + 1):
-            q_table[i] = q_table[i - 1] + is_sqfree[i]
-
-        def get_q(x: int) -> int:
-            if x <= q_limit:
-                return q_table[x]
-            lim = int(math.isqrt(x))
-            res = 0
-            for d in range(1, lim + 1):
-                if mu[d] != 0:
-                    res += mu[d] * (x // (d * d))
-            return res
-
-        total_solutions = 0
-        y_max = int((math.isqrt(1 + 4 * limit) - 1) // 2)
-        y_split = int(math.isqrt(limit // 2))
-
-        # Part 1: y from y_split + 1 to y_max (where q = 1 always)
-        for y in range(y_split + 1, y_max + 1):
-            total_solutions += (limit // y) - y
-
-        # Part 2: y from 2 to y_split (chunking on q = floor(K / s))
-        _q_table = q_table
-        for y in range(2, y_split + 1):
-            k = limit // y
-            s_end = 2 * y - 1
-            s = y + 1
-            while s <= s_end:
-                q = k // s
-                s_next = min(s_end, k // q)
-                val = _q_table[q] if q <= q_limit else get_q(q)
-                total_solutions += (s_next - s + 1) * val
-                s = s_next + 1
-
-        return total_solutions
+        return ans
 
 
 class Solution454(unittest.TestCase):
