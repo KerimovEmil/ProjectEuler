@@ -15,7 +15,7 @@ Solve time: ~7.2 seconds
 import math
 import unittest
 import numpy as np
-from util.utils import timeit
+from util.utils import timeit, mobius_sieve
 
 
 # MATHEMATICAL DERIVATION:
@@ -137,23 +137,7 @@ class Problem454:
             limit = self.limit
 
         rt = math.isqrt(limit)
-        mu = [0] * (rt + 1)
-        mu[1] = 1
-        primes = []
-        is_prime = [True] * (rt + 1)
-        for i in range(2, rt + 1):
-            if is_prime[i]:
-                primes.append(i)
-                mu[i] = -1
-            for p in primes:
-                if i * p > rt:
-                    break
-                is_prime[i * p] = False
-                if i % p == 0:
-                    mu[i * p] = 0
-                    break
-                else:
-                    mu[i * p] = -mu[i]
+        mu = mobius_sieve(rt)
 
         ans = 0
         for d in range(1, rt + 1):
