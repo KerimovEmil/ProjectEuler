@@ -1,6 +1,6 @@
 # Solutions Index
 
-This table catalogs all 170 solved Project Euler problems in this repository.
+This table catalogs all 171 solved Project Euler problems in this repository.
 
 | Problem | Solution File | Topic / Summary | Solve Time |
 |:-------:|:--------------|:----------------|:-----------|
@@ -124,6 +124,7 @@ This table catalogs all 170 solved Project Euler problems in this repository.
 | PE0144 | [PE0144.py](../solutions/PE0144.py) | nI laser physics, a "white cell" is a mirror system that acts as a ... | 0.004 seconds |
 | PE0145 | [PE0145.py](../solutions/PE0145.py) | Some positive integers n have the property that the sum [ n + rever... | 0.003 seconds |
 | PE0152 | [PE0152.py](../solutions/PE0152.py) | There are several ways to write the number 1/2 as a sum of inverse ... | 27 seconds |
+| PE0154 | [PE0154.py](../solutions/PE0154.py) | A triangular pyramid is constructed using spherical balls such that... | 8.0 seconds |
 | PE0162 | [PE0162.py](../solutions/PE0162.py) | In the hexadecimal number system numbers are represented using 16 d... | 0.01 seconds |
 | PE0169 | [PE0169.py](../solutions/PE0169.py) | Define f(0) = 1 and f(n) to be the number of different ways n can b... | 0.001 seconds |
 | PE0179 | [PE0179.py](../solutions/PE0179.py) | Find the number of integers 1 < n < 10^7, for which n and n + 1 hav... | 18 seconds |
@@ -171,6 +172,6 @@ This table catalogs all 170 solved Project Euler problems in this repository.
 | PE0739 | [PE0739.py](../solutions/PE0739.py) | Take a sequence of length n. Discard the first term then make a seq... | 166 seconds (~3 minutes) |
 | PE0752 | [PE0752.py](../solutions/PE0752.py) | When (1+sqrt(7)) is raised to an integral power, n, we always get a... | 4.1 seconds |
 | PE0753 | [PE0753.py](../solutions/PE0753.py) | Problem 753 | 2.5 seconds |
-| PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.18 seconds |
+| PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.15 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
 | PE0853 | [PE0853.py](../solutions/PE0853.py) | For every positive integer n the Fibonacci sequence modulo n is per... | 0.17 seconds |
