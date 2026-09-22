@@ -36,4 +36,4 @@ This document serves as the high-level architecture overview and directory map. 
 - **Single Solution**: Run `python -m unittest solutions.PE0<N>` (or `python solutions/PE0<N>.py`).
 - **All Solutions**: Run `python -m unittest discover -s all_build_tests`.
 - **Utilities**: Run `python -m unittest all_build_tests/test_util.py` or `python -m unittest all_build_tests/test_crt.py`.
-- **Continuous Integration**: `.github/workflows/python-package.yml` runs on push/PR to `main` across Python 3.12 and 3.13, checking linting via `flake8` and executing the full build test suite.
+- **Continuous Integration**: `.github/workflows/python-package.yml` runs on push/PR to `main` across Python 3.12, 3.13, and 3.14, checking linting via `flake8` and executing the full build test suite.
