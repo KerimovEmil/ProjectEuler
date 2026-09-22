@@ -81,7 +81,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0075 | [PE0075.py](../solutions/PE0075.py) | It turns out that 12 cm is the smallest length of wire that can be ... | 1.1 seconds |
 | PE0076 | [PE0076.py](../solutions/PE0076.py) | It is possible to write five as a sum in exactly six different ways: | 0.004 seconds |
 | PE0077 | [PE0077.py](../solutions/PE0077.py) | It is possible to write ten as the sum of primes in exactly five di... | 0.026 seconds |
-| PE0078 | [PE0078.py](../solutions/PE0078.py) | Let p(n) represent the number of different ways in which n coins ca... | 11.3 seconds |
+| PE0078 | [PE0078.py](../solutions/PE0078.py) | Let p(n) represent the number of different ways in which n coins ca... | 3.8 seconds |
 | PE0079 | [PE0079.py](../solutions/PE0079.py) | A common security method used for online banking is to ask the user... | 0.001 seconds |
 | PE0080 | [PE0080.py](../solutions/PE0080.py) | Problem 80 | 0.05 seconds |
 | PE0081 | [PE0081.py](../solutions/PE0081.py) | Find the minimal path sum, in matrix.txt (right click and "Save Lin... | 0.012 seconds |
@@ -123,7 +123,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0140 | [PE0140.py](../solutions/PE0140.py) | Consider the infinite polynomial series AG(x)=xG1+x2G2+x3G3+⋯, wher... | 0.001 seconds |
 | PE0144 | [PE0144.py](../solutions/PE0144.py) | nI laser physics, a "white cell" is a mirror system that acts as a ... | 0.004 seconds |
 | PE0145 | [PE0145.py](../solutions/PE0145.py) | Some positive integers n have the property that the sum [ n + rever... | 0.003 seconds |
-| PE0152 | [PE0152.py](../solutions/PE0152.py) | There are several ways to write the number 1/2 as a sum of inverse ... | 27 seconds |
+| PE0152 | [PE0152.py](../solutions/PE0152.py) | There are several ways to write the number 1/2 as a sum of inverse ... | 3.5 seconds |
 | PE0154 | [PE0154.py](../solutions/PE0154.py) | A triangular pyramid is constructed using spherical balls such that... | 8.0 seconds |
 | PE0162 | [PE0162.py](../solutions/PE0162.py) | In the hexadecimal number system numbers are represented using 16 d... | 0.01 seconds |
 | PE0169 | [PE0169.py](../solutions/PE0169.py) | Define f(0) = 1 and f(n) to be the number of different ways n can b... | 0.001 seconds |
@@ -131,7 +131,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0185 | [PE0185.py](../solutions/PE0185.py) | The game Number Mind is a variant of the well known game Master Mind. | 0.26 seconds |
 | PE0187 | [PE0187.py](../solutions/PE0187.py) | A composite is a number containing at least two prime factors. For ... | 0.04 seconds |
 | PE0188 | [PE0188.py](../solutions/PE0188.py) | Problem 188 | 0.001 seconds |
-| PE0193 | [PE0193.py](../solutions/PE0193.py) | A positive integer n is called square-free, if no square of a prime... | 23 seconds |
+| PE0193 | [PE0193.py](../solutions/PE0193.py) | A positive integer n is called square-free, if no square of a prime... | 8.0 seconds |
 | PE0197 | [PE0197.py](../solutions/PE0197.py) | Given is the function f(x) = ⌊2^(30.403243784-x^2)⌋ × 1e-9 ( ⌊ ⌋ is... | 0.001 seconds |
 | PE0204 | [PE0204.py](../solutions/PE0204.py) | A Hamming number is a positive number which has no prime factor lar... | 0.6 seconds |
 | PE0206 | [PE0206.py](../solutions/PE0206.py) | Find the unique positive integer whose square has the form 1_2_3_4_... | 0.1 seconds |
@@ -155,7 +155,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0345 | [PE0345.py](../solutions/PE0345.py) | We define the Matrix Sum of a matrix as the maximum possible sum of... | 0.015 seconds |
 | PE0347 | [PE0347.py](../solutions/PE0347.py) | The largest integer ≤ 100 that is only divisible by both the primes... | 2 seconds |
 | PE0356 | [PE0356.py](../solutions/PE0356.py) | Let a_n be the largest real root of a polynomial g(x) = x^3 - 2^n·x... | 0.003 seconds |
-| PE0357 | [PE0357.py](../solutions/PE0357.py) | Consider the divisors of 30: 1,2,3,5,6,10,15,30. | 27 seconds |
+| PE0357 | [PE0357.py](../solutions/PE0357.py) | Consider the divisors of 30: 1,2,3,5,6,10,15,30. | 4.4 seconds |
 | PE0365 | [PE0365.py](../solutions/PE0365.py) | The binomial coefficient (10^18 choose 10^9) is a number with more ... | ~1.45 seconds |
 | PE0381 | [PE0381.py](../solutions/PE0381.py) | For a prime p let S(p) = (sum (p-k)!) mod p for 1 <= k <= 5. | 3.661 seconds |
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | An integer is called a divisor of n if it divides n with no remainder. Find SIGMA2(10^15) mod 10^9. | ~5.0 seconds |
@@ -167,10 +167,10 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | 6 seconds |
 | PE0486 | [PE0486.py](../solutions/PE0486.py) | Problem 486 | 1.5 seconds |
 | PE0493 | [PE0493.py](../solutions/PE0493.py) | Problem 493 | 0.001 seconds |
-| PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 10.439 seconds |
+| PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
 | PE0668 | [PE0668.py](../solutions/PE0668.py) | A positive integer is called square root smooth if all of its prime... | 2.868 seconds |
-| PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | 16.6 seconds |
+| PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | 27 seconds |
 | PE0686 | [PE0686.py](../solutions/PE0686.py) | 2^7 = 128 is the first power of two whose leading digits are "12". | 1.6 seconds |
 | PE0700 | [PE0700.py](../solutions/PE0700.py) | Leonhard Euler was born on 15 April 1707. | 0.003 seconds |
 | PE0722 | [PE0722.py](../solutions/PE0722.py) | Problem 722 | 0.001 seconds |
