@@ -23,26 +23,26 @@ There are 75373 such numbers that do not exceed 10^7.
 How many such numbers are there that do not exceed 2×10^9?
 
 ANSWER: 11325263
-Solve time: ~12.0 seconds
+Solve time: ~5.6 seconds
 """
 import numpy as np
 
 import unittest
-from util.utils import timeit
+from util.utils import timeit, primes_of_n, primes_upto
 
 
 # Extending the number field of the reals with a field extension of sqrt(D), n = a + b sqrt(D)
-# such that Norm(a + b sqrt(D)) = a^2 - D*b^2
+# such that Norm(a + b sqrt(D)) = a^2 - D×b^2
 # Note that there are only the following negative D for which the resulting field is a principal ideal domain (PID)
-# D = -1, -2, -3, -7, -11, -19, -43, -67, -163
-# However only the field extensions of D = -1, -2, -3, -7, -11 are Euclidean domains.
-# The remaining fields, D = -19, -43, -67, -163 are rare examples of PID's that are not Euclidean domains
+# D = −1, −2, −3, −7, −11, −19, −43, −67, −163
+# However only the field extensions of D = −1, −2, −3, −7, −11 are Euclidean domains.
+# The remaining fields, D = −19, −43, −67, −163 are rare examples of PID's that are not Euclidean domains
 
-# For reference: commutative rings > integral domains > integrally closed domains > GCD domains >
-# unique factorization domains (UFD) > principal ideal domains (PID) > Euclidean domains > fields > finite fields
+# For reference: commutative rings ⊃ integral domains ⊃ integrally closed domains ⊃ GCD domains ⊃
+# unique factorization domains (UFD) ⊃ principal ideal domains (PID) ⊃ Euclidean domains ⊃ fields ⊃ finite fields
 
 # For reference: the only D's for which the field extension is a Euclidean domain are
-# D = -11, -7, -3, -2, -1, 2, 3, 5, 6, 7, 11, 13, 17, 19, 21, 29, 33, 37, 41, 57, 73
+# D = −11, -7, -3, -2, −1, 2, 3, 5, 6, 7, 11, 13, 17, 19, 21, 29, 33, 37, 41, 57, 73
 
 # Using the Legendre symbol (-1/p) = {1 if p==1 mod 4, -1 if p==3 mod 4}
 # In other words -1 has quadratic residues iff p == 1 mod 4,
@@ -118,13 +118,14 @@ class Problem229:
     def cond_d_1(dc_prime):  # Accurate!
         """Ignore powers of 2. 1 mod 4 primes must exist. 3 mod 4 primes must be even power."""
         # NOTE: THIS EXCLUDES 0, SO NO 2^2 + 0^2 = 4.
-        # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p = 3 (mod 4)
+        # n is a sum of two squares iff it factors as n = ab^2, where a has no prime factor p ≡ 3 (mod 4)
         # 3 mod 4 primes must all be even powers
         if any([x % 2 != 0 for p, x in dc_prime.items() if p % 4 == 3]):
             return False
         # At least one 1mod4 prime must exist
         if sum([x % 4 == 1 for x in dc_prime.keys()]) == 0:
             # if at least one 1mod4 prime does not exist then the power of 2 must be odd
+            # if 2 in dc_prime.keys():
             if dc_prime.get(2, 0) % 2 == 1:
                 return True
             else:
@@ -237,7 +238,7 @@ class Problem229:
             ls_good_primes: list of primes to use
 
         Returns:
-            list of composites
+
         """
         max_prime_of_2 = int(max_n / (ls_good_primes[0])) + 1
         prod_2 = [i for i in ls_good_primes if i <= max_prime_of_2]
@@ -265,8 +266,9 @@ class Problem229:
             ls_good_primes: list of primes to use
 
         Returns:
-            list of triple composites
+
         """
+
         max_prime_of_3 = int(max_n / (ls_good_primes[0] * ls_good_primes[1])) + 1
         prod_3 = [i for i in ls_good_primes if i <= max_prime_of_3]
 
@@ -285,47 +287,15 @@ class Problem229:
         return ls_good_triple_comp
 
     @timeit
-    def solve(self, debug=False):  # noqa: C901
-        max_n = self.max_n
-        sqrt_lim = int(max_n**0.5)
-
-        base_sieve = bytearray([1]) * (sqrt_lim + 1)
-        base_sieve[0] = base_sieve[1] = 0
-        for i in range(2, int(sqrt_lim**0.5) + 1):
-            if base_sieve[i]:
-                base_sieve[i * i::i] = bytearray(len(range(i * i, sqrt_lim + 1, i)))
-        base_primes = np.array([i for i in range(2, sqrt_lim + 1) if base_sieve[i]], dtype=np.int64)
-
-        seg_size = 5_000_000
-        num_odds = max_n // 2
-        ls_good_primes = []
-
-        for seg_start in range(0, num_odds, seg_size):
-            seg_end = min(num_odds, seg_start + seg_size)
-            seg_len = seg_end - seg_start
-            seg = bytearray([1]) * seg_len
-            if seg_start == 0:
-                seg[0] = 0  # 1 is not prime
-            low_val = 2 * seg_start + 1
-            high_val = 2 * (seg_end - 1) + 1
-            max_p = int(high_val**0.5)
-
-            for p in base_primes[1:]:  # skip 2
-                if p > max_p:
-                    break
-                start_val = max(int(p * p), int(((low_val + p - 1) // p) * p))
-                if start_val % 2 == 0:
-                    start_val += int(p)
-                if start_val <= high_val:
-                    start_idx = (start_val - 1) // 2 - seg_start
-                    step = int(p)
-                    seg[start_idx::step] = bytearray(len(range(start_idx, seg_len, step)))
-
-            seg_np = np.frombuffer(seg, dtype=np.uint8)
-            prime_odds = (2 * (seg_start + np.nonzero(seg_np)[0]) + 1).astype(np.int64)
-            p_168 = prime_odds % 168
-            good = prime_odds[np.isin(p_168, [1, 25, 121])]
-            ls_good_primes.extend(good.tolist())
+    def solve(self, debug=False):
+        if debug:
+            print("generating primes")
+        ls_primes = timeit(primes_upto)(self.max_n)
+        if debug:
+            print("finished generating primes")  # 1.3 seconds
+        # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
+        p_168 = ls_primes % 168  # using numpy arrays for speed
+        ls_good_primes = (ls_primes[np.isin(p_168, [1, 25, 121])]).tolist()
 
         # generate all n = p_i * p_j, s.t. n <= max_n
         ls_good_comp = self.get_ls_good_composite(max_n=self.max_n, ls_good_primes=ls_good_primes)
@@ -339,21 +309,8 @@ class Problem229:
         self.count += int(np.floor((self.max_n / np.array(ls_good_nums)) ** 0.5).sum())
 
         sq_n = int(self.max_n ** 0.5)
-        spf = list(range(sq_n + 1))
-        for i in range(2, int(sq_n**0.5) + 1):
-            if spf[i] == i:
-                for j in range(i * i, sq_n + 1, i):
-                    if spf[j] == j:
-                        spf[j] = i
-
         for i in range(60, sq_n):  # first number that works is 60
-            dc_prime = {}
-            temp = i
-            while temp > 1:
-                p = spf[temp]
-                dc_prime[p] = dc_prime.get(p, 0) + 1
-                temp //= p
-
+            dc_prime = primes_of_n(i)
             cond = self.is_sq_rep_d_7(dc_prime)
             if cond:
                 cond = cond and self.is_sq_rep_d_3(dc_prime)

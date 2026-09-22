@@ -8,27 +8,22 @@ Find the sum of all indices n such that T(n) is 47-smooth.
 
 ANSWER: 2227616372734
 Solve time: ~4.6 seconds
+
+Key Idea:
+Størmer's theorem - that is, all P-smooth consecutive numbers can be generated using the solution to Pell's equation
+x^2 - dy^2 = 1.
+Essentially, for every squarefree 47-smooth q not equal to 2, we solve sufficiently many solutions to x^2-dq y^2 = 1
+For each solution, (x-1)/2 is a candidate for this problem's n.
+
+See here for more details: https://en.wikipedia.org/wiki/St%C3%B8rmer%27s_theorem
+
+Using that theorem and https://oeis.org/A117581 we get:
+ the upperbound on consecutive 47-smooth numbers is 1,109,496,723,126
 """
 
 import unittest
 import numpy as np
 from util.utils import timeit
-
-
-# MATHEMATICAL DERIVATION:
-#
-# 1. Smooth Triangular Numbers and Consecutive Smooth Pairs:
-#    T(n) = n * (n + 1) / 2.
-#    Since gcd(n, n + 1) = 1, T(n) is 47-smooth if and only if both n and n + 1 are 47-smooth.
-#    Therefore, every index n corresponds to a pair of consecutive 47-smooth numbers (n, n + 1).
-#
-# 2. Bound on Consecutive 47-Smooth Numbers:
-#    By Størmer's Theorem (using solutions to Pell's equations x^2 - D*y^2 = 1 for square-free 47-smooth D),
-#    the maximum consecutive 47-smooth number is bounded by 1,109,496,723,126 (OEIS A117581 / Lehmer 1964).
-#
-# 3. High-Performance Generation:
-#    - Iteratively expand 47-smooth numbers in a flat list without recursion overhead.
-#    - Sort the array and detect consecutive elements via NumPy vector difference (diff == 1).
 
 
 class Problem581:

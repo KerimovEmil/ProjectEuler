@@ -16,24 +16,29 @@ import numpy as np
 from util.utils import timeit
 
 
-# MATHEMATICAL DERIVATION:
-#
-# 1. Properties of Valid Numbers n:
-#    - For d = 1: 1 + n must be prime.
-#    - n must be even for n > 1: If n were odd, then every divisor d would be odd,
-#      making d + n/d = odd + odd = even > 2 (not prime).
-#    - n must be square-free: If p^2 | n, choosing d = p gives d + n/d = p + p * (n / p^2) = p * (1 + n/p^2),
-#      which is composite.
-#    - Since n is even and square-free, n = 2 * (odd square-free), so n = 2 (mod 4).
-#    - Since n + 1 must be prime, p = n + 1 must satisfy p = 3 (mod 4).
-#    - For d = 2: 2 + n // 2 must be prime.
-#
-# 2. Fast Candidate Filtering and Factor-Tree Divisor Generation:
-#    - A bytearray prime sieve up to 10^8 allows O(1) primality tests.
-#    - Filter candidate n = p - 1 for primes p = 3 (mod 4) such that 2 + n // 2 is also prime.
-#    - Instead of checking ~10,000 trial divisors for each candidate, factorize n into its prime factors
-#      to generate only the actual divisors (typically <= 16 divisors per square-free number).
-#    - Early exit whenever any divisor d produces a composite d + n // d.
+# Since 1 is always a divisor of n, then
+# 1 + n/1 = 1 + n = prime
+
+# n must be even
+# since if n is odd then every divisor d must be odd then
+# d + n/30 = odd + odd = even != prime if the prime > 2. Which holds for n > 2.
+
+# n is square free
+# since if n = p_1 * p_2^2 then choose d = p_2
+# p_2 + p_1*p_2 = p_2 * (1 + p_1) != prime.
+
+# combining the last two findings we have, n%4 can only be 0 or 2 since n needs to be odd,
+# however since n is squarefree, n%4 can only be equal to 2
+
+# combining this with the fact that n + 1 must be a prime, it results in us only needing
+# to loop over primes such that p%4 == 3
+
+# Fast Candidate Filtering and Factor-Tree Divisor Generation:
+# - A bytearray prime sieve up to 10^8 allows O(1) primality tests.
+# - Filter candidate n = p - 1 for primes p = 3 (mod 4) such that 2 + n // 2 is also prime.
+# - Instead of checking ~10,000 trial divisors for each candidate, factorize n into its prime factors
+#   to generate only the actual divisors (typically <= 16 divisors per square-free number).
+# - Early exit whenever any divisor d produces a composite d + n // d.
 
 
 class Problem357:
