@@ -47,6 +47,12 @@ Find the unique 16-digit secret sequence.
 
 ANSWER: 4640261571849533
 Solve time: ~0.26 seconds
+
+Alternative / Experimental Solutions:
+- Stochastic Hill Climbing / Local Search (~180 seconds):
+  ../experimental_solutions/PE0185_simulated_annealing.py
+- Recursive Backtracking with Constraint Propagation (~0.05s for 5-digit sample):
+  ../experimental_solutions/PE0185_recursive.py
 """
 
 import unittest
@@ -56,6 +62,14 @@ from scipy.optimize import milp, LinearConstraint
 from util.utils import timeit
 
 
+# Alternative solutions in the repository:
+# - [`experimental_solutions/PE0185_simulated_annealing.py`](../experimental_solutions/PE0185_simulated_annealing.py):
+#   Original randomized local search / hill-climbing solver (~180 seconds).
+# - [`experimental_solutions/PE0185_recursive.py`](../experimental_solutions/PE0185_recursive.py):
+#   Recursive depth-first search with heuristic probability sorting (~0.05s for 5-digit game).
+#
+# See also: https://github.com/raphey/number-mind
+#
 # MATHEMATICAL DERIVATION:
 #
 # 1. 0-1 Integer Linear Programming Formulation:
