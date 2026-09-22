@@ -16,7 +16,7 @@ Find the least value of n for which p(n) is divisible by one million.
 ANSWER: 55374
 Solve time: ~11.3 seconds
 """
-from util.utils import timeit, partition_number
+from util.utils import timeit
 import unittest
 
 
@@ -26,12 +26,32 @@ class Problem78:
 
     @timeit
     def solve(self, div=1_000_000):
-        p = 1
-        n = 2
-        while p != 0:
+        """
+        Euler's Pentagonal Number Theorem:
+            p(n) = sum_{k=1}^inf (-1)^{k+1} [ p(n - k(3k-1)/2) + p(n - k(3k+1)/2) ]
+        Compute p(n) modulo `div` iteratively using a dynamic programming list.
+        """
+        p = [1]
+        n = 0
+        while True:
             n += 1
-            p = partition_number(n, mod=div)
-        return n
+            total = 0
+            k = 1
+            while True:
+                p1 = k * (3 * k - 1) // 2
+                p2 = k * (3 * k + 1) // 2
+                sign = 1 if k % 2 == 1 else -1
+                if p1 <= n:
+                    total += sign * p[n - p1]
+                else:
+                    break
+                if p2 <= n:
+                    total += sign * p[n - p2]
+                k += 1
+            total %= div
+            p.append(total)
+            if total == 0:
+                return n
 
 
 class Solution78(unittest.TestCase):

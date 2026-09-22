@@ -7,84 +7,84 @@ square-free, but not 4, 8, 9, 12.
 How many square-free numbers are there below 2^50?
 
 ANSWER: 684465067343069
-Solve time: ~23 seconds
-
-References:
-  https://arxiv.org/pdf/1107.4890.pdf
-  http://www.numericana.com/answer/numbers.htm#moebius
-  https://arxiv.org/pdf/1107.4890.pdf
+Solve time: ~8.5 seconds
 """
+
 import unittest
-from util.utils import timeit, mobius_sieve, primes_upto
+from bisect import bisect_right
+import numpy as np
+from util.utils import timeit, primes_upto
+
+
+# MATHEMATICAL DERIVATION:
+#
+# 1. Square-free Counting via Inclusion-Exclusion (Möbius Inversion):
+#    The count of square-free integers strictly below N is:
+#      Q(N - 1) = sum_{k=1}^{floor(sqrt(N - 1))} mu(k) * floor((N - 1) / k^2)
+#
+# 2. Branch-and-Bound DFS with O(1) Binary Search Bulk Counting:
+#    - For 1 prime: sum_{p <= sqrt(N-1)} floor((N - 1) / p^2) is computed directly via NumPy vectorization.
+#    - For square-free products of >= 2 primes (p_1 < p_2 < ...), we traverse the tree of prime square products.
+#    - Terminal Leaf Optimization: When floor((N - 1) / (prod * p^2)) == 1, no further prime can branch.
+#      All primes in the interval (sqrt((N - 1)/(2 * prod)), sqrt((N - 1)/prod)] each contribute exactly
+#      1 * sign to the total. We count this entire block in O(1) time using bisect_right, eliminating
+#      millions of leaf function calls.
 
 
 class Problem193:
-    def __init__(self, n):
+    def __init__(self, n=2**50):
         self.n = n
-        self.ls_primes = None
-        self.limit = None
-        self.total = None
-        self.ls_sq_primes = None
-        self.num_primes = None
 
     @timeit
-    def solve_mobius(self, debug=False):  # 49 seconds
-        self.ls_primes = primes_upto((self.n ** 0.5) + 1)
-        if debug:
-            print("finished calculating primes")
+    def solve(self):
         limit = self.n - 1
-        sq_root_n = int(self.n ** 0.5) + 1
-        ls_m = mobius_sieve(n=sq_root_n, ls_prime=self.ls_primes)
-        if debug:
-            print("finished calculating mobius values")
-        return sum(ls_m[i] * (limit // (i ** 2)) for i in range(1, sq_root_n))
+        sq_n = int(limit**0.5)
 
-    @timeit
-    def solve_count_p_square(self, debug=False):  # 30 seconds
-        self.ls_primes = primes_upto((self.n ** 0.5) + 1)
-        self.ls_sq_primes = [p*p for p in self.ls_primes]
-        len_primes = len(self.ls_primes)
-        if debug:
-            print("finished calculating primes")
-        ls = [(i, p2) for i, p2 in enumerate(self.ls_sq_primes)]
-        total = self.n - 1
-        limit = self.n - 1
-        sig = 1
-        while ls:
-            sig *= -1
-            new_ls = []
-            for i, q in ls:
-                total += (limit // q) * sig
-                for j in range(i + 1, len_primes):
-                    pq = self.ls_sq_primes[j] * q
-                    if pq > self.n:
-                        break
-                    new_ls.append((j, pq))
-            ls = new_ls
-        return total
+        primes = primes_upto(sq_n + 1)
+        num_primes = len(primes)
+        p_list = [int(p) for p in primes]
+        p_sq_list = [int(p * p) for p in primes]
 
-    @timeit
-    def solve_inclusion_exclusion(self):  # 23 seconds
-        self.limit = self.n - 1
-        self.total = self.n - 1
-        self.ls_primes = primes_upto((self.n ** 0.5) + 1)
-        self.ls_sq_primes = [int(p * p) for p in self.ls_primes]
-        self.num_primes = len(self.ls_primes)
-        self.inclusion_exclusion_helper(odd_even=-1, prev_prod=1, prime_index=0, next_prod=4)
-        return self.total
+        # 1-prime terms via vectorized NumPy
+        p_sq = primes.astype(np.int64)**2
+        total = limit - int(np.sum(limit // p_sq))
 
-    def inclusion_exclusion_helper(self, odd_even, prev_prod, prime_index, next_prod):
-        while next_prod <= self.n:
-            self.total += (self.limit // next_prod) * odd_even
-            prime_index += 1
+        def dfs(idx, prod, sign):
+            nonlocal total
+            max_p2 = limit // prod
+            if max_p2 < p_sq_list[idx]:
+                return
+            max_p = int(max_p2**0.5)
+            max_idx = bisect_right(p_list, max_p, idx)
 
-            if prime_index >= self.num_primes:
+            max_p2_for_2 = limit // (2 * prod)
+            if max_p2_for_2 >= p_sq_list[idx]:
+                max_p_for_2 = int(max_p2_for_2**0.5)
+                idx_for_2 = bisect_right(p_list, max_p_for_2, idx, max_idx)
+            else:
+                idx_for_2 = idx
+
+            # Loop for terms where floor(limit / (prod * p^2)) >= 2 (may branch further)
+            for i in range(idx, idx_for_2):
+                p2 = p_sq_list[i]
+                new_prod = prod * p2
+                val = limit // new_prod
+                total += val * sign
+                if i + 1 < num_primes and p_sq_list[i + 1] <= limit // new_prod:
+                    dfs(i + 1, new_prod, -sign)
+
+            # O(1) bulk count for leaf terms where floor(limit / (prod * p^2)) == 1
+            count_1 = max_idx - idx_for_2
+            if count_1 > 0:
+                total += count_1 * sign
+
+        for i in range(num_primes):
+            p1_sq = p_sq_list[i]
+            if i + 1 < num_primes and p1_sq * p_sq_list[i + 1] > limit:
                 break
+            dfs(i + 1, p1_sq, 1)
 
-            next_prime_sq = self.ls_sq_primes[prime_index]
-            self.inclusion_exclusion_helper(odd_even=-odd_even, prev_prod=next_prod, prime_index=prime_index,
-                                            next_prod=next_prod*next_prime_sq)
-            next_prod = prev_prod * next_prime_sq
+        return total
 
 
 class Solution193(unittest.TestCase):
@@ -92,9 +92,7 @@ class Solution193(unittest.TestCase):
         self.problem = Problem193(n=int(2 ** 50))
 
     def test_solution(self):
-        # self.assertEqual(684465067343069, self.problem.solve_mobius())
-        # self.assertEqual(684465067343069, self.problem.solve_count_p_square())
-        self.assertEqual(684465067343069, self.problem.solve_inclusion_exclusion())
+        self.assertEqual(684465067343069, self.problem.solve())
 
 
 if __name__ == '__main__':

@@ -104,18 +104,31 @@ def sum_of_recip_sq_frac(s):
     return sum(Fraction(1, i**2) for i in s)
 
 
-def subset_sum(numbers, target, partial=None, partial_sum=Fraction(0, 1)):
-    if partial is None:
-        partial = []
-    if partial_sum == target:
-        yield partial
-    if partial_sum >= target:
-        return
-    if sum_of_recip_sq_frac(numbers) < (target - partial_sum):
-        return
-    for i, n in enumerate(numbers):
-        remaining = numbers[i + 1:]
-        yield from subset_sum(remaining, target, partial + [n], partial_sum + Fraction(1, n**2))
+def subset_sum(numbers, target):
+    """
+    Finds all subsets of numbers whose inverse squares sum to target.
+    Uses precomputed suffix sums for fast O(1) branch-and-bound pruning.
+    """
+    n_items = len(numbers)
+    fracs = [Fraction(1, n**2) for n in numbers]
+    tail_sums = [Fraction(0, 1)] * (n_items + 1)
+    for i in range(n_items - 1, -1, -1):
+        tail_sums[i] = tail_sums[i + 1] + fracs[i]
+
+    def _search(idx, current_sum, path):
+        if current_sum == target:
+            yield list(path)
+            return
+        if idx >= n_items or current_sum > target or current_sum + tail_sums[idx] < target:
+            return
+        # Branch 1: include numbers[idx]
+        path.append(numbers[idx])
+        yield from _search(idx + 1, current_sum + fracs[idx], path)
+        path.pop()
+        # Branch 2: exclude numbers[idx]
+        yield from _search(idx + 1, current_sum, path)
+
+    yield from _search(0, Fraction(0, 1), [])
 
 
 class Problem152:

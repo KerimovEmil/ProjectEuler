@@ -250,9 +250,6 @@ class Problem678:
 
 
 class Solution678(unittest.TestCase):
-    def setUp(self):
-        self.problem = Problem678(n=10 ** 18)
-
     def test_sample_solution_1000(self):
         self.assertEqual(7, Problem678(n=10 ** 3).solve())
 
@@ -263,7 +260,7 @@ class Solution678(unittest.TestCase):
         self.assertEqual(287, Problem678(n=10 ** 7).solve())
 
     def test_solution(self):
-        self.assertEqual(1986065, self.problem.solve())
+        self.assertEqual(1986065, Problem678(n=10 ** 18).solve())
 
 
 if __name__ == '__main__':
