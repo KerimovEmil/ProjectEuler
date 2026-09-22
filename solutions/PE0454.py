@@ -74,7 +74,7 @@ from util.utils import timeit, mobius_sieve
 #    which solves L = 10^12 in ~7 seconds.
 
 
-def _innertriple(limit: int) -> int:
+def _innertriple(limit: int) -> int:  # noqa: C901
     """Computes G(limit) in O(limit^(2/3)) using the 3D Dirichlet hyperbola method."""
     if limit < 6:
         return 0

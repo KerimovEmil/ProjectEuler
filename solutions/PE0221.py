@@ -16,7 +16,6 @@ ANSWER: 1884161251122450
 Solve time: ~0.95 seconds
 """
 
-import math
 import unittest
 from util.utils import timeit, tonelli_shanks, primes_upto
 
@@ -53,7 +52,7 @@ class Problem221:
         self.n = n
 
     @timeit
-    def solve(self, n: int = None) -> int:
+    def solve(self, n: int = None) -> int:  # noqa: C901
         if n is None:
             n = self.n
 

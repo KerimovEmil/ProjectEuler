@@ -68,9 +68,8 @@ class Solution169(unittest.TestCase):
         self.assertEqual(13, self.problem.solve(n=42))
 
     def test_solution(self):
-        self.assertEqual(178653872807, self.problem.solve(n=pow(10,25)))
+        self.assertEqual(178653872807, self.problem.solve(n=pow(10, 25)))
 
 
 if __name__ == '__main__':
     unittest.main()
-

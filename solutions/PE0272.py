@@ -79,7 +79,7 @@ class Problem272:
         self.limit = limit
 
     @timeit
-    def solve(self, limit: int = None) -> int:
+    def solve(self, limit: int = None) -> int:  # noqa: C901
         if limit is None:
             limit = self.limit
 

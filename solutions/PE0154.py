@@ -1,11 +1,12 @@
-"""
+r"""
 PROBLEM
 
-A triangular pyramid is constructed using spherical balls such that one ball rests on top of three balls of the next lower level.
-Then we calculate the number of paths leading from the apex to each position:
+A triangular pyramid is constructed using spherical balls such that one ball rests on top of three balls
+of the next lower level. Then we calculate the number of paths leading from the apex to each position:
 A path starts at the apex and progresses down to any of the three spheres directly below the current position.
 
-Consequently, the number of paths to reach a position (i, j, k) at level n (where i + j + k = n) is given by the trinomial coefficient:
+Consequently, the number of paths to reach a position (i, j, k) at level n (where i + j + k = n)
+is given by the trinomial coefficient:
 n! / (i! * j! * k!)
 
 How many coefficients in the expansion of (x + y + z)^200000 are multiples of 10^12?
@@ -76,7 +77,7 @@ class Problem154:
         self.exponent = exponent
 
     @timeit
-    def solve(self, n: int = None, exponent: int = None) -> int:
+    def solve(self, n: int = None, exponent: int = None) -> int:  # noqa: C901
         if n is None:
             n = self.n
         if exponent is None:

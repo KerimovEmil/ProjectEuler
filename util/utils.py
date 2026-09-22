@@ -80,7 +80,7 @@ class Hungarian:
         """Returns expected value after calculation."""
         return self._totalPotential
 
-    def calculate(self, input_matrix=None, is_profit_matrix=False):
+    def calculate(self, input_matrix=None, is_profit_matrix=False):  # noqa: C901
         """
         Implementation of the Hungarian (Munkres) Algorithm.
         input_matrix is a List of Lists.
@@ -284,7 +284,7 @@ class CoverZeros:
         """Return list of covered columns."""
         return self._covered_columns
 
-    def __calculate(self):
+    def __calculate(self):  # noqa: C901
         """
         Calculates minimum number of lines necessary to cover all zeros in a matrix.
         Algorithm based on: http://weber.ucsd.edu/~vcrawfor/hungar.pdf
@@ -653,7 +653,7 @@ def is_palindrome(n: int) -> bool:
     return ls == ls[::-1]
 
 
-def new_mod(str_a, m):  # todo: test for bugs
+def new_mod(str_a, m):  # noqa: C901 # todo: test for bugs
     """
     Returns a mod m.
     Works well for m=0,1,2,3,4,5,8,9,10,11
@@ -1027,25 +1027,6 @@ def sign(x):
         return 0
 
 
-def mobius_sieve(n: int, ls_prime: Union[List[int], None]) -> List[int]:
-    """
-    Returns a list of all mobius function values.
-    mobius(n) = 1 if i is square-free with even number of primes,
-               -1 if odd number,
-                0 if contains square
-    """
-    ls_m = [1]*n
-    if ls_prime is None:
-        ls_p = primes_upto(n)
-    else:
-        ls_p = ls_prime
-    for p in ls_p:
-        ls_m[p:n:p] = [-1 * x for x in ls_m[p:n:p]]
-        p2 = p ** 2
-        ls_m[p2:n:p2] = [0] * ((n-1)//p2)  # len(ls_m[p2:n:p2]) == (n-1)//p2
-    return ls_m
-
-
 # @lru_cache(maxsize=None)
 def num_of_divisors(n):
     """
@@ -1275,7 +1256,7 @@ def legendre_symbol(a: int, p: int) -> int:
     return -1 if ls == p - 1 else ls
 
 
-def tonelli_shanks(n: int, p: int) -> Optional[int]:
+def tonelli_shanks(n: int, p: int) -> Optional[int]:  # noqa: C901
     """
     Find a modular square root of n modulo an odd prime p using the Tonelli-Shanks algorithm.
     Solves the congruence r^2 = n (mod p) for r in [0, p - 1].
@@ -1352,7 +1333,7 @@ def tonelli_shanks(n: int, p: int) -> Optional[int]:
     return r
 
 
-def mobius_sieve(n: int) -> list:
+def mobius_sieve(n: int, ls_prime: Union[List[int], None] = None) -> list:
     """
     Computes the Mobius function mu(k) for all 0 <= k <= n using a linear sieve.
 
@@ -1494,6 +1475,3 @@ def digits(n: int) -> List[int]:
 def digits_sum(n: int) -> int:
     """Returns the sum of base-10 digits of |n|."""
     return sum(int(c) for c in str(abs(n)))
-
-
-

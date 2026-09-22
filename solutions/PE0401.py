@@ -44,7 +44,10 @@ def sum_sq_mod(x, mod):
     """Computes x*(x+1)*(2x+1)//6 mod `mod` for a NumPy array of int64 without overflow."""
     rem6 = x % 6
     a = np.where(rem6 == 0, x // 6, np.where((rem6 == 2) | (rem6 == 4), x // 2, np.where(rem6 == 3, x // 3, x))) % mod
-    b = np.where(rem6 == 5, (x + 1) // 6, np.where((rem6 == 1) | (rem6 == 3), (x + 1) // 2, np.where(rem6 == 2, (x + 1) // 3, x + 1))) % mod
+    b = np.where(
+        rem6 == 5, (x + 1) // 6,
+        np.where((rem6 == 1) | (rem6 == 3), (x + 1) // 2, np.where(rem6 == 2, (x + 1) // 3, x + 1))
+    ) % mod
     c = np.where((rem6 == 1) | (rem6 == 4), (2 * x + 1) // 3, 2 * x + 1) % mod
     return ((a * b % mod) * c) % mod
 

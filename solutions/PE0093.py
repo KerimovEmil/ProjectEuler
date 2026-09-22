@@ -1,7 +1,8 @@
 r"""
 PROBLEM
 
-By using each of the digits from the set, $\{1, 2, 3, 4\}$, exactly once, and making use of the four arithmetic operations ($+, -, \times, /$) and brackets/parentheses, it is possible to form different positive integer targets.
+By using each of the digits from the set, $\{1, 2, 3, 4\}$, exactly once, and making use of the four arithmetic
+operations ($+, -, \times, /$) and brackets/parentheses, it is possible to form different positive integer targets.
 
 For example,
 
@@ -14,9 +15,11 @@ $$\begin{align}
 
 Note that concatenations of the digits, like $12 + 34$, are not allowed.
 
-Using the set, $\{1, 2, 3, 4\}$, it is possible to obtain thirty-one different target numbers of which $36$ is the maximum, and each of the numbers $1$ to $28$ can be obtained before encountering the first non-expressible number.
+Using the set, $\{1, 2, 3, 4\}$, it is possible to obtain thirty-one different target numbers of which $36$ is the
+maximum, and each of the numbers $1$ to $28$ can be obtained before encountering the first non-expressible number.
 
-Find the set of four distinct digits, $a \lt b \lt c \lt d$, for which the longest set of consecutive positive integers, $1$ to $n$, can be obtained, giving your answer as a string: abcd.
+Find the set of four distinct digits, $a \lt b \lt c \lt d$, for which the longest set of consecutive positive integers,
+$1$ to $n$, can be obtained, giving your answer as a string: abcd.
 
 ANSWER: 1258
 Solve time: ~0.08 seconds

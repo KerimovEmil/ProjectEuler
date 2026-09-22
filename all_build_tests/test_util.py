@@ -51,7 +51,6 @@ class UtilTestCase(unittest.TestCase):
         self.assertFalse(is_prime_simple(1000000007 * 1000000009))
         self.assertTrue(is_prime_simple(2**31 - 1))  # Mersenne prime M31
 
-
     def test_continued_fraction_sqrt(self):
         self.assertEqual(continued_fraction_sqrt(4), (2, []))
         self.assertEqual(continued_fraction_sqrt(2), (1, [2]))
@@ -111,5 +110,3 @@ class UtilTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

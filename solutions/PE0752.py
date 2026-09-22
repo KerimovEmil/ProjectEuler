@@ -94,7 +94,7 @@ class Problem752:
         return ord_v
 
     @timeit
-    def solve(self, n: int = None) -> int:
+    def solve(self, n: int = None) -> int:  # noqa: C901
         if n is None:
             n = self.max_n
 

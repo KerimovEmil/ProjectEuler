@@ -43,7 +43,7 @@ MATHEMATICAL DERIVATION:
 
 import unittest
 import numpy as np
-from util.utils import timeit, primes_upto, get_combination_mod_p, number_base_rep
+from util.utils import timeit, primes_upto, get_combination_mod_p
 
 
 class Problem365:

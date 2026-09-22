@@ -26,7 +26,8 @@ MATHEMATICAL DERIVATION:
 
 3. High-Performance Pure Python Optimization:
    - A precomputed prefix sieve of phi(k) for all k <= L (L = 5,000,000) is built via a fast NumPy prime sieve.
-   - For all q <= D <= sqrt(10^11) ~ 316,227 <= L, Phi(q) is directly looked up in the precomputed array, and the entire second sum is evaluated as a single vectorized NumPy dot product.
+   - For all q <= D <= sqrt(10^11) ~ 316,227 <= L, Phi(q) is directly looked up in the precomputed array,
+     and the entire second sum is evaluated as a single vectorized NumPy dot product.
    - In the first sum, any terms with floor(x / d) <= L are evaluated via vectorized array slicing on the precomputed table.
    - Only values with floor(x / d) > L branch into recursive memoized calls.
    This executes the entire solution in ~2.8 seconds purely in Python without external C dependencies.

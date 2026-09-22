@@ -72,7 +72,7 @@ class Problem269:
         self.max_n = max_n
 
     @timeit
-    def solve(self, max_n: int = None) -> int:
+    def solve(self, max_n: int = None) -> int:  # noqa: C901
         if max_n is None:
             max_n = self.max_n
 

@@ -44,6 +44,7 @@ class Problem49:
 
         return None
 
+
 class Solution49(unittest.TestCase):
     def setUp(self):
         self.problem = Problem49(exclude={1487, 4817, 8147}, n=4)

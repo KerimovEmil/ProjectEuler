@@ -55,7 +55,7 @@ class Problem266:
         self.num_total_primes = len(self.ls_primes)
 
     @timeit
-    def solve(self) -> int:
+    def solve(self) -> int:  # noqa: C901
         primes = self.ls_primes
         target_log = sum(math.log(p) for p in primes) / 2.0
         mid = len(primes) // 2

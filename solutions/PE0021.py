@@ -15,7 +15,7 @@ Solve time: ~0.018 seconds
 """
 
 import unittest
-from util.utils import timeit, primes_of_n, num_of_divisors
+from util.utils import timeit
 
 
 class Problem21:

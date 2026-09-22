@@ -17,7 +17,7 @@ ANSWER: 139602943319822
 Solve time: ~3.661 seconds
 """
 
-import unittest 
+import unittest
 from util.utils import timeit, primes_upto
 
 
@@ -66,7 +66,6 @@ from util.utils import timeit, primes_upto
 # S(29) = -3/8 mod 29 = -3 * 11 mod 29 = -33 mod 29 = 26
 # S(31) = -3/8 mod 31 = -3 * 27 mod 31 = -81 mod 31 = 13
 # S(37) = -3/8 mod 37 = -3 * 28 mod 37 = -84 mod 37 = 9
-
 
 
 class Problem381:
