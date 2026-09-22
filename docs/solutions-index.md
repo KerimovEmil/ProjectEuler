@@ -136,7 +136,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0204 | [PE0204.py](../solutions/PE0204.py) | A Hamming number is a positive number which has no prime factor lar... | 0.6 seconds |
 | PE0206 | [PE0206.py](../solutions/PE0206.py) | Find the unique positive integer whose square has the form 1_2_3_4_... | 0.1 seconds |
 | PE0211 | [PE0211.py](../solutions/PE0211.py) | For a positive integer n, let σ2(n) be the sum of the squares of it... | 4.8 seconds |
-| PE0221 | [PE0221.py](../solutions/PE0221.py) | We shall call a positive integer "A" an "Alexandrian integer", if t... | 660 seconds |
+| PE0221 | [PE0221.py](../solutions/PE0221.py) | We shall call a positive integer "A" an "Alexandrian integer", if t... | 0.95 seconds |
 | PE0225 | [PE0225.py](../solutions/PE0225.py) | The sequence 1, 1, 1, 3, 5, 9, 17, 31, 57, 105, 193, 355, 653, 1201... | 0.519 seconds |
 | PE0229 | [PE0229.py](../solutions/PE0229.py) | Consider the number 3600. It is very special, because | 5.6 seconds |
 | PE0233 | [PE0233.py](../solutions/PE0233.py) | Let f(N) be the number of points with integer coordinates that are ... | 2.5 seconds |
@@ -160,7 +160,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0381 | [PE0381.py](../solutions/PE0381.py) | For a prime p let S(p) = (sum (p-k)!) mod p for 1 <= k <= 5. | 3.661 seconds |
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | An integer is called a divisor of n if it divides n with no remainder. Find SIGMA2(10^15) mod 10^9. | ~5.0 seconds |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Look and Say sequence: Find A(n), B(n), and C(n) for n = 10^12 modulo 2^30. | ~0.005 seconds |
-| PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | 1113 seconds (~19 minutes) |
+| PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | ~3.4 seconds |
 | PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~1.65 seconds |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~7.2 seconds |
