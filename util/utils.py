@@ -1333,9 +1333,12 @@ def tonelli_shanks(n: int, p: int) -> Optional[int]:  # noqa: C901
     return r
 
 
-def mobius_sieve(n: int, ls_prime: Union[List[int], None] = None) -> list:
+def mobius_sieve(n: int, ls_prime: Union[List[int], None] = None) -> list:  # noqa: C901
     """
-    Computes the Mobius function mu(k) for all 0 <= k <= n using a linear sieve.
+    Computes the Mobius function mu(k) for all 0 <= k <= n.
+
+    If `ls_prime` is provided, computes mu using prime slicing with the provided primes.
+    Otherwise, computes mu using an O(n) linear sieve.
 
     mu(k) =  1 if k is a square-free integer with an even number of prime factors
     mu(k) = -1 if k is a square-free integer with an odd number of prime factors
@@ -1344,6 +1347,18 @@ def mobius_sieve(n: int, ls_prime: Union[List[int], None] = None) -> list:
     Returns:
         A list mu of length n + 1 where mu[k] is the Mobius value of k.
     """
+    if ls_prime is not None:
+        ls_m = [1] * (n + 1)
+        ls_m[0] = 0
+        for p in ls_prime:
+            if p > n:
+                break
+            ls_m[p:n + 1:p] = [-x for x in ls_m[p:n + 1:p]]
+            p2 = p * p
+            if p2 <= n:
+                ls_m[p2:n + 1:p2] = [0] * len(range(p2, n + 1, p2))
+        return ls_m
+
     mu = [0] * (n + 1)
     primes = []
     is_prime_flags = [True] * (n + 1)

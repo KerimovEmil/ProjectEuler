@@ -2,7 +2,7 @@ import unittest
 from util.utils import (
     tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital,
     mobius_sieve, is_prime_simple, continued_fraction_sqrt, pell_fundamental_solution,
-    digits, digits_sum, number_base_rep, get_combination_mod_p
+    digits, digits_sum, number_base_rep, get_combination_mod_p, primes_upto
 )
 
 
@@ -37,9 +37,9 @@ class UtilTestCase(unittest.TestCase):
                 self.assertEqual((r * r) % p, n, f"Root {r}^2 mod {p} does not equal {n}")
 
     def test_mobius_sieve(self):
-        mu = mobius_sieve(30)
         expected = [0, 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1]
-        self.assertEqual(mu, expected)
+        self.assertEqual(mobius_sieve(30), expected)
+        self.assertEqual(mobius_sieve(30, ls_prime=primes_upto(30)), expected)
 
     def test_is_prime_simple(self):
         primes_below_50 = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47}
