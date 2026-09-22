@@ -14,7 +14,7 @@ O O O O O
 Find the least value of n for which p(n) is divisible by one million.
 
 ANSWER: 55374
-Solve time: ~11.3 seconds
+Solve time: ~3.8 seconds
 """
 from util.utils import timeit
 import unittest

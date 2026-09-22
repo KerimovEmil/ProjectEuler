@@ -7,7 +7,7 @@ square-free, but not 4, 8, 9, 12.
 How many square-free numbers are there below 2^50?
 
 ANSWER: 684465067343069
-Solve time: ~8.5 seconds
+Solve time: ~8.0 seconds
 """
 
 import unittest
