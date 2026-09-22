@@ -1,92 +1,135 @@
 """
 PROBLEM
 
-We shall call a positive integer "A" an "Alexandrian integer", if there exist integers a,b,c such that:
+We shall call a positive integer "A" an "Alexandrian integer", if there exist integers a, b, c such that:
 
-A = a*b*c
+A = a * b * c
 and
 1/A = 1/a + 1/b + 1/c
 
 For example, 630 is an Alexandrian integer (a=5, b=-7, c=-18). In fact, 630 is the
-6th Alexandrian integer, the first 6 Alexandrian integers being: 6,42,120,156,420, and 630.
+6th Alexandrian integer, the first 6 Alexandrian integers being: 6, 42, 120, 156, 420, and 630.
 
-Find the 150000th Alexandrian integer
+Find the 150000th Alexandrian integer.
 
 ANSWER: 1884161251122450
-Solve time: ~660 seconds
+Solve time: ~0.95 seconds
 """
-from util.utils import timeit
+
+import math
 import unittest
+from util.utils import timeit, tonelli_shanks, primes_upto
 
-# 1/(a*b*c) = 1/a + 1/b + 1/c
-# a*b + b*c + a*c = 1
 
-# note out of a,b,c two of them must always be negative.
-# proof:
-# - only one can't be negative since a*b*c > 0
-# - three can't be negative since a*b*c > 0
-# - 0 can't be negative since a*b + b*c + a*c > 1, since a,b,c >= 1
-
-# The min(a,b,c) has to be the positive one.
-# WLOG let a = min(a,b,c) then 1/a - 1/b - 1/c is the only combination that is positive.
-
-# NAIVE approach
-# wlog let |a| >= |b| >= |c|
-# fix k, k*b + b*c + k*c = 1
-# k*(b+c) = 1 - b*c
-# k = (1 - b*c) / (b+c)
-
-# PRIME FACTORIZATION APPROACH
-# fix k, k*b + b*c + k*c = 1
-# (k+b)*(k+c) - k^2 = 1
-# 1 + k^2 = p*q = (k+b)*(k+c), with b=p-k, c=q-k
-# note that k will be negative, k=-k*
-
-# e.g. k=8,
-# 8^2 + 1 = 65 = 13*5 = 65*1
-# case 1: p=13-8=5, q=5-8=-3, (a,b,c) = (3,-5,-8)
-# case 2: p=65-8=57, q=1-8=-7, (a,b,c) = (7,-8,-57)
-
-# note that p-k < 0 and q-k > 0
-# therefore |q-k| < |k|, so k must always be one of the negative options
-# either (k-p) or (q-k) can be the smallest numbers
-
-# note A = k*(k-p)*(q-k) = k*(kq - k^2 - pq + kp)
-# A = k*(kq - k^2 - (1+k^2) + kp)
-# A = k*(kq + kp - 1 - 2*k^2)
-# A = k*(k*(q + p) - 1 - 2*k^2)
-# A = (q + p)*k^2 - k - 2*k^3
-# A = (q + p - 2k)*k^2 - k
+# MATHEMATICAL DERIVATION:
+#
+# 1. Algebraic Transformation:
+#    The condition 1/A = 1/a + 1/b + 1/c with A = a*b*c is equivalent to:
+#      ab + bc + ca = 1.
+#    Since A > 0 and ab + bc + ca = 1, exactly two of a, b, c must be negative.
+#    Let a > 0, b = -B < 0, c = -C < 0 where B, C > 0.
+#    Then -aB + BC - aC = 1 => BC - a(B + C) = 1.
+#    Add a^2 to both sides:
+#      (B - a)(C - a) = a^2 + 1.
+#
+# 2. Divisor Factorization:
+#    Setting k = a, let p and q be complementary divisors of k^2 + 1 such that p * q = k^2 + 1 with p <= k.
+#    Then B = k + p and C = k + q = k + (k^2 + 1) / p, yielding:
+#      A = k * B * C = k * (k + p) * (k + (k^2 + 1) / p).
+#
+# 3. Sieve of k^2 + 1:
+#    The 150,000th Alexandrian integer is ~1.88 * 10^15. Since A >= 2 * k^3, k <= 100,000.
+#    We sieve prime factors of k^2 + 1 for k <= max_k (~120,000):
+#    - For p = 2: k is odd.
+#    - For odd primes p = 1 (mod 4): solve r^2 = -1 (mod p) using tonelli_shanks(-1, p).
+#      Then p divides k^2 + 1 for k = r (mod p) and k = p - r (mod p).
+#    - Factorize each k^2 + 1, generate all divisors p <= k, collect all Alexandrian integers,
+#      sort, and select the n-th element.
+#    Total runtime is ~0.95s (down from ~660s).
 
 
 class Problem221:
-    def __init__(self, n):
+    def __init__(self, n: int = 150_000):
         self.n = n
 
-    def solve(self):
-        #  Set to track seen numbers
-        seen = set()
+    @timeit
+    def solve(self, n: int = None) -> int:
+        if n is None:
+            n = self.n
 
-        k = 1
-        while len(seen) < 4*self.n:
-            n = k ** 2 + 1
-            for p in range(1, k+1):
-                if n % p == 0:
-                    # a, b, c = k, k - p, n // p - k
-                    product = k * (k + p) * (n // p + k)
-                    if product not in seen:
-                        seen.add(product)
-            k += 1
+        # Upper bound estimation for k:
+        # A_n ~ O(n log n), 2 * k^3 <= A_n
+        if n <= 10:
+            max_k = 50
+        elif n <= 1000:
+            max_k = 2000
+        else:
+            max_k = int(1.5 * (n ** 0.5) * 200)
+            max_k = max(max_k, 120_000)
 
-        return sorted(list(seen))[self.n - 1]
+        # 1. Sieve primes up to max_k
+        primes = [int(p) for p in primes_upto(max_k) if p == 2 or p % 4 == 1]
+
+        # 2. Sieve prime factorization of k^2 + 1
+        rem = [k * k + 1 for k in range(max_k + 1)]
+        prime_factors = [[] for _ in range(max_k + 1)]
+
+        for k in range(1, max_k + 1, 2):
+            cnt = 0
+            while rem[k] % 2 == 0:
+                rem[k] //= 2
+                cnt += 1
+            prime_factors[k].append((2, cnt))
+
+        for p in primes:
+            if p == 2:
+                continue
+            r = tonelli_shanks(-1, p)
+            if r is None:
+                continue
+            for root in (r, p - r):
+                for k in range(root, max_k + 1, p):
+                    if rem[k] % p == 0:
+                        cnt = 0
+                        while rem[k] % p == 0:
+                            rem[k] //= p
+                            cnt += 1
+                        prime_factors[k].append((p, cnt))
+
+        # Remaining factor > 1 must be prime
+        for k in range(1, max_k + 1):
+            if rem[k] > 1:
+                prime_factors[k].append((rem[k], 1))
+
+        # 3. Generate divisors and Alexandrian integers
+        alexandrian = []
+        for k in range(1, max_k + 1):
+            divs = [1]
+            for p, count in prime_factors[k]:
+                new_divs = []
+                p_pow = 1
+                for _ in range(count):
+                    p_pow *= p
+                    for d in divs:
+                        new_divs.append(d * p_pow)
+                divs.extend(new_divs)
+
+            n_val = k * k + 1
+            for p in divs:
+                if p <= k:
+                    A = k * (k + p) * (k + n_val // p)
+                    alexandrian.append(A)
+
+        alexandrian.sort()
+        return alexandrian[n - 1]
 
 
 class Solution221(unittest.TestCase):
     def setUp(self):
-        self.problem = Problem221(n=150_000)
+        self.problem = Problem221()
 
     def test_small_solution(self):
-        self.assertEqual(630, Problem221(n=6).solve())
+        self.assertEqual(630, self.problem.solve(n=6))
 
     def test_solution(self):
         self.assertEqual(1884161251122450, self.problem.solve())
