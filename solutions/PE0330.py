@@ -53,7 +53,7 @@ from util.utils import timeit
 #      where S(k_1, n_0) = sum_{k_0=0}^{n_0} binom(n_0, k_0) A[k_1*p + k_0] (mod p).
 #    By memoizing S(k_1, n_0) for completed blocks k_1, each step evaluates in O(p) instead of O(n),
 #    reducing the overall complexity per prime to O(p^3).
-#    Total runtime across all 5 primes is ~0.47s (down from ~268s).
+#    Total runtime across all 5 primes is ~0.47s.
 
 
 class Problem330:
