@@ -88,11 +88,22 @@ Returns the period length of recurring decimal digits in $1/k$.
 
 ## 2. Matrix Algebra & Linear Recurrences (`util/utils.py`)
 
-### `Matrix`
-Integer matrix class supporting:
+### `mat_mul(a_mat: Sequence[Sequence[int]], b_mat: Sequence[Sequence[int]], mod: Optional[int] = None) -> List[List[int]]`
+Multiplies two 2D matrices $A$ ($n \times p$) and $B$ ($p \times m$), optionally modulo `mod`.
+- Zero-skipping optimization on sparse rows for faster evaluation on state transition matrices.
+- Returns the product matrix $C = A \times B$ as a list of lists.
+
+### `mat_pow(a_mat: Sequence[Sequence[int]], p: int, mod: Optional[int] = None) -> List[List[int]]`
+Computes the matrix power $A^p \pmod{\text{mod}}$ (or exact integer powers when `mod` is `None`) for a square matrix $A$ ($n \times n$) and non-negative integer exponent $p \ge 0$.
+- Uses binary exponentiation in $O(n^3 \log p)$ time.
+- Handles $p = 0$ (identity matrix) correctly.
+
+### `Matrix(entries)`
+2D integer matrix wrapper supporting:
 - Matrix multiplication (`A * B` or `A @ B`)
-- Modular matrix multiplication (`(A * B) % mod`)
+- Modular arithmetic (`A % mod`) without in-place mutation
 - Fast matrix exponentiation (`pow(A, power, mod)` or `A ** power`)
+- Element access (`A[i][j]`), length (`len(A)`), and equality comparison (`A == B`)
 
 ### `LinearHomogeneousRecurrence(coefficients, initial_values)`
 Solves constant-coefficient linear homogeneous recurrences of the form:

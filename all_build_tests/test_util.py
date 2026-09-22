@@ -2,11 +2,73 @@ import unittest
 from util.utils import (
     tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital,
     mobius_sieve, is_prime_simple, continued_fraction_sqrt, pell_fundamental_solution,
-    digits, digits_sum, number_base_rep, get_combination_mod_p, primes_upto
+    digits, digits_sum, number_base_rep, get_combination_mod_p, primes_upto,
+    mat_mul, mat_pow, Matrix
 )
 
 
 class UtilTestCase(unittest.TestCase):
+    def test_mat_mul(self):
+        # 2x3 * 3x2 matrix multiplication
+        a = [[1, 2, 3], [4, 5, 6]]
+        b = [[7, 8], [9, 1], [2, 3]]
+        expected = [[31, 19], [85, 55]]
+        self.assertEqual(mat_mul(a, b), expected)
+
+        # Modular matrix multiplication
+        self.assertEqual(mat_mul(a, b, mod=10), [[1, 9], [5, 5]])
+
+        # Sparse / zero skipping
+        zero_a = [[0, 0], [0, 0]]
+        self.assertEqual(mat_mul(zero_a, [[1, 2], [3, 4]]), [[0, 0], [0, 0]])
+
+    def test_mat_pow(self):
+        fib_mat = [[1, 1], [1, 0]]
+
+        # Power 0: Identity
+        self.assertEqual(mat_pow(fib_mat, 0), [[1, 0], [0, 1]])
+        self.assertEqual(mat_pow(fib_mat, 0, mod=5), [[1, 0], [0, 1]])
+
+        # Power 1
+        self.assertEqual(mat_pow(fib_mat, 1), [[1, 1], [1, 0]])
+
+        # Power 5: [[F_6, F_5], [F_5, F_4]] = [[8, 5], [5, 3]]
+        self.assertEqual(mat_pow(fib_mat, 5), [[8, 5], [5, 3]])
+
+        # Modular power
+        self.assertEqual(mat_pow(fib_mat, 5, mod=7), [[1, 5], [5, 3]])
+
+        # Negative power error
+        with self.assertRaises(ValueError):
+            mat_pow(fib_mat, -1)
+
+    def test_matrix_class(self):
+        m1 = Matrix([[1, 1], [1, 0]])
+        m2 = Matrix([[2, 0], [0, 2]])
+
+        # Multiplication
+        m3 = m1 * m2
+        self.assertEqual(m3.entries, [[2, 2], [2, 0]])
+
+        # Matmul operator @
+        m_at = m1 @ m2
+        self.assertEqual(m_at.entries, [[2, 2], [2, 0]])
+
+        # Exponentiation
+        m_pow = pow(m1, 5)
+        self.assertEqual(m_pow.entries, [[8, 5], [5, 3]])
+
+        # Modular arithmetic
+        m_mod = m_pow % 7
+        self.assertEqual(m_mod.entries, [[1, 5], [5, 3]])
+        # Verify original matrix wasn't mutated in place
+        self.assertEqual(m_pow.entries, [[8, 5], [5, 3]])
+
+        # Indexing and length
+        self.assertEqual(len(m1), 2)
+        self.assertEqual(m1[0], [1, 1])
+        self.assertEqual(m1[1][0], 1)
+
     def test_legendre_symbol(self):
         self.assertEqual(legendre_symbol(0, 7), 0)
         self.assertEqual(legendre_symbol(1, 7), 1)

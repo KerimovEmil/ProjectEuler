@@ -16,27 +16,13 @@ Solve time: ~0.064 seconds
 """
 
 import unittest
-from util.utils import timeit
+from util.utils import timeit, mat_pow
 
 
 class Problem435:
     def __init__(self, n, mod):
         self.n = n
         self.mod = mod
-
-    def mat_mul(self, a, b):
-        mod = self.mod
-        return [[sum(a[r][k] * b[k][c] for k in range(3)) % mod for c in range(3)]
-                for r in range(3)]
-
-    def mat_pow(self, m, exp):
-        result = [[1 if r == c else 0 for c in range(3)] for r in range(3)]
-        while exp:
-            if exp & 1:
-                result = self.mat_mul(result, m)
-            m = self.mat_mul(m, m)
-            exp >>= 1
-        return result
 
     def f_n_at(self, x):
         """Return F_n(x) mod self.mod using the 3x3 recurrence state."""
@@ -46,7 +32,7 @@ class Problem435:
         x %= mod
         x_sq = x * x % mod
         transition = [[0, 1, 0], [x_sq, x, 0], [x_sq, x, 1]]
-        power = self.mat_pow(transition, self.n - 1)
+        power = mat_pow(transition, self.n - 1, mod)
         return ((power[2][1] + power[2][2]) * x) % mod
 
     @timeit

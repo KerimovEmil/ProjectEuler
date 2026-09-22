@@ -49,12 +49,18 @@ MATHEMATICAL DERIVATION:
 
 from fractions import Fraction
 import math
+from typing import List, Tuple
 import unittest
-from util.utils import timeit
+from util.utils import timeit, mat_mul, mat_pow
 
 
-def is_module(a, b, c, m):
-    """Check if n^4 + a n^3 + b n^2 + c n is divisible by m for all n."""
+def is_module(a: int, b: int, c: int, m: int) -> bool:
+    """
+    Check if the integer polynomial P(n) = n^4 + a n^3 + b n^2 + c n is divisible
+    by m for all integers n.
+
+    Since divisibility modulo m only depends on n mod m, it suffices to check 1 <= n <= m.
+    """
     for n in range(1, m + 1):
         p = n * (n * (n * (n + a) + b) + c)
         if p % m != 0:
@@ -62,8 +68,14 @@ def is_module(a, b, c, m):
     return True
 
 
-def max_int(a, b, c):
-    """Get max divisor integer m dividing P(n) for all n."""
+def max_int(a: int, b: int, c: int) -> int:
+    """
+    Compute M(a, b, c): the maximum integer m dividing P(n) = n^4 + a n^3 + b n^2 + c n
+    for all integers n.
+
+    By polynomial difference theory in the binomial basis, m must divide 24 and
+    all values P(1), P(2), ..., P(24). Hence M(a, b, c) = gcd_{1 <= n <= 24} (24, P(n)).
+    """
     g = 24
     for n in range(1, 25):
         val = n * (n * (n * (n + a) + b) + c)
@@ -74,8 +86,18 @@ def max_int(a, b, c):
 M = max_int
 
 
-def build_transition_matrix():
-    """Build 10x10 transition matrix for Fibonacci powers up to degree 3."""
+def build_transition_matrix() -> List[List[int]]:
+    """
+    Build the 10x10 linear transition matrix T for the state vector of Fibonacci powers
+    and cross-products up to total degree 3:
+      v_n = [
+        F_{n+1}^3, F_{n+1}^2 F_n, F_{n+1} F_n^2, F_n^3,
+        F_{n+1}^2, F_{n+1} F_n, F_n^2,
+        F_{n+1}, F_n,
+        1
+      ]^T
+    satisfying v_{n+1} = T v_n.
+    """
     return [
         [1, 3, 3, 1, 0, 0, 0, 0, 0, 0],
         [1, 2, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -88,31 +110,6 @@ def build_transition_matrix():
         [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
     ]
-
-
-def mat_mul(a_mat, b_mat, mod):
-    n, m, p = len(a_mat), len(b_mat[0]), len(b_mat)
-    c_mat = [[0] * m for _ in range(n)]
-    for i in range(n):
-        for k in range(p):
-            aik = a_mat[i][k]
-            if aik == 0:
-                continue
-            for j in range(m):
-                c_mat[i][j] = (c_mat[i][j] + aik * b_mat[k][j]) % mod
-    return c_mat
-
-
-def mat_pow(a_mat, p, mod):
-    n = len(a_mat)
-    res = [[int(i == j) for j in range(n)] for i in range(n)]
-    base = a_mat
-    while p > 0:
-        if p & 1:
-            res = mat_mul(res, base, mod)
-        base = mat_mul(base, base, mod)
-        p >>= 1
-    return res
 
 
 class Problem402:
@@ -143,8 +140,11 @@ class Problem402:
             block[i + 10][i + 10] = 1
         return block
 
-    def s(self, max_coeff):
-        """Compute S(max_coeff) exactly using 24x24x24 residue block counting."""
+    def s(self, max_coeff: int) -> int:
+        """
+        Compute S(N) exactly using 24x24x24 residue block counting:
+          S(N) = sum_{a=1}^N sum_{b=1}^N sum_{c=1}^N M(a, b, c)
+        """
         q, r = divmod(max_coeff, 24)
         cnt = [q + (1 if (i if i != 0 else 24) <= r else 0) for i in range(24)]
         total = 0
@@ -160,7 +160,7 @@ class Problem402:
                     total += self.m_table[a][b][c] * cab * cnt[c]
         return total
 
-    def _build_polynomials(self):
+    def _build_polynomials(self) -> List[List[int]]:
         int_polys = []
         for r in range(24):
             pts = [r + 24 * k for k in range(4)]
@@ -179,7 +179,7 @@ class Problem402:
             int_polys.append([int(mat[i][4] * self.denom) for i in range(4)])
         return int_polys
 
-    def _get_start_vectors(self):
+    def _get_start_vectors(self) -> Tuple[List[int], List[List[int]]]:
         fib = [0, 1]
         for _ in range(30):
             fib.append(fib[-1] + fib[-2])
@@ -194,7 +194,7 @@ class Problem402:
             ])
         return fib, v_list
 
-    def _sum_residue_class(self, j, k_max, fib, v_list):
+    def _sum_residue_class(self, j: int, k_max: int, fib: List[int], v_list: List[List[int]]) -> int:
         m_min = 0 if j >= 2 else 1
         m_max = (k_max - j) // 24
         if m_max < m_min:
@@ -221,7 +221,10 @@ class Problem402:
         return term
 
     @timeit
-    def solve(self, k_max=1234567890123):
+    def solve(self, k_max: int = 1234567890123) -> int:
+        """
+        Find the last 9 digits of sum_{k=2}^{k_max} S(F_k) using block matrix exponentiation.
+        """
         fib, v_list = self._get_start_vectors()
         total_scaled_sum = 0
         for j in range(24):
