@@ -170,7 +170,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 10.439 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
 | PE0668 | [PE0668.py](../solutions/PE0668.py) | A positive integer is called square root smooth if all of its prime... | 2.868 seconds |
-| PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | 16.6 seconds |
+| PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | ~30 seconds |
 | PE0686 | [PE0686.py](../solutions/PE0686.py) | 2^7 = 128 is the first power of two whose leading digits are "12". | 1.6 seconds |
 | PE0700 | [PE0700.py](../solutions/PE0700.py) | Leonhard Euler was born on 15 April 1707. | 0.003 seconds |
 | PE0722 | [PE0722.py](../solutions/PE0722.py) | Problem 722 | 0.001 seconds |
