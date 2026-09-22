@@ -29,7 +29,7 @@ Solve time: ~0.004 seconds
 
 from util.utils import timeit
 import unittest
-from typing import List, Tuple
+from typing import Tuple
 
 
 class Problem144:
@@ -128,4 +128,3 @@ class Solution144(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

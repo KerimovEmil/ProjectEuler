@@ -65,7 +65,7 @@ class Problem330:
         self.n = n
 
     @timeit
-    def solve(self, n: int = None) -> int:
+    def solve(self, n: int = None) -> int:  # noqa: C901
         if n is None:
             n = self.n
 

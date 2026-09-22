@@ -30,7 +30,6 @@ class Problem4:
         return max(pds)
 
 
-
 class Solution4(unittest.TestCase):
     def setUp(self):
         self.problem = Problem4(3)

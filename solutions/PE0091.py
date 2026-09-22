@@ -43,6 +43,7 @@ class Problem91:
                             ans += 2
         return ans
 
+
 class Solution91(unittest.TestCase):
     def setUp(self):
         self.problem = Problem91()

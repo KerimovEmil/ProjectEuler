@@ -51,7 +51,6 @@ class Problem66:
         return self.d_max_min_x
 
 
-
 class Solution66(unittest.TestCase):
     def setUp(self):
         self.problem = Problem66(1000)

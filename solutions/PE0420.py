@@ -68,7 +68,7 @@ class Problem420:
         self.n = n
 
     @timeit
-    def solve(self):
+    def solve(self):  # noqa: C901
         n = self.n
         max_u = int((2 * n / 5) ** 0.5) + 2
         max_k = (max_u // 2) ** 2 + 10

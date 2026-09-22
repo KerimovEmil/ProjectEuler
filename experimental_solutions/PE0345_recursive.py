@@ -13,7 +13,7 @@ ANSWER: 13938
 
 import functools
 import unittest
-from typing import List, Tuple
+from typing import Tuple
 
 
 def memoize(obj):

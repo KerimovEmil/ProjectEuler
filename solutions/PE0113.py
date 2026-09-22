@@ -68,9 +68,10 @@ class Problem113:
         return sum(self.n_digit_non_bouncy(n) for n in range(1, num_digit + 1))
 
     @staticmethod
-    def n_digit_non_bouncy(n: int)-> int:
+    def n_digit_non_bouncy(n: int) -> int:
         value = (18 + n) * (n + 8) * (n + 7) * (n + 6) * (n + 5) * (n + 4) * (n + 3) * (n + 2) * (n + 1) // 362880 - 10
         return int(value)
+
 
 class Solution113(unittest.TestCase):
     def setUp(self):
