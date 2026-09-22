@@ -113,13 +113,13 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0113 | [PE0113.py](../solutions/PE0113.py) | Working from left-to-right if no digit is exceeded by the digit to ... | 0.001 seconds |
 | PE0116 | [PE0116.py](../solutions/PE0116.py) | Problem 116 | 0.001 seconds |
 | PE0120 | [PE0120.py](../solutions/PE0120.py) | Let r be the remainder when (a−1)^n + (a+1)^n is divided by a^2. | 0.001 seconds |
-| PE0123 | [PE0123.py](../solutions/PE0123.py) | Let p_n be the nth prime: 2, 3, 5, 7, 11, ..., and let r be the rem... | 0.85 seconds |
+| PE0123 | [PE0123.py](../solutions/PE0123.py) | Let p_n be the nth prime: 2, 3, 5, 7, 11, ..., and let r be the rem... | 0.006 seconds |
 | PE0124 | [PE0124.py](../solutions/PE0124.py) | The radical of n, rad(n), is the product of the distinct prime fact... | 2 seconds |
 | PE0125 | [PE0125.py](../solutions/PE0125.py) | The palindromic number 595 is interesting because it can be written... | 0.99 seconds |
-| PE0131 | [PE0131.py](../solutions/PE0131.py) | There are some prime values, p, for which there exists a positive i... | 1 seconds |
+| PE0131 | [PE0131.py](../solutions/PE0131.py) | There are some prime values, p, for which there exists a positive i... | 0.017 seconds |
 | PE0132 | [PE0132.py](../solutions/PE0132.py) | A number consisting entirely of ones is called a repunit. We shall ... | 0.05 seconds |
 | PE0137 | [PE0137.py](../solutions/PE0137.py) | Consider the infinite polynomial series A(x)=xF_1+x^2 F_2 + x^3 F_3... | 0.001 seconds |
-| PE0139 | [PE0139.py](../solutions/PE0139.py) | Problem 139 | 9.5 seconds using brute force |
+| PE0139 | [PE0139.py](../solutions/PE0139.py) | Problem 139 | 0.003 seconds |
 | PE0140 | [PE0140.py](../solutions/PE0140.py) | Consider the infinite polynomial series AG(x)=xG1+x2G2+x3G3+⋯, wher... | 0.001 seconds |
 | PE0144 | [PE0144.py](../solutions/PE0144.py) | nI laser physics, a "white cell" is a mirror system that acts as a ... | 0.004 seconds |
 | PE0145 | [PE0145.py](../solutions/PE0145.py) | Some positive integers n have the property that the sum [ n + rever... | 0.003 seconds |
@@ -170,7 +170,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
 | PE0668 | [PE0668.py](../solutions/PE0668.py) | A positive integer is called square root smooth if all of its prime... | 2.868 seconds |
-| PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | 27 seconds |
+| PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | ~14.5 seconds |
 | PE0686 | [PE0686.py](../solutions/PE0686.py) | 2^7 = 128 is the first power of two whose leading digits are "12". | 1.6 seconds |
 | PE0700 | [PE0700.py](../solutions/PE0700.py) | Leonhard Euler was born on 15 April 1707. | 0.003 seconds |
 | PE0722 | [PE0722.py](../solutions/PE0722.py) | Problem 722 | 0.001 seconds |

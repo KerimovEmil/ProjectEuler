@@ -15,7 +15,7 @@ F(10^3) = 7, F(10^5) = 53 and F(10^7) = 287.
 Find F(10^18).
 
 ANSWER: 1986065
-Solve time: ~27 seconds
+Solve time: ~14.5 seconds
 """
 
 import unittest
