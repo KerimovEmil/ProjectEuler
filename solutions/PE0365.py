@@ -41,31 +41,9 @@ MATHEMATICAL DERIVATION:
    This completes the ~2.9 x 10^7 CRT combinations in ~1.5 seconds.
 """
 
-import math
 import unittest
 import numpy as np
-from util.utils import timeit, primes_upto
-
-
-def number_base_rep(n, b):
-    digits = []
-    while n:
-        digits.append(int(n % b))
-        n //= b
-    return digits
-
-
-def get_combination_mod_p(n, k, p):
-    """Return (n choose k) mod p via Lucas' Theorem."""
-    p = int(p)
-    n_digits = number_base_rep(n, p)
-    k_digits = number_base_rep(k, p)
-    mult = 1
-    for a, b in zip(n_digits, k_digits):
-        if a < b:
-            return 0
-        mult = (mult * math.comb(a, b)) % p
-    return mult
+from util.utils import timeit, primes_upto, get_combination_mod_p, number_base_rep
 
 
 class Problem365:

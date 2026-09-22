@@ -748,6 +748,80 @@ def combin(n, r):
         return 0
 
 
+def number_base_rep(n: int, b: int) -> List[int]:
+    """
+    Returns the base-b representation of a non-negative integer n as a list of digits
+    in little-endian order (least significant digit first).
+
+    Args:
+        n (int): Non-negative integer to convert (n >= 0).
+        b (int): Base (b >= 2).
+
+    Returns:
+        List[int]: Digits [d_0, d_1, ..., d_k] such that n = sum_{i=0}^k d_i * b^i,
+                   with 0 <= d_i < b and d_k > 0 (for n > 0). For n = 0, returns [0].
+
+    Examples:
+        >>> number_base_rep(13, 2)
+        [1, 0, 1, 1]  # 13 = 1*1 + 0*2 + 1*4 + 1*8
+        >>> number_base_rep(100, 7)
+        [2, 0, 2]     # 100 = 2*1 + 0*7 + 2*49
+        >>> number_base_rep(0, 10)
+        [0]
+    """
+    if n == 0:
+        return [0]
+    digits = []
+    while n:
+        digits.append(int(n % b))
+        n //= b
+    return digits
+
+
+def get_combination_mod_p(n: int, k: int, p: int) -> int:
+    """
+    Computes the binomial coefficient (n choose k) modulo a prime p using Lucas' Theorem.
+
+    By Lucas' Theorem, if n and k are expanded in base p:
+        n = sum_{i=0}^m n_i * p^i = (n_m n_{m-1} ... n_0)_p
+        k = sum_{i=0}^m k_i * p^i = (k_m k_{m-1} ... k_0)_p
+    then the binomial coefficient satisfies:
+        (n choose k) = prod_{i=0}^m (n_i choose k_i)  (mod p)
+    where (n_i choose k_i) = 0 whenever n_i < k_i.
+
+    This reduces the computation of (n choose k) mod p for arbitrarily large n and k
+    (e.g., 10^18 choose 10^9) to O(log_p(n)) small binomial coefficients mod p, each
+    evaluated in O(1) time.
+
+    Args:
+        n (int): Total number of items (n >= 0).
+        k (int): Number of items to choose (0 <= k <= n).
+        p (int): Prime modulus (p >= 2).
+
+    Returns:
+        int: (n choose k) mod p in the range [0, p - 1].
+
+    Examples:
+        >>> get_combination_mod_p(10, 3, 7)  # (10 choose 3) = 120 = 1 (mod 7)
+        1
+        >>> get_combination_mod_p(100, 45, 13)
+        2
+    """
+    if k < 0 or k > n:
+        return 0
+    if k == 0 or k == n:
+        return 1 % p
+    p = int(p)
+    n_digits = number_base_rep(n, p)
+    k_digits = number_base_rep(k, p)
+    mult = 1
+    for a, b in zip(n_digits, k_digits):
+        if a < b:
+            return 0
+        mult = (mult * math.comb(a, b)) % p
+    return mult
+
+
 def square_free_sieve(limit):
     """Generator that yields all square free numbers less than limit"""
     a = [True] * limit

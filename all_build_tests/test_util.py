@@ -2,7 +2,7 @@ import unittest
 from util.utils import (
     tonelli_shanks, legendre_symbol, coprime, is_palindrome, is_pandigital,
     mobius_sieve, is_prime_simple, continued_fraction_sqrt, pell_fundamental_solution,
-    digits, digits_sum
+    digits, digits_sum, number_base_rep, get_combination_mod_p
 )
 
 
@@ -92,6 +92,21 @@ class UtilTestCase(unittest.TestCase):
         self.assertTrue(is_pandigital(15243))
         self.assertFalse(is_pandigital(10234))
         self.assertFalse(is_pandigital(11234))
+
+    def test_number_base_rep(self):
+        self.assertEqual(number_base_rep(0, 10), [0])
+        self.assertEqual(number_base_rep(13, 2), [1, 0, 1, 1])
+        self.assertEqual(number_base_rep(100, 7), [2, 0, 2])
+        self.assertEqual(number_base_rep(27, 3), [0, 0, 0, 1])
+
+    def test_get_combination_mod_p(self):
+        self.assertEqual(get_combination_mod_p(10, 3, 7), 1)
+        self.assertEqual(get_combination_mod_p(100, 45, 13), 2)
+        self.assertEqual(get_combination_mod_p(5, 6, 7), 0)
+        self.assertEqual(get_combination_mod_p(5, 0, 7), 1)
+        self.assertEqual(get_combination_mod_p(5, 5, 7), 1)
+        self.assertEqual(get_combination_mod_p(10**18, 10**9, 1009), 0)
+        self.assertEqual(get_combination_mod_p(10**18, 10**9, 1103), 185)
 
 
 if __name__ == '__main__':
