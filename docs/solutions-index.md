@@ -156,7 +156,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0347 | [PE0347.py](../solutions/PE0347.py) | The largest integer ≤ 100 that is only divisible by both the primes... | 2 seconds |
 | PE0356 | [PE0356.py](../solutions/PE0356.py) | Let a_n be the largest real root of a polynomial g(x) = x^3 - 2^n·x... | 0.003 seconds |
 | PE0357 | [PE0357.py](../solutions/PE0357.py) | Consider the divisors of 30: 1,2,3,5,6,10,15,30. | 27 seconds |
-| PE0365 | [PE0365.py](../solutions/PE0365.py) | The binomial coefficient (10^18 choose 10^9) is a number with more ... | 270 seconds (~5 minutes) |
+| PE0365 | [PE0365.py](../solutions/PE0365.py) | The binomial coefficient (10^18 choose 10^9) is a number with more ... | ~1.45 seconds |
 | PE0381 | [PE0381.py](../solutions/PE0381.py) | For a prime p let S(p) = (sum (p-k)!) mod p for 1 <= k <= 5. | 3.661 seconds |
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | Problem 401 | ~0.000s |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Look and Say sequence: Find A(n), B(n), and C(n) for n = 10^12 modulo 2^30. | ~0.005 seconds |
