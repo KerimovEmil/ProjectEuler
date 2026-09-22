@@ -158,7 +158,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0357 | [PE0357.py](../solutions/PE0357.py) | Consider the divisors of 30: 1,2,3,5,6,10,15,30. | 27 seconds |
 | PE0365 | [PE0365.py](../solutions/PE0365.py) | The binomial coefficient (10^18 choose 10^9) is a number with more ... | ~1.45 seconds |
 | PE0381 | [PE0381.py](../solutions/PE0381.py) | For a prime p let S(p) = (sum (p-k)!) mod p for 1 <= k <= 5. | 3.661 seconds |
-| PE0401 | [PE0401.py](../solutions/PE0401.py) | Problem 401 | ~0.000s |
+| PE0401 | [PE0401.py](../solutions/PE0401.py) | An integer is called a divisor of n if it divides n with no remainder. Find SIGMA2(10^15) mod 10^9. | ~5.0 seconds |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Look and Say sequence: Find A(n), B(n), and C(n) for n = 10^12 modulo 2^30. | ~0.005 seconds |
 | PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | ~3.4 seconds |
 | PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~1.65 seconds |
