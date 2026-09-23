@@ -12,7 +12,7 @@ You are given $F(1) = \frac{1}{2}$, $F(4) = \frac{1}{4}$ and $F(10) \approx 0.13
 Find $F(10^4)$ and give your answer rounded to 13 digits after the decimal point.
 
 ANSWER: 0.0003452201133
-Solve time: ~15 seconds
+Solve time: ~0.02 seconds
 
 ---
 MATHEMATICAL DERIVATION:
@@ -44,47 +44,102 @@ MATHEMATICAL DERIVATION:
                                            = b_1 [t^2 / 2]_0^{1/(b_1 b_2)}
                                            = 1 / (2 b_1 b_2^2).
 
-4. Total Expectation Summation:
-   Summing across all consecutive pairs in F_N gives the exact expected value:
-       F(N) = \int_0^1 f_N(x) dx = \sum_{(a_1/b_1, a_2/b_2) \in F_N} \frac{1}{2 b_1 b_2^2}.
+4. Denominator Pairing & Reflection Symmetry:
+   A fundamental property of Farey sequences states that two integers b_1, b_2 <= N appear as
+   denominators of adjacent fractions in F_N if and only if gcd(b_1, b_2) = 1 and b_1 + b_2 > N.
+   By symmetry (reflecting x <-> 1 - x), every pair (b_1, b_2) with b_1 < b_2 pairs with (b_2, b_1):
+       \frac{1}{2 b_1 b_2^2} + \frac{1}{2 b_2 b_1^2} = \frac{b_1 + b_2}{2 b_1^2 b_2^2}.
+   Thus, for N >= 2:
+       F(N) = \sum_{\substack{1 \le b_1 < b_2 \le N \\ \gcd(b_1, b_2) = 1 \\ b_1 + b_2 > N}} \frac{b_1 + b_2}{2 b_1^2 b_2^2}.
 
-5. Algorithmic Complexity:
-   The number of Farey intervals is |F_N| - 1 = \sum_{k=1}^N \phi(k) \approx \frac{3}{\pi^2} N^2.
-   For N = 10^4, there are ~30.4 million intervals.
-   Using the standard O(1)-memory Farey recurrence:
-       k = (N + b_1) // b_2,  (a_3, b_3) = (k a_2 - a_1, k b_2 - b_1)
-   and Kahan compensated summation to eliminate floating-point precision loss across 30 million
-   terms, F(10^4) computes in ~15 seconds with full 13-digit precision.
+5. Möbius Inversion & O(N log N) Evaluation:
+   We eliminate the coprimality condition gcd(b_1, b_2) = 1 using the Möbius identity
+   \sum_{d | \gcd(b_1, b_2)} \mu(d) = [\gcd(b_1, b_2) = 1].
+   Substituting b_1 = dx, b_2 = dy with 1 <= x < y <= N/d and d(x + y) > N (i.e. x + y > N/d):
+       F(N) = \sum_{d=1}^N \frac{\mu(d)}{2 d^3} \sum_{\substack{1 \le x < y \le N/d \\ x + y > N/d}} \frac{x + y}{x^2 y^2}
+            = \sum_{d=1}^N \frac{\mu(d)}{2 d^3} \sum_{y=2}^{\lfloor N/d \rfloor} \sum_{x = x_{\min}}^{y - 1} \left( \frac{1}{y x^2} + \frac{1}{y^2 x} \right)
+   where x_{\min} = \max(1, \lfloor N/d \rfloor + 1 - y).
+
+   The inner sum over x is evaluated in O(1) time using precomputed prefix harmonic sums:
+       H_1(k) = \sum_{x=1}^k \frac{1}{x}, \quad H_2(k) = \sum_{x=1}^k \frac{1}{x^2}.
+   The total number of (d, y) pairs is \sum_{d=1}^N \lfloor N/d \rfloor \approx N \ln N.
+   For N = 10^4, this requires only ~92,100 operations instead of ~30.4 million Farey intervals,
+   reducing the runtime from ~15 seconds to ~0.02 seconds with exact precision via math.fsum.
 """
 
+import math
 import unittest
 from util.utils import timeit
 
 
+def compute_f_mobius(n: int) -> float:
+    """
+    Compute F(N) in O(N log N) time using Möbius inversion and precomputed prefix harmonic sums.
+    """
+    if n == 1:
+        return 0.5
+
+    # Linear sieve for Möbius function mu
+    mu = [0] * (n + 1)
+    mu[1] = 1
+    primes = []
+    is_prime = [True] * (n + 1)
+    for i in range(2, n + 1):
+        if is_prime[i]:
+            primes.append(i)
+            mu[i] = -1
+        for p in primes:
+            if i * p > n:
+                break
+            is_prime[i * p] = False
+            if i % p == 0:
+                mu[i * p] = 0
+                break
+            mu[i * p] = -mu[i]
+
+    # Precompute prefix sums of 1/x and 1/x^2
+    inv = [0.0] * (n + 1)
+    inv2 = [0.0] * (n + 1)
+    for x in range(1, n + 1):
+        inv[x] = inv[x - 1] + 1.0 / x
+        inv2[x] = inv2[x - 1] + 1.0 / (x * x)
+
+    terms = []
+    for d in range(1, n + 1):
+        if mu[d] == 0:
+            continue
+        d_factor = mu[d] / (2.0 * (d ** 3))
+        lim = n // d
+
+        for y in range(2, lim + 1):
+            x_min = lim + 1 - y
+            if x_min < 1:
+                x_min = 1
+            x_max = y - 1
+            if x_min > x_max:
+                continue
+
+            sum_inv2 = inv2[x_max] - inv2[x_min - 1]
+            sum_inv1 = inv[x_max] - inv[x_min - 1]
+            val = sum_inv2 / y + sum_inv1 / (y * y)
+            terms.append(d_factor * val)
+
+    return math.fsum(terms)
+
+
 def compute_f_farey(n: int) -> float:
     """
-    Compute F(N) = sum_{(a_1/b_1, a_2/b_2) in Farey(N)} 1 / (2 * b_1 * b_2^2)
-    using Kahan compensated summation.
+    Baseline O(N^2) computation iterating through all consecutive Farey intervals.
     """
     a1, b1, a2, b2 = 0, 1, 1, n
-    total = 0.0
-    c = 0.0  # Kahan compensation accumulator
-
-    # First term: [0/1, 1/n]
-    y = (1.0 / (2.0 * b1 * b2 * b2)) - c
-    t = total + y
-    c = (t - total) - y
-    total = t
+    terms = [(1.0 / (2.0 * b1 * b2 * b2))]
 
     while not (a2 == 1 and b2 == 1):
         k = (n + b1) // b2
         a1, b1, a2, b2 = a2, b2, k * a2 - a1, k * b2 - b1
-        y = (1.0 / (2.0 * b1 * b2 * b2)) - c
-        t = total + y
-        c = (t - total) - y
-        total = t
+        terms.append(1.0 / (2.0 * b1 * b2 * b2))
 
-    return total
+    return math.fsum(terms)
 
 
 class Problem965:
@@ -96,7 +151,7 @@ class Problem965:
         """
         Compute F(n) and return the value rounded to 13 digits after the decimal point.
         """
-        val = compute_f_farey(n)
+        val = compute_f_mobius(n)
         return f"{val:.13f}"
 
 
@@ -105,12 +160,15 @@ class Solution965(unittest.TestCase):
         self.problem = Problem965()
 
     def test_sample_f1(self):
-        self.assertAlmostEqual(0.5, compute_f_farey(1), places=10)
+        self.assertAlmostEqual(0.5, compute_f_mobius(1), places=10)
 
     def test_sample_f4(self):
-        self.assertAlmostEqual(0.25, compute_f_farey(4), places=10)
+        self.assertAlmostEqual(0.25, compute_f_mobius(4), places=10)
 
     def test_sample_f10(self):
+        self.assertAlmostEqual(19.0 / 144.0, compute_f_mobius(10), places=10)
+
+    def test_sample_f10_farey(self):
         self.assertAlmostEqual(19.0 / 144.0, compute_f_farey(10), places=10)
 
     def test_solution_final(self):
