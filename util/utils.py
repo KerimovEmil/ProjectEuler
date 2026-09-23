@@ -4,7 +4,7 @@ from itertools import accumulate
 from functools import lru_cache, reduce
 import math
 from math import gcd
-from typing import List, Union, Dict, Generator, Optional, Tuple
+from typing import List, Union, Dict, Generator, Optional, Tuple, Sequence
 
 
 class Hungarian:
@@ -450,36 +450,116 @@ def lcm(x, y):
     return x * y // gcd(x, y)
 
 
+def mat_mul(
+    a_mat: Sequence[Sequence[int]],
+    b_mat: Sequence[Sequence[int]],
+    mod: Optional[int] = None
+) -> List[List[int]]:
+    """
+    Multiply two 2D matrices A (n x p) and B (p x m), optionally modulo `mod`.
+
+    Optimized for sparse/structured matrices by skipping zero entries in A.
+
+    Args:
+        a_mat: First matrix of shape (n, p).
+        b_mat: Second matrix of shape (p, m).
+        mod: Optional modulo applied to intermediate additions and final entries.
+
+    Returns:
+        Product matrix C = A @ B of shape (n, m) as a list of lists.
+    """
+    n, m, p = len(a_mat), len(b_mat[0]), len(b_mat)
+    c_mat = [[0] * m for _ in range(n)]
+    if mod is not None:
+        for i in range(n):
+            for k in range(p):
+                aik = a_mat[i][k]
+                if aik == 0:
+                    continue
+                for j in range(m):
+                    c_mat[i][j] = (c_mat[i][j] + aik * b_mat[k][j]) % mod
+    else:
+        for i in range(n):
+            for k in range(p):
+                aik = a_mat[i][k]
+                if aik == 0:
+                    continue
+                for j in range(m):
+                    c_mat[i][j] += aik * b_mat[k][j]
+    return c_mat
+
+
+def mat_pow(
+    a_mat: Sequence[Sequence[int]],
+    p: int,
+    mod: Optional[int] = None
+) -> List[List[int]]:
+    """
+    Compute integer power of a square matrix A^p, optionally modulo `mod`.
+
+    Uses binary exponentiation in O(n^3 log p) operations.
+
+    Args:
+        a_mat: Square matrix of shape (n, n).
+        p: Non-negative integer exponent (p >= 0).
+        mod: Optional modulo applied during multiplications.
+
+    Returns:
+        Result matrix A^p of shape (n, n) as a list of lists.
+    """
+    if p < 0:
+        raise ValueError("Matrix power requires a non-negative exponent.")
+    n = len(a_mat)
+    res = [[int(i == j) for j in range(n)] for i in range(n)]
+    if mod is not None and p == 0:
+        return [[res[i][j] % mod for j in range(n)] for i in range(n)]
+    base = a_mat if mod is None else [[a_mat[i][j] % mod for j in range(n)] for i in range(n)]
+    while p > 0:
+        if p & 1:
+            res = mat_mul(res, base, mod)
+        base = mat_mul(base, base, mod)
+        p >>= 1
+    return res
+
+
 class Matrix:
-    def __init__(self, entries):
-        self.entries = entries
+    """
+    2D Matrix wrapper supporting multiplication, modular arithmetic, and exponentiation.
+    """
 
-    def __mul__(self, other):
-        result = [[0 for _ in range(len(other.entries[0]))] for _ in range(len(self.entries))]
-        for i in range(len(self.entries)):
-            for j in range(len(other.entries[0])):
-                for k in range(len(other.entries)):
-                    result[i][j] += self.entries[i][k] * other.entries[k][j]
-        return Matrix(result)
+    def __init__(self, entries: Sequence[Sequence[int]]):
+        self.entries = [list(row) for row in entries]
 
-    def __mod__(self, mod):
-        if mod:
-            for i in range(len(self.entries)):
-                for j in range(len(self.entries[0])):
-                    self.entries[i][j] %= mod
-        return self
+    def __mul__(self, other: Union['Matrix', Sequence[Sequence[int]]]) -> 'Matrix':
+        other_entries = other.entries if isinstance(other, Matrix) else other
+        return Matrix(mat_mul(self.entries, other_entries))
 
-    def __pow__(self, n, mod=None):
-        assert (n > 0)
-        if n == 1:
-            return self.__mod__(mod)
-        half = self.__pow__(n >> 1, mod)
-        if n & 1 == 1:  # if odd
-            return half.__mul__(half).__mul__(self).__mod__(mod)
-        else:  # if even
-            return half.__mul__(half).__mod__(mod)
+    def __matmul__(self, other: Union['Matrix', Sequence[Sequence[int]]]) -> 'Matrix':
+        return self.__mul__(other)
 
-    def __str__(self):
+    def __mod__(self, mod: Optional[int]) -> 'Matrix':
+        if mod is None:
+            return Matrix(self.entries)
+        return Matrix([[val % mod for val in row] for row in self.entries])
+
+    def __pow__(self, n: int, mod: Optional[int] = None) -> 'Matrix':
+        return Matrix(mat_pow(self.entries, n, mod))
+
+    def __getitem__(self, index: int) -> List[int]:
+        return self.entries[index]
+
+    def __len__(self) -> int:
+        return len(self.entries)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Matrix):
+            return self.entries == other.entries
+        return self.entries == other
+
+    def __repr__(self) -> str:
+        return f"Matrix({self.entries})"
+
+    def __str__(self) -> str:
         return str(self.entries)
 
 
