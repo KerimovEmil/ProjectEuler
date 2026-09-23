@@ -19,10 +19,10 @@ You are given S(4) = 276 and S(5) = 3347.
 Find S(14).
 
 ANSWER: 11726115562784664
-Solve time: ~180 seconds
+Solve time: ~85 seconds
 
 ---
-MATHEMATICAL DERIVATION:
+MATHEMATICAL DERIVATION & ALGORITHMIC ARCHITECTURE:
 
 1. Threat Condition & Distance Parameter d:
    Horizontal movement is unrestricted, so exactly one queen must occupy each of the n rows.
@@ -38,32 +38,45 @@ MATHEMATICAL DERIVATION:
      has one queen, each row chooses any column independently: Q(n, n - 1) = n^n.
    - When d = n - 1 (w = 0): this is the standard N-Queens problem.
 
-3. Hybrid Algorithmic Architecture:
-   As d varies from 0 to n - 1, the nature of the constraints shifts drastically:
-   - For small d (large w, wide search tree):
-     Constraints only extend back d rows. The system behaves as an order-d Markov process.
-     We use Dynamic Programming with state (c_{r-d}, ..., c_{r-1}) remembering only the last
-     d queen placements. State space is small and transitions take O(1) bitwise operations.
-   - For large d (small w, tight search tree):
-     The search tree is very narrow. We use Depth-First Search with O(1) Bitwise Expirations:
-     Maintain active bitmasks for columns (`cols`), main diagonals (`d1`), and anti-diagonals (`d2`).
-     Within any sliding window of length d, all active queens occupy pairwise distinct columns and
-     diagonals. When stepping from row r to r+1, the queen placed at row r - d expires, allowing
-     its column, d1, and d2 bits to be removed via XOR (`^=`) in O(1) time.
+3. Hybrid Dual Algorithmic Approach:
+   As d varies from 0 to n - 1, the constraint structure shifts between two regimes:
+
+   (A) Order-d Markov Transition Graph DP (for d <= 9):
+       - For smaller d, queens placed more than d rows apart exert no mutual constraints.
+         The system behaves as an order-d Markov chain where the valid state at row r depends
+         solely on the d-tuple of previous column placements (c_{r-d}, ..., c_{r-1}).
+       - We first generate all valid d-tuples and map each to a contiguous integer ID u in [0, |S|-1].
+       - An adjacency list adj[u] precomputes all valid transitions u -> v where
+         u = (c_{r-d}, ..., c_{r-1}) transitions to v = (c_{r-d+1}, ..., c_r) via bitmask compatibility.
+       - Each row transition from r to r+1 is a fast flat-array integer addition:
+             new_counts[v] += counts[u]
+         which completely avoids Python dictionary/tuple overhead, running in a few seconds.
+
+   (B) Fast Bitmask DFS with Branch-Free Sliding-Window Expirations (for d >= 10):
+       - For large d, the search space is narrow. We use bitwise DFS tracking active bitmasks
+         for columns (`cols`), left-diagonals (`d1`), and right-diagonals (`d2`).
+       - When placing a queen at row r with bitmask `bit` (where bit = 1 << c), we record
+         `bit_hist[r] = bit`.
+       - When advancing from row r to r+1 with r >= d, the queen from row r - d expires.
+         Its columns and diagonals are expired in O(1) branch-free bit operations:
+             old_bit = bit_hist[r - d]
+             nxt_cols ^= old_bit
+             nxt_d1 ^= (old_bit << (d + 1)) & mask_all
+             nxt_d2 ^= (old_bit >> (d + 1))
 
 4. Symmetry Reduction:
    Left-right reflection (c <-> n - 1 - c) is an automorphism of the board and attack relations.
-   For row 0, restricting c_0 to {0, ..., floor(n/2) - 1} and multiplying by 2 (plus the center
-   column if n is odd) halves the required computation.
+   Fixing c_0 to {0, ..., floor(n/2) - 1} and multiplying by 2 (plus the center column if n is odd)
+   cuts the state exploration in half for both DP and DFS.
 """
 
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 import unittest
 from util.utils import timeit
 
 
-def compute_q_dp(n: int, d: int) -> int:
-    """Compute Q(n, w) where d = n - 1 - w using dynamic programming over the last d rows."""
+def solve_dp_graph(n: int, d: int) -> int:
+    """Compute Q(n, w) where d = n - 1 - w using precomputed state graph DP."""
     if d == 0:
         return n**n
     if d == 1:
@@ -80,7 +93,6 @@ def compute_q_dp(n: int, d: int) -> int:
             dp = new_dp
         return sum(dp)
 
-    # Precompute attack bitmasks
     attack = [[0] * n for _ in range(d + 1)]
     for k in range(1, d + 1):
         for c in range(n):
@@ -93,138 +105,147 @@ def compute_q_dp(n: int, d: int) -> int:
 
     mask_all = (1 << n) - 1
 
-    # Symmetry on row 0
-    dp: Dict[Tuple[int, ...], int] = {(c,): 1 for c in range(n // 2)}
-    for r in range(1, n):
-        new_dp: Dict[Tuple[int, ...], int] = {}
-        for state, count in dp.items():
-            forb = 0
-            for k, prev_c in enumerate(reversed(state), 1):
-                forb |= attack[k][prev_c]
-            avail = mask_all & ~forb
-            while avail:
-                bit = avail & -avail
-                avail &= avail - 1
-                c = (bit - 1).bit_count()
-                nxt = (state + (c,)) if len(state) < d else (state[1:] + (c,))
-                new_dp[nxt] = new_dp.get(nxt, 0) + count
-        dp = new_dp
+    states: List[Tuple[int, ...]] = []
 
-    total = sum(dp.values()) * 2
+    def build_states(cur: Tuple[int, ...]):
+        if len(cur) == d:
+            states.append(cur)
+            return
+        forb = 0
+        for k, prev_c in enumerate(reversed(cur), 1):
+            forb |= attack[k][prev_c]
+        avail = mask_all & ~forb
+        while avail:
+            bit = avail & -avail
+            avail &= avail - 1
+            c = (bit - 1).bit_count()
+            build_states(cur + (c,))
+
+    build_states(())
+    state_to_id = {st: i for i, st in enumerate(states)}
+    num_states = len(states)
+
+    adj: List[List[int]] = [[] for _ in range(num_states)]
+    for u, st in enumerate(states):
+        forb = 0
+        for k, prev_c in enumerate(reversed(st), 1):
+            forb |= attack[k][prev_c]
+        avail = mask_all & ~forb
+        tail = st[1:]
+        while avail:
+            bit = avail & -avail
+            avail &= avail - 1
+            c = (bit - 1).bit_count()
+            v = state_to_id[tail + (c,)]
+            adj[u].append(v)
+
+    counts = [0] * num_states
+    half = n // 2
+    for i, st in enumerate(states):
+        if st[0] < half:
+            counts[i] = 1
+
+    for _ in range(d, n):
+        new_counts = [0] * num_states
+        for u in range(num_states):
+            cnt = counts[u]
+            if cnt:
+                for v in adj[u]:
+                    new_counts[v] += cnt
+        counts = new_counts
+
+    total = sum(counts) * 2
 
     if n % 2 == 1:
-        c0 = n // 2
-        dp_mid: Dict[Tuple[int, ...], int] = {(c0,): 1}
-        for r in range(1, n):
-            new_dp = {}
-            for state, count in dp_mid.items():
-                forb = 0
-                for k, prev_c in enumerate(reversed(state), 1):
-                    forb |= attack[k][prev_c]
-                avail = mask_all & ~forb
-                while avail:
-                    bit = avail & -avail
-                    avail &= avail - 1
-                    c = (bit - 1).bit_count()
-                    nxt = (state + (c,)) if len(state) < d else (state[1:] + (c,))
-                    new_dp[nxt] = new_dp.get(nxt, 0) + count
-            dp_mid = new_dp
-        total += sum(dp_mid.values())
+        counts = [0] * num_states
+        mid = n // 2
+        for i, st in enumerate(states):
+            if st[0] == mid:
+                counts[i] = 1
+        for _ in range(d, n):
+            new_counts = [0] * num_states
+            for u in range(num_states):
+                cnt = counts[u]
+                if cnt:
+                    for v in adj[u]:
+                        new_counts[v] += cnt
+            counts = new_counts
+        total += sum(counts)
 
     return total
 
 
-def compute_q_dfs(n: int, d: int) -> int:
-    """Compute Q(n, w) where d = n - 1 - w using bitmask DFS with O(1) sliding window expirations."""
-    if d == 0:
-        return n**n
-
+def compute_q_dfs_fast(n: int, d: int) -> int:
+    """Compute Q(n, w) where d = n - 1 - w using fast bitmask DFS with sliding-window expirations."""
     mask_all = (1 << n) - 1
-    history = [0] * n
+    shift = d + 1
+    bit_hist = [0] * n
     count = 0
 
-    for c0 in range(n // 2):
-        history[0] = c0
-        bit0 = 1 << c0
-
-        def dfs(r: int, cols: int, d1: int, d2: int):
+    if d >= n - 1:
+        def dfs_full(r: int, cols: int, d1: int, d2: int):
             nonlocal count
             if r == n:
                 count += 1
                 return
-
             avail = mask_all & ~(cols | d1 | d2)
             while avail:
                 bit = avail & -avail
                 avail &= avail - 1
-                c = (bit - 1).bit_count()
-                history[r] = c
+                dfs_full(r + 1, cols | bit, ((d1 | bit) << 1) & mask_all, (d2 | bit) >> 1)
+
+        for c0 in range(n // 2):
+            bit0 = 1 << c0
+            dfs_full(1, bit0, (bit0 << 1) & mask_all, bit0 >> 1)
+        total = count * 2
+        if n % 2 == 1:
+            bit0 = 1 << (n // 2)
+            count = 0
+            dfs_full(1, bit0, (bit0 << 1) & mask_all, bit0 >> 1)
+            total += count
+        return total
+
+    def dfs(r: int, cols: int, d1: int, d2: int):
+        nonlocal count
+        if r == n:
+            count += 1
+            return
+
+        avail = mask_all & ~(cols | d1 | d2)
+        if r < d:
+            while avail:
+                bit = avail & -avail
+                avail &= avail - 1
+                bit_hist[r] = bit
+                dfs(r + 1, cols | bit, ((d1 | bit) << 1) & mask_all, (d2 | bit) >> 1)
+        else:
+            while avail:
+                bit = avail & -avail
+                avail &= avail - 1
+                bit_hist[r] = bit
 
                 nxt_cols = cols | bit
                 nxt_d1 = ((d1 | bit) << 1) & mask_all
                 nxt_d2 = (d2 | bit) >> 1
 
-                # Expire queen from row r - d
-                if r >= d:
-                    old_c = history[r - d]
-                    nxt_cols ^= (1 << old_c)
-                    shift1 = old_c + d + 1
-                    if shift1 < n:
-                        nxt_d1 ^= (1 << shift1)
-                    shift2 = old_c - (d + 1)
-                    if shift2 >= 0:
-                        nxt_d2 ^= (1 << shift2)
+                old_bit = bit_hist[r - d]
+                nxt_cols ^= old_bit
+                nxt_d1 ^= (old_bit << shift) & mask_all
+                nxt_d2 ^= (old_bit >> shift)
 
                 dfs(r + 1, nxt_cols, nxt_d1, nxt_d2)
 
-        init_cols = bit0
-        init_d1 = (bit0 << 1) & mask_all
-        init_d2 = bit0 >> 1
-        dfs(1, init_cols, init_d1, init_d2)
-
-    total = count * 2
-
-    if n % 2 == 1:
-        c0 = n // 2
-        history[0] = c0
+    for c0 in range(n // 2):
         bit0 = 1 << c0
-        count_mid = 0
-
-        def dfs_mid(r: int, cols: int, d1: int, d2: int):
-            nonlocal count_mid
-            if r == n:
-                count_mid += 1
-                return
-
-            avail = mask_all & ~(cols | d1 | d2)
-            while avail:
-                bit = avail & -avail
-                avail &= avail - 1
-                c = (bit - 1).bit_count()
-                history[r] = c
-
-                nxt_cols = cols | bit
-                nxt_d1 = ((d1 | bit) << 1) & mask_all
-                nxt_d2 = (d2 | bit) >> 1
-
-                if r >= d:
-                    old_c = history[r - d]
-                    nxt_cols ^= (1 << old_c)
-                    shift1 = old_c + d + 1
-                    if shift1 < n:
-                        nxt_d1 ^= (1 << shift1)
-                    shift2 = old_c - (d + 1)
-                    if shift2 >= 0:
-                        nxt_d2 ^= (1 << shift2)
-
-                dfs_mid(r + 1, nxt_cols, nxt_d1, nxt_d2)
-
-        init_cols = bit0
-        init_d1 = (bit0 << 1) & mask_all
-        init_d2 = bit0 >> 1
-        dfs_mid(1, init_cols, init_d1, init_d2)
-        total += count_mid
-
+        bit_hist[0] = bit0
+        dfs(1, bit0, (bit0 << 1) & mask_all, bit0 >> 1)
+    total = count * 2
+    if n % 2 == 1:
+        bit0 = 1 << (n // 2)
+        bit_hist[0] = bit0
+        count = 0
+        dfs(1, bit0, (bit0 << 1) & mask_all, bit0 >> 1)
+        total += count
     return total
 
 
@@ -235,9 +256,9 @@ class Problem534:
     def q(self, n: int, w: int) -> int:
         """Calculate Q(n, w)."""
         d = n - 1 - w
-        if d <= 7:
-            return compute_q_dp(n, d)
-        return compute_q_dfs(n, d)
+        if d <= 9:
+            return solve_dp_graph(n, d)
+        return compute_q_dfs_fast(n, d)
 
     @timeit
     def solve(self, n: int = 14) -> int:
