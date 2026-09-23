@@ -177,6 +177,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0739 | [PE0739.py](../solutions/PE0739.py) | Take a sequence of length n. Discard the first term then make a seq... | 166 seconds (~3 minutes) |
 | PE0752 | [PE0752.py](../solutions/PE0752.py) | When (1+sqrt(7)) is raised to an integral power, n, we always get a... | 4.1 seconds |
 | PE0753 | [PE0753.py](../solutions/PE0753.py) | Problem 753 | 2.5 seconds |
+| PE0759 | [PE0759.py](../solutions/PE0759.py) | A squared recurrence: Find S(10^16) mod 1,000,000,007 where S(n) = sum f(i)^2. | ~0.002 seconds |
 | PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.15 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
 | PE0853 | [PE0853.py](../solutions/PE0853.py) | For every positive integer n the Fibonacci sequence modulo n is per... | 0.17 seconds |
