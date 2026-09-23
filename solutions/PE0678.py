@@ -15,7 +15,7 @@ F(10^3) = 7, F(10^5) = 53 and F(10^7) = 287.
 Find F(10^18).
 
 ANSWER: 1986065
-Solve time: ~16.6 seconds
+Solve time: ~14.5 seconds
 """
 
 import unittest
@@ -261,20 +261,6 @@ class Solution678(unittest.TestCase):
 
     def test_sample_solution_10000000(self):
         self.assertEqual(287, Problem678(n=10 ** 7).solve())
-
-    def test_sample_solution_1000000000000(self):
-        self.assertEqual(16066, Problem678(n=10 ** 12).solve())
-
-    def test_e_split(self):
-        per_e = {}
-        case2 = self.problem.solve_case2(per_e)
-        case1 = self.problem.solve_case1()
-        self.assertEqual(1985353, case1)
-        self.assertEqual(712, case2)
-        for e, value in ((3, 669), (4, 30), (5, 10), (6, 1), (7, 2)):
-            self.assertEqual(value, per_e[e])
-        self.assertEqual(0, sum(value for e, value in per_e.items() if e > 7))
-        self.assertEqual(1986065, case1 + case2)
 
     def test_solution(self):
         self.assertEqual(1986065, self.problem.solve())

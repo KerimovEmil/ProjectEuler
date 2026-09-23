@@ -181,7 +181,7 @@ class HandBuilder:
         self.ic = None
         self.c = Counter(self.values)
 
-    def build(self):
+    def build(self):  # noqa: C901
         if self.is_royal_flush():
             return Hand(HandType.RoyalFlush, self.cards, self.ic)
         elif self.is_straight_flush():

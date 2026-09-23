@@ -24,7 +24,6 @@ class Problem7:
         bound = int(n * (10 ** 0.5)) if n < 10 else int(n * (n.bit_length() * 0.6931471805599453 + 4))
         while count_primes_upto(bound) < n:
             bound *= 2
-        ls_primes = [i for i in range(2, bound) if i]
         sieved = [True] * bound
         for i in range(bound):
             if i >= 2 and sieved[i]:

@@ -6,11 +6,11 @@ of each solution grid; for example, 483 is the 3-digit number found in the top l
 the solution grid above.
 
 ANSWER: 24702
-Solve time: ~68 seconds
+Solve time: ~0.7 seconds
 """
 
 import unittest
-from util.dlx import DancingLinks, LeftIterator
+from util.dlx import DancingLinks
 from util.utils import timeit
 import os
 
@@ -53,46 +53,29 @@ class Problem96:
 
     @staticmethod
     def to_exact_cover(sudoku_matrix):
-        existing_rows = []
-        other_rows = []
+        rows = []
         mat_ref = {}
 
-        for row_id in range(len(sudoku_matrix)):
+        for row_id in range(9):
             row = sudoku_matrix[row_id]
-            for col_id in range(len(row)):
+            for col_id in range(9):
                 e = int(row[col_id])
-                for value in range(1, 10):
+                values = [e] if e != 0 else range(1, 10)
+                for value in values:
                     constraint_row = Problem96.gen_row(row_id, col_id, value)
                     mat_ref[constraint_row] = (row_id, col_id, value)
-                    if value == e:
-                        existing_rows.append(constraint_row)
-                    else:
-                        other_rows.append(constraint_row)
-        return existing_rows, other_rows, mat_ref
+                    rows.append(constraint_row)
+        return rows, mat_ref
 
     @staticmethod
     def solve_sudoku(sudoku_matrix):
         sudoku = [['0' for _ in range(9)] for _ in range(9)]
-
-        existing_rows, other_rows, mat_ref = Problem96.to_exact_cover(sudoku_matrix)
-        solver = DancingLinks(other_rows)
-
-        cols_to_cover = set()
-        for row in existing_rows:
-            for col_id in range(len(row)):
-                if row[col_id]:
-                    cols_to_cover.add(col_id)
-
-        for head in LeftIterator(solver.smat.ghead):
-            if head.col_idx in cols_to_cover:
-                solver._cover(head)
-
+        rows, mat_ref = Problem96.to_exact_cover(sudoku_matrix)
+        solver = DancingLinks(rows)
         solving_nodes = solver.solve()
-        solving_rows = set(other_rows[node.row_idx] for node in solving_nodes)
-        overall_rows = list(solving_rows) + existing_rows
 
-        for row in overall_rows:
-            row_id, col_id, value = mat_ref[row]
+        for node in solving_nodes:
+            row_id, col_id, value = mat_ref[rows[node.row_idx]]
             sudoku[row_id][col_id] = str(value)
         return sudoku
 

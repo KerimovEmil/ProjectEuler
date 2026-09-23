@@ -22,7 +22,7 @@ ANSWER: 5673835352990
 Solve time: ~0.001 seconds
 """
 import unittest
-from util.utils import timeit
+from util.utils import timeit, is_int
 
 
 # A(x) = sum_{n=1, inf} G_n x^n
@@ -118,10 +118,6 @@ def multiply_by_u(x, u=(9, 4), d=5):
     f = u1 * a + u2 * d * b
     s = u2 * a + u1 * b
     return f, s
-
-
-def is_int(n):
-    return abs(n - int(n)) < 1e-13
 
 
 class Problem140:

@@ -13,7 +13,7 @@ Solve time: ~0.274 seconds
 from itertools import product
 
 import unittest
-from util.utils import timeit
+from util.utils import timeit, is_palindrome
 
 
 class Problem4:
@@ -21,15 +21,11 @@ class Problem4:
         self.lower = 10 ** (num_digits - 1) - 1
         self.upper = 10 ** num_digits - 1
 
-    @staticmethod
-    def is_palindrome(num):
-        return str(num) == str(num)[::-1]
-
     @timeit
     def solve(self):
         pds = []
         for i, j in product(range(self.lower, self.upper), repeat=2):
-            if self.is_palindrome(i * j):
+            if is_palindrome(i * j):
                 pds.append(i * j)
         return max(pds)
 

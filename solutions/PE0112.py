@@ -30,6 +30,7 @@ def is_increasing(a):
 def is_decreasing(a):
     return all(j <= i for i, j in zip(a[:-1], a[1:]))
 
+
 def is_bouncy(a):
     return not is_decreasing(a) and not is_increasing(a)
 

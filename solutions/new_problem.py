@@ -4,10 +4,14 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 
+
 def get_problem_description(n):
     url = f"https://projecteuler.net/problem={n}"
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        'User-Agent': (
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+            'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        )
     }
     try:
         response = requests.get(url, headers=headers, timeout=10)
@@ -18,19 +22,19 @@ def get_problem_description(n):
                 # Remove script and style tags
                 for script in problem_content(["script", "style"]):
                     script.decompose()
-                
+
                 # Replace <br> with newlines
                 for br in problem_content.find_all('br'):
                     br.replace_with('\n')
-                
+
                 # Replace <p> with newlines around content
                 for p in problem_content.find_all('p'):
                     p.insert_before('\n')
                     p.insert_after('\n')
-                
+
                 # Extract text
                 text = problem_content.get_text()
-                
+
                 # Clean up multiple newlines and spaces
                 lines = [line.strip() for line in text.split('\n')]
                 # Filter out multiple consecutive empty lines
@@ -38,19 +42,20 @@ def get_problem_description(n):
                 for line in lines:
                     if line or (cleaned_lines and cleaned_lines[-1] != ''):
                         cleaned_lines.append(line)
-                
+
                 return '\n'.join(cleaned_lines).strip()
     except Exception as e:
         print(f"Warning: Could not fetch problem description: {e}")
     return "PROBLEM DESCRIPTION COULD NOT BE AUTOMATICALLY RETRIEVED."
+
 
 TEMPLATE = """r\"\"\"
 PROBLEM
 
 {1}
 
-ANSWER: 
-Solve time: 
+ANSWER:
+Solve time:
 \"\"\"
 
 import unittest
@@ -92,10 +97,10 @@ if __name__ == '__main__':
     if os.path.exists(f'./{fn}'):
         raise AssertionError(
             f'{fn} already exists! Just update the file you lazy bastard!')
-    
+
     print(f"Fetching problem {args.p} description...")
     description = get_problem_description(args.p)
-    
+
     with open(fn, 'w', encoding='utf-8') as f:
         f.write(TEMPLATE.format(args.p, description))
 

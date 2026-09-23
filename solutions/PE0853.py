@@ -66,7 +66,7 @@ class Problem853:
         self.debug = debug
 
     @timeit
-    def solve(self):
+    def solve(self):  # noqa: C901
 
         ls_n = []
 

@@ -12,7 +12,7 @@ and there are only four such primes below one-hundred.
 How many primes below one million have this remarkable property?
 
 ANSWER: 173
-Solve time: ~1 seconds
+Solve time: ~0.017 seconds
 """
 from util.utils import timeit, primes_upto
 import unittest
@@ -53,4 +53,3 @@ class Solution131(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

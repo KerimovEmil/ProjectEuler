@@ -7,19 +7,20 @@ square-free, but not 4, 8, 9, 12.
 How many square-free numbers are there below 2^50?
 
 ANSWER: 684465067343069
-Solve time: ~23 seconds
+Solve time: ~8.0 seconds
 
 References:
   https://arxiv.org/pdf/1107.4890.pdf
   http://www.numericana.com/answer/numbers.htm#moebius
-  https://arxiv.org/pdf/1107.4890.pdf
 """
 import unittest
+from bisect import bisect_right
+import numpy as np
 from util.utils import timeit, mobius_sieve, primes_upto
 
 
 class Problem193:
-    def __init__(self, n):
+    def __init__(self, n=2**50):
         self.n = n
         self.ls_primes = None
         self.limit = None
@@ -42,7 +43,7 @@ class Problem193:
     @timeit
     def solve_count_p_square(self, debug=False):  # 30 seconds
         self.ls_primes = primes_upto((self.n ** 0.5) + 1)
-        self.ls_sq_primes = [p*p for p in self.ls_primes]
+        self.ls_sq_primes = [p * p for p in self.ls_primes]
         len_primes = len(self.ls_primes)
         if debug:
             print("finished calculating primes")
@@ -64,27 +65,59 @@ class Problem193:
         return total
 
     @timeit
-    def solve_inclusion_exclusion(self):  # 23 seconds
+    def solve_inclusion_exclusion(self):  # ~8.0 seconds
         self.limit = self.n - 1
-        self.total = self.n - 1
-        self.ls_primes = primes_upto((self.n ** 0.5) + 1)
-        self.ls_sq_primes = [int(p * p) for p in self.ls_primes]
+        self.ls_primes = primes_upto(int(self.limit ** 0.5) + 1)
         self.num_primes = len(self.ls_primes)
-        self.inclusion_exclusion_helper(odd_even=-1, prev_prod=1, prime_index=0, next_prod=4)
+        p_list = [int(p) for p in self.ls_primes]
+        self.ls_sq_primes = [int(p * p) for p in self.ls_primes]
+        p_sq_list = self.ls_sq_primes
+        limit = self.limit
+
+        # 1-prime terms via vectorized NumPy
+        p_sq = self.ls_primes.astype(np.int64) ** 2
+        total = limit - int(np.sum(limit // p_sq))
+
+        def dfs(idx, prod, sign):
+            nonlocal total
+            max_p2 = limit // prod
+            if max_p2 < p_sq_list[idx]:
+                return
+            max_p = int(max_p2**0.5)
+            max_idx = bisect_right(p_list, max_p, idx)
+
+            max_p2_for_2 = limit // (2 * prod)
+            if max_p2_for_2 >= p_sq_list[idx]:
+                max_p_for_2 = int(max_p2_for_2**0.5)
+                idx_for_2 = bisect_right(p_list, max_p_for_2, idx, max_idx)
+            else:
+                idx_for_2 = idx
+
+            # Loop for terms where floor(limit / (prod * p^2)) >= 2 (may branch further)
+            for i in range(idx, idx_for_2):
+                p2 = p_sq_list[i]
+                new_prod = prod * p2
+                val = limit // new_prod
+                total += val * sign
+                if i + 1 < self.num_primes and p_sq_list[i + 1] <= limit // new_prod:
+                    dfs(i + 1, new_prod, -sign)
+
+            # O(1) bulk count for leaf terms where floor(limit / (prod * p^2)) == 1
+            count_1 = max_idx - idx_for_2
+            if count_1 > 0:
+                total += count_1 * sign
+
+        for i in range(self.num_primes):
+            p1_sq = p_sq_list[i]
+            if i + 1 < self.num_primes and p1_sq * p_sq_list[i + 1] > limit:
+                break
+            dfs(i + 1, p1_sq, 1)
+
+        self.total = total
         return self.total
 
-    def inclusion_exclusion_helper(self, odd_even, prev_prod, prime_index, next_prod):
-        while next_prod <= self.n:
-            self.total += (self.limit // next_prod) * odd_even
-            prime_index += 1
-
-            if prime_index >= self.num_primes:
-                break
-
-            next_prime_sq = self.ls_sq_primes[prime_index]
-            self.inclusion_exclusion_helper(odd_even=-odd_even, prev_prod=next_prod, prime_index=prime_index,
-                                            next_prod=next_prod*next_prime_sq)
-            next_prod = prev_prod * next_prime_sq
+    def solve(self):
+        return self.solve_inclusion_exclusion()
 
 
 class Solution193(unittest.TestCase):

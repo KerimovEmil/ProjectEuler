@@ -23,10 +23,9 @@ ANSWER: 661
 Solve time: ~0.093 seconds
 """
 
-import decimal
+import math
 import unittest
-
-decimal.getcontext().prec = 100
+from util.utils import timeit, pell_fundamental_solution
 
 
 class Problem66:
@@ -35,37 +34,20 @@ class Problem66:
         self.max_min_x = 0
         self.d_max_min_x = None
 
-    @staticmethod
-    def get_min_x_given_d(d):  # TODO: consider moving this to a util
-        old_p = decimal.Decimal(1).to_integral_exact(rounding=decimal.ROUND_FLOOR)
-        old_q = decimal.Decimal(0).to_integral_exact(rounding=decimal.ROUND_FLOOR)
-        p = decimal.Decimal(d).sqrt().to_integral_exact(rounding=decimal.ROUND_FLOOR)
-        q = 1
-        rem = decimal.Decimal(d).sqrt()
-        a = rem.to_integral_exact(rounding=decimal.ROUND_FLOOR)
-
-        while (p ** 2 - d * q ** 2 > 1) or (p ** 2 - d * q ** 2 < 1):
-            older_p = old_p
-            older_q = old_q
-            old_p = p
-            old_q = q
-            old_rem = rem
-            rem = 1 / (old_rem - a)
-            a = rem.to_integral_exact(rounding=decimal.ROUND_FLOOR)
-            p = a * old_p + older_p
-            q = a * old_q + older_q
-
-        return (p, q)
-
+    @timeit
     def solve(self):
-        non_sqr_ls = [x for x in range(1, self.max_d + 1) if int(x ** 0.5) != x ** 0.5]
+        for d in range(2, self.max_d + 1):
+            r = math.isqrt(d)
+            if r * r == d:
+                continue
 
-        for i in non_sqr_ls:
-            min_x = Problem66.get_min_x_given_d(i)[1]
+            sol = pell_fundamental_solution(d)
+            if sol is not None:
+                x = sol[0]
+                if x > self.max_min_x:
+                    self.max_min_x = x
+                    self.d_max_min_x = d
 
-            if min_x > self.max_min_x:
-                self.max_min_x = min_x
-                self.d_max_min_x = i
         return self.d_max_min_x
 
 
