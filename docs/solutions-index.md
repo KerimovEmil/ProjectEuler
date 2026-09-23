@@ -181,3 +181,4 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.15 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
 | PE0853 | [PE0853.py](../solutions/PE0853.py) | For every positive integer n the Fibonacci sequence modulo n is per... | 0.17 seconds |
+| PE0965 | [PE0965.py](../solutions/PE0965.py) | Minimal Fractional Parts: Find F(10^4) expected min {nx} on [0, 1]. | ~15 seconds |
