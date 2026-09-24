@@ -19,7 +19,7 @@ You are given S(4) = 276 and S(5) = 3347.
 Find S(14).
 
 ANSWER: 11726115562784664
-Solve time: ~85 seconds
+Solve time: ~75 seconds
 
 ---
 MATHEMATICAL DERIVATION & ALGORITHMIC ARCHITECTURE:
@@ -41,18 +41,19 @@ MATHEMATICAL DERIVATION & ALGORITHMIC ARCHITECTURE:
 3. Hybrid Dual Algorithmic Approach:
    As d varies from 0 to n - 1, the constraint structure shifts between two regimes:
 
-   (A) Order-d Markov Transition Graph DP (for d <= 9):
+   (A) Order-d Markov Transition Graph DP with Contiguous Prefix Slices (for d <= 8):
        - For smaller d, queens placed more than d rows apart exert no mutual constraints.
          The system behaves as an order-d Markov chain where the valid state at row r depends
          solely on the d-tuple of previous column placements (c_{r-d}, ..., c_{r-1}).
-       - We first generate all valid d-tuples and map each to a contiguous integer ID u in [0, |S|-1].
-       - An adjacency list adj[u] precomputes all valid transitions u -> v where
-         u = (c_{r-d}, ..., c_{r-1}) transitions to v = (c_{r-d+1}, ..., c_r) via bitmask compatibility.
-       - Each row transition from r to r+1 is a fast flat-array integer addition:
+       - All valid d-tuples are generated in lexicographical order. Consequently, all states
+         sharing the same (d-1)-prefix form a contiguous slice [start, end) in the state array.
+       - The transition from state u = (c_0, tail) to state v = (tail, c_d) requires only
+         checking that c_0 does not threaten c_d at distance d.
+       - Each row transition from r to r+1 is a flat integer array addition:
              new_counts[v] += counts[u]
-         which completely avoids Python dictionary/tuple overhead, running in a few seconds.
+         which completely avoids Python dictionary/tuple overhead.
 
-   (B) Fast Bitmask DFS with Branch-Free Sliding-Window Expirations (for d >= 10):
+   (B) Fast Bitmask DFS with Branch-Free Sliding-Window Expirations (for d >= 9):
        - For large d, the search space is narrow. We use bitwise DFS tracking active bitmasks
          for columns (`cols`), left-diagonals (`d1`), and right-diagonals (`d2`).
        - When placing a queen at row r with bitmask `bit` (where bit = 1 << c), we record
@@ -60,9 +61,9 @@ MATHEMATICAL DERIVATION & ALGORITHMIC ARCHITECTURE:
        - When advancing from row r to r+1 with r >= d, the queen from row r - d expires.
          Its columns and diagonals are expired in O(1) branch-free bit operations:
              old_bit = bit_hist[r - d]
-             nxt_cols ^= old_bit
-             nxt_d1 ^= (old_bit << (d + 1)) & mask_all
-             nxt_d2 ^= (old_bit >> (d + 1))
+             nxt_cols = (cols | bit) ^ old_bit
+             nxt_d1 = (((d1 | bit) << 1) & mask_all) ^ ((old_bit << (d + 1)) & mask_all)
+             nxt_d2 = ((d2 | bit) >> 1) ^ (old_bit >> (d + 1))
 
 4. Symmetry Reduction:
    Left-right reflection (c <-> n - 1 - c) is an automorphism of the board and attack relations.
@@ -76,7 +77,7 @@ from util.utils import timeit
 
 
 def solve_dp_graph(n: int, d: int) -> int:
-    """Compute Q(n, w) where d = n - 1 - w using precomputed state graph DP."""
+    """Compute Q(n, w) where d = n - 1 - w using precomputed state graph DP with prefix slices."""
     if d == 0:
         return n**n
     if d == 1:
@@ -122,22 +123,35 @@ def solve_dp_graph(n: int, d: int) -> int:
             build_states(cur + (c,))
 
     build_states(())
-    state_to_id = {st: i for i, st in enumerate(states)}
     num_states = len(states)
+
+    # Prefix slices: map each (d-1)-prefix to (start_idx, end_idx)
+    # Since states are generated in lexicographical order, states with same prefix form a contiguous slice
+    prefix_slices = {}
+    curr_prefix = None
+    start_idx = 0
+    for idx, st in enumerate(states):
+        pref = st[:-1]
+        if pref != curr_prefix:
+            if curr_prefix is not None:
+                prefix_slices[curr_prefix] = (start_idx, idx)
+            curr_prefix = pref
+            start_idx = idx
+    if curr_prefix is not None:
+        prefix_slices[curr_prefix] = (start_idx, num_states)
+
+    last_cols = [st[-1] for st in states]
 
     adj: List[List[int]] = [[] for _ in range(num_states)]
     for u, st in enumerate(states):
-        forb = 0
-        for k, prev_c in enumerate(reversed(st), 1):
-            forb |= attack[k][prev_c]
-        avail = mask_all & ~forb
+        c0 = st[0]
         tail = st[1:]
-        while avail:
-            bit = avail & -avail
-            avail &= avail - 1
-            c = (bit - 1).bit_count()
-            v = state_to_id[tail + (c,)]
-            adj[u].append(v)
+        forb_d = attack[d][c0]
+        if tail in prefix_slices:
+            s_idx, e_idx = prefix_slices[tail]
+            for v in range(s_idx, e_idx):
+                if not ((1 << last_cols[v]) & forb_d):
+                    adj[u].append(v)
 
     counts = [0] * num_states
     half = n // 2
@@ -224,14 +238,10 @@ def compute_q_dfs_fast(n: int, d: int) -> int:
                 avail &= avail - 1
                 bit_hist[r] = bit
 
-                nxt_cols = cols | bit
-                nxt_d1 = ((d1 | bit) << 1) & mask_all
-                nxt_d2 = (d2 | bit) >> 1
-
                 old_bit = bit_hist[r - d]
-                nxt_cols ^= old_bit
-                nxt_d1 ^= (old_bit << shift) & mask_all
-                nxt_d2 ^= (old_bit >> shift)
+                nxt_cols = (cols | bit) ^ old_bit
+                nxt_d1 = (((d1 | bit) << 1) & mask_all) ^ ((old_bit << shift) & mask_all)
+                nxt_d2 = ((d2 | bit) >> 1) ^ (old_bit >> shift)
 
                 dfs(r + 1, nxt_cols, nxt_d1, nxt_d2)
 
