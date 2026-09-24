@@ -5,35 +5,39 @@ Find the number of integers 1 < n < 10^7, for which n and n + 1 have the same nu
 For example, 14 has the positive divisors 1, 2, 7, 14 while 15 has 1, 3, 5, 15.
 
 ANSWER: 986262
-Solve time: ~0.38 seconds
+Solve time: ~0.21 seconds
+
+---
+MATHEMATICAL DERIVATION:
+
+1. Divisor Pairing & Sqrt Divisor Counting:
+   For any positive integer m, every divisor d < sqrt(m) corresponds to a unique complementary
+   divisor (m / d) > sqrt(m).
+   If m is a perfect square, d = sqrt(m) is a single divisor counted once.
+   Therefore, the divisor counting function tau(m) can be expressed as:
+       tau(m) = sum_{d | m, d <= sqrt(m)} (2 - [d^2 == m])
+
+2. Direct Sqrt Vectorized Sieve:
+   Instead of factorizing each number or sieving prime powers with multiple auxiliary arrays:
+   - Initialize tau[m] = 2 for all m >= 2 (since every m >= 2 has at least two divisors: 1 and m),
+     with tau[0] = 0 and tau[1] = 1.
+   - For each integer d from 2 up to floor(sqrt(n)):
+     - d is a divisor <= sqrt(m) for all multiples m = k * d with k >= d (i.e. m >= d^2).
+     - For k > d, {d, k} provides two new divisors, so add 2 to tau[d^2 :: d].
+     - For k = d (m = d^2), d = sqrt(m) is only one divisor, so subtract 1 from tau[d^2].
+   - This requires iterating d only up to floor(sqrt(10^7)) = 3162, requiring only 3162 slice
+     additions in NumPy.
+
+3. Memory & Computational Complexity:
+   - Memory: A single uint16 array of size N + 1 (20 MB for N = 10^7), avoiding auxiliary prime,
+     factor, or boolean mask arrays.
+   - Time: Sum_{d=2}^{sqrt(N)} (N / d) approx (1/2) N ln N operations, executing in ~0.21 seconds.
 """
 
 import math
 import unittest
 import numpy as np
 from util.utils import timeit
-
-
-# MATHEMATICAL DERIVATION:
-#
-# 1. Multiplicative Divisor Function:
-#    For n = prod p_i^{a_i}, the divisor count function is:
-#      tau(n) = prod (a_i + 1)
-#
-# 2. Vectorized Sieve via Small Primes:
-#    Since n <= 10^7, any number n has at most ONE prime factor p > sqrt(n) ~ 3162.
-#    There are only 446 primes p <= 3162.
-#    - We maintain an array rem = [0, 1, 2, ..., n] and tau = [1, 1, 1, ..., 1].
-#    - For each small prime p <= sqrt(n):
-#        For each power p^k <= n, we compute the multiplicity of p and divide rem[p^k :: p^k] by p.
-#        We multiply tau[p :: p] by (e + 1).
-#    - After processing all primes p <= sqrt(n):
-#        If rem[i] > 1, then rem[i] is prime (since it has no prime factors <= sqrt(n) and i <= n < (sqrt(n)+1)^2).
-#        Therefore, we multiply tau[rem > 1] by 2.
-#
-# 3. Consecutive Divisor Comparison:
-#    Count indices 2 <= i < n where tau[i] == tau[i + 1] using numpy vectorization.
-#    Total runtime is ~0.38s (down from ~18s).
 
 
 class Problem179:
@@ -47,28 +51,15 @@ class Problem179:
 
         limit_sqrt = math.isqrt(n)
 
-        # Sieve primes up to sqrt(n)
-        is_p = bytearray([1]) * (limit_sqrt + 1)
-        is_p[0] = is_p[1] = 0
-        for p in range(2, math.isqrt(limit_sqrt) + 1):
-            if is_p[p]:
-                is_p[p * p::p] = bytearray(len(is_p[p * p::p]))
-        small_primes = [p for p in range(2, limit_sqrt + 1) if is_p[p]]
+        # Initialize: every m >= 2 has at least 2 divisors (1 and m)
+        tau = np.full(n + 1, 2, dtype=np.uint16)
+        tau[0] = 0
+        tau[1] = 1
 
-        tau = np.ones(n + 1, dtype=np.int16)
-        rem = np.arange(n + 1, dtype=np.int32)
-
-        for p in small_primes:
-            p_pow = p
-            exp = np.zeros(n // p + 1, dtype=np.int8)
-            while p_pow <= n:
-                rem[p_pow::p_pow] //= p
-                exp[p_pow // p::p_pow // p] += 1
-                p_pow *= p
-            tau[p::p] *= (exp[1:] + 1)
-
-        # Any remaining factor > 1 is a prime > sqrt(n)
-        tau[rem > 1] *= 2
+        # Sieve complementary divisor pairs {d, m / d} for d >= 2
+        for d in range(2, limit_sqrt + 1):
+            tau[d * d::d] += 2
+            tau[d * d] -= 1
 
         return int(np.count_nonzero(tau[2:n] == tau[3:n + 1]))
 
