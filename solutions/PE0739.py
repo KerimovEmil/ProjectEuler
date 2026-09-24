@@ -174,9 +174,46 @@ class Problem739:
         m = self.mod_n
         f0, f1, f2 = 1, 1, 3
         den = 1
-        for k in range(3, n):
+
+        k = 3
+        limit = n - 8
+        while k <= limit:
             f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
             den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+        while k < n:
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
 
         f = (2 * f2 + f1) * pow(den, m - 2, m) % m
         return f
