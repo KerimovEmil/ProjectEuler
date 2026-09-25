@@ -29,33 +29,41 @@ Solve time: ~85 seconds
 ---
 MATHEMATICAL DERIVATION:
 
-1. Lattice Path & Catalan Transform:
-   Let the initial sequence of length n be (x_0, x_1, ..., x_{n-1}).
-   In the first step, x_0 is discarded and partial sums are computed.
-   Because the entire process of discarding and partial summation is linear, the final
-   single term is a linear combination of the initial terms:
-       f(n) = sum_{k=1}^{n-1} c_{n, k} x_k
-   (with c_{n, 0} = 0 since x_0 is immediately discarded).
+1. Catalan Triangle & Lattice Path Representation (OEIS A009766):
+   The coefficients for the partial summation process correspond to the Catalan Triangle
+   (OEIS A009766), defined by:
+       B(n, m) = (n - m + 1) / (n + 1) * C(n + m, m)
+   
+   This directly corresponds to the columns of the example in the problem:
+       Column 1 (m=0): 1, 1, 2, 5, 14, 42, 132, 429 (the Catalan numbers C_n)
+       Column 2 (m=1): 1, 2, 5, 14, 42, 132, 429
+       Column 3 (m=2): 1, 3, 9, 28, 90, 297
+       Column 4 (m=3): 1, 4, 14, 48, 165
+       Column 5 (m=4): 1, 5, 20, 75
+       Column 6 (m=5): 1, 6, 27
+       Column 7 (m=6): 1, 7
+       Column 8 (m=7): 1
 
-   Each step corresponds to moving in a triangular lattice where each node is the sum
-   of paths reaching it without crossing the diagonal y > x.
-   By André's Reflection Principle / Ballot Theorem, the coefficient c_{n, k} is:
-       c_{n, k} = C(2m - k - 1, m - 1) - C(2m - k - 1, m)
-                = k / m * C(2m - k - 1, m - 1)
-                = k / (2m - k) * C(2m - k, m)
-   where m = n - 1.
-   This operation mapping an input sequence to f(n) is the Catalan transform.
+   To see this geometrically, imagine adding an indicator row (1, 0, 0, ...) above the top row
+   and prepending zeros to subsequent rows. This isolates the contribution of each starting
+   term depending on its position.
 
-2. Sequence Evolution for Lucas Numbers:
-   For x_k = L_k (with x_0 = 1, x_1 = 3, x_2 = 4, x_3 = 7, ...), we can express L_k in terms
-   of Fibonacci numbers: L_k = F_{k-1} + 3*F_k.
-   Thus:
+   For a starting sequence of length N, the weight of the term at position N - m (for m in 0..N-2)
+   is given by the Catalan triangle entry at row n = N - 2:
+       coeff(m) = B(N - 2, m) = C(N - 2 + m, m) * (N - 1 - m) / (N - 1)
+
+   Thus, the final sum is given in closed form by:
+       f(N) = sum_{m=0}^{N-2} [ C(N - 2 + m, m) * (N - 1 - m) / (N - 1) ] * L(N - m)
+   where L(k) is the k-th Lucas number (with L(1)=1, L(2)=3, L(3)=4, L(4)=7, ...).
+
+2. Sequence Evolution & Catalan Transform:
+   Expressed in terms of Fibonacci numbers with L_k = F_{k-1} + 3*F_k:
        f(n+1) = sum_{k=0}^{n} k/(2n-k) * C(2n-k, n-k) * (F_{k-1} + 3*F_k)
        f(n+1) = sum_{k=0}^{n} k/(2n-k) * C(2n-k, n)   * (F_{k-1} + 3*F_k)
        f(n+1) = sum_{k=0}^{n} k/(n-1)  * C(2n-k-1, n-1) * (F_{k-1} + 3*F_k)
 
-3. Connection to OEIS A081696 & P-Recursive Recurrence:
-   The Catalan transform of the Fibonacci sequence yields the sequence a(n) (OEIS A081696):
+3. Connection to OEIS A081696 & Holonomic Recurrence:
+   The Catalan transform of the Fibonacci sequence yields sequence a(n) (OEIS A081696):
        1, 1, 3, 9, 29, 97, 333, 1165, 4135, ...
    with generating function:
        G(x) = 1 / (x + sqrt(1 - 4x)) = (sqrt(1 - 4x) - x) / (1 - 4x - x^2)
@@ -70,11 +78,10 @@ MATHEMATICAL DERIVATION:
    with initial conditions a(0) = 1, a(1) = 1, a(2) = 3.
 
 4. Efficient O(N) Computation with Single Modular Inversion:
-   To avoid computing modular inverses at each step k in [3, n-1], we scale the state by
-   (k! / 2!) and maintain the denominator den = (n-1)! / 2! mod M.
-   At the end of the loop, a single modular inversion via Fermat's Little Theorem gives:
+   To compute f(10^8) mod 10^9+7 in O(N) time without computing N modular inverses:
+   Scale the state by (k! / 2!) and maintain den = (n-1)! / 2! mod M.
+   At the end, a single modular inversion via Fermat's Little Theorem yields:
        f(n) = (2*f2 + f1) * den^{M-2} mod M
-   which runs in O(N) time and O(1) memory.
 """
 
 from typing import List
@@ -141,9 +148,9 @@ class Problem739:
     @timeit
     def solve_catalan_transform(self, n: int) -> int:
         """
-        Compute f(n) using the Catalan transform formula with precomputed modular inverses.
+        Compute f(n) using the Catalan transform / Catalan triangle formula with precomputed modular inverses.
 
-        f(n+1) = sum_{k=0}^{n} k/(n-1) * C(2n-k-1, n-1) * (F_{k-1} + 3*F_k)
+        f(N) = sum_{m=0}^{N-2} [ C(N - 2 + m, m) * (N - 1 - m) / (N - 1) ] * L(N - m)
         """
         f1, f2 = 0, 1
         s, m = 0, n - 1
@@ -169,7 +176,8 @@ class Problem739:
         n * a(n) = 2*(4*n-3)*a(n-1) - 3*(5*n-8)*a(n-2) - 2*(2*n-3)*a(n-3)
                  = n*(8*a(n-1) - 15*a(n-2) - 4*a(n-3)) + 6*(4*a(n-2) - a(n-1) + a(n-3))
 
-        With scaled variables to defer modular division to a single inverse at the end.
+        With scaled variables to defer modular division to a single inverse at the end,
+        and unrolled 8x to minimize loop overhead.
         """
         m = self.mod_n
         f0, f1, f2 = 1, 1, 3
