@@ -19,7 +19,7 @@ You are given S(4) = 276 and S(5) = 3347.
 Find S(14).
 
 ANSWER: 11726115562784664
-Solve time: ~75 seconds
+Solve time: ~100 seconds
 
 ---
 MATHEMATICAL DERIVATION & ALGORITHMIC ARCHITECTURE:
