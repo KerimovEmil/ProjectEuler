@@ -185,6 +185,8 @@ class Problem739:
 
         k = 3
         limit = n - 8
+        # 8x loop unrolling amortizes CPython bytecode loop-control overhead
+        # (condition comparisons and jump instructions) across 10^8 iterations.
         while k <= limit:
             f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
             den = (den * k) % m
@@ -218,6 +220,7 @@ class Problem739:
             den = (den * k) % m
             k += 1
 
+        # Tail/cleanup loop for the remaining iterations (0 to 7 steps)
         while k < n:
             f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
             den = (den * k) % m
