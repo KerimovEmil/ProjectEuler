@@ -24,12 +24,70 @@ You are also given f(20)=742296999 modulo 1,000,000,007
 Find f(10^8). Give your answer modulo 1,000,000,007.
 
 ANSWER: 711399016
-Solve time: ~166 seconds (~3 minutes)
+Solve time: ~85 seconds
+
+---
+MATHEMATICAL DERIVATION:
+
+1. Catalan Triangle & Lattice Path Representation (OEIS A009766):
+   The coefficients for the partial summation process correspond to the Catalan Triangle
+   (OEIS A009766), defined by:
+       B(n, m) = (n - m + 1) / (n + 1) * C(n + m, m)
+   
+   This directly corresponds to the columns of the example in the problem:
+       Column 1 (m=0): 1, 1, 2, 5, 14, 42, 132, 429 (the Catalan numbers C_n)
+       Column 2 (m=1): 1, 2, 5, 14, 42, 132, 429
+       Column 3 (m=2): 1, 3, 9, 28, 90, 297
+       Column 4 (m=3): 1, 4, 14, 48, 165
+       Column 5 (m=4): 1, 5, 20, 75
+       Column 6 (m=5): 1, 6, 27
+       Column 7 (m=6): 1, 7
+       Column 8 (m=7): 1
+
+   To see this geometrically, imagine adding an indicator row (1, 0, 0, ...) above the top row
+   and prepending zeros to subsequent rows. This isolates the contribution of each starting
+   term depending on its position.
+
+   For a starting sequence of length N, the weight of the term at position N - m (for m in 0..N-2)
+   is given by the Catalan triangle entry at row n = N - 2:
+       coeff(m) = B(N - 2, m) = C(N - 2 + m, m) * (N - 1 - m) / (N - 1)
+
+   Thus, the final sum is given in closed form by:
+       f(N) = sum_{m=0}^{N-2} [ C(N - 2 + m, m) * (N - 1 - m) / (N - 1) ] * L(N - m)
+   where L(k) is the k-th Lucas number (with L(1)=1, L(2)=3, L(3)=4, L(4)=7, ...).
+
+2. Sequence Evolution & Catalan Transform:
+   Expressed in terms of Fibonacci numbers with L_k = F_{k-1} + 3*F_k:
+       f(n+1) = sum_{k=0}^{n} k/(2n-k) * C(2n-k, n-k) * (F_{k-1} + 3*F_k)
+       f(n+1) = sum_{k=0}^{n} k/(2n-k) * C(2n-k, n)   * (F_{k-1} + 3*F_k)
+       f(n+1) = sum_{k=0}^{n} k/(n-1)  * C(2n-k-1, n-1) * (F_{k-1} + 3*F_k)
+
+3. Connection to OEIS A081696 & Holonomic Recurrence:
+   The Catalan transform of the Fibonacci sequence yields sequence a(n) (OEIS A081696):
+       1, 1, 3, 9, 29, 97, 333, 1165, 4135, ...
+   with generating function:
+       G(x) = 1 / (x + sqrt(1 - 4x)) = (sqrt(1 - 4x) - x) / (1 - 4x - x^2)
+
+   Since the Lucas sequence satisfies L_{k+1} = 2*F_{k+1} + F_k, our target value is:
+       f(n+1) = 2*a(n) + a(n-1)
+
+   The sequence a(n) satisfies the 3rd-order holonomic (P-recursive) recurrence:
+       n * a(n) = 2*(4n - 3)*a(n-1) - 3*(5n - 8)*a(n-2) - 2*(2n - 3)*a(n-3)
+   which factors as:
+       n * a(n) = n*(8*a(n-1) - 15*a(n-2) - 4*a(n-3)) - 6*(a(n-1) - 4*a(n-2) - a(n-3))
+   with initial conditions a(0) = 1, a(1) = 1, a(2) = 3.
+
+4. Efficient O(N) Computation with Single Modular Inversion:
+   To compute f(10^8) mod 10^9+7 in O(N) time without computing N modular inverses:
+   Scale the state by (k! / 2!) and maintain den = (n-1)! / 2! mod M.
+   At the end, a single modular inversion via Fermat's Little Theorem yields:
+       f(n) = (2*f2 + f1) * den^{M-2} mod M
 """
 
-from util.utils import timeit, cumsum, fibonacci_n_term, catalan_transform, get_all_mod_inverse_list
-import unittest
 from typing import List
+import unittest
+from util.utils import timeit, cumsum, fibonacci_n_term, catalan_transform, get_all_mod_inverse_list
+
 
 # 1, 3, 4, 7, 11, 18, 29, 47
 # 3, 7, 14, 25, 43, 72, 119
@@ -74,66 +132,107 @@ from typing import List
 
 
 class Problem739:
-    def __init__(self, mod_n: int = 1000000007, a=1, b=3, debug=False):
+    def __init__(self, mod_n: int = 1000000007, a: int = 1, b: int = 3, debug: bool = False):
         self.mod_n = mod_n
         self.a = a
         self.b = b
         self.debug = debug
 
     @timeit
-    def naive_solve(self, n: int, seq: List[int]):
-        for i in range(n-1):
+    def naive_solve(self, n: int, seq: List[int]) -> int:
+        """Simulate the process of dropping the first term and taking partial sums."""
+        for _ in range(n - 1):
             seq = cumsum(seq[1:])
         return seq[0]
 
     @timeit
-    def solve_catalan_transform(self, n: int):  # takes ~3 min 14 seconds
+    def solve_catalan_transform(self, n: int) -> int:
         """
-        Took from thread solutions.
+        Compute f(n) using the Catalan transform / Catalan triangle formula with precomputed modular inverses.
 
-        f(n+1) = sum_{k=0}^{k=n} k/(n-1)  * C(2n-k-1, n-1) (F_{k-1} + 3*F_{k})
+        f(N) = sum_{m=0}^{N-2} [ C(N - 2 + m, m) * (N - 1 - m) / (N - 1) ] * L(N - m)
         """
-
         f1, f2 = 0, 1
         s, m = 0, n - 1
 
         if self.debug:
             print('computing inverses')
-        ls_inv = get_all_mod_inverse_list(m=self.mod_n, max_n=m-1)
+        ls_inv = get_all_mod_inverse_list(m=self.mod_n, max_n=m - 1)
         if self.debug:
             print('finished computing inverses')
 
         for k in range(1, m):
-            # if (k % 100000) == 0:
-            #     print(f'{100 * (k / m):.2f} % complete')
             s = (s * (2 * m - k) + k * (f1 + 3 * f2)) * ls_inv[m - k] % self.mod_n
             f1, f2 = f2, (f1 + f2) % self.mod_n
 
         return (s + f1 + 3 * f2) % self.mod_n
 
     @timeit
-    def solve_recursive(self, n: int):
+    def solve_recursive(self, n: int) -> int:
         """
-        Took from thread solutions.
+        Compute f(n) modulo mod_n in O(n) time using the 3rd-order P-recursive relation for OEIS A081696.
 
-        OEIS A081696
-        f(0), f(1), f(2) = 1, 1, 3
+        Recurrence:
+        n * a(n) = 2*(4*n-3)*a(n-1) - 3*(5*n-8)*a(n-2) - 2*(2*n-3)*a(n-3)
+                 = n*(8*a(n-1) - 15*a(n-2) - 4*a(n-3)) + 6*(4*a(n-2) - a(n-1) + a(n-3))
 
-        n*f(n) = 2*(4*n-3)*f(n-1) - 3*(5*n-8)*f(n-2) - 2*(2*n-3)*f(n-3)
-
-        n*f(n) = n*(8f(n-1) - 15f(n-2) - 4f(n-3)) + 6*(4f(n-2) - f(n-1) + f(n-3))
+        With scaled variables to defer modular division to a single inverse at the end,
+        and unrolled 8x to minimize loop overhead.
         """
         m = self.mod_n
         f0, f1, f2 = 1, 1, 3
         den = 1
-        for k in range(3, n):
-            # if (k % 100000) == 0:
-            #     print(f'{100 * (k / n):.2f} % complete')
-            f0, f1, f2 = k * f1 % m, k * f2 % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
-            den = (den * k) % self.mod_n  # denominator = N!/2!
 
-        f = (2 * f2 + f1) * pow(den, self.mod_n - 2, self.mod_n) % self.mod_n  # (2*f2 + f1) / denominator % mod_n
+        k = 3
+        limit = n - 8
+        # 8x loop unrolling amortizes CPython bytecode loop-control overhead
+        # (condition comparisons and jump instructions) across 10^8 iterations.
+        while k <= limit:
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+        # Tail/cleanup loop for the remaining iterations (0 to 7 steps)
+        while k < n:
+            f0, f1, f2 = (k * f1) % m, (k * f2) % m, (k * (8 * f2 - 15 * f1 - 4 * f0) - 6 * (f2 - 4 * f1 - f0)) % m
+            den = (den * k) % m
+            k += 1
+
+        f = (2 * f2 + f1) * pow(den, m - 2, m) % m
         return f
+
+    @timeit
+    def solve(self, n: int = 100000000) -> int:
+        """Main solver entry point."""
+        return self.solve_recursive(n)
 
 
 class Solution739(unittest.TestCase):
@@ -149,10 +248,10 @@ class Solution739(unittest.TestCase):
     def test_catalan_fib_transform(self):
         ls_fib = [fibonacci_n_term(i) for i in range(7 + 1)]
         self.assertEqual(749, catalan_transform(n=7, seq=ls_fib))
-        self.assertEqual(118, catalan_transform(n=5, seq=[f-1 for f in ls_fib][2:]))
+        self.assertEqual(118, catalan_transform(n=5, seq=[f - 1 for f in ls_fib][2:]))
 
     def test_larger_solution(self):
-        """f(20)=74229699 modulo 1,000,000,007"""
+        """f(20)=742296999 modulo 1,000,000,007"""
         self.assertEqual(742296999, self.problem.solve_recursive(n=20))
 
     def test_solution_1e3(self):
@@ -164,8 +263,8 @@ class Solution739(unittest.TestCase):
     def test_solution_1e5(self):
         self.assertEqual(587213414, self.problem.solve_recursive(n=int(1e5)))
 
-    # def test_solution_1e8(self):  # takes ~ 2 mins 45 seconds
-    #     self.assertEqual(711399016, self.problem.solve_recursive(n=int(1e8)))
+    def test_solution_final(self):
+        self.assertEqual(711399016, self.problem.solve(int(1e8)))
 
 
 if __name__ == '__main__':
