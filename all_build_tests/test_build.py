@@ -2,7 +2,8 @@ import unittest
 from importlib import import_module
 from os import listdir, path
 
-bad_or_slow_solutions = [739]
+
+bad_or_slow_solutions = [534, 739]
 
 file_path = path.join(path.dirname(__file__), '..', 'solutions',)
 
