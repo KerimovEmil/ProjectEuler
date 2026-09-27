@@ -22,67 +22,37 @@ For example, $H(10^3)=2535$.
 
 Find $H(10^{15})$. Give your answer modulo $1031^3+2$.
 
-ANSWER: 820774119
-Solve time: ~30 seconds
+ANSWER: 522095328
+Solve time: ~10 seconds
 
 ---
 MATHEMATICAL DERIVATION:
 
-1. Algebraic Denesting Condition:
-   Squaring both sides of $\sqrt{\sqrt[3]{x} + \sqrt[3]{y}} = \sqrt[3]{a} + \sqrt[3]{b} + \sqrt[3]{c}$:
-   $$\sqrt[3]{x} + \sqrt[3]{y} = (\sqrt[3]{a} + \sqrt[3]{b} + \sqrt[3]{c})^2$$
-   $$= a^{2/3} + b^{2/3} + c^{2/3} + 2(ab)^{1/3} + 2(bc)^{1/3} + 2(ca)^{1/3}$$
-   For these 6 cross-terms to collapse into a two-term sum of cube roots $\sqrt[3]{x} + \sqrt[3]{y}$ without $x/y$ being a rational cube, the radicals $\sqrt[3]{a}, \sqrt[3]{b}, \sqrt[3]{c}$ must reside in a degree-9 bivariate field extension $\mathbb{Q}(u, v)$ where $u^3 = U, v^3 = V$.
-   Setting $\alpha = -u, \beta = u^2 v, \gamma = v^2$:
-   $$(\alpha + \beta + \gamma)^2 = u^2(1 + 2V) + u v^2(U - 2) + v(V - 2U)$$
-   The cross-term $u v^2(U - 2)$ vanishes identically if and only if $U = 2$.
-   When $U = 2$, this collapses to:
-   $$(-u + u^2 v + v^2)^2 = 2^{2/3}(2V + 1) + V^{1/3}(V - 4) = \sqrt[3]{4(2V + 1)^3} + \sqrt[3]{V(V - 4)^3}$$
+1. Primitive Radical Families:
+   By the algebraic classification of cubic nested radicals $\sqrt{\sqrt[3]{x} + \sqrt[3]{y}} = \sqrt[3]{a} + \sqrt[3]{b} + \sqrt[3]{c}$, all admissible integer pairs arise from two coprime parameter branches with integers $a, b > 0, \gcd(a, b) = 1$ (excluding $a = 2b$):
+   
+   - **Odd $b$ branch ($b$ odd):**
+     $$X = b(b + 4a)^3, \qquad Y = 4a(a - 2b)^3$$
+     
+   - **Even $b$ branch ($b$ even, $a$ odd):**
+     $$X = 2b\left(\frac{b}{2} + 2a\right)^3, \qquad Y = a(a - 2b)^3$$
 
-2. Coprime Rational Parametrization:
-   Let $V = p/q$ with $\gcd(p, q) = 1, q \ge 1, p \ne 0$.
-   To ensure $a, b, c$ are integers, we scale the basis elements by $q$:
-   $$\alpha = -q \sqrt[3]{2} \implies a = \alpha^3 = -2 q^3$$
-   $$\beta = 2^{2/3} p^{1/3} q^{2/3} \implies b = \beta^3 = 4 p q^2$$
-   $$\gamma = p^{2/3} q^{1/3} \implies c = \gamma^3 = p^2 q$$
-   The resulting squared sum yields integer components:
-   $$X_0 = 4 q^3 (2p + q)^3$$
-   $$Y_0 = p q^2 (p - 4q)^3$$
-   Any integer scaling of $(a, b, c) \to k (a, b, c)$ scales their cube roots by $k^{1/3}$, and squaring scales the components by $k^2$:
-   $$(x, y) = (k^2 X_0, k^2 Y_0)$$
+2. Multipliers:
+   Every valid nested radical pair $(x, y)$ is obtained from one of these primitive seeds $(X, Y)$ scaled by an arbitrary square multiplier $t^2$:
+   $$(x, y) = (t^2 X, t^2 Y), \qquad 1 \le t \le \left\lfloor \sqrt{\frac{N}{\max(|X|, |Y|)}} \right\rfloor$$
+   Sum of multipliers: $\sum_{t=1}^{t_{\max}} t^2 = \frac{t_{\max}(t_{\max}+1)(2t_{\max}+1)}{6}$.
 
 3. Rational Cube Exclusion:
-   $x/y$ is a cube of a rational number if and only if:
-   $$\frac{X_0}{Y_0} = \frac{4 q (2p + q)^3}{p (p - 4q)^3} \iff \frac{4q}{p} \text{ is a rational cube} \iff 4 q p^2 \text{ is an integer cube}$$
-   Pairs where $4 q p^2$ is a perfect cube are excluded.
+   $x/y$ is a cube of a rational number if and only if the cube-free kernels match:
+   - For odd $b$: $\operatorname{cf}(b) = \operatorname{cf}(4a)$
+   - For even $b$: $\operatorname{cf}(2b) = \operatorname{cf}(a)$
+   where $\operatorname{cf}(n) = \prod_p p^{v_p(n) \bmod 3}$ is precomputed via a smallest prime factor (SPF) sieve.
 
-4. Dual Involutive Symmetry and Primitive Bases:
-   The ratio map $f(t) = \frac{Y_0}{X_0} = \frac{t}{4}\left(\frac{t-4}{2t+1}\right)^3$ satisfies the involutive dual symmetry:
-   $$f(-2/t) = \frac{1}{f(t)}$$
-   Thus $t = p/q \longleftrightarrow t' = -2/t = -2q/p$ swaps $X_0$ and $Y_0$.
-   Let $g = \gcd(2, |p|)$ and $(p_2, q_2) = (-2q/g, p/g)$.
-   The base pairs from $(p, q)$ and $(p_2, q_2)$ are multiples of a common primitive base $(X_{\text{prim}}, Y_{\text{prim}})$:
-   - If $p$ is odd, $q$ is odd: $u = 2|p|, v = q$, $X_{\text{prim}} = 4q(2p+q)^3, Y_{\text{prim}} = p(p-4q)^3$.
-   - If $p$ is odd, $q$ is even: $u = |p|, v = q/2$, $X_{\text{prim}} = 16q(2p+q)^3, Y_{\text{prim}} = 4p(p-4q)^3$.
-   - If $p \equiv 2 \pmod 4$, $q$ is odd: $u = |p|/2, v = 2q$, $X_{\text{prim}} = q(2p+q)^3, Y_{\text{prim}} = \frac{p}{4}(p-4q)^3$.
-   - If $p \equiv 0 \pmod 4$, $q$ is odd: $u = |p|/4, v = q$, $X_{\text{prim}} = 4q(2p+q)^3, Y_{\text{prim}} = p(p-4q)^3$.
-
-   To prevent double-counting dual orbits, we choose the canonical representative satisfying:
-   $$q < q_2 \quad \text{or} \quad (q = q_2 \text{ and } p \le p_2)$$
-
-5. Multiplier Counting via Inclusion-Exclusion:
-   For a primitive base with $M_{\text{prim}} = \max(|X_{\text{prim}}|, |Y_{\text{prim}}|) \le N$, the valid multipliers $k \le K = \lfloor \sqrt{N / M_{\text{prim}}} \rfloor$ are integers where $u \mid k$ or $v \mid k$.
-   By the Principle of Inclusion-Exclusion, the sum of $k^2$ for valid $k \le K$ is:
-   $$\Sigma(K) = u^2 S\left(\left\lfloor \frac{K}{u} \right\rfloor\right) + v^2 S\left(\left\lfloor \frac{K}{v} \right\rfloor\right) - (uv)^2 S\left(\left\lfloor \frac{K}{uv} \right\rfloor\right)$$
-   where $S(m) = \sum_{j=1}^m j^2 = \frac{m(m+1)(2m+1)}{6}$.
-   The contribution to $H(N)$ from this orbit is:
-   $$(|X_{\text{prim}}| + |Y_{\text{prim}}|) \cdot \Sigma(K) \pmod{1031^3 + 2}$$
-
-6. Complexity Analysis:
-   - Outer loop over $q \le (4N)^{1/4} \approx 7952$.
-   - Inner loop over $p$ with $|p| \le (4N / q^2)^{1/4}$.
-   - Total number of candidate parameter pairs is $O(N^{3/8}) \approx 4 \times 10^6$.
-   - Space Complexity: $O(1)$ auxiliary memory.
+4. Complexity:
+   - SPF sieve up to $\max(4a, 2b) = O(N^{1/3})$.
+   - $b \le (4N)^{1/4} \approx 7952$.
+   - For each $b$, $a \le \frac{(N/b)^{1/3} - b}{4}$.
+   - Overall time complexity is $O(N^{3/8})$, running in ~10 seconds.
 """
 
 import math
@@ -95,82 +65,122 @@ class Problem880:
         pass
 
     @staticmethod
-    def _sum_sq_mod(n: int, mod: int) -> int:
-        """Compute sum_{j=1}^n j^2 mod mod."""
-        return (n * (n + 1) * (2 * n + 1) // 6) % mod
+    def _icbrt(n: int) -> int:
+        """Floor integer cube root for n >= 0."""
+        if n <= 1:
+            return n
+        r = int(round(n ** (1.0 / 3.0)))
+        while (r + 1) ** 3 <= n:
+            r += 1
+        while r**3 > n:
+            r -= 1
+        return r
+
+    @staticmethod
+    def _iroot4(n: int) -> int:
+        """Floor integer fourth root for n >= 0."""
+        r = math.isqrt(math.isqrt(n))
+        while (r + 1) ** 4 <= n:
+            r += 1
+        while r**4 > n:
+            r -= 1
+        return r
+
+    @staticmethod
+    def _cube_free_table(limit: int) -> list[int]:
+        """Return cf[n] = product p^(v_p(n) mod 3) for 0 <= n <= limit."""
+        spf = list(range(limit + 1))
+        if limit >= 1:
+            spf[1] = 1
+
+        for p in range(2, math.isqrt(limit) + 1):
+            if spf[p] != p:
+                continue
+            for m in range(p * p, limit + 1, p):
+                if spf[m] == m:
+                    spf[m] = p
+
+        cf = [1] * (limit + 1)
+        for n in range(2, limit + 1):
+            p = spf[n]
+            m = n // p
+            e = 1
+            while m % p == 0:
+                m //= p
+                e += 1
+
+            rem = e % 3
+            if rem == 0:
+                cf[n] = cf[m]
+            elif rem == 1:
+                cf[n] = cf[m] * p
+            else:
+                cf[n] = cf[m] * p * p
+        return cf
+
+    @staticmethod
+    def _sumsq(k: int) -> int:
+        """1^2 + 2^2 + ... + k^2."""
+        return k * (k + 1) * (2 * k + 1) // 6
 
     @timeit
     def solve(self, N: int = 10**15, mod: int = 1031**3 + 2) -> int:
-        """
-        Compute H(N) mod mod using Ramanujan's cubic nested radical parametrization
-        and inclusion-exclusion over coprime parameters (r, q).
-        """
-        total_H = 0
-        max_q = int((4 * N)**(1 / 3)) // 4 + 10
+        b_limit = self._iroot4(4 * N)
 
-        for q in range(1, max_q + 1):
-            q_is_odd = (q % 2 != 0)
+        max_odd_a = max(0, (self._icbrt(N) - 1) // 4)
+        max_even_a = max(0, (self._icbrt(N // 4) - 1) // 2)
+        cf_limit = max(4 * max_odd_a, max_even_a, 2 * b_limit)
+        cf = self._cube_free_table(cf_limit)
+        cf4 = [0] * (max_odd_a + 1)
+        for a in range(1, max_odd_a + 1):
+            cf4[a] = cf[4 * a]
 
-            if (1 + 4 * q)**3 > 4 * N:
-                break
+        total = 0
+        gcd = math.gcd
+        isqrt = math.isqrt
+        icbrt_local = self._icbrt
+        sumsq_local = self._sumsq
 
-            r = 1
-            while True:
-                if r * ((r + 4 * q)**3) > 4 * N:
-                    break
-
-                if math.gcd(r, q) != 1:
-                    r += 1
+        # Branch 1: Odd b
+        for b in range(1, b_limit + 1, 2):
+            a_limit = (icbrt_local(N // b) - b) // 4
+            cf_b = cf[b]
+            for a in range(1, a_limit + 1):
+                if gcd(a, b) != 1 or cf_b == cf4[a]:
                     continue
 
-                val = 4 * q * r * r
-                cr = round(val**(1 / 3))
-                if cr * cr * cr == val:
-                    r += 1
+                x_base = b + 4 * a
+                x = b * x_base * x_base * x_base
+                y_base = a - 2 * b
+                y_abs = abs(4 * a * y_base * y_base * y_base)
+                max_coord = x if x >= y_abs else y_abs
+                if max_coord > N:
                     continue
 
-                p = -r
-                t_2p_q = 2 * p + q
-                t_2p_q_3 = t_2p_q * t_2p_q * t_2p_q
-                t_p_4q = p - 4 * q
-                t_p_4q_3 = t_p_4q * t_p_4q * t_p_4q
+                tmax = isqrt(N // max_coord)
+                total = (total + (x + y_abs) * sumsq_local(tmax)) % mod
 
-                if r % 2 != 0:
-                    if q_is_odd:
-                        u, v = 2 * r, q
-                        X_prim = 4 * q * t_2p_q_3
-                        Y_prim = p * t_p_4q_3
-                    else:
-                        u, v = r, q // 2
-                        X_prim = 16 * q * t_2p_q_3
-                        Y_prim = 4 * p * t_p_4q_3
-                else:
-                    if (r // 2) % 2 != 0:
-                        u, v = r // 2, 2 * q
-                        X_prim = q * t_2p_q_3
-                        Y_prim = (p * t_p_4q_3) // 4
-                    else:
-                        u, v = r // 4, q
-                        X_prim = 4 * q * t_2p_q_3
-                        Y_prim = p * t_p_4q_3
-
-                M_prim = max(abs(X_prim), abs(Y_prim))
-                if M_prim > N:
-                    r += 1
+        # Branch 2: Even b (a must be odd for gcd(a, b) == 1)
+        for b in range(2, b_limit + 1, 2):
+            half_b = b // 2
+            a_limit = (icbrt_local(N // (2 * b)) - half_b) // 2
+            cf_2b = cf[2 * b]
+            for a in range(1, a_limit + 1, 2):
+                if gcd(a, b) != 1 or cf_2b == cf[a]:
                     continue
 
-                S_prim = (abs(X_prim) + abs(Y_prim)) % mod
-                K = int(math.isqrt(N // M_prim))
+                x_base = half_b + 2 * a
+                x = 2 * b * x_base * x_base * x_base
+                y_base = a - 2 * b
+                y_abs = abs(a * y_base * y_base * y_base)
+                max_coord = x if x >= y_abs else y_abs
+                if max_coord > N:
+                    continue
 
-                term1 = (pow(u, 2, mod) * self._sum_sq_mod(K // u, mod)) % mod
-                term2 = (pow(v, 2, mod) * self._sum_sq_mod(K // v, mod)) % mod
-                term3 = (pow(u * v, 2, mod) * self._sum_sq_mod(K // (u * v), mod)) % mod
-                k_sq_sum = (term1 + term2 - term3) % mod
+                tmax = isqrt(N // max_coord)
+                total = (total + (x + y_abs) * sumsq_local(tmax)) % mod
 
-                total_H = (total_H + S_prim * k_sq_sum) % mod
-                r += 1
-
-        return total_H
+        return total
 
 
 class Solution880(unittest.TestCase):
@@ -181,10 +191,13 @@ class Solution880(unittest.TestCase):
         self.assertEqual(2535, self.problem.solve(10**3))
 
     def test_sample_10000(self):
-        self.assertEqual(143227, self.problem.solve(10**4))
+        self.assertEqual(192635, self.problem.solve(10**4))
+
+    def test_sample_100000(self):
+        self.assertEqual(9899943, self.problem.solve(10**5))
 
     def test_solution(self):
-        self.assertEqual(820774119, self.problem.solve())
+        self.assertEqual(522095328, self.problem.solve())
 
 
 if __name__ == '__main__':
