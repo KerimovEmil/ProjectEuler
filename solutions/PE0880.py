@@ -23,7 +23,7 @@ For example, $H(10^3)=2535$.
 Find $H(10^{15})$. Give your answer modulo $1031^3+2$.
 
 ANSWER: 820774119
-Solve time: ~220 seconds
+Solve time: ~30 seconds
 
 ---
 MATHEMATICAL DERIVATION:
@@ -102,165 +102,73 @@ class Problem880:
     @timeit
     def solve(self, N: int = 10**15, mod: int = 1031**3 + 2) -> int:
         """
-        Compute H(N) mod mod using coprime parameter generation and inclusion-exclusion.
+        Compute H(N) mod mod using Ramanujan's cubic nested radical parametrization
+        and inclusion-exclusion over coprime parameters (r, q).
         """
         total_H = 0
-        max_q = int((4 * N)**0.25) + 10
+        max_q = int((4 * N)**(1 / 3)) // 4 + 10
 
         for q in range(1, max_q + 1):
             q_is_odd = (q % 2 != 0)
 
-            # Positive p
-            p = q
+            if (1 + 4 * q)**3 > 4 * N:
+                break
+
+            r = 1
             while True:
-                if not q_is_odd and p % 2 == 0:
-                    p += 1
-                    continue
-                if q_is_odd and p % 2 == 0 and p < 2 * q:
-                    p += 1
-                    continue
-                if 2 * p + q == 0 or p - 4 * q == 0:
-                    p += 1
-                    continue
-                if math.gcd(p, q) != 1:
-                    p += 1
-                    continue
-
-                # Dual canonical check
-                g = 2 if p % 2 == 0 else 1
-                p2, q2 = -2 * q // g, p // g
-                if q2 < 0:
-                    p2, q2 = -p2, -q2
-
-                if q > q2 or (q == q2 and p > p2):
-                    p += 1
-                    continue
-
-                # Rational cube exclusion
-                val = 4 * q * p * p
-                cr = round(val**(1 / 3))
-                if cr * cr * cr == val:
-                    p += 1
-                    continue
-
-                t_2p_q = 2 * p + q
-                t_2p_q_3 = t_2p_q * t_2p_q * t_2p_q
-                t_p_4q = p - 4 * q
-                t_p_4q_3 = t_p_4q * t_p_4q * t_p_4q
-
-                if p % 2 != 0:
-                    if q_is_odd:
-                        u, v = 2 * p, q
-                        X_prim = 4 * q * t_2p_q_3
-                        Y_prim = p * t_p_4q_3
-                    else:
-                        u, v = p, q // 2
-                        X_prim = 16 * q * t_2p_q_3
-                        Y_prim = 4 * p * t_p_4q_3
-                else:
-                    if (p // 2) % 2 != 0:
-                        u, v = p // 2, 2 * q
-                        X_prim = q * t_2p_q_3
-                        Y_prim = (p * t_p_4q_3) // 4
-                    else:
-                        u, v = p // 4, q
-                        X_prim = 4 * q * t_2p_q_3
-                        Y_prim = p * t_p_4q_3
-
-                M_prim = max(abs(X_prim), abs(Y_prim))
-                if M_prim > N:
-                    if p > 4 * q:
-                        break
-                    p += 1
-                    continue
-
-                S_prim = (abs(X_prim) + abs(Y_prim)) % mod
-                K = int(math.isqrt(N // M_prim))
-
-                if (p, q) == (p2, q2):
-                    k_sq_sum = self._sum_sq_mod(K, mod)
-                else:
-                    term1 = (pow(u, 2, mod) * self._sum_sq_mod(K // u, mod)) % mod
-                    term2 = (pow(v, 2, mod) * self._sum_sq_mod(K // v, mod)) % mod
-                    term3 = (pow(u * v, 2, mod) * self._sum_sq_mod(K // (u * v), mod)) % mod
-                    k_sq_sum = (term1 + term2 - term3) % mod
-
-                total_H = (total_H + S_prim * k_sq_sum) % mod
-                p += 1
-
-            # Negative p
-            p = -q
-            while True:
-                abs_p = -p
-                if not q_is_odd and abs_p % 2 == 0:
-                    p -= 1
-                    continue
-                if q_is_odd and abs_p % 2 == 0 and abs_p < 2 * q:
-                    p -= 1
-                    continue
-                if 2 * p + q == 0 or p - 4 * q == 0:
-                    p -= 1
-                    continue
-                if math.gcd(abs_p, q) != 1:
-                    p -= 1
-                    continue
-
-                g = 2 if abs_p % 2 == 0 else 1
-                p2, q2 = -2 * q // g, p // g
-                if q2 < 0:
-                    p2, q2 = -p2, -q2
-
-                if q > q2 or (q == q2 and p > p2):
-                    p -= 1
-                    continue
-
-                val = 4 * q * abs_p * abs_p
-                cr = round(val**(1 / 3))
-                if cr * cr * cr == val:
-                    p -= 1
-                    continue
-
-                t_2p_q = 2 * p + q
-                t_2p_q_3 = t_2p_q * t_2p_q * t_2p_q
-                t_p_4q = p - 4 * q
-                t_p_4q_3 = t_p_4q * t_p_4q * t_p_4q
-
-                if abs_p % 2 != 0:
-                    if q_is_odd:
-                        u, v = 2 * abs_p, q
-                        X_prim = 4 * q * t_2p_q_3
-                        Y_prim = p * t_p_4q_3
-                    else:
-                        u, v = abs_p, q // 2
-                        X_prim = 16 * q * t_2p_q_3
-                        Y_prim = 4 * p * t_p_4q_3
-                else:
-                    if (abs_p // 2) % 2 != 0:
-                        u, v = abs_p // 2, 2 * q
-                        X_prim = q * t_2p_q_3
-                        Y_prim = (p * t_p_4q_3) // 4
-                    else:
-                        u, v = abs_p // 4, q
-                        X_prim = 4 * q * t_2p_q_3
-                        Y_prim = p * t_p_4q_3
-
-                M_prim = max(abs(X_prim), abs(Y_prim))
-                if M_prim > N:
+                if r * ((r + 4 * q)**3) > 4 * N:
                     break
 
+                if math.gcd(r, q) != 1:
+                    r += 1
+                    continue
+
+                val = 4 * q * r * r
+                cr = round(val**(1 / 3))
+                if cr * cr * cr == val:
+                    r += 1
+                    continue
+
+                p = -r
+                t_2p_q = 2 * p + q
+                t_2p_q_3 = t_2p_q * t_2p_q * t_2p_q
+                t_p_4q = p - 4 * q
+                t_p_4q_3 = t_p_4q * t_p_4q * t_p_4q
+
+                if r % 2 != 0:
+                    if q_is_odd:
+                        u, v = 2 * r, q
+                        X_prim = 4 * q * t_2p_q_3
+                        Y_prim = p * t_p_4q_3
+                    else:
+                        u, v = r, q // 2
+                        X_prim = 16 * q * t_2p_q_3
+                        Y_prim = 4 * p * t_p_4q_3
+                else:
+                    if (r // 2) % 2 != 0:
+                        u, v = r // 2, 2 * q
+                        X_prim = q * t_2p_q_3
+                        Y_prim = (p * t_p_4q_3) // 4
+                    else:
+                        u, v = r // 4, q
+                        X_prim = 4 * q * t_2p_q_3
+                        Y_prim = p * t_p_4q_3
+
+                M_prim = max(abs(X_prim), abs(Y_prim))
+                if M_prim > N:
+                    r += 1
+                    continue
+
                 S_prim = (abs(X_prim) + abs(Y_prim)) % mod
                 K = int(math.isqrt(N // M_prim))
 
-                if (p, q) == (p2, q2):
-                    k_sq_sum = self._sum_sq_mod(K, mod)
-                else:
-                    term1 = (pow(u, 2, mod) * self._sum_sq_mod(K // u, mod)) % mod
-                    term2 = (pow(v, 2, mod) * self._sum_sq_mod(K // v, mod)) % mod
-                    term3 = (pow(u * v, 2, mod) * self._sum_sq_mod(K // (u * v), mod)) % mod
-                    k_sq_sum = (term1 + term2 - term3) % mod
+                term1 = (pow(u, 2, mod) * self._sum_sq_mod(K // u, mod)) % mod
+                term2 = (pow(v, 2, mod) * self._sum_sq_mod(K // v, mod)) % mod
+                term3 = (pow(u * v, 2, mod) * self._sum_sq_mod(K // (u * v), mod)) % mod
+                k_sq_sum = (term1 + term2 - term3) % mod
 
                 total_H = (total_H + S_prim * k_sq_sum) % mod
-                p -= 1
+                r += 1
 
         return total_H
 
