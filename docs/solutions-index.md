@@ -178,6 +178,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | ~14.5 seconds |
 | PE0686 | [PE0686.py](../solutions/PE0686.py) | 2^7 = 128 is the first power of two whose leading digits are "12". | 1.6 seconds |
 | PE0700 | [PE0700.py](../solutions/PE0700.py) | Leonhard Euler was born on 15 April 1707. | 0.003 seconds |
+| PE0704 | [PE0704.py](../solutions/PE0704.py) | Factors of Two in Binomial Coefficients: Find S(10^16) = sum F(n). | ~0.0001 seconds |
 | PE0722 | [PE0722.py](../solutions/PE0722.py) | Problem 722 | 0.001 seconds |
 | PE0739 | [PE0739.py](../solutions/PE0739.py) | Take a sequence of length n. Discard the first term then make a seq... | ~85 seconds |
 | PE0752 | [PE0752.py](../solutions/PE0752.py) | When (1+sqrt(7)) is raised to an integral power, n, we always get a... | 4.1 seconds |
