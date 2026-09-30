@@ -132,6 +132,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0185 | [PE0185.py](../solutions/PE0185.py) | The game Number Mind is a variant of the well known game Master Mind. | 0.26 seconds |
 | PE0187 | [PE0187.py](../solutions/PE0187.py) | A composite is a number containing at least two prime factors. For ... | 0.04 seconds |
 | PE0188 | [PE0188.py](../solutions/PE0188.py) | Problem 188 | 0.001 seconds |
+| PE0189 | [PE0189.py](../solutions/PE0189.py) | Tri-colouring a triangular grid: Find valid 3-colourings of a 64-triangle grid. | ~0.05 seconds |
 | PE0193 | [PE0193.py](../solutions/PE0193.py) | A positive integer n is called square-free, if no square of a prime... | 8.0 seconds |
 | PE0197 | [PE0197.py](../solutions/PE0197.py) | Given is the function f(x) = ⌊2^(30.403243784-x^2)⌋ × 1e-9 ( ⌊ ⌋ is... | 0.001 seconds |
 | PE0204 | [PE0204.py](../solutions/PE0204.py) | A Hamming number is a positive number which has no prime factor lar... | 0.6 seconds |
