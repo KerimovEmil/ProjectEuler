@@ -33,9 +33,6 @@ MATHEMATICAL DERIVATION:
 
 2. <Recurrence / Invariant / Formula>:
    Detail the exact formulas, transition equations, generating functions, or dynamic programming state transitions.
-
-3. <Complexity Analysis>:
-   State the asymptotic time and space complexity in Big-O notation (e.g. O(log N), O(N^(2/3))).
 """
 
 import unittest
@@ -76,7 +73,7 @@ Ensure that:
 - The answer assertion matches.
 - Small sample test cases from the problem statement are included in the `Solution<N>` test suite.
 - The runtime printed by `@timeit` is recorded in the docstring (`Solve time: ~X.XXX seconds`).
-- Complete mathematical derivations, recurrence equations, and complexity analyses are documented in the docstring.
+- Complete mathematical derivations and recurrence equations are documented in the docstring.
 
 ### Step 4: Run the Global Test Suite
 Verify that the full CI test suite passes:
