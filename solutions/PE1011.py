@@ -15,7 +15,7 @@ You are given $E(10) = 343$ and $E(100) = 269288$.
 Find $E(3\,000\,000)$.
 
 ANSWER: 6750031298491815420
-Solve time: ~1.54 seconds
+Solve time: ~0.85 seconds
 
 ---
 MATHEMATICAL DERIVATION:
@@ -25,28 +25,22 @@ MATHEMATICAL DERIVATION:
      $$E(N) = \sum_{a=1}^{N-1} a + 2 \sum_{1 \le a < b < N} f(a, b) = \frac{(N-1)N}{2} + 2 S(N)$$
    - For a fixed $a$ and $b > a$, let $q = \lfloor b/a \rfloor \ge 1$. Then $(a, b) \to (a, q)$, so $f(a, b) = f(a, q)$.
    - For each quotient $q \in [1, \lfloor (N-1)/a \rfloor]$, $b$ ranges in $[\max(a+1, q a), \min(N-1, (q+1)a - 1)]$.
-   - For $q = 1$: $f(a, 1) = a$. The count of such $b$'s is:
-     $$c(a, 1) = \begin{cases} a - 1 & \text{if } a \le \lfloor N/2 \rfloor \\ N - 1 - a & \text{if } a > \lfloor N/2 \rfloor \end{cases}$$
-     The sum $\sum_{a=1}^{N-1} a \cdot c(a, 1)$ evaluates in $O(1)$ using quadratic/linear power sums.
+   - For $q = 1$: $f(a, 1) = a$. Evaluated in $O(1)$ via closed-form quadratic and linear sum identities.
    - For $a = 1, q \ge 2$: $c(1, q) = 1$ and $f(1, q) = q$, contributing $\sum_{q=2}^{N-1} q = \frac{(N-1)N}{2} - 1$.
 
-2. Hyperbolic Interval Aggregation & Recurrence:
-   - For $a \ge 2, q \ge 2$ with $a \cdot q < N$, we have $\min(a, q) \le \sqrt{N-1}$.
-   - For a fixed parameter $d = \min(a, q) \le \sqrt{N-1}$:
-     - When $a < q$: $q$ ranges in $[d+1, \lfloor (N-1)/d \rfloor]$. Setting $k = \lfloor q/d \rfloor$, $f(d, q) = f(d, k)$
-       remains constant on intervals of $q \in [k \cdot d, \min((N-1)/d, (k+1)d - 1)]$.
-     - When $a > q$: $a$ ranges in $[d+1, \lfloor (N-1)/d \rfloor]$. Setting $k = \lfloor a/d \rfloor$, $f(a, d) = f(d, k)$
-       remains constant on intervals of $a \in [k \cdot d, \min((N-1)/d, (k+1)d - 1)]$.
-   - On each interval, the sum of coefficients $c(a, q)$ is an arithmetic progression computed in $O(1)$ time.
-   - The total number of intervals across all $d \le \sqrt{N}$ is $2 \sum_{d=2}^{\sqrt{N}} \frac{N}{d^2} \approx 2 N (\pi^2/6 - 1) \approx 1.29 N$.
+2. Constant Invariant $f(2, b) = 2$ and $O(1)$ Closed Forms for $d = 2$:
+   - For any $b \ge 2$, $(2, b) \to (2, \lfloor b/2 \rfloor) \to \dots \to (2, 2 \text{ or } 3) \to (2, 1) \mapsto 2$.
+     Thus, $f(2, b) = 2$ identically for all $b \ge 2$.
+   - The divisor $d = 2$ accounts for $N/4 = 750,000$ intervals ($\approx 38.8\%$ of all intervals across all $d$).
+   - We replace all $d = 2$ computations with exact $O(1)$ closed forms:
+     1. $a = 2, b \ge 4$: $\sum_{b=4}^{N-1} f(2, b) = 2(N - 4)$.
+     2. $q = 2, a \ge 3$: $\sum_{a=3}^{\lfloor (N-1)/2 \rfloor} c(a, 2) \cdot 2 = 2 \left( \sum_{a=3}^{\lfloor N/3 \rfloor} a + \sum_{a=\lfloor N/3 \rfloor + 1}^{\lfloor (N-1)/2 \rfloor} (N - 2a) \right)$.
 
-3. Precomputed Recurrence Table:
-   - $f(x, y)$ for $x \le \sqrt{N}$ and $y \le (N-1)/x^2$ is precomputed in $O(N)$ total time via memoized DAG traversal:
-     $$f(x, y) = f(\min(x, \lfloor y/x \rfloor), \max(x, \lfloor y/x \rfloor))$$
-
-4. Complexity Analysis:
-   - Time Complexity: $O(N)$ operations ($\approx 3.8 \times 10^6$ intervals for $N = 3 \times 10^6$), running in ~1.5 seconds.
-   - Space Complexity: $O(\sum_{d=2}^{\sqrt{N}} N/d^2) = O(N)$ integers (~1.93 million entries, < 16 MB).
+3. Hyperbolic Interval Aggregation for $d \ge 3$:
+   - For $a \ge 3, q \ge 3$ with $a \cdot q < N$, let $d = \min(a, q) \le \sqrt{N-1}$.
+   - Setting $k = \lfloor \max(a, q) / d \rfloor$, $f(a, q) = f(d, k)$ is constant over contiguous intervals of length $d$.
+   - The coefficient sum over each interval is an arithmetic progression evaluated in $O(1)$ time.
+   - Values of $f(d, k)$ for $3 \le d \le \sqrt{N}$ and $k \le (N-1)/d^2$ are precomputed in $O(N)$ via memoized DAG traversal over integer array buffers.
 """
 
 import unittest
@@ -66,20 +60,25 @@ class Problem1011:
         half = n // 2
         limit_sqrt = int((n - 1) ** 0.5)
 
-        # Precompute table for f(x, k) where x <= limit_sqrt and k <= (n - 1) // (x * x)
+        # Precompute table for f(x, k) for 3 <= x <= limit_sqrt and k <= (n - 1) // (x * x)
+        # We leverage f(2, b) = 2 identically for all b >= 2
         f_table: list[list[int] | None] = [None] * (limit_sqrt + 1)
-        for x in range(2, limit_sqrt + 1):
+        for x in range(3, limit_sqrt + 1):
             max_k = (n - 1) // (x * x)
             f_table[x] = [0] * (max_k + 1)
 
         def compute_f(x: int, y: int) -> int:
             if x == 1:
                 return y
+            if x == 2:
+                return 2
             if x == y:
                 return x
             k = y // x
             if k == 1:
                 return x
+            if k == 2:
+                return 2
             if k <= x:
                 tbl_k = f_table[k]
                 if k <= limit_sqrt and tbl_k is not None and x < len(tbl_k) and tbl_k[x] != 0:
@@ -91,15 +90,19 @@ class Problem1011:
                     return tbl_x[k]
                 return compute_f(x, k)
 
-        for x in range(2, limit_sqrt + 1):
+        for x in range(3, limit_sqrt + 1):
             tbl = f_table[x]
             assert tbl is not None
             max_k = len(tbl) - 1
             for k in range(2, max_k + 1):
-                if k <= x:
+                if k == 2:
+                    tbl[k] = 2
+                elif k <= x:
                     q = x // k
                     if q == 1:
                         tbl[k] = k
+                    elif q == 2:
+                        tbl[k] = 2
                     elif q <= k:
                         tbl[k] = compute_f(q, k)
                     else:
@@ -108,26 +111,50 @@ class Problem1011:
                     q = k // x
                     if q == 1:
                         tbl[k] = x
+                    elif q == 2:
+                        tbl[k] = 2
                     elif q <= x:
                         tbl[k] = tbl[q] if q < len(tbl) and tbl[q] else compute_f(q, x)
                     else:
                         tbl[k] = tbl[q] if q < len(tbl) and tbl[q] else compute_f(x, q)
 
-        # Closed form for q = 1 cases: sum_{a=1}^{n-1} a * count(a, 1)
-        sum_part1 = (half - 1) * half * (half + 1) // 3
+        # 1. Closed form for q = 1 cases: sum_{a=1}^{n-1} a * count(a, 1)
         sum_linear = lambda m: m * (m + 1) // 2
         sum_squares = lambda m: m * (m + 1) * (2 * m + 1) // 6
+
+        sum_part1 = (half - 1) * half * (half + 1) // 3
         sum_a = sum_linear(n - 1) - sum_linear(half)
         sum_a2 = sum_squares(n - 1) - sum_squares(half)
         sum_part2 = (n - 1) * sum_a - sum_a2
         sum_q1 = sum_part1 + sum_part2
 
-        # a = 1, q in [2, n - 1]: f(1, q) = q
+        # 2. a = 1, q in [2, n - 1]: f(1, q) = q
         sum_a1 = (n - 1) * n // 2 - 1
 
-        sum_pairs = 0
-        for d in range(2, limit_sqrt + 1):
-            # 1. d == q (diagonal of product region)
+        # 3. Exact O(1) closed forms for d = 2 leveraging f(2, b) = 2 for all b >= 2:
+        # (a) a = 2, b in [4, n - 1]:
+        sum_a2_ge_4 = 2 * max(0, n - 4)
+
+        # (b) q = 2, a in [3, (n - 1) // 2]:
+        third = n // 3
+        if third >= 3:
+            sum_count_a = sum_linear(third) - sum_linear(2)
+        else:
+            sum_count_a = 0
+
+        if half >= third + 1:
+            cnt_terms = half - (third + 1) + 1
+            sum_a_tail = sum_linear(half) - sum_linear(third)
+            sum_count_b = n * cnt_terms - 2 * sum_a_tail
+        else:
+            sum_count_b = 0
+
+        sum_q2_a_ge_3 = 2 * (sum_count_a + sum_count_b)
+
+        sum_pairs = sum_a2_ge_4 + sum_q2_a_ge_3
+
+        # 4. Hyperbolic intervals for d >= 3:
+        for d in range(3, limit_sqrt + 1):
             c_diag = d if (d + 1) * d <= n else n - d * d
             sum_pairs += c_diag * d
 
