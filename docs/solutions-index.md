@@ -165,6 +165,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0365 | [PE0365.py](../solutions/PE0365.py) | The binomial coefficient (10^18 choose 10^9) is a number with more ... | ~1.45 seconds |
 | PE0381 | [PE0381.py](../solutions/PE0381.py) | For a prime p let S(p) = (sum (p-k)!) mod p for 1 <= k <= 5. | 3.661 seconds |
 | PE0392 | [PE0392.py](../solutions/PE0392.py) | Find rectilinear gridline positions to minimize red cells enclosing unit circle. | ~0.005 seconds |
+| PE0394 | [PE0394.py](../solutions/PE0394.py) | Expected repetitions of Jeff eating circular pie with remaining threshold. | ~0.00001 seconds |
 | PE0399 | [PE0399.py](../solutions/PE0399.py) | Find the 100,000,000th squarefree Fibonacci number. | ~0.001 seconds |
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | An integer is called a divisor of n if it divides n with no remainder. Find SIGMA2(10^15) mod 10^9. | ~5.0 seconds |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Look and Say sequence: Find A(n), B(n), and C(n) for n = 10^12 modulo 2^30. | ~0.005 seconds |
