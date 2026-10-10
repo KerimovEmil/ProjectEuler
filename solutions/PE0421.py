@@ -47,45 +47,26 @@ MATHEMATICAL DERIVATION:
      count(r, p, N) = (N - r) // p + 1.
 
 5. Optimization:
-   - Sieve primes up to M = 10^8 using an odd-only boolean array in ~0.25 seconds.
+   - Sieve primes up to M = 10^8 using primes_upto from util.utils in ~0.47 seconds.
    - Group primes by d = gcd(15, p - 1) = gcd(15, (p - 1) % 15):
      * d = 1: primes with (p - 1) % 15 in {1, 2, 4, 7, 13} (and p = 2).
        The single root is always p - 1. This entire subset (~2.16 million primes) is vectorized
        with NumPy in ~0.15 seconds.
      * d = 3, 5, 15: iterated with minimal small-g exponentiation, directly accumulating contributions.
-   Total run time is ~31 seconds.
+   Total run time is ~24 seconds.
 """
 
 import unittest
 import numpy as np
-from util.utils import timeit
+from util.utils import timeit, primes_upto
 
 
 class Problem421:
     def __init__(self):
         pass
 
-    @staticmethod
-    def _primes_up_to(n: int) -> np.ndarray:
-        """Return all primes up to n as a NumPy array of int64."""
-        if n < 2:
-            return np.empty(0, dtype=np.int64)
-        size = (n - 1) // 2 + 1
-        sieve = np.ones(size, dtype=bool)
-        sieve[0] = False
-        limit = int(int(n**0.5 - 1) / 2) + 1
-        for i in range(1, limit):
-            if sieve[i]:
-                p = 2 * i + 1
-                start = 2 * i * (i + 1)
-                sieve[start::p] = False
-        primes = np.empty(np.count_nonzero(sieve) + 1, dtype=np.int64)
-        primes[0] = 2
-        primes[1:] = 2 * np.nonzero(sieve)[0] + 1
-        return primes
-
     def compute(self, n_limit: int, prime_limit: int) -> int:
-        primes = self._primes_up_to(prime_limit)
+        primes = primes_upto(prime_limit)
         p_mod = (primes - 1) % 15
 
         # d = 1: gcd(15, p - 1) == 1
