@@ -168,6 +168,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0394 | [PE0394.py](../solutions/PE0394.py) | Expected repetitions of Jeff eating circular pie with remaining threshold. | ~0.00001 seconds |
 | PE0398 | [PE0398.py](../solutions/PE0398.py) | Expected length of second-shortest segment when cutting rope into m pieces. | ~0.33 seconds |
 | PE0399 | [PE0399.py](../solutions/PE0399.py) | Find the 100,000,000th squarefree Fibonacci number. | ~0.001 seconds |
+| PE0400 | [PE0400.py](../solutions/PE0400.py) | Count winning moves on first turn of take-away game on Fibonacci tree. | ~7.2 seconds |
 | PE0401 | [PE0401.py](../solutions/PE0401.py) | An integer is called a divisor of n if it divides n with no remainder. Find SIGMA2(10^15) mod 10^9. | ~5.0 seconds |
 | PE0419 | [PE0419.py](../solutions/PE0419.py) | Look and Say sequence: Find A(n), B(n), and C(n) for n = 10^12 modulo 2^30. | ~0.005 seconds |
 | PE0420 | [PE0420.py](../solutions/PE0420.py) | A positive integer matrix is a matrix whose elements are all positi... | ~3.4 seconds |
