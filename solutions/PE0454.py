@@ -9,7 +9,7 @@ We can verify that F(15) = 4 and F(1000) = 1069.
 Find F(10^12).
 
 ANSWER: 5435004633092
-Solve time: ~7.2 seconds
+Solve time: ~5.2 seconds
 """
 
 import math
@@ -127,6 +127,15 @@ def _innertriple(limit: int) -> int:  # noqa: C901
     return total
 
 
+# 6. Block Mertens Hyperbola Grouping:
+#    For large d, sub_limit = floor(L / d^2) takes small values v <= K.
+#    Since sub_limit = 0 for sub_limit < 6, d is bounded by floor(sqrt(L / 6)).
+#    Using prefix sums of the Möbius function M(x) = sum_{k=1}^x mu(k):
+#      sum_{d: floor(L/d^2) = v} mu(d) * G(v) = G(v) * (M(floor(sqrt(L/v))) - M(floor(sqrt(L/(v+1))))).
+#    Grouping over small v in [6, K] condenses hundreds of thousands of evaluation terms
+#    into single constant-time prefix differences.
+
+
 class Problem454:
     def __init__(self, limit: int = 10**12):
         self.limit = limit
@@ -136,16 +145,39 @@ class Problem454:
         if limit is None:
             limit = self.limit
 
-        rt = math.isqrt(limit)
-        mu = mobius_sieve(rt)
+        if limit < 6:
+            return 0
+
+        d_max = math.isqrt(limit // 6)
+        if d_max == 0:
+            return 0
+
+        mu = mobius_sieve(d_max)
+
+        # For small limits or d_max <= 500, direct evaluation is instantaneous
+        k_thresh = 500
+        if d_max <= k_thresh:
+            return sum(mu[d] * _innertriple(limit // (d * d)) for d in range(1, d_max + 1) if mu[d])
+
+        mu_arr = np.array(mu, dtype=np.int32)
+        m_prefix = np.cumsum(mu_arr)
+
+        d_cutoff = math.isqrt(limit // (k_thresh + 1))
 
         ans = 0
-        for d in range(1, rt + 1):
+        for d in range(1, d_cutoff + 1):
             if mu[d] != 0:
                 sub_limit = limit // (d * d)
-                if sub_limit < 6:
-                    break
                 ans += mu[d] * _innertriple(sub_limit)
+
+        for v in range(6, k_thresh + 1):
+            val_g = _innertriple(v)
+            if val_g == 0:
+                continue
+            d_hi = math.isqrt(limit // v)
+            d_lo = math.isqrt(limit // (v + 1))
+            sum_mu = int(m_prefix[d_hi] - m_prefix[d_lo])
+            ans += val_g * sum_mu
 
         return ans
 

@@ -134,14 +134,14 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0187 | [PE0187.py](../solutions/PE0187.py) | A composite is a number containing at least two prime factors. For ... | 0.04 seconds |
 | PE0188 | [PE0188.py](../solutions/PE0188.py) | Problem 188 | 0.001 seconds |
 | PE0189 | [PE0189.py](../solutions/PE0189.py) | Tri-colouring a triangular grid: Find valid 3-colourings of a 64-triangle grid. | ~0.05 seconds |
-| PE0193 | [PE0193.py](../solutions/PE0193.py) | A positive integer n is called square-free, if no square of a prime... | 8.0 seconds |
+| PE0193 | [PE0193.py](../solutions/PE0193.py) | A positive integer n is called square-free, if no square of a prime... | 5.1 seconds |
 | PE0197 | [PE0197.py](../solutions/PE0197.py) | Given is the function f(x) = ⌊2^(30.403243784-x^2)⌋ × 1e-9 ( ⌊ ⌋ is... | 0.001 seconds |
 | PE0204 | [PE0204.py](../solutions/PE0204.py) | A Hamming number is a positive number which has no prime factor lar... | 0.6 seconds |
 | PE0206 | [PE0206.py](../solutions/PE0206.py) | Find the unique positive integer whose square has the form 1_2_3_4_... | 0.1 seconds |
 | PE0211 | [PE0211.py](../solutions/PE0211.py) | For a positive integer n, let σ2(n) be the sum of the squares of it... | 4.8 seconds |
 | PE0221 | [PE0221.py](../solutions/PE0221.py) | We shall call a positive integer "A" an "Alexandrian integer", if t... | 0.95 seconds |
 | PE0225 | [PE0225.py](../solutions/PE0225.py) | The sequence 1, 1, 1, 3, 5, 9, 17, 31, 57, 105, 193, 355, 653, 1201... | 0.519 seconds |
-| PE0229 | [PE0229.py](../solutions/PE0229.py) | Consider the number 3600. It is very special, because | 5.6 seconds |
+| PE0229 | [PE0229.py](../solutions/PE0229.py) | Consider the number 3600. It is very special, because | 6.0 seconds |
 | PE0233 | [PE0233.py](../solutions/PE0233.py) | Let f(N) be the number of points with integer coordinates that are ... | 2.5 seconds |
 | PE0235 | [PE0235.py](../solutions/PE0235.py) | Given is the arithmetic-geometric sequence u(k) = (900-3k)r^{k-1}. | 0.003 seconds |
 | PE0236 | [PE0236.py](../solutions/PE0236.py) | Suppliers 'A' and 'B' provided the following numbers of products fo... | 0.23 seconds |
@@ -175,7 +175,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0421 | [PE0421.py](../solutions/PE0421.py) | Prime factors of n^15 + 1: Sum distinct prime factors <= 10^8 for n <= 10^11. | ~16.1 seconds |
 | PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~1.65 seconds |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
-| PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~7.2 seconds |
+| PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~5.2 seconds |
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | ~1.7 seconds |
 | PE0486 | [PE0486.py](../solutions/PE0486.py) | Problem 486 | 1.5 seconds |
 | PE0493 | [PE0493.py](../solutions/PE0493.py) | Problem 493 | 0.001 seconds |
