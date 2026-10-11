@@ -16,7 +16,7 @@ numbers is equal to 90%.
 Find the least number for which the proportion of bouncy numbers is exactly 99%.
 
 ANSWER: 1587000
-Solve time: ~6 seconds
+Solve time: ~0.65 seconds
 """
 
 from util.utils import timeit
@@ -31,8 +31,22 @@ def is_decreasing(a):
     return all(j <= i for i, j in zip(a[:-1], a[1:]))
 
 
-def is_bouncy(a):
-    return not is_decreasing(a) and not is_increasing(a)
+def is_bouncy(n: int) -> bool:
+    last = n % 10
+    n //= 10
+    inc = False
+    dec = False
+    while n:
+        cur = n % 10
+        if cur < last:
+            inc = True
+        elif cur > last:
+            dec = True
+        if inc and dec:
+            return True
+        last = cur
+        n //= 10
+    return False
 
 
 class Problem112:
@@ -44,7 +58,8 @@ class Problem112:
         N = 10000000
         count = 0
         for n in range(1, N + 1):
-            count += is_bouncy(str(n))
+            if is_bouncy(n):
+                count += 1
             if count / n >= limit:
                 return n
 
