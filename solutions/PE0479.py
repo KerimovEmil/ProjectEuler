@@ -14,7 +14,7 @@ Interestingly, S(n) is always an integer. For example, S(4)=51160
 Find S(10^6) modulo 1,000,000,007
 
 ANSWER: 191541795
-Solve time: ~6 seconds
+Solve time: ~1.7 seconds
 """
 
 # re-arrange 1/x = (k/x)^2 (k+x^2) -kx to
@@ -50,11 +50,20 @@ class Problem479:
 
     @timeit
     def solve(self, n):
-        r = (-n) % self.m
-        r += sum(
-            ((1 - pow(1 - pow(k, 2, self.m), n + 1, self.m)) * pow(k, -2, self.m)) % self.m
-            for k in range(1, n + 1)) % self.m
-        return r % self.m
+        m = self.m
+        inv = [1] * (n + 1)
+        for i in range(2, n + 1):
+            inv[i] = (m - m // i) * inv[m % i] % m
+
+        r = (-n) % m
+        sum_terms = 0
+        for k in range(1, n + 1):
+            inv_k = inv[k]
+            inv_k2 = (inv_k * inv_k) % m
+            k2 = (k * k) % m
+            term = ((1 - pow(1 - k2, n + 1, m)) * inv_k2) % m
+            sum_terms = (sum_terms + term) % m
+        return (r + sum_terms) % m
 
 
 class Solution479(unittest.TestCase):

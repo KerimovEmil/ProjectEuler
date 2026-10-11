@@ -111,7 +111,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0108 | [PE0108.py](../solutions/PE0108.py) | x,y > 0 and integers | 0.003 seconds |
 | PE0110 | [PE0110.py](../solutions/PE0110.py) | x,y > 0 and integers | 0.003 seconds |
 | PE0111 | [PE0111.py](../solutions/PE0111.py) | Considering 4-digit primes containing repeated digits it is clear t... | 0.29 seconds |
-| PE0112 | [PE0112.py](../solutions/PE0112.py) | Working from left-to-right if no digit is exceeded by the digit to ... | 6 seconds |
+| PE0112 | [PE0112.py](../solutions/PE0112.py) | Working from left-to-right if no digit is exceeded by the digit to ... | ~0.65 seconds |
 | PE0113 | [PE0113.py](../solutions/PE0113.py) | Working from left-to-right if no digit is exceeded by the digit to ... | 0.001 seconds |
 | PE0116 | [PE0116.py](../solutions/PE0116.py) | Problem 116 | 0.001 seconds |
 | PE0120 | [PE0120.py](../solutions/PE0120.py) | Let r be the remainder when (a−1)^n + (a+1)^n is divided by a^2. | 0.001 seconds |
@@ -126,7 +126,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0144 | [PE0144.py](../solutions/PE0144.py) | nI laser physics, a "white cell" is a mirror system that acts as a ... | 0.004 seconds |
 | PE0145 | [PE0145.py](../solutions/PE0145.py) | Some positive integers n have the property that the sum [ n + rever... | 0.003 seconds |
 | PE0152 | [PE0152.py](../solutions/PE0152.py) | There are several ways to write the number 1/2 as a sum of inverse ... | 3.5 seconds |
-| PE0154 | [PE0154.py](../solutions/PE0154.py) | A triangular pyramid is constructed using spherical balls such that... | 8.0 seconds |
+| PE0154 | [PE0154.py](../solutions/PE0154.py) | A triangular pyramid is constructed using spherical balls such that... | ~4.7 seconds |
 | PE0162 | [PE0162.py](../solutions/PE0162.py) | In the hexadecimal number system numbers are represented using 16 d... | 0.01 seconds |
 | PE0169 | [PE0169.py](../solutions/PE0169.py) | Define f(0) = 1 and f(n) to be the number of different ways n can b... | 0.001 seconds |
 | PE0179 | [PE0179.py](../solutions/PE0179.py) | Find the number of integers 1 < n < 10^7, for which n and n + 1 hav... | 0.38 seconds |
@@ -176,7 +176,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~1.65 seconds |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~7.2 seconds |
-| PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | 6 seconds |
+| PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | ~1.7 seconds |
 | PE0486 | [PE0486.py](../solutions/PE0486.py) | Problem 486 | 1.5 seconds |
 | PE0493 | [PE0493.py](../solutions/PE0493.py) | Problem 493 | 0.001 seconds |
 | PE0534 | [PE0534.py](../solutions/PE0534.py) | Weak Queens: Find S(14) where S(n) = sum_{w=0}^{n-1} Q(n, w). | ~100 seconds |

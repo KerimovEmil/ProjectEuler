@@ -12,7 +12,7 @@ n! / (i! * j! * k!)
 How many coefficients in the expansion of (x + y + z)^200000 are multiples of 10^12?
 
 ANSWER: 479742450
-Solve time: ~8.0 seconds
+Solve time: ~4.7 seconds
 """
 
 import unittest
@@ -55,10 +55,13 @@ from util.utils import timeit
 #      - If i == j < k or i < j == k: 3! / 2! = 3 permutations.
 #      - If i == j == k: 3! / 3! = 1 permutation.
 #
-# 5. Vectorized NumPy Evaluation:
-#    For each fixed i, we construct slices for j in [i, floor((n-i)/2)] and k in reverse order.
-#    We apply the stricter condition on prime 5 first (since 5^12 is much more restrictive),
-#    filter with a boolean mask, then check prime 2, and aggregate the symmetry-weighted counts.
+# 5. Kummer Carry Bound Pruning & Vectorized NumPy Evaluation:
+#    By Kummer's theorem, v_5( (n-i)! / (j! k!) ) equals the number of carries when adding j and k in base 5.
+#    Since n - i < 200,000 has at most 8 digits in base 5, the maximum possible number of carries is 7.
+#    Hence min_{j} (f5[j] + f5[k]) >= f5[n - i] - 7 for all j.
+#    If f5[n - i] - 7 > rem_5 (where rem_5 = T_5 - f5[i]), no choice of j can satisfy the condition,
+#    allowing thousands of outer loops to be pruned in O(1) time.
+#    For remaining i, vectorized boolean masks evaluate valid (j, k) pairs across slices.
 
 
 def _get_factorial_valuations(p: int, n: int) -> np.ndarray:
@@ -94,6 +97,8 @@ class Problem154:
 
         for i in range(max_i + 1):
             rem_5 = t5 - f5[i]
+            if f5[n - i] - 7 > rem_5:
+                continue
             rem_2 = t2 - f2[i]
             j_end = (n - i) // 2
             if i > j_end:
