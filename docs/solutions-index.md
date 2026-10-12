@@ -200,6 +200,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
 | PE0853 | [PE0853.py](../solutions/PE0853.py) | For every positive integer n the Fibonacci sequence modulo n is per... | 0.17 seconds |
 | PE0880 | [PE0880.py](../solutions/PE0880.py) | Nested Radical Pairs: Sum |x|+|y| for (x, y) where sqrt(cbrt(x)+cbrt(y)) = cbrt(a)+cbrt(b)+cbrt(c). | ~10.0 seconds |
+| PE0915 | [PE0915.py](../solutions/PE0915.py) | Giant GCDs: Find sum_{a,b <= 10^8} gcd(s(s(a)), s(s(b))) mod 123456789. | ~0.45 seconds |
 | PE0965 | [PE0965.py](../solutions/PE0965.py) | Minimal Fractional Parts: Find F(10^4) expected min {nx} on [0, 1]. | ~0.02 seconds |
 | PE1000 | [PE1000.py](../solutions/PE1000.py) | Milestone 1000 (I, X, C, M): Max And, Max Xor Sum, Unreachable Nim, and Meta-problem. | ~0.6 seconds |
 | PE1011 | [PE1011.py](../solutions/PE1011.py) | Modified Euclidean Algorithm: Sum of terminal values f(a, b) for a, b < 3,000,000. | ~0.82 seconds |
