@@ -198,4 +198,5 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0880 | [PE0880.py](../solutions/PE0880.py) | Nested Radical Pairs: Sum |x|+|y| for (x, y) where sqrt(cbrt(x)+cbrt(y)) = cbrt(a)+cbrt(b)+cbrt(c). | ~10.0 seconds |
 | PE0965 | [PE0965.py](../solutions/PE0965.py) | Minimal Fractional Parts: Find F(10^4) expected min {nx} on [0, 1]. | ~0.02 seconds |
 | PE1011 | [PE1011.py](../solutions/PE1011.py) | Modified Euclidean Algorithm: Sum of terminal values f(a, b) for a, b < 3,000,000. | ~0.82 seconds |
+| PE1014 | [PE1014.py](../solutions/PE1014.py) | Steiner Club: Find the octad of S(5, 8, 24) containing CGJLV from 11 given blocks. | ~0.001 seconds |
 
