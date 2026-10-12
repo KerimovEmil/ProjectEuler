@@ -286,16 +286,33 @@ class Problem229:
                         ls_good_triple_comp.append(c3)
         return ls_good_triple_comp
 
+    @staticmethod
+    def _get_good_primes(max_n: int) -> list:
+        """
+        Return primes <= max_n with p % 168 in {1, 25, 121}.
+        Uses an odd-only boolean sieve and periodic pattern masking to avoid 2GB full arrays.
+        """
+        if max_n < 193:
+            return []
+        size = (max_n - 1) // 2 + 1
+        sieve = np.ones(size, dtype=bool)
+        sieve[0] = False
+        limit = int(int(max_n**0.5 - 1) / 2) + 1
+        for i in range(1, limit):
+            if sieve[i]:
+                p = 2 * i + 1
+                sieve[2 * i * (i + 1)::p] = False
+
+        # odd integers 2*i + 1 == 1, 25, 121 (mod 168) <=> i == 0, 12, 60 (mod 84)
+        pattern = np.zeros(84, dtype=bool)
+        pattern[0] = pattern[12] = pattern[60] = True
+        full_pattern = np.tile(pattern, size // 84 + 1)[:size]
+        sieve &= full_pattern
+        return (2 * np.nonzero(sieve)[0] + 1).tolist()
+
     @timeit
     def solve(self, debug=False):
-        if debug:
-            print("generating primes")
-        ls_primes = timeit(primes_upto)(self.max_n)
-        if debug:
-            print("finished generating primes")  # 1.3 seconds
-        # Note: 25^2 mod 168 = 121, 121^2 mod 168 = 25, 1^1 mod 168 = 1, 121*25 mod 168 = 1
-        p_168 = ls_primes % 168  # using numpy arrays for speed
-        ls_good_primes = (ls_primes[np.isin(p_168, [1, 25, 121])]).tolist()
+        ls_good_primes = self._get_good_primes(self.max_n)
 
         # generate all n = p_i * p_j, s.t. n <= max_n
         ls_good_comp = self.get_ls_good_composite(max_n=self.max_n, ls_good_primes=ls_good_primes)
@@ -309,16 +326,26 @@ class Problem229:
         self.count += int(np.floor((self.max_n / np.array(ls_good_nums)) ** 0.5).sum())
 
         sq_n = int(self.max_n ** 0.5)
+        spf = list(range(sq_n + 1))
+        for i in range(2, int(sq_n**0.5) + 1):
+            if spf[i] == i:
+                for j in range(i * i, sq_n + 1, i):
+                    if spf[j] == j:
+                        spf[j] = i
+
         for i in range(60, sq_n):  # first number that works is 60
-            dc_prime = primes_of_n(i)
-            cond = self.is_sq_rep_d_7(dc_prime)
-            if cond:
-                cond = cond and self.is_sq_rep_d_3(dc_prime)
-            if cond:
-                cond = cond and self.is_sq_rep_d_1(dc_prime)
-            if cond:
-                cond = cond and self.is_sq_rep_d_2(dc_prime)
-            if cond:
+            temp = i
+            dc_prime = {}
+            while temp > 1:
+                pr = spf[temp]
+                dc_prime[pr] = dc_prime.get(pr, 0) + 1
+                temp //= pr
+            if (
+                self.is_sq_rep_d_7(dc_prime)
+                and self.is_sq_rep_d_3(dc_prime)
+                and self.is_sq_rep_d_1(dc_prime)
+                and self.is_sq_rep_d_2(dc_prime)
+            ):
                 self.count += 1
 
         return self.count
