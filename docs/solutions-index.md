@@ -178,6 +178,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
 | PE0443 | [PE0443.py](../solutions/PE0443.py) | GCD sequence: Find g(10^15) where g(n) = g(n-1) + gcd(n, g(n-1)). | ~0.06 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~5.2 seconds |
+| PE0463 | [PE0463.py](../solutions/PE0463.py) | A weird recurrence relation: Find S(3^37) mod 10^9 where S(n) = sum_{i=1}^n f(i). | ~0.0002 seconds |
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | ~1.7 seconds |
 | PE0486 | [PE0486.py](../solutions/PE0486.py) | Problem 486 | 1.5 seconds |
 | PE0493 | [PE0493.py](../solutions/PE0493.py) | Problem 493 | 0.001 seconds |
