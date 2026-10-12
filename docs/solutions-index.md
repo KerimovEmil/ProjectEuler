@@ -176,6 +176,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0421 | [PE0421.py](../solutions/PE0421.py) | Prime factors of n^15 + 1: Sum distinct prime factors <= 10^8 for n <= 10^11. | ~16.1 seconds |
 | PE0432 | [PE0432.py](../solutions/PE0432.py) | Let S(n,m) = ∑φ(n × i) for 1 ≤ i ≤ m. (φ is Euler's totient function) | ~1.65 seconds |
 | PE0435 | [PE0435.py](../solutions/PE0435.py) | The Fibonacci numbers {f_n, n >= 0} are defined recursively as f_n ... | 0.064 seconds |
+| PE0443 | [PE0443.py](../solutions/PE0443.py) | GCD sequence: Find g(10^15) where g(n) = g(n-1) + gcd(n, g(n-1)). | ~0.06 seconds |
 | PE0454 | [PE0454.py](../solutions/PE0454.py) | In the following equation x, y, and n are positive integers: 1/x + 1/y = 1/n. Find F(10^12). | ~5.2 seconds |
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | ~1.7 seconds |
 | PE0486 | [PE0486.py](../solutions/PE0486.py) | Problem 486 | 1.5 seconds |
