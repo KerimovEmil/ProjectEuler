@@ -182,6 +182,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0479 | [PE0479.py](../solutions/PE0479.py) | Problem 479 | ~1.7 seconds |
 | PE0486 | [PE0486.py](../solutions/PE0486.py) | Problem 486 | 1.5 seconds |
 | PE0493 | [PE0493.py](../solutions/PE0493.py) | Problem 493 | 0.001 seconds |
+| PE0509 | [PE0509.py](../solutions/PE0509.py) | Divisor Nim: Count winning 3-pile positions for n <= 123456787654321 mod 1234567890. | ~0.0001 seconds |
 | PE0534 | [PE0534.py](../solutions/PE0534.py) | Weak Queens: Find S(14) where S(n) = sum_{w=0}^{n-1} Q(n, w). | ~100 seconds |
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
