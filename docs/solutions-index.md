@@ -119,6 +119,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0115 | [PE0115.py](../solutions/PE0115.py) | Counting block combinations II: Least n for which F(50, n) exceeds one million. | ~0.0001 seconds |
 | PE0116 | [PE0116.py](../solutions/PE0116.py) | Problem 116 | 0.001 seconds |
 | PE0117 | [PE0117.py](../solutions/PE0117.py) | Red, green, and blue tiles: Ways to tile a 50-unit row using tiles of lengths 1, 2, 3, and 4. | ~0.0001 seconds |
+| PE0119 | [PE0119.py](../solutions/PE0119.py) | Digit power sum: Find the 30th number equal to a power of the sum of its digits. | ~0.001 seconds |
 | PE0120 | [PE0120.py](../solutions/PE0120.py) | Let r be the remainder when (a−1)^n + (a+1)^n is divided by a^2. | 0.001 seconds |
 | PE0123 | [PE0123.py](../solutions/PE0123.py) | Let p_n be the nth prime: 2, 3, 5, 7, 11, ..., and let r be the rem... | 0.006 seconds |
 | PE0124 | [PE0124.py](../solutions/PE0124.py) | The radical of n, rad(n), is the product of the distinct prime fact... | 2 seconds |
