@@ -24,6 +24,7 @@ The `problem_data/` directory contains input datasets and text files required by
 | `p098_words.txt` | [`PE0098.py`](../solutions/PE0098.py) | List of ~2,000 English words for anagram square analysis |
 | `p099_base_exp.txt` | [`PE0099.py`](../solutions/PE0099.py) | 1,000 lines of `base,exponent` pairs |
 | `p102_triangles.txt` | [`PE0102.py`](../solutions/PE0102.py) | 1,000 triangle coordinate triples `(x1,y1,x2,y2,x3,y3)` |
+| `p107_network.txt` | [`PE0107.py`](../solutions/PE0107.py) | 40x40 adjacency matrix of undirected edge weights |
 
 ## Accessing Problem Data in Solutions
 
