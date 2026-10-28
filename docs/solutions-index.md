@@ -108,6 +108,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0102 | [PE0102.py](../solutions/PE0102.py) | Three distinct points are plotted at random on a Cartesian plane, f... | 0.014 seconds |
 | PE0103 | [PE0103.py](../solutions/PE0103.py) | Special subset sums: optimum: Find the set string for optimum special sum set n = 7. | ~0.18 seconds |
 | PE0104 | [PE0104.py](../solutions/PE0104.py) | The Fibonacci sequence is defined by the recurrence relation: $F_n = F_{n - 1} + F_{n - 2}$... | ~0.10 seconds |
+| PE0107 | [PE0107.py](../solutions/PE0107.py) | Minimal network: Maximum saving by removing redundant edges from a 40-vertex network. | ~0.001 seconds |
 | PE0108 | [PE0108.py](../solutions/PE0108.py) | x,y > 0 and integers | 0.003 seconds |
 | PE0110 | [PE0110.py](../solutions/PE0110.py) | x,y > 0 and integers | 0.003 seconds |
 | PE0111 | [PE0111.py](../solutions/PE0111.py) | Considering 4-digit primes containing repeated digits it is clear t... | 0.29 seconds |
