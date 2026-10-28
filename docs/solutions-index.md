@@ -127,6 +127,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0125 | [PE0125.py](../solutions/PE0125.py) | The palindromic number 595 is interesting because it can be written... | 0.99 seconds |
 | PE0131 | [PE0131.py](../solutions/PE0131.py) | There are some prime values, p, for which there exists a positive i... | 0.017 seconds |
 | PE0132 | [PE0132.py](../solutions/PE0132.py) | A number consisting entirely of ones is called a repunit. We shall ... | 0.05 seconds |
+| PE0134 | [PE0134.py](../solutions/PE0134.py) | Prime pair connection: Sum of smallest S ending in p_1 and divisible by p_2 for 5 <= p_1 <= 10^6. | ~0.07 seconds |
 | PE0137 | [PE0137.py](../solutions/PE0137.py) | Consider the infinite polynomial series A(x)=xF_1+x^2 F_2 + x^3 F_3... | 0.001 seconds |
 | PE0139 | [PE0139.py](../solutions/PE0139.py) | Problem 139 | 0.003 seconds |
 | PE0140 | [PE0140.py](../solutions/PE0140.py) | Consider the infinite polynomial series AG(x)=xG1+x2G2+x3G3+⋯, wher... | 0.001 seconds |
