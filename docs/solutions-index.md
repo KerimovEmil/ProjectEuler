@@ -121,6 +121,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0117 | [PE0117.py](../solutions/PE0117.py) | Red, green, and blue tiles: Ways to tile a 50-unit row using tiles of lengths 1, 2, 3, and 4. | ~0.0001 seconds |
 | PE0119 | [PE0119.py](../solutions/PE0119.py) | Digit power sum: Find the 30th number equal to a power of the sum of its digits. | ~0.001 seconds |
 | PE0120 | [PE0120.py](../solutions/PE0120.py) | Let r be the remainder when (a−1)^n + (a+1)^n is divided by a^2. | 0.001 seconds |
+| PE0121 | [PE0121.py](../solutions/PE0121.py) | Disc game prize fund: Maximum prize fund for a 15-turn red/blue disc game. | ~0.0001 seconds |
 | PE0123 | [PE0123.py](../solutions/PE0123.py) | Let p_n be the nth prime: 2, 3, 5, 7, 11, ..., and let r be the rem... | 0.006 seconds |
 | PE0124 | [PE0124.py](../solutions/PE0124.py) | The radical of n, rad(n), is the product of the distinct prime fact... | 2 seconds |
 | PE0125 | [PE0125.py](../solutions/PE0125.py) | The palindromic number 595 is interesting because it can be written... | 0.99 seconds |
