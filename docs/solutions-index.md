@@ -114,6 +114,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0112 | [PE0112.py](../solutions/PE0112.py) | Working from left-to-right if no digit is exceeded by the digit to ... | ~0.65 seconds |
 | PE0113 | [PE0113.py](../solutions/PE0113.py) | Working from left-to-right if no digit is exceeded by the digit to ... | 0.001 seconds |
 | PE0116 | [PE0116.py](../solutions/PE0116.py) | Problem 116 | 0.001 seconds |
+| PE0119 | [PE0119.py](../solutions/PE0119.py) | Digit power sum: Find the 30th number equal to a power of the sum of its digits. | ~0.001 seconds |
 | PE0120 | [PE0120.py](../solutions/PE0120.py) | Let r be the remainder when (a−1)^n + (a+1)^n is divided by a^2. | 0.001 seconds |
 | PE0123 | [PE0123.py](../solutions/PE0123.py) | Let p_n be the nth prime: 2, 3, 5, 7, 11, ..., and let r be the rem... | 0.006 seconds |
 | PE0124 | [PE0124.py](../solutions/PE0124.py) | The radical of n, rad(n), is the product of the distinct prime fact... | 2 seconds |
