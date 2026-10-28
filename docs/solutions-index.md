@@ -110,6 +110,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0104 | [PE0104.py](../solutions/PE0104.py) | The Fibonacci sequence is defined by the recurrence relation: $F_n = F_{n - 1} + F_{n - 2}$... | ~0.10 seconds |
 | PE0107 | [PE0107.py](../solutions/PE0107.py) | Minimal network: Maximum saving by removing redundant edges from a 40-vertex network. | ~0.001 seconds |
 | PE0108 | [PE0108.py](../solutions/PE0108.py) | x,y > 0 and integers | 0.003 seconds |
+| PE0109 | [PE0109.py](../solutions/PE0109.py) | Darts: Distinct ways a player can checkout with a score less than 100. | ~0.001 seconds |
 | PE0110 | [PE0110.py](../solutions/PE0110.py) | x,y > 0 and integers | 0.003 seconds |
 | PE0111 | [PE0111.py](../solutions/PE0111.py) | Considering 4-digit primes containing repeated digits it is clear t... | 0.29 seconds |
 | PE0112 | [PE0112.py](../solutions/PE0112.py) | Working from left-to-right if no digit is exceeded by the digit to ... | ~0.65 seconds |
