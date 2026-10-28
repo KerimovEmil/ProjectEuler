@@ -108,18 +108,26 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0102 | [PE0102.py](../solutions/PE0102.py) | Three distinct points are plotted at random on a Cartesian plane, f... | 0.014 seconds |
 | PE0103 | [PE0103.py](../solutions/PE0103.py) | Special subset sums: optimum: Find the set string for optimum special sum set n = 7. | ~0.18 seconds |
 | PE0104 | [PE0104.py](../solutions/PE0104.py) | The Fibonacci sequence is defined by the recurrence relation: $F_n = F_{n - 1} + F_{n - 2}$... | ~0.10 seconds |
+| PE0107 | [PE0107.py](../solutions/PE0107.py) | Minimal network: Maximum saving by removing redundant edges from a 40-vertex network. | ~0.001 seconds |
 | PE0108 | [PE0108.py](../solutions/PE0108.py) | x,y > 0 and integers | 0.003 seconds |
+| PE0109 | [PE0109.py](../solutions/PE0109.py) | Darts: Distinct ways a player can checkout with a score less than 100. | ~0.001 seconds |
 | PE0110 | [PE0110.py](../solutions/PE0110.py) | x,y > 0 and integers | 0.003 seconds |
 | PE0111 | [PE0111.py](../solutions/PE0111.py) | Considering 4-digit primes containing repeated digits it is clear t... | 0.29 seconds |
 | PE0112 | [PE0112.py](../solutions/PE0112.py) | Working from left-to-right if no digit is exceeded by the digit to ... | ~0.65 seconds |
 | PE0113 | [PE0113.py](../solutions/PE0113.py) | Working from left-to-right if no digit is exceeded by the digit to ... | 0.001 seconds |
+| PE0114 | [PE0114.py](../solutions/PE0114.py) | Counting block combinations I: Ways to fill a 50-unit row with red blocks of length >= 3. | ~0.0001 seconds |
+| PE0115 | [PE0115.py](../solutions/PE0115.py) | Counting block combinations II: Least n for which F(50, n) exceeds one million. | ~0.0001 seconds |
 | PE0116 | [PE0116.py](../solutions/PE0116.py) | Problem 116 | 0.001 seconds |
+| PE0117 | [PE0117.py](../solutions/PE0117.py) | Red, green, and blue tiles: Ways to tile a 50-unit row using tiles of lengths 1, 2, 3, and 4. | ~0.0001 seconds |
+| PE0119 | [PE0119.py](../solutions/PE0119.py) | Digit power sum: Find the 30th number equal to a power of the sum of its digits. | ~0.001 seconds |
 | PE0120 | [PE0120.py](../solutions/PE0120.py) | Let r be the remainder when (a−1)^n + (a+1)^n is divided by a^2. | 0.001 seconds |
+| PE0121 | [PE0121.py](../solutions/PE0121.py) | Disc game prize fund: Maximum prize fund for a 15-turn red/blue disc game. | ~0.0001 seconds |
 | PE0123 | [PE0123.py](../solutions/PE0123.py) | Let p_n be the nth prime: 2, 3, 5, 7, 11, ..., and let r be the rem... | 0.006 seconds |
 | PE0124 | [PE0124.py](../solutions/PE0124.py) | The radical of n, rad(n), is the product of the distinct prime fact... | 2 seconds |
 | PE0125 | [PE0125.py](../solutions/PE0125.py) | The palindromic number 595 is interesting because it can be written... | 0.99 seconds |
 | PE0131 | [PE0131.py](../solutions/PE0131.py) | There are some prime values, p, for which there exists a positive i... | 0.017 seconds |
 | PE0132 | [PE0132.py](../solutions/PE0132.py) | A number consisting entirely of ones is called a repunit. We shall ... | 0.05 seconds |
+| PE0134 | [PE0134.py](../solutions/PE0134.py) | Prime pair connection: Sum of smallest S ending in p_1 and divisible by p_2 for 5 <= p_1 <= 10^6. | ~0.07 seconds |
 | PE0137 | [PE0137.py](../solutions/PE0137.py) | Consider the infinite polynomial series A(x)=xF_1+x^2 F_2 + x^3 F_3... | 0.001 seconds |
 | PE0139 | [PE0139.py](../solutions/PE0139.py) | Problem 139 | 0.003 seconds |
 | PE0140 | [PE0140.py](../solutions/PE0140.py) | Consider the infinite polynomial series AG(x)=xG1+x2G2+x3G3+⋯, wher... | 0.001 seconds |
@@ -129,6 +137,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0154 | [PE0154.py](../solutions/PE0154.py) | A triangular pyramid is constructed using spherical balls such that... | ~4.7 seconds |
 | PE0162 | [PE0162.py](../solutions/PE0162.py) | In the hexadecimal number system numbers are represented using 16 d... | 0.01 seconds |
 | PE0169 | [PE0169.py](../solutions/PE0169.py) | Define f(0) = 1 and f(n) to be the number of different ways n can b... | 0.001 seconds |
+| PE0173 | [PE0173.py](../solutions/PE0173.py) | Hollow square laminae I: Number of square laminae formed using up to one million tiles. | ~0.0001 seconds |
 | PE0174 | [PE0174.py](../solutions/PE0174.py) | Hollow square laminae II: Number of tile counts t <= 10^6 of type L(n) for 1 <= n <= 10. | ~0.04 seconds |
 | PE0179 | [PE0179.py](../solutions/PE0179.py) | Find the number of integers 1 < n < 10^7, for which n and n + 1 hav... | 0.38 seconds |
 | PE0185 | [PE0185.py](../solutions/PE0185.py) | The game Number Mind is a variant of the well known game Master Mind. | 0.26 seconds |
