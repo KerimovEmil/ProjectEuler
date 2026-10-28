@@ -154,6 +154,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0221 | [PE0221.py](../solutions/PE0221.py) | We shall call a positive integer "A" an "Alexandrian integer", if t... | 0.95 seconds |
 | PE0225 | [PE0225.py](../solutions/PE0225.py) | The sequence 1, 1, 1, 3, 5, 9, 17, 31, 57, 105, 193, 355, 653, 1201... | 0.519 seconds |
 | PE0229 | [PE0229.py](../solutions/PE0229.py) | Consider the number 3600. It is very special, because | 6.0 seconds |
+| PE0231 | [PE0231.py](../solutions/PE0231.py) | The prime factorisation of binomial coefficients: Sum of prime factors of comb(20000000, 15000000). | ~0.09 seconds |
 | PE0233 | [PE0233.py](../solutions/PE0233.py) | Let f(N) be the number of points with integer coordinates that are ... | 2.5 seconds |
 | PE0235 | [PE0235.py](../solutions/PE0235.py) | Given is the arithmetic-geometric sequence u(k) = (900-3k)r^{k-1}. | 0.003 seconds |
 | PE0236 | [PE0236.py](../solutions/PE0236.py) | Suppliers 'A' and 'B' provided the following numbers of products fo... | 0.23 seconds |
