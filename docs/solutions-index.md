@@ -108,11 +108,14 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0102 | [PE0102.py](../solutions/PE0102.py) | Three distinct points are plotted at random on a Cartesian plane, f... | 0.014 seconds |
 | PE0103 | [PE0103.py](../solutions/PE0103.py) | Special subset sums: optimum: Find the set string for optimum special sum set n = 7. | ~0.18 seconds |
 | PE0104 | [PE0104.py](../solutions/PE0104.py) | The Fibonacci sequence is defined by the recurrence relation: $F_n = F_{n - 1} + F_{n - 2}$... | ~0.10 seconds |
+| PE0107 | [PE0107.py](../solutions/PE0107.py) | Minimal network: Maximum saving by removing redundant edges from a 40-vertex network. | ~0.001 seconds |
 | PE0108 | [PE0108.py](../solutions/PE0108.py) | x,y > 0 and integers | 0.003 seconds |
+| PE0109 | [PE0109.py](../solutions/PE0109.py) | Darts: Distinct ways a player can checkout with a score less than 100. | ~0.001 seconds |
 | PE0110 | [PE0110.py](../solutions/PE0110.py) | x,y > 0 and integers | 0.003 seconds |
 | PE0111 | [PE0111.py](../solutions/PE0111.py) | Considering 4-digit primes containing repeated digits it is clear t... | 0.29 seconds |
 | PE0112 | [PE0112.py](../solutions/PE0112.py) | Working from left-to-right if no digit is exceeded by the digit to ... | ~0.65 seconds |
 | PE0113 | [PE0113.py](../solutions/PE0113.py) | Working from left-to-right if no digit is exceeded by the digit to ... | 0.001 seconds |
+| PE0114 | [PE0114.py](../solutions/PE0114.py) | Counting block combinations I: Ways to fill a 50-unit row with red blocks of length >= 3. | ~0.0001 seconds |
 | PE0115 | [PE0115.py](../solutions/PE0115.py) | Counting block combinations II: Least n for which F(50, n) exceeds one million. | ~0.0001 seconds |
 | PE0116 | [PE0116.py](../solutions/PE0116.py) | Problem 116 | 0.001 seconds |
 | PE0120 | [PE0120.py](../solutions/PE0120.py) | Let r be the remainder when (a−1)^n + (a+1)^n is divided by a^2. | 0.001 seconds |
