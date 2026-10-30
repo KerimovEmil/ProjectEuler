@@ -136,6 +136,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0152 | [PE0152.py](../solutions/PE0152.py) | There are several ways to write the number 1/2 as a sum of inverse ... | 3.5 seconds |
 | PE0154 | [PE0154.py](../solutions/PE0154.py) | A triangular pyramid is constructed using spherical balls such that... | ~4.7 seconds |
 | PE0162 | [PE0162.py](../solutions/PE0162.py) | In the hexadecimal number system numbers are represented using 16 d... | 0.01 seconds |
+| PE0164 | [PE0164.py](../solutions/PE0164.py) | Numbers for which no three consecutive digits have a sum greater than a given value: Count 20-digit numbers with 3-digit sum <= 9. | ~0.0001 seconds |
 | PE0169 | [PE0169.py](../solutions/PE0169.py) | Define f(0) = 1 and f(n) to be the number of different ways n can b... | 0.001 seconds |
 | PE0173 | [PE0173.py](../solutions/PE0173.py) | Hollow square laminae I: Number of square laminae formed using up to one million tiles. | ~0.0001 seconds |
 | PE0174 | [PE0174.py](../solutions/PE0174.py) | Hollow square laminae II: Number of tile counts t <= 10^6 of type L(n) for 1 <= n <= 10. | ~0.04 seconds |
