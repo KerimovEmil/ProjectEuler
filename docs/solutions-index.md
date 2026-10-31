@@ -206,6 +206,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0550 | [PE0550.py](../solutions/PE0550.py) | Divisor Game: Find f(10^7, 10^12) mod 987654321 using Omega Grundy values and FWHT. | ~1.3 seconds |
 | PE0558 | [PE0558.py](../solutions/PE0558.py) | Irrational Base: Sum of term counts S(5000000) in base r via carry propagation. | ~8.5 seconds |
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
+| PE0591 | [PE0591.py](../solutions/PE0591.py) | Best Approximations by Quadratic Integers: Closest quadratic integer BQA_d(pi, 10^13). | ~0.05 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
 | PE0668 | [PE0668.py](../solutions/PE0668.py) | A positive integer is called square root smooth if all of its prime... | 2.868 seconds |
 | PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | ~14.5 seconds |
