@@ -208,6 +208,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
 | PE0618 | [PE0618.py](../solutions/PE0618.py) | Numbers with a given prime factor sum: Sum of S(F_k) mod 10^9 via Euler product DP. | ~60 seconds |
+| PE0630 | [PE0630.py](../solutions/PE0630.py) | Crossed lines: Total line crossings S(L_2500) via canonical slope grouping. | ~8.3 seconds |
 | PE0643 | [PE0643.py](../solutions/PE0643.py) | Two positive integers a and b are 2-friendly when gcd(a, b) = 2^t, ... | 2.40 seconds |
 | PE0657 | [PE0657.py](../solutions/PE0657.py) | In the context of formal languages, any finite sequence of letters o... | 0.85 seconds |
 | PE0668 | [PE0668.py](../solutions/PE0668.py) | A positive integer is called square root smooth if all of its prime... | 2.868 seconds |
