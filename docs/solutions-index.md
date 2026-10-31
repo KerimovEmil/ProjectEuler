@@ -202,6 +202,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0514 | [PE0514.py](../solutions/PE0514.py) | Geoboard: Expected area of the random pin convex hull on [0, 100]^2. | ~1.05 seconds |
 | PE0519 | [PE0519.py](../solutions/PE0519.py) | Tricoloured Coin Fountains: Last 9 digits of T(20000) using suffix-sum DP. | ~0.58 seconds |
 | PE0534 | [PE0534.py](../solutions/PE0534.py) | Weak Queens: Find S(14) where S(n) = sum_{w=0}^{n-1} Q(n, w). | ~100 seconds |
+| PE0550 | [PE0550.py](../solutions/PE0550.py) | Divisor Game: Find f(10^7, 10^12) mod 987654321 using Omega Grundy values and FWHT. | ~1.3 seconds |
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
 | PE0668 | [PE0668.py](../solutions/PE0668.py) | A positive integer is called square root smooth if all of its prime... | 2.868 seconds |
