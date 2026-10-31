@@ -82,11 +82,10 @@ MATHEMATICAL DERIVATION:
    Evaluation is instantaneous in ~0.000 seconds.
 """
 
-from decimal import Decimal, getcontext
+from decimal import Decimal, localcontext
 import unittest
 from util.utils import timeit
 
-getcontext().prec = 50
 
 # Euler-Mascheroni constant
 GAMMA = Decimal('0.577215664901532860606512090082402431042159335939923598805767234884867726777664670936947063')
@@ -111,25 +110,31 @@ class Problem567:
         )
 
     def compute_JA(self, n: int) -> float:
-        val = Decimal(2)**(-n) * sum((Decimal(2)**j - 1) / Decimal(j) for j in range(1, n + 1))
-        return round(float(val), 8)
-
-    def compute_JB(self, n: int) -> float:
-        val = Decimal(2)**(-n) * sum(Decimal(2)**k / Decimal(k) for k in range(1, n + 1))
-        return round(float(val), 8)
-
-    def compute_S(self, m: int) -> float:
-        if m <= 20:
-            val = sum(
-                Decimal(4 - 2**(-(k - 1)) - 2**(k - m + 1) + 2**(-m)) / Decimal(k)
-                for k in range(1, m + 1)
-            )
+        with localcontext() as ctx:
+            ctx.prec = 50
+            val = Decimal(2)**(-n) * sum((Decimal(2)**j - 1) / Decimal(j) for j in range(1, n + 1))
             return round(float(val), 8)
 
-        term1 = 4 * self.harmonic(m)
-        term2 = 2 * Decimal(2).ln()
-        term3 = sum(Decimal(2**(1 - j)) / Decimal(m - j) for j in range(min(m, 80)))
-        return round(float(term1 - term2 - term3), 8)
+    def compute_JB(self, n: int) -> float:
+        with localcontext() as ctx:
+            ctx.prec = 50
+            val = Decimal(2)**(-n) * sum(Decimal(2)**k / Decimal(k) for k in range(1, n + 1))
+            return round(float(val), 8)
+
+    def compute_S(self, m: int) -> float:
+        with localcontext() as ctx:
+            ctx.prec = 50
+            if m <= 20:
+                val = sum(
+                    Decimal(4 - 2**(-(k - 1)) - 2**(k - m + 1) + 2**(-m)) / Decimal(k)
+                    for k in range(1, m + 1)
+                )
+                return round(float(val), 8)
+
+            term1 = 4 * self.harmonic(m)
+            term2 = 2 * Decimal(2).ln()
+            term3 = sum(Decimal(2**(1 - j)) / Decimal(m - j) for j in range(min(m, 80)))
+            return round(float(term1 - term2 - term3), 8)
 
     @timeit
     def solve(self) -> float:
