@@ -198,6 +198,9 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0493 | [PE0493.py](../solutions/PE0493.py) | Problem 493 | 0.001 seconds |
 | PE0509 | [PE0509.py](../solutions/PE0509.py) | Divisor Nim: Count winning 3-pile positions for n <= 123456787654321 mod 1234567890. | ~0.0001 seconds |
 | PE0512 | [PE0512.py](../solutions/PE0512.py) | Sums of totients of powers: Evaluate g(5 * 10^8) using Du's sieve on odd totients. | ~0.85 seconds |
+| PE0513 | [PE0513.py](../solutions/PE0513.py) | Integral median: Count triangles with c <= 100000 having integral median m_C. | ~7.5 seconds |
+| PE0514 | [PE0514.py](../solutions/PE0514.py) | Geoboard: Expected area of the random pin convex hull on [0, 100]^2. | ~1.05 seconds |
+| PE0519 | [PE0519.py](../solutions/PE0519.py) | Tricoloured Coin Fountains: Last 9 digits of T(20000) using suffix-sum DP. | ~0.58 seconds |
 | PE0534 | [PE0534.py](../solutions/PE0534.py) | Weak Queens: Find S(14) where S(n) = sum_{w=0}^{n-1} Q(n, w). | ~100 seconds |
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
