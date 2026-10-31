@@ -205,9 +205,15 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0534 | [PE0534.py](../solutions/PE0534.py) | Weak Queens: Find S(14) where S(n) = sum_{w=0}^{n-1} Q(n, w). | ~100 seconds |
 | PE0550 | [PE0550.py](../solutions/PE0550.py) | Divisor Game: Find f(10^7, 10^12) mod 987654321 using Omega Grundy values and FWHT. | ~1.3 seconds |
 | PE0558 | [PE0558.py](../solutions/PE0558.py) | Irrational Base: Sum of term counts S(5000000) in base r via carry propagation. | ~8.5 seconds |
+| PE0567 | [PE0567.py](../solutions/PE0567.py) | Reciprocal games I: Expected win S(123456789) via order interchange and Euler-Maclaurin expansion. | 0.000 seconds |
 | PE0571 | [PE0571.py](../solutions/PE0571.py) | Super Pandigital Numbers: Sum of 10 smallest 12-super-pandigital numbers via base-12 permutations. | ~45 seconds |
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
+| PE0618 | [PE0618.py](../solutions/PE0618.py) | Numbers with a given prime factor sum: Sum of S(F_k) mod 10^9 via Euler product DP. | ~60 seconds |
+| PE0630 | [PE0630.py](../solutions/PE0630.py) | Crossed lines: Total line crossings S(L_2500) via canonical slope grouping. | ~8.3 seconds |
+| PE0635 | [PE0635.py](../solutions/PE0635.py) | Subset sums: Evaluate S_2(10^8) + S_3(10^8) mod (10^9+9) using roots of unity filter. | ~3.9 seconds |
+| PE0643 | [PE0643.py](../solutions/PE0643.py) | Two positive integers a and b are 2-friendly when gcd(a, b) = 2^t, ... | 2.40 seconds |
+| PE0657 | [PE0657.py](../solutions/PE0657.py) | In the context of formal languages, any finite sequence of letters o... | 0.85 seconds |
 | PE0668 | [PE0668.py](../solutions/PE0668.py) | A positive integer is called square root smooth if all of its prime... | 2.868 seconds |
 | PE0678 | [PE0678.py](../solutions/PE0678.py) | If a triple of positive integers (a, b, c) satisfies a^2 + b^2 = c^... | ~14.5 seconds |
 | PE0686 | [PE0686.py](../solutions/PE0686.py) | 2^7 = 128 is the first power of two whose leading digits are "12". | 1.6 seconds |
