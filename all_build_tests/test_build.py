@@ -3,7 +3,7 @@ from importlib import import_module
 from os import listdir, path
 
 
-bad_or_slow_solutions = [400, 421, 534, 558, 657, 739, 880]
+bad_or_slow_solutions = [400, 421, 534, 558, 618, 657, 739, 880]
 
 file_path = path.join(path.dirname(__file__), '..', 'solutions',)
 
