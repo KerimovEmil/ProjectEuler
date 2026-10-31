@@ -208,6 +208,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0567 | [PE0567.py](../solutions/PE0567.py) | Reciprocal games I: Expected win S(123456789) via order interchange and Euler-Maclaurin expansion. | 0.000 seconds |
 | PE0571 | [PE0571.py](../solutions/PE0571.py) | Super Pandigital Numbers: Sum of 10 smallest 12-super-pandigital numbers via base-12 permutations. | 12.0 seconds |
 | PE0581 | [PE0581.py](../solutions/PE0581.py) | Problem 581 | 4.6 seconds |
+| PE0591 | [PE0591.py](../solutions/PE0591.py) | Best Approximations by Quadratic Integers: Closest quadratic integer BQA_d(pi, 10^13). | ~0.05 seconds |
 | PE0610 | [PE0610.py](../solutions/PE0610.py) | A random generator produces a sequence of symbols drawn from the se... | 0.58 seconds |
 | PE0618 | [PE0618.py](../solutions/PE0618.py) | Numbers with a given prime factor sum: Sum of S(F_k) mod 10^9 via Euler product DP. | ~60 seconds |
 | PE0630 | [PE0630.py](../solutions/PE0630.py) | Crossed lines: Total line crossings S(L_2500) via canonical slope grouping. | ~8.3 seconds |
