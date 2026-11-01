@@ -161,6 +161,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0235 | [PE0235.py](../solutions/PE0235.py) | Given is the arithmetic-geometric sequence u(k) = (900-3k)r^{k-1}. | 0.003 seconds |
 | PE0236 | [PE0236.py](../solutions/PE0236.py) | Suppliers 'A' and 'B' provided the following numbers of products fo... | 0.23 seconds |
 | PE0243 | [PE0243.py](../solutions/PE0243.py) | A positive fraction whose numerator is less than its denominator is... | 0.003 seconds |
+| PE0250 | [PE0250.py](../solutions/PE0250.py) | Find the number of non-empty subsets of {1^1, 2^2, ..., 250250^250250... | 0.20 seconds |
 | PE0254 | [PE0254.py](../solutions/PE0254.py) | Define f(n) as the sum of the factorials of the digits of n. For ex... | 2 seconds |
 | PE0266 | [PE0266.py](../solutions/PE0266.py) | Pseudo Square Root: Find the largest divisor of the product of primes below 190 not exceeding its square root. | 4.4 seconds |
 | PE0267 | [PE0267.py](../solutions/PE0267.py) | Problem 267 | 0.1 seconds |
