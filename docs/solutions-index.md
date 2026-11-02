@@ -230,7 +230,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0759 | [PE0759.py](../solutions/PE0759.py) | A squared recurrence: Find S(10^16) mod 1,000,000,007 where S(n) = sum f(i)^2. | ~0.002 seconds |
 | PE0764 | [PE0764.py](../solutions/PE0764.py) | Asymmetric Diophantine Equation 16x^2 + y^4 = z^2: Find S(10^16) mod 10^9. | 0.25 seconds |
 | PE0765 | [PE0765.py](../solutions/PE0765.py) | Trillionaire: Maximize probability of reaching 10^12 gold in 1000 rounds. | ~0.03 seconds |
-| PE0769 | [PE0769.py](../solutions/PE0769.py) | Binary Quadratic Form II: Count primitive representations of z^2 <= 10^14 for x^2 + 5xy + 3y^2. | ~115 seconds |
+| PE0769 | [PE0769.py](../solutions/PE0769.py) | Binary Quadratic Form II: Count primitive representations of z^2 <= 10^14 for x^2 + 5xy + 3y^2. | ~1.4 seconds |
 | PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.15 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
 | PE0853 | [PE0853.py](../solutions/PE0853.py) | For every positive integer n the Fibonacci sequence modulo n is per... | 0.17 seconds |

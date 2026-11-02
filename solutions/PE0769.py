@@ -17,7 +17,7 @@ You are given C(10^3) = 142 and C(10^6) = 142463.
 Find C(10^14).
 
 ANSWER: 14246712611506
-Solve time: ~115 seconds
+Solve time: ~1.4 seconds
 
 ---
 MATHEMATICAL DERIVATION:
@@ -46,10 +46,20 @@ MATHEMATICAL DERIVATION:
    We precompute an SPF array using a linear sieve to extract distinct prime factors of p in O(omega(p)) time.
    Inclusion-exclusion over square-free divisors d | p counts integers in [q_min, q_max] coprime to p,
    and an additional linear congruence filter subtracts cases with q = 4p (mod 13).
+
+5. Optimized C Extension with Pure Python Fallback:
+   Evaluating Branch 1 and Branch 2 up to p, a ~ 6.13 * 10^6 executes ~1.2 * 10^7 inner loops.
+   A dynamically compiled C extension computes C(10^14) in ~1.4 seconds, with the pure Python
+   implementation retained as an automated fallback.
 """
 
 from array import array
+import ctypes
 import math
+import os
+import shutil
+import subprocess
+import tempfile
 import unittest
 from util.utils import timeit
 
@@ -58,6 +68,242 @@ SQRT3 = math.sqrt(3.0)
 INV_MOD13 = [0] * 13
 for a in range(1, 13):
     INV_MOD13[a] = pow(a, -1, 13)
+
+C_SOURCE = """
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+
+static inline int64_t isqrt_i64(int64_t n) {
+    if (n <= 0) return 0;
+    int64_t x = (int64_t)sqrt((double)n);
+    while ((x + 1) * (x + 1) <= n) x++;
+    while (x * x > n) x--;
+    return x;
+}
+
+static inline int64_t count_congruence(int64_t L, int64_t R, int64_t mod, int64_t rem) {
+    if (rem < L) {
+        rem += ((L - rem + mod - 1) / mod) * mod;
+    }
+    if (rem > R) return 0;
+    return 1 + (R - rem) / mod;
+}
+
+static const int INV_MOD13[13] = {0, 1, 7, 9, 10, 8, 11, 2, 5, 3, 4, 6, 12};
+
+static int64_t max_abs_p_for_negative_branch(int64_t N) {
+    int64_t lo = 0;
+    int64_t hi = isqrt_i64(N) + 2;
+    while (lo + 1 < hi) {
+        int64_t a = (lo + hi) / 2;
+        if (a == 0) {
+            lo = a;
+            continue;
+        }
+        int64_t qmin = (int64_t)(1.7320508075688772 * a) + 1;
+        int64_t thr = 3 * a * a;
+        while (qmin * qmin <= thr) qmin++;
+        int64_t qmax = (5 * a - 1) / 2;
+        int ok = 0;
+        if (qmin <= qmax) {
+            int64_t z = -(qmin * qmin - 5 * a * qmin + 3 * a * a);
+            if (z <= N) ok = 1;
+        }
+        if (ok) lo = a;
+        else hi = a;
+    }
+    return lo;
+}
+
+#ifdef _WIN32
+__declspec(dllexport)
+#endif
+int64_t solve_c(int64_t n) {
+    int64_t four_n = 4 * n;
+    int64_t pmax = isqrt_i64(n / 3);
+    int64_t amax = max_abs_p_for_negative_branch(n);
+    int64_t maxp = pmax > amax ? pmax : amax;
+
+    int32_t *spf = (int32_t *)calloc(maxp + 1, sizeof(int32_t));
+    int32_t *primes = (int32_t *)malloc((maxp / 10 + 1000) * sizeof(int32_t));
+    if (!spf || !primes) {
+        if (spf) free(spf);
+        if (primes) free(primes);
+        return -1;
+    }
+
+    int prime_count = 0;
+    for (int32_t i = 2; i <= maxp; i++) {
+        if (spf[i] == 0) {
+            spf[i] = i;
+            primes[prime_count++] = i;
+        }
+        int32_t si = spf[i];
+        for (int k = 0; k < prime_count; k++) {
+            int32_t p = primes[k];
+            int64_t v = (int64_t)i * p;
+            if (v > maxp) break;
+            spf[v] = p;
+            if (p == si) break;
+        }
+    }
+
+    int64_t total = 0;
+    int p_factors[16];
+    int64_t ds[128];
+    int mus[128];
+
+    // Branch 1: p > 0, q > sqrt(3)*p, z = q^2 + 5pq + 3p^2 <= N
+    for (int64_t p = 1; p <= pmax; p++) {
+        int64_t qmin = (int64_t)(1.7320508075688772 * p) + 1;
+        int64_t thr = 3 * p * p;
+        while (qmin * qmin <= thr) qmin++;
+
+        int64_t disc = 13 * p * p + four_n;
+        int64_t qmax = (isqrt_i64(disc) - 5 * p) / 2;
+        if (qmax < qmin) continue;
+
+        int64_t pp3 = 3 * p * p;
+        while (qmax >= qmin && (qmax * qmax + 5 * p * qmax + pp3) > n) {
+            qmax--;
+        }
+        if (qmax < qmin) continue;
+
+        int num_primes = 0;
+        int temp = (int)p;
+        while (temp > 1) {
+            int pr = spf[temp];
+            p_factors[num_primes++] = pr;
+            while (temp % pr == 0) temp /= pr;
+        }
+
+        int num_divs = 1;
+        ds[0] = 1;
+        mus[0] = 1;
+        for (int i = 0; i < num_primes; i++) {
+            int pr = p_factors[i];
+            int cur_len = num_divs;
+            for (int j = 0; j < cur_len; j++) {
+                ds[num_divs] = ds[j] * pr;
+                mus[num_divs] = -mus[j];
+                num_divs++;
+            }
+        }
+
+        int64_t lm = qmin - 1;
+        int64_t cnt = 0;
+        for (int i = 0; i < num_divs; i++) {
+            cnt += mus[i] * (qmax / ds[i] - lm / ds[i]);
+        }
+
+        if (p % 13 != 0) {
+            int rem13 = (4 * p) % 13;
+            int64_t bad = 0;
+            for (int i = 0; i < num_divs; i++) {
+                int64_t d = ds[i];
+                int inv = INV_MOD13[d % 13];
+                int64_t m0 = (rem13 * inv) % 13;
+                int64_t rem = d * m0;
+                int64_t mod = 13 * d;
+                bad += mus[i] * count_congruence(qmin, qmax, mod, rem);
+            }
+            cnt -= bad;
+        }
+        total += cnt;
+    }
+
+    // Branch 2: p = -a < 0, sqrt(3)*a < q < 2.5a, z = -(q^2 - 5aq + 3a^2) <= N
+    int64_t threshold = isqrt_i64(four_n / 13);
+    for (int64_t a = 1; a <= amax; a++) {
+        int64_t qmin = (int64_t)(1.7320508075688772 * a) + 1;
+        int64_t thr = 3 * a * a;
+        while (qmin * qmin <= thr) qmin++;
+
+        int64_t qmax = (5 * a - 1) / 2;
+        if (qmax < qmin) continue;
+
+        if (a > threshold) {
+            int64_t disc = 13 * a * a - four_n;
+            int64_t s = isqrt_i64(disc);
+            int64_t lim = (5 * a - s) / 2;
+            if (lim < qmax) qmax = lim;
+        }
+
+        while (qmax >= qmin && (-(qmax * qmax - 5 * a * qmax + 3 * a * a)) > n) {
+            qmax--;
+        }
+        if (qmax < qmin) continue;
+
+        int num_primes = 0;
+        int temp = (int)a;
+        while (temp > 1) {
+            int pr = spf[temp];
+            p_factors[num_primes++] = pr;
+            while (temp % pr == 0) temp /= pr;
+        }
+
+        int num_divs = 1;
+        ds[0] = 1;
+        mus[0] = 1;
+        for (int i = 0; i < num_primes; i++) {
+            int pr = p_factors[i];
+            int cur_len = num_divs;
+            for (int j = 0; j < cur_len; j++) {
+                ds[num_divs] = ds[j] * pr;
+                mus[num_divs] = -mus[j];
+                num_divs++;
+            }
+        }
+
+        int64_t lm = qmin - 1;
+        int64_t cnt = 0;
+        for (int i = 0; i < num_divs; i++) {
+            cnt += mus[i] * (qmax / ds[i] - lm / ds[i]);
+        }
+
+        if (a % 13 != 0) {
+            int rem13 = ((-4 * a) % 13 + 13) % 13;
+            int64_t bad = 0;
+            for (int i = 0; i < num_divs; i++) {
+                int64_t d = ds[i];
+                int inv = INV_MOD13[d % 13];
+                int64_t m0 = (rem13 * inv) % 13;
+                int64_t rem = d * m0;
+                int64_t mod = 13 * d;
+                bad += mus[i] * count_congruence(qmin, qmax, mod, rem);
+            }
+            cnt -= bad;
+        }
+        total += cnt;
+    }
+
+    free(spf);
+    free(primes);
+    return total;
+}
+"""
+
+
+def _load_c_solver():
+    cc = shutil.which("gcc") or shutil.which("clang")
+    if not cc:
+        return None
+    try:
+        temp_dir = tempfile.mkdtemp()
+        c_path = os.path.join(temp_dir, "solver769.c")
+        ext = ".dll" if os.name == "nt" else ".so"
+        so_path = os.path.join(temp_dir, f"libsolver769{ext}")
+        with open(c_path, "w", encoding="utf-8") as f:
+            f.write(C_SOURCE)
+        cmd = [cc, "-O3", "-shared", "-static", "-fPIC", c_path, "-o", so_path]
+        subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        dll = ctypes.CDLL(so_path)
+        dll.solve_c.argtypes = [ctypes.c_int64]
+        dll.solve_c.restype = ctypes.c_int64
+        return dll.solve_c
+    except Exception:
+        return None
 
 
 def build_spf_linear(n: int) -> array:
@@ -169,9 +415,15 @@ def max_abs_p_for_negative_branch(N: int) -> int:
 class Problem769:
     def __init__(self, limit: int = 10**14):
         self.limit = limit
+        self._c_solver = _load_c_solver()
 
     def compute_C(self, n: int, spf: array = None) -> int:
         n = int(n)
+        if self._c_solver is not None:
+            ans = self._c_solver(n)
+            if ans >= 0:
+                return ans
+
         four_n = 4 * n
         total = 0
         isqrt = math.isqrt
@@ -243,6 +495,10 @@ class Problem769:
 
     @timeit
     def solve(self) -> int:
+        if self._c_solver is not None:
+            ans = self._c_solver(self.limit)
+            if ans >= 0:
+                return ans
         maxp = max(int(math.isqrt(self.limit // 3)), max_abs_p_for_negative_branch(self.limit))
         spf = build_spf_linear(maxp)
         return self.compute_C(self.limit, spf)
