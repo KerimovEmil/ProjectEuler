@@ -224,6 +224,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0719 | [PE0719.py](../solutions/PE0719.py) | Number Splitting: Sum of S-numbers T(10^12) via modulo 9 pruning and suffix partition. | 7.2 seconds |
 | PE0722 | [PE0722.py](../solutions/PE0722.py) | Problem 722 | 0.001 seconds |
 | PE0739 | [PE0739.py](../solutions/PE0739.py) | Take a sequence of length n. Discard the first term then make a seq... | ~85 seconds |
+| PE0744 | [PE0744.py](../solutions/PE0744.py) | What? Where? When? Normal game end probability f(10^11, 0.4999). | ~0.0001 seconds |
 | PE0752 | [PE0752.py](../solutions/PE0752.py) | When (1+sqrt(7)) is raised to an integral power, n, we always get a... | 4.1 seconds |
 | PE0753 | [PE0753.py](../solutions/PE0753.py) | Problem 753 | 2.5 seconds |
 | PE0759 | [PE0759.py](../solutions/PE0759.py) | A squared recurrence: Find S(10^16) mod 1,000,000,007 where S(n) = sum f(i)^2. | ~0.002 seconds |
