@@ -14,7 +14,7 @@ Further we define T(N) to be the sum of all S numbers n <= N. You are given T(10
 Find T(10^12).
 
 ANSWER: 128088830547982
-Solve time: ~10.0 seconds
+Solve time: ~7.0 seconds
 
 ---
 MATHEMATICAL DERIVATION:
@@ -34,39 +34,70 @@ MATHEMATICAL DERIVATION:
    Since gcd(s, s - 1) = 1, 9 must divide either s or s - 1:
      s = 0 mod 9  or  s = 1 mod 9.
    This single modular constraint eliminates 7/9 (~77.8%) of all candidates, leaving only ~222,222
-   values of s to test up to 10^6.
+   values of s to test up to 10^6. We generate these directly (s = 9k and s = 9k + 1) without checking
+   modulo 9 on every integer.
 
-3. Recursive Suffix Splitting with Branch-and-Bound:
-   For each candidate s:
-   - To ensure at least 2 parts, the first split cannot take the entire number.
-   - For subproblems checking if `num` can be split into parts summing to `target`:
+3. Recursive Suffix Partitioning with Monotonic and Zero-Duplicate Pruning:
+   - For subproblems checking if `num` can be partitioned to sum to `target`:
        if num < target: return False
        if num == target: return True
-       for d in (10, 100, 1000, ...):
-         r = num % d
-         if r > target: break  # Because larger powers of 10 yield larger remainders
-         if can_split(num // d, target - r): return True
-   - Pruning stops branches almost immediately, evaluating the entire search space in ~10 seconds
-     in pure Python.
+   - Monotonic bound: As d in (10, 100, 1000, ...) increases, r = num % d is non-decreasing.
+     If r >= target, any larger power of 10 will produce an even larger remainder >= target,
+     so we return False immediately without testing larger powers of 10.
+   - Zero-Duplicate Elimination: If num % 10^(k+1) == num % 10^k, the (k+1)-th digit is 0.
+     Taking that 0 yields the exact same remainder value and reduces the quotient, a state space
+     already covered by the branch that took the zero digit in the previous cut. Skipping
+     identical remainders eliminates millions of duplicate recursive calls.
+   - For s >= 2, s^2 > s, so can_split(s * s, s) is guaranteed to make at least one partition cut
+     (producing >= 2 parts), allowing a unified, direct recursive search.
 """
 
 import math
 import unittest
 from util.utils import timeit
 
-POW10 = (
-    10,
-    100,
-    1000,
-    10_000,
-    100_000,
-    1_000_000,
-    10_000_000,
-    100_000_000,
-    1_000_000_000,
-    10_000_000_000,
-    100_000_000_000,
-)
+
+def can_split(num: int, target: int) -> bool:
+    """Recursively checks whether `num` can be partitioned into parts summing to `target`."""
+    if num < target:
+        return False
+    if num == target:
+        return True
+
+    r = num % 10
+    if r >= target:
+        return False
+    if can_split(num // 10, target - r):
+        return True
+
+    r2 = num % 100
+    if r2 >= target:
+        return False
+    if r2 != r and can_split(num // 100, target - r2):
+        return True
+
+    r3 = num % 1000
+    if r3 >= target:
+        return False
+    if r3 != r2 and can_split(num // 1000, target - r3):
+        return True
+
+    r4 = num % 10000
+    if r4 >= target:
+        return False
+    if r4 != r3 and can_split(num // 10000, target - r4):
+        return True
+
+    r5 = num % 100000
+    if r5 >= target:
+        return False
+    if r5 != r4 and can_split(num // 100000, target - r5):
+        return True
+
+    r6 = num % 1000000
+    if r6 >= target:
+        return False
+    return r6 != r5 and can_split(num // 1000000, target - r6)
 
 
 class Problem719:
@@ -74,42 +105,25 @@ class Problem719:
         self.limit = limit
 
     @staticmethod
-    def _can_split(num: int, target: int) -> bool:
-        if num < target:
-            return False
-        if num == target:
-            return True
-        for d in POW10:
-            if d > num:
-                break
-            r = num % d
-            if r > target:
-                break
-            if Problem719._can_split(num // d, target - r):
-                return True
-        return False
-
-    @staticmethod
     def is_s_number(s: int) -> bool:
-        num = s * s
-        for d in POW10:
-            if d > num:
-                break
-            r = num % d
-            if r > s:
-                break
-            if Problem719._can_split(num // d, s - r):
-                return True
-        return False
+        """Checks if s^2 is an S-number with square root s."""
+        if s < 2:
+            return False
+        rem = s % 9
+        if rem != 0 and rem != 1:
+            return False
+        return can_split(s * s, s)
 
     def compute_T(self, limit: int) -> int:
         limit_s = math.isqrt(limit)
         total = 0
-        for s in range(2, limit_s + 1):
-            rem = s % 9
-            if rem != 0 and rem != 1:
-                continue
-            if self.is_s_number(s):
+        max_k = limit_s // 9
+        for k in range(1, max_k + 1):
+            s = 9 * k
+            if can_split(s * s, s):
+                total += s * s
+            s = 9 * k + 1
+            if s <= limit_s and can_split(s * s, s):
                 total += s * s
         return total
 
