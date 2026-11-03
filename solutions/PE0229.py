@@ -229,7 +229,6 @@ class Problem229:
         return True
 
     @staticmethod
-    @timeit
     def get_ls_good_composite(max_n: int, ls_good_primes: list) -> list:
         """
         Compute a list of composite numbers consisting of two primes, less than max_n
@@ -257,7 +256,6 @@ class Problem229:
         return ls_good_composite
 
     @staticmethod
-    @timeit
     def get_ls_good_composite_3_primes(max_n: int, ls_good_primes: list) -> list:
         """
         Compute a list of composite numbers consisting of three primes, less than max_n
