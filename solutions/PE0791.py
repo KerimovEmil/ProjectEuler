@@ -15,7 +15,7 @@ Hence S(5) = 48. You are also given S(10^3) = 37048340.
 Find S(10^8). Give your answer modulo 433494437.
 
 ANSWER: 404890862
-Solve time: ~0.035 seconds (pure Python: ~8.5 seconds)
+Solve time: ~0.035 seconds (pure Python: ~3.6 seconds)
 
 ---
 MATHEMATICAL DERIVATION:
@@ -173,8 +173,9 @@ class Problem791:
                 return ans
 
         # Pure Python fallback using Ehrhart polynomial on interior chamber
-        x3 = int(math.sqrt(2.0 / 3.0 * n + 0.25) - 0.5)
-        x1 = int(math.sqrt(2.0 * n + 0.25) - 0.5)
+        sqrt = math.sqrt
+        x3 = int(sqrt(2.0 / 3.0 * n + 0.25) - 0.5)
+        x1 = int(sqrt(2.0 * n + 0.25) - 0.5)
 
         if x3 >= 1:
             inv6 = pow(6, -1, mod)
@@ -183,17 +184,32 @@ class Problem791:
         else:
             tot = 3
 
-        for x in range(x3 + 1, x1 + 1):
-            y2 = int((math.sqrt(4.0 * n - 2.0 * x * (x + 1) + 1.0) - 1.0) / 2.0)
-            y1 = int((math.sqrt(4.0 * (2.0 * n - x * (x + 1)) + 1.0) - 1.0) / 2.0)
-            tot += (x * (y2 + 1)) ** 2 + (2 * y2 + 3) * (y2 * (y2 + 1) * (2 * y2 + 1) // 6)
-            tot %= mod
+        four_n = 4 * n
+        eight_n_plus_1 = 8 * n + 1
 
-            max_y = min(x, y1)
+        for x in range(x3 + 1, x1 + 1):
+            x_sq = x * x
+            x_xp1 = x * (x + 1)
+            four_x_xp1 = 4 * x_xp1
+
+            y2 = int((sqrt(four_n - 2 * x_xp1 + 1.0) - 1.0) * 0.5)
+            y1 = int((sqrt(2 * four_n - four_x_xp1 + 1.0) - 1.0) * 0.5)
+
+            y2_p1 = y2 + 1
+            y2_term = (x * y2_p1) ** 2 + (2 * y2 + 3) * (y2 * y2_p1 * (2 * y2 + 1) // 6)
+
+            c_x = eight_n_plus_1 - four_x_xp1
+            max_y = x if x < y1 else y1
+
+            sum_z1_p1 = 0
+            sub_tot = y2_term
             for y in range(y2 + 1, max_y + 1):
-                z1 = int((math.sqrt(4.0 * (2.0 * n - x * (x + 1) - y * (y + 1)) + 1.0) - 1.0) / 2.0)
-                term = 2 * (z1 + 1) * (x**2 + y**2) + (z1 * (z1 + 1) * (2 * z1 + 1)) // 3 + (z1 + 1) ** 2
-                tot = (tot + term) % mod
+                z1 = int((sqrt(c_x - 4 * y * (y + 1)) - 1.0) * 0.5)
+                z1_p1 = z1 + 1
+                sum_z1_p1 += z1_p1
+                sub_tot += 2 * z1_p1 * y * y + (z1_p1 * (2 * z1_p1 * z1_p1 + 1)) // 3
+
+            tot = (tot + sub_tot + 2 * x_sq * sum_z1_p1) % mod
 
         return (2 * tot) % mod
 
