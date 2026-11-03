@@ -15,61 +15,49 @@ Hence S(5) = 48. You are also given S(10^3) = 37048340.
 Find S(10^8). Give your answer modulo 433494437.
 
 ANSWER: 404890862
-Solve time: ~1.8 seconds
+Solve time: ~0.08 seconds (pure Python: ~8.5 seconds)
 
 ---
 MATHEMATICAL DERIVATION:
 
-1. Algebraic Condition on Average and Variance:
+1. Condition on Average and Variance:
    For k = 4, let s = a + b + c + d.
-   Average: \bar{x} = s / 4.
-   Variance: \sigma^2 = (1/4) \sum x_i^2 - (s/4)^2.
-   The condition \bar{x} = 2\sigma^2 expands to:
-     s/4 = 2 * ((1/4) \sum x_i^2 - s^2/16)
-     2s = 4 \sum x_i^2 - s^2
-     4 \sum x_i^2 = s(s + 2).
-   Since 4 | s(s + 2), s must be even: s = 2m.
-   Then 4 \sum x_i^2 = 2m(2m + 2) = 4m(m + 1), which implies:
-     \sum_{i=1}^4 x_i^2 = m(m + 1).
+   The condition \bar{x} = 2\sigma^2 is equivalent to:
+     4(a^2 + b^2 + c^2 + d^2) = s(s + 2)
 
-2. Centered Coordinates and Transformation:
-   Case 1 (m even, m = 2k):
-     The mean \mu = k is an integer. Let y_i = x_i - k.
-     Then \sum y_i = 0 and \sum y_i^2 = 2k, so k = (1/2) \sum y_i^2 is uniquely determined!
-     With y_1 <= y_2 <= y_3 <= y_4, define:
-       u = y_3 + y_4 = -(y_1 + y_2) > 0,
-       d_1 = y_2 - y_1 >= 0,   d_2 = y_4 - y_3 >= 0,
-       with d_1 \equiv d_2 \equiv u (mod 2).
-     Then:
-       \sum y_i^2 = u^2 + (d_1^2 + d_2^2) / 2,   y_4 = (u + d_2) / 2.
-     The constraint d = k + y_4 <= n translates to:
-       2u^2 + 2u + d_1^2 + d_2^2 + 2d_2 <= 4n.
-     The ordering condition y_2 <= y_3 simplifies to d_1 + d_2 <= 2u.
-     The quadruple sum is s = 4k = 2 \sum y_i^2 = 2u^2 + d_1^2 + d_2^2.
+2. Walsh-Hadamard Transform H_2:
+   Transform the quadruple (a, b, c, d) using the orthogonal Walsh-Hadamard basis:
+     x = (-a - b + c + d) / 2
+     y = (-a + b - c + d) / 2
+     z = ( a - b - c + d) / 2
+   along with the sum s = a + b + c + d.
+   By orthogonality of H_2:
+     4(a^2 + b^2 + c^2 + d^2) = s^2 + 4(x^2 + y^2 + z^2)
+   Substituting into 4\sum x_i^2 = s(s + 2) = s^2 + 2s gives:
+     s^2 + 4(x^2 + y^2 + z^2) = s^2 + 2s  ==>  s = 2(x^2 + y^2 + z^2).
+   The quadratic coupling on s cancels out completely!
 
-   Case 2 (m odd, m = 2k + 1):
-     The mean \mu = k + 0.5 is a half-integer.
-     Let z_i = 2x_i - (2k + 1) be odd integers with \sum z_i = 0.
-     Then \sum z_i^2 = 8k + 4 = 4m.
-     Let u = z_3 + z_4 = 2U, d_1 = z_2 - z_1 = 2D_1, d_2 = z_4 - z_3 = 2D_2.
-     Since z_i are odd, D_1 \not\equiv U (mod 2) and D_2 \not\equiv U (mod 2).
-     The constraint d <= n becomes:
-       2U^2 + 2U + D_1^2 + D_2^2 + 2D_2 <= 4n.
-     The ordering condition becomes D_1 + D_2 <= 2U.
-     The quadruple sum is s = 2m = 2U^2 + D_1^2 + D_2^2.
+3. Domain Constraints:
+   The ordering 1 <= a <= b <= c <= d <= n maps to:
+     x >= y >= |z|
+     d = (s + x + y + z) / 2 <= n  ==>  x^2 + y^2 + z^2 + x + y + z <= 2n.
+   The condition a = (s - x - y + z) / 2 >= 1 holds for all quadruples except (1, 1, 1, 3),
+   which corresponds to x = 1 (where s = 6, accounted for by tot = 3).
 
-3. Closed-Form Summation over d_1 / D_1:
-   For fixed u and d_2, d_1 ranges from rem to max_d_1 in steps of 2, where:
-     max_d_1 = min(2u - d_2, floor(sqrt(4n - (2u^2 + 2u + d_2^2 + 2d_2)))).
-   Setting J = (max_d_1 - rem) // 2 and cnt = J + 1, the inner sum \sum (2u^2 + d_2^2 + d_1^2)
-   evaluates in O(1) via Faulhaber's formulas for \sum j and \sum j^2.
-
-4. Boundary Violators (a < 1):
-   a >= 1 holds for all quadruples except exactly three across both cases:
-     - Case 1: y = (-1, 0, 0, 1) -> sum = 4
-     - Case 2: z = (-3, 1, 1, 1) -> sum = 6
-     - Case 2: z = (-1, -1, 1, 1) -> sum = 2
-   Subtracting 4 + 6 + 2 = 12 yields the exact value of S(n).
+4. Geometric Domain Decomposition:
+   Since x >= y >= |z|, the maximum of d(x, y, z) for a fixed x occurs at y = x, z = x:
+     d_max(x) = (3/2) x(x + 1)
+   - When x <= x_3 = floor(sqrt(2n/3 + 1/4) - 1/2):
+     d_max(x) <= n is ALWAYS satisfied!
+     The entire inner domain over y in [0, x] and z in [-y, y] is unconstrained by n,
+     and evaluates in closed form:
+       (x(x + 1))^2 + (2x + 3) * x(x + 1)(2x + 1) / 6.
+   - For x > x_3:
+     When y <= y_2 = floor((sqrt(4n - 2x(x + 1) + 1) - 1) / 2),
+     the z-sum remains unconstrained, evaluating in closed form:
+       (x(y_2 + 1))^2 + (2y_2 + 3) * y_2(y_2 + 1)(2y_2 + 1) / 6.
+     Only for the active boundary strip y_2 < y <= min(x, y_1) do we explicitly compute
+     the bound on z and sum in O(1) via Faulhaber formulas.
 """
 
 import ctypes
@@ -85,100 +73,50 @@ MOD = 433494437
 
 C_SOURCE = """
 #include <stdint.h>
-#include <stdlib.h>
 #include <math.h>
-
-static inline int64_t isqrt_i64(int64_t n) {
-    if (n <= 0) return 0;
-    int64_t x = (int64_t)sqrt((double)n);
-    while ((x + 1) * (x + 1) <= n) x++;
-    while (x * x > n) x--;
-    return x;
-}
 
 #ifdef _WIN32
 __declspec(dllexport)
 #endif
-int64_t solve_c_omp(int64_t n, int64_t mod) {
-    int64_t four_n = 4 * n;
-    int64_t max_u = isqrt_i64(2 * n) + 2;
-    __int128 total1 = 0;
-    __int128 total2 = 0;
+int64_t solve_c_walsh(int64_t N0, int64_t M) {
+    int64_t tot = 3; // case x = 1: (1+1+1+3)/2 = 3
+    int64_t x3 = (int64_t)(sqrt(2.0 / 3.0 * N0 + 0.25) - 0.5);
+    int64_t x1 = (int64_t)(sqrt(2.0 * N0 + 0.25) - 0.5);
+    int64_t inv3 = 144498146; // 3^(-1) mod 433494437
 
-    // Case 1: rem = u % 2
-    #pragma omp parallel for schedule(guided) reduction(+:total1)
-    for (int64_t u = 1; u <= max_u; u++) {
-        int64_t rem = u % 2;
-        int64_t u2 = u * u;
-        int64_t two_u2_plus_2u = 2 * u2 + 2 * u;
-        if (two_u2_plus_2u > four_n) continue;
+    for (int64_t x = 2; x <= x3; x++) {
+        int64_t term = (x * (x + 1)) % M;
+        term = (term * term) % M;
+        int64_t term2 = ((2 * x + 3) % M) * ((x * (x + 1) / 2) % M) % M;
+        term2 = (term2 * ((2 * x + 1) % M)) % M;
+        term2 = (term2 * inv3) % M;
+        tot = (tot + term + term2) % M;
+    }
 
-        int64_t cur_bound = isqrt_i64(four_n - two_u2_plus_2u);
+    for (int64_t x = x3 + 1; x <= x1; x++) {
+        int64_t y2 = (int64_t)((sqrt(4.0 * N0 - 2.0 * x * (x + 1) + 1.0) - 1.0) / 2.0);
+        int64_t y1 = (int64_t)((sqrt(4.0 * (2.0 * N0 - x * (x + 1)) + 1.0) - 1.0) / 2.0);
 
-        for (int64_t d2 = rem; d2 <= 2 * u; d2 += 2) {
-            int64_t lhs_part = two_u2_plus_2u + d2 * d2 + 2 * d2;
-            int64_t rem_val = four_n - lhs_part;
-            if (rem_val < 0) break;
+        int64_t term = (x * (y2 + 1)) % M;
+        term = (term * term) % M;
+        int64_t term2 = ((2 * y2 + 3) % M) * ((y2 * (y2 + 1) / 2) % M) % M;
+        term2 = (term2 * ((2 * y2 + 1) % M)) % M;
+        term2 = (term2 * inv3) % M;
+        tot = (tot + term + term2) % M;
 
-            while (cur_bound * cur_bound > rem_val) {
-                cur_bound--;
-            }
-
-            int64_t max_d1 = 2 * u - d2;
-            if (cur_bound < max_d1) max_d1 = cur_bound;
-            if (max_d1 < rem) continue;
-
-            int64_t J = (max_d1 - rem) / 2;
-            int64_t cnt = J + 1;
-
-            __int128 sum_j = (__int128)J * (J + 1) / 2;
-            __int128 sum_j2 = (__int128)J * (J + 1) * (2 * J + 1) / 6;
-            __int128 sum_d1_sq = (__int128)cnt * (rem * rem) + 4 * rem * sum_j + 4 * sum_j2;
-
-            __int128 term = (__int128)cnt * (2 * u2 + d2 * d2) + sum_d1_sq;
-            total1 += term;
+        int64_t max_y = x < y1 ? x : y1;
+        for (int64_t y = y2 + 1; y <= max_y; y++) {
+            int64_t z1 = (int64_t)((sqrt(4.0 * (2.0 * N0 - x * (x + 1) - y * (y + 1)) + 1.0) - 1.0) / 2.0);
+            int64_t z1_p1 = z1 + 1;
+            int64_t t1 = (2 * z1_p1) % M * ((x * x + y * y) % M) % M;
+            int64_t t2 = (z1 % M) * ((z1 + 1) % M) % M * ((2 * z1 + 1) % M) % M;
+            t2 = (t2 * inv3) % M;
+            int64_t t3 = (z1_p1 % M) * (z1_p1 % M) % M;
+            tot = (tot + t1 + t2 + t3) % M;
         }
     }
 
-    // Case 2: rem = 1 - (U % 2)
-    #pragma omp parallel for schedule(guided) reduction(+:total2)
-    for (int64_t U = 1; U <= max_u; U++) {
-        int64_t rem = 1 - (U % 2);
-        int64_t U2 = U * U;
-        int64_t two_U2_plus_2U = 2 * U2 + 2 * U;
-        if (two_U2_plus_2U > four_n) continue;
-
-        int64_t cur_bound = isqrt_i64(four_n - two_U2_plus_2U);
-
-        for (int64_t D2 = rem; D2 <= 2 * U; D2 += 2) {
-            int64_t lhs_part = two_U2_plus_2U + D2 * D2 + 2 * D2;
-            int64_t rem_val = four_n - lhs_part;
-            if (rem_val < 0) break;
-
-            while (cur_bound * cur_bound > rem_val) {
-                cur_bound--;
-            }
-
-            int64_t max_D1 = 2 * U - D2;
-            if (cur_bound < max_D1) max_D1 = cur_bound;
-            if (max_D1 < rem) continue;
-
-            int64_t J = (max_D1 - rem) / 2;
-            int64_t cnt = J + 1;
-
-            __int128 sum_j = (__int128)J * (J + 1) / 2;
-            __int128 sum_j2 = (__int128)J * (J + 1) * (2 * J + 1) / 6;
-            __int128 sum_D1_sq = (__int128)cnt * (rem * rem) + 4 * rem * sum_j + 4 * sum_j2;
-
-            __int128 term = (__int128)cnt * (2 * U2 + D2 * D2) + sum_D1_sq;
-            total2 += term;
-        }
-    }
-
-    __int128 total = total1 + total2 - 12;
-    int64_t ans = (int64_t)(total % mod);
-    if (ans < 0) ans += mod;
-    return ans;
+    return (2 * tot) % M;
 }
 """
 
@@ -199,16 +137,12 @@ def _load_c_solver():
         so_path = os.path.join(temp_dir, f"libsolver791{ext}")
         with open(c_path, "w", encoding="utf-8") as f:
             f.write(C_SOURCE)
-        try:
-            cmd = [cc, "-O3", "-fopenmp", "-shared", "-static", "-fPIC", c_path, "-o", so_path]
-            subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception:
-            cmd = [cc, "-O3", "-shared", "-static", "-fPIC", c_path, "-o", so_path]
-            subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        cmd = [cc, "-O3", "-shared", "-static", "-fPIC", c_path, "-o", so_path]
+        subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         dll = ctypes.CDLL(so_path)
-        dll.solve_c_omp.argtypes = [ctypes.c_int64, ctypes.c_int64]
-        dll.solve_c_omp.restype = ctypes.c_int64
-        _COMPILED_C_SOLVER = dll.solve_c_omp
+        dll.solve_c_walsh.argtypes = [ctypes.c_int64, ctypes.c_int64]
+        dll.solve_c_walsh.restype = ctypes.c_int64
+        _COMPILED_C_SOLVER = dll.solve_c_walsh
         return _COMPILED_C_SOLVER
     except Exception:
         return None
@@ -226,59 +160,28 @@ class Problem791:
             if ans >= 0:
                 return ans
 
-        # Pure Python fallback
-        four_n = 4 * n
-        max_u = int(math.isqrt(2 * n)) + 2
-        total = 0
+        # Pure Python fallback using Walsh-Hadamard domain decomposition
+        tot = 3  # case x = 1: (1+1+1+3)/2 = 3
+        x3 = int(math.sqrt(2.0 / 3.0 * n + 0.25) - 0.5)
+        x1 = int(math.sqrt(2.0 * n + 0.25) - 0.5)
 
-        # Case 1: rem = u % 2
-        for u in range(1, max_u):
-            rem = u % 2
-            u2 = u * u
-            two_u2_plus_2u = 2 * u2 + 2 * u
-            if two_u2_plus_2u > four_n:
-                break
-            for d2 in range(rem, 2 * u + 1, 2):
-                lhs_part = two_u2_plus_2u + d2 * d2 + 2 * d2
-                if lhs_part > four_n:
-                    break
-                max_d1_by_bound = int(math.isqrt(four_n - lhs_part))
-                max_d1 = min(2 * u - d2, max_d1_by_bound)
-                if max_d1 < rem:
-                    continue
-                J = (max_d1 - rem) // 2
-                cnt = J + 1
-                sum_j = J * (J + 1) // 2
-                sum_j2 = J * (J + 1) * (2 * J + 1) // 6
-                sum_d1_sq = cnt * (rem * rem) + 4 * rem * sum_j + 4 * sum_j2
-                term = cnt * (2 * u2 + d2 * d2) + sum_d1_sq
-                total += term
+        for x in range(2, x3 + 1):
+            tot += (x * (x + 1)) ** 2 + (2 * x + 3) * (x * (x + 1) * (2 * x + 1) // 6)
+            tot %= mod
 
-        # Case 2: rem = 1 - (U % 2)
-        for U in range(1, max_u):
-            rem = 1 - (U % 2)
-            U2 = U * U
-            two_U2_plus_2U = 2 * U2 + 2 * U
-            if two_U2_plus_2U > four_n:
-                break
-            for D2 in range(rem, 2 * U + 1, 2):
-                lhs_part = two_U2_plus_2U + D2 * D2 + 2 * D2
-                if lhs_part > four_n:
-                    break
-                max_D1_by_bound = int(math.isqrt(four_n - lhs_part))
-                max_D1 = min(2 * U - D2, max_D1_by_bound)
-                if max_D1 < rem:
-                    continue
-                J = (max_D1 - rem) // 2
-                cnt = J + 1
-                sum_j = J * (J + 1) // 2
-                sum_j2 = J * (J + 1) * (2 * J + 1) // 6
-                sum_D1_sq = cnt * (rem * rem) + 4 * rem * sum_j + 4 * sum_j2
-                term = cnt * (2 * U2 + D2 * D2) + sum_D1_sq
-                total += term
+        for x in range(x3 + 1, x1 + 1):
+            y2 = int((math.sqrt(4.0 * n - 2.0 * x * (x + 1) + 1.0) - 1.0) / 2.0)
+            y1 = int((math.sqrt(4.0 * (2.0 * n - x * (x + 1)) + 1.0) - 1.0) / 2.0)
+            tot += (x * (y2 + 1)) ** 2 + (2 * y2 + 3) * (y2 * (y2 + 1) * (2 * y2 + 1) // 6)
+            tot %= mod
 
-        total -= 12
-        return total % mod
+            max_y = min(x, y1)
+            for y in range(y2 + 1, max_y + 1):
+                z1 = int((math.sqrt(4.0 * (2.0 * n - x * (x + 1) - y * (y + 1)) + 1.0) - 1.0) / 2.0)
+                term = 2 * (z1 + 1) * (x**2 + y**2) + (z1 * (z1 + 1) * (2 * z1 + 1)) // 3 + (z1 + 1) ** 2
+                tot = (tot + term) % mod
+
+        return (2 * tot) % mod
 
     @timeit
     def solve(self) -> int:
