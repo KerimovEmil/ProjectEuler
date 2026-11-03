@@ -232,6 +232,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0765 | [PE0765.py](../solutions/PE0765.py) | Trillionaire: Maximize probability of reaching 10^12 gold in 1000 rounds. | ~0.03 seconds |
 | PE0769 | [PE0769.py](../solutions/PE0769.py) | Binary Quadratic Form II: Count primitive representations of z^2 <= 10^14 for x^2 + 5xy + 3y^2. | ~1.4 seconds |
 | PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.15 seconds |
+| PE0791 | [PE0791.py](../solutions/PE0791.py) | Average and Variance: Sum of quadruples where mean equals twice variance for n <= 10^8 mod 433494437. | ~1.8 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
 | PE0853 | [PE0853.py](../solutions/PE0853.py) | For every positive integer n the Fibonacci sequence modulo n is per... | 0.17 seconds |
 | PE0880 | [PE0880.py](../solutions/PE0880.py) | Nested Radical Pairs: Sum |x|+|y| for (x, y) where sqrt(cbrt(x)+cbrt(y)) = cbrt(a)+cbrt(b)+cbrt(c). | ~10.0 seconds |
