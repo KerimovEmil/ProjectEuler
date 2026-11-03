@@ -173,7 +173,6 @@ class Problem678:
                     cur *= sm
         return total
 
-    @timeit
     def solve_case2(self, per_e=None):
         """
         Count solutions with e >= 3. Assuming Beal's conjecture, a, b and c must
@@ -228,7 +227,6 @@ class Problem678:
                     c = a ** e + b ** e
         return answers
 
-    @timeit
     def solve_case1(self):
         """
         Count solutions with e == 2, i.e. c^f expressible as a sum of two squares
