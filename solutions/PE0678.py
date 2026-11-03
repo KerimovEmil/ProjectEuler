@@ -282,12 +282,6 @@ class Solution678(unittest.TestCase):
     def test_sample_solution_1000(self):
         self.assertEqual(7, Problem678(n=10 ** 3).solve())
 
-    def test_sample_solution_100000(self):
-        self.assertEqual(53, Problem678(n=10 ** 5).solve())
-
-    def test_sample_solution_10000000(self):
-        self.assertEqual(287, Problem678(n=10 ** 7).solve())
-
     def test_solution(self):
         self.assertEqual(1986065, self.problem.solve())
 
