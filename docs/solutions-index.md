@@ -232,6 +232,8 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0765 | [PE0765.py](../solutions/PE0765.py) | Trillionaire: Maximize probability of reaching 10^12 gold in 1000 rounds. | ~0.03 seconds |
 | PE0769 | [PE0769.py](../solutions/PE0769.py) | Binary Quadratic Form II: Count primitive representations of z^2 <= 10^14 for x^2 + 5xy + 3y^2. | ~1.4 seconds |
 | PE0772 | [PE0772.py](../solutions/PE0772.py) | Balanceable k-bounded Partitions: Smallest N such that all k-bounded partitions are balanceable mod 10^9+7. | ~0.9 seconds |
+| PE0773 | [PE0773.py](../solutions/PE0773.py) | Ruff Numbers: Sum of S_k-Ruff numbers < M_k ending in 7 mod 10^9+7 via CRT and parity periodicity. | ~0.001 seconds |
+| PE0776 | [PE0776.py](../solutions/PE0776.py) | Digit Sum Division: Evaluate sum n/d(n) for n <= 1234567890123456789 via digit DP. | ~0.005 seconds |
 | PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.15 seconds |
 | PE0791 | [PE0791.py](../solutions/PE0791.py) | Average and Variance: Sum of quadruples where mean equals twice variance for n <= 10^8 mod 433494437. | ~0.035 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
