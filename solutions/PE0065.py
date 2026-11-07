@@ -24,11 +24,8 @@ Find the sum of digits in the numerator of the 100th convergent of the continued
 ANSWER: 272
 Solve time: ~0.001 seconds
 """
-import decimal
 import math
 import unittest
-
-decimal.getcontext().prec = 1000
 
 
 class Problem65:
@@ -41,7 +38,7 @@ class Problem65:
     def get_numerator(self):
         n = self.nth_convergent - 1
         old_p = 1
-        p = decimal.Decimal(self.n).to_integral_exact(rounding=decimal.ROUND_FLOOR)
+        p = int(self.n)
         # p(n) = a(n) * p(n - 1) + p(n - 2)
         for i in range(n):
             older_p = old_p

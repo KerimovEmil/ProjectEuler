@@ -51,30 +51,31 @@ MATHEMATICAL DERIVATION:
 import unittest
 from util.utils import timeit
 
-DEFAULT_BLOCKS_24 = (
-    "ABCDKMPR",
-    "ABJKLMNW",
-    "ACIOQTUW",
-    "ADFMPQTU",
-    "AEFNPTVX",
-    "AEFQRSTW",
-    "AEGIMQSU",
-    "BDEKORUX",
-    "BEFGHIKU",
-    "DEFHKOSW",
-    "FHIJKRST",
-)
-
-
 class Problem1014:
+    DEFAULT_BLOCKS_24: tuple[str, ...] = (
+        "ABCDKMPR",
+        "ABJKLMNW",
+        "ACIOQTUW",
+        "ADFMPQTU",
+        "AEFNPTVX",
+        "AEFQRSTW",
+        "AEGIMQSU",
+        "BDEKORUX",
+        "BEFGHIKU",
+        "DEFHKOSW",
+        "FHIJKRST",
+    )
+
     def __init__(
         self,
         t: int = 5,
         k: int = 8,
         v: int = 24,
-        given_blocks: tuple[str, ...] = DEFAULT_BLOCKS_24,
+        given_blocks: tuple[str, ...] | None = None,
         query: str = "CGJLV",
     ):
+        if given_blocks is None:
+            given_blocks = self.DEFAULT_BLOCKS_24
         self.t = t
         self.k = k
         self.v = v

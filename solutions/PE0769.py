@@ -63,12 +63,6 @@ import tempfile
 import unittest
 from util.utils import timeit
 
-SQRT3 = math.sqrt(3.0)
-
-INV_MOD13 = [0] * 13
-for a in range(1, 13):
-    INV_MOD13[a] = pow(a, -1, 13)
-
 C_SOURCE = """
 #include <stdint.h>
 #include <stdlib.h>
@@ -202,7 +196,7 @@ int64_t solve_c(int64_t n) {
             int64_t bad = 0;
             for (int i = 0; i < num_divs; i++) {
                 int64_t d = ds[i];
-                int inv = INV_MOD13[d % 13];
+                int inv = (0, 1, 7, 9, 10, 8, 11, 2, 5, 3, 4, 6, 12)[d % 13];
                 int64_t m0 = (rem13 * inv) % 13;
                 int64_t rem = d * m0;
                 int64_t mod = 13 * d;
@@ -267,7 +261,7 @@ int64_t solve_c(int64_t n) {
             int64_t bad = 0;
             for (int i = 0; i < num_divs; i++) {
                 int64_t d = ds[i];
-                int inv = INV_MOD13[d % 13];
+                int inv = (0, 1, 7, 9, 10, 8, 11, 2, 5, 3, 4, 6, 12)[d % 13];
                 int64_t m0 = (rem13 * inv) % 13;
                 int64_t rem = d * m0;
                 int64_t mod = 13 * d;
@@ -375,7 +369,7 @@ def count_coprime_with_mod13_congruence(
     """Count integers q in [L, R] with gcd(q, n) = 1 and q = rem13 (mod 13)."""
     total = 0
     for d, mu in zip(ds, mus):
-        inv = INV_MOD13[d % 13]
+        inv = (0, 1, 7, 9, 10, 8, 11, 2, 5, 3, 4, 6, 12)[d % 13]
         m0 = (rem13 * inv) % 13
         rem = d * m0
         mod = 13 * d
@@ -393,7 +387,7 @@ def max_abs_p_for_negative_branch(N: int) -> int:
             lo = a
             continue
 
-        qmin = int(SQRT3 * a) + 1
+        qmin = int(math.sqrt(3.0) * a) + 1
         thr = 3 * a * a
         while qmin * qmin <= thr:
             qmin += 1
@@ -435,7 +429,7 @@ class Problem769:
         # Branch 1: p > 0, q > sqrt(3)*p, z = q^2 + 5pq + 3p^2 <= N
         pmax = int(isqrt(n // 3))
         for p in range(1, pmax + 1):
-            qmin = int(SQRT3 * p) + 1
+            qmin = int(math.sqrt(3.0) * p) + 1
             thr = 3 * p * p
             while qmin * qmin <= thr:
                 qmin += 1
@@ -463,7 +457,7 @@ class Problem769:
         threshold = int(isqrt(four_n // 13))
 
         for a in range(1, amax + 1):
-            qmin = int(SQRT3 * a) + 1
+            qmin = int(math.sqrt(3.0) * a) + 1
             thr = 3 * a * a
             while qmin * qmin <= thr:
                 qmin += 1

@@ -61,8 +61,6 @@ from typing import Optional
 import unittest
 from util.utils import timeit
 
-MOD = 1000000009
-
 C_SOURCE = """
 #include <stdio.h>
 #include <stdlib.h>
@@ -190,7 +188,9 @@ def _load_c_solver():
 
 
 class Problem635:
-    def __init__(self, limit: int = 100_000_000):
+    def __init__(self, limit: int = 100_000_000, mod: int = 1000000009):
+        self.limit = limit
+        self.mod = mod
         self.limit = limit
         self._c_solver = _load_c_solver()
 
@@ -209,7 +209,7 @@ class Problem635:
                 for j in range(i * i, limit + 1, i):
                     is_prime[j] = False
         primes = [i for i, prime in enumerate(is_prime) if prime]
-        return sum(self.compute_A(q, p) for p in primes) % MOD
+        return sum(self.compute_A(q, p) for p in primes) % self.mod
 
     @timeit
     def solve(self) -> int:
