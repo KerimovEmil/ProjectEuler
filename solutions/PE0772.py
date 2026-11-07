@@ -14,7 +14,7 @@ For example, f(3) = 12 and f(6) = 120.
 Find f(10^8). Give your answer modulo 1,000,000,007.
 
 ANSWER: 83985379
-Solve time: ~0.05 seconds (pure Python: ~4.5 seconds)
+Solve time: ~0.9 seconds
 
 ---
 MATHEMATICAL DERIVATION:
@@ -41,118 +41,38 @@ MATHEMATICAL DERIVATION:
      lcm(1, 2, ..., k) = \prod_{p <= k} p^{\lfloor \log_p k \rfloor}.
    For primes p > sqrt(k) = 10^4, the exponent \lfloor \log_p k \rfloor is exactly 1.
    For primes p <= 10^4, the exponent is \lfloor \log_p k \rfloor.
-   We sieve primes up to 10^8, compute the product of prime powers modulo 1,000,000,007,
-   and multiply by 2.
+   We sieve primes up to 10^8 via NumPy, compute prime powers for small primes p <= 10^4,
+   and multiply large primes p > 10^4 with exponent 1 directly modulo 1,000,000,007 in ~0.9 seconds.
 """
 
-import ctypes
 import math
-import os
-import shutil
-import subprocess
-import tempfile
 import unittest
+import numpy as np
 
 from util.utils import timeit
 
-MOD = 1000000007
-
-C_SOURCE = """
-#include <stdint.h>
-#include <stdlib.h>
-
-#ifdef _WIN32
-__declspec(dllexport)
-#endif
-int64_t solve_c(int64_t n, int64_t mod) {
-    if (n < 2) return 0;
-    int64_t max_i = (n - 1) / 2;
-    uint8_t *sieve = (uint8_t *)calloc(max_i + 1, sizeof(uint8_t));
-    if (!sieve) return -1;
-
-    for (int64_t i = 1; (2 * i + 1) * (2 * i + 1) <= n; i++) {
-        if (!sieve[i]) {
-            int64_t p = 2 * i + 1;
-            int64_t start = (p * p - 1) / 2;
-            for (int64_t j = start; j <= max_i; j += p) {
-                sieve[j] = 1;
-            }
-        }
-    }
-
-    int64_t ans = 2;
-    int64_t p2 = 1;
-    while (p2 * 2 <= n) p2 *= 2;
-    ans = (int64_t)(((uint64_t)ans * (p2 % mod)) % mod);
-
-    for (int64_t i = 1; i <= max_i; i++) {
-        if (!sieve[i]) {
-            int64_t p = 2 * i + 1;
-            if (p * p <= n) {
-                int64_t pw = p;
-                while (pw * p <= n) pw *= p;
-                ans = (int64_t)(((uint64_t)ans * (pw % mod)) % mod);
-            } else {
-                ans = (int64_t)(((uint64_t)ans * (p % mod)) % mod);
-            }
-        }
-    }
-    free(sieve);
-    return ans;
-}
-"""
-
-_COMPILED_C_SOLVER = None
-
-
-def _load_c_solver():
-    global _COMPILED_C_SOLVER
-    if _COMPILED_C_SOLVER is not None:
-        return _COMPILED_C_SOLVER
-    cc = shutil.which("gcc") or shutil.which("clang")
-    if not cc:
-        return None
-    try:
-        temp_dir = tempfile.mkdtemp()
-        c_path = os.path.join(temp_dir, "solver772.c")
-        ext = ".dll" if os.name == "nt" else ".so"
-        so_path = os.path.join(temp_dir, f"libsolver772{ext}")
-        with open(c_path, "w", encoding="utf-8") as f:
-            f.write(C_SOURCE)
-        cmd = [cc, "-O3", "-shared", "-fPIC", c_path, "-o", so_path]
-        subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        dll = ctypes.CDLL(so_path)
-        dll.solve_c.argtypes = [ctypes.c_int64, ctypes.c_int64]
-        dll.solve_c.restype = ctypes.c_int64
-        _COMPILED_C_SOLVER = dll.solve_c
-        return _COMPILED_C_SOLVER
-    except Exception:
-        return None
-
 
 class Problem772:
-    def __init__(self, limit: int = 10**8, mod: int = MOD):
+    def __init__(self, limit: int = 10**8, mod: int = 1000000007):
         self.limit = limit
         self.mod = mod
-        self._c_solver = _load_c_solver()
 
-    def compute_f(self, k: int, mod: int = MOD) -> int:
+    def compute_f(self, k: int, mod: int | None = None) -> int:
+        if mod is None:
+            mod = self.mod
         if k < 2:
             return 2 if k == 1 else 0
 
-        if self._c_solver is not None:
-            ans = self._c_solver(int(k), int(mod))
-            if ans >= 0:
-                return ans
-
-        # Pure Python fallback
         max_i = (k - 1) // 2
-        sieve = bytearray([1]) * (max_i + 1)
-        for i in range(1, int(math.isqrt(k)) // 2 + 1):
+        sieve = np.ones(max_i + 1, dtype=bool)
+        sieve[0] = False
+        sqrt_k = math.isqrt(k)
+        for i in range(1, sqrt_k // 2 + 1):
             if sieve[i]:
                 p = 2 * i + 1
-                start = (p * p - 1) // 2
-                sieve[start :: p] = bytearray(len(sieve[start :: p]))
+                sieve[(p * p - 1) // 2 :: p] = False
+
+        primes = (2 * np.flatnonzero(sieve) + 1).astype(np.int64)
 
         ans = 2
         p2 = 1
@@ -160,16 +80,19 @@ class Problem772:
             p2 *= 2
         ans = (ans * p2) % mod
 
-        for i in range(1, max_i + 1):
-            if sieve[i]:
-                p = 2 * i + 1
-                if p * p <= k:
-                    pw = p
-                    while pw * p <= k:
-                        pw *= p
-                    ans = (ans * pw) % mod
-                else:
-                    ans = (ans * p) % mod
+        idx = np.searchsorted(primes, sqrt_k + 1)
+        small_primes = primes[:idx]
+        large_primes = primes[idx:]
+
+        for p in small_primes:
+            pw = int(p)
+            while pw * p <= k:
+                pw *= p
+            ans = (ans * pw) % mod
+
+        for p in large_primes.tolist():
+            ans = (ans * p) % mod
+
         return ans
 
     @timeit
