@@ -244,4 +244,4 @@ This table catalogs solved Project Euler problems in this repository.
 | PE1000 | [PE1000.py](../solutions/PE1000.py) | Milestone 1000 (I, X, C, M): Max And, Max Xor Sum, Unreachable Nim, and Meta-problem. | ~0.6 seconds |
 | PE1011 | [PE1011.py](../solutions/PE1011.py) | Modified Euclidean Algorithm: Sum of terminal values f(a, b) for a, b < 3,000,000. | ~0.82 seconds |
 | PE1014 | [PE1014.py](../solutions/PE1014.py) | Steiner Club: Find the octad of S(5, 8, 24) containing CGJLV from 11 given blocks. | ~0.001 seconds |
-
+| PE1018 | [PE1018.py](../solutions/PE1018.py) | Hex: Number of possible move sequences until a player wins on an 11x11 board mod 10^9+7. | ~31.5 seconds |
