@@ -50,17 +50,16 @@ MATHEMATICAL DERIVATION:
      T(s) = \sum_{is\_less} sum_val(is_less, s)
    The total is:
      F(N) = \sum_{s=1}^{171} \frac{T(s)}{s}.
-   Using Python's `decimal.Decimal` with 60 digits of precision prevents floating point roundoff errors.
+   Using `decimal.localcontext()` with 60 digits of precision prevents floating point roundoff errors
+   without modifying global decimal context.
    Finally, format the result in scientific notation with 12 decimal places after the decimal point:
      mantissa * 10^exp -> e.g. "9.627509725002e33".
 """
 
-from decimal import Decimal, getcontext
+from decimal import Decimal, localcontext
 import unittest
 
 from util.utils import timeit
-
-getcontext().prec = 60
 
 
 def format_sci(d: Decimal) -> str:
@@ -73,10 +72,14 @@ def format_sci(d: Decimal) -> str:
 
 
 class Problem776:
-    def __init__(self, n: int = 1234567890123456789):
+    def __init__(self, n: int = 1234567890123456789, precision: int = 60):
         self.n = n
+        self.precision = precision
 
-    def compute_F_decimal(self, n: int) -> Decimal:
+    def compute_F_decimal(self, n: int, precision: int | None = None) -> Decimal:
+        if precision is None:
+            precision = self.precision
+
         s_str = str(n)
         dp = {(False, 0): (1, 0)}
 
@@ -99,11 +102,13 @@ class Problem776:
                         new_dp[key] = (nxt_cnt, nxt_val)
             dp = new_dp
 
-        total = Decimal(0)
-        for (is_less, s), (cnt, s_val) in dp.items():
-            if s > 0:
-                total += Decimal(s_val) / Decimal(s)
-        return total
+        with localcontext() as ctx:
+            ctx.prec = precision
+            total = Decimal(0)
+            for (is_less, s), (cnt, s_val) in dp.items():
+                if s > 0:
+                    total += Decimal(s_val) / Decimal(s)
+            return +total
 
     def compute_F_sci(self, n: int) -> str:
         d = self.compute_F_decimal(n)
