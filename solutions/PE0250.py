@@ -46,7 +46,6 @@ import tempfile
 import unittest
 from util.utils import timeit
 
-MOD = 10**16
 
 C_SOURCE = """
 #include <stdint.h>
@@ -115,7 +114,7 @@ def _load_c_solver():
 
 
 class Problem250:
-    def __init__(self, n: int = 250250, m: int = 250, mod: int = MOD):
+    def __init__(self, n: int = 250250, m: int = 250, mod: int = 10**16):
         self.n = n
         self.m = m
         self.mod = mod

@@ -49,11 +49,9 @@ from typing import List
 import unittest
 from util.utils import timeit
 
-MOD = 10**9
-
-
 class Problem618:
-    def __init__(self, max_fib_index: int = 24):
+    def __init__(self, max_fib_index: int = 24, mod: int = 10**9):
+        self.mod = mod
         self.max_fib_index = max_fib_index
 
     @staticmethod
@@ -73,14 +71,16 @@ class Problem618:
                     is_prime[j] = False
         return [i for i, prime in enumerate(is_prime) if prime]
 
-    def compute_S(self, max_k: int) -> List[int]:
+    def compute_S(self, max_k: int, mod: int | None = None) -> List[int]:
+        if mod is None:
+            mod = self.mod
         primes = self.sieve_primes(max_k)
         dp = [0] * (max_k + 1)
         dp[0] = 1
 
         for p in primes:
             for i in range(p, max_k + 1):
-                dp[i] = (dp[i] + p * dp[i - p]) % MOD
+                dp[i] = (dp[i] + p * dp[i - p]) % mod
 
         return dp
 
@@ -89,7 +89,7 @@ class Problem618:
         fib = self.get_fibonacci(self.max_fib_index)
         max_k = fib[self.max_fib_index]
         dp = self.compute_S(max_k)
-        return sum(dp[fib[k]] for k in range(2, self.max_fib_index + 1)) % MOD
+        return sum(dp[fib[k]] for k in range(2, self.max_fib_index + 1)) % self.mod
 
 
 class Solution618(unittest.TestCase):

@@ -71,10 +71,7 @@ import math
 import unittest
 from util.utils import timeit
 
-MOD = 10**9
-
-
-def pow_sum(j: int):
+def pow_sum(j: int, mod: int = 10**9):
     """Returns (sum j^0, sum j^1, sum j^2, sum j^3, sum j^4) for j = 1..J mod 10^9."""
     if j <= 0:
         return (0, 0, 0, 0, 0)
@@ -83,12 +80,13 @@ def pow_sum(j: int):
     s2 = j * (j + 1) * (2 * j + 1) // 6
     s3 = s1 * s1
     s4 = j * (j + 1) * (2 * j + 1) * (3 * j * j + 3 * j - 1) // 30
-    return (s0 % MOD, s1 % MOD, s2 % MOD, s3 % MOD, s4 % MOD)
+    return (s0 % mod, s1 % mod, s2 % mod, s3 % mod, s4 % mod)
 
 
 class Problem764:
-    def __init__(self, limit: int = 10**16):
+    def __init__(self, limit: int = 10**16, mod: int = 10**9):
         self.limit = limit
+        self.mod = mod
         self.max_a = int(limit**0.25) + 1
         self._precompute_divisors(self.max_a)
 
@@ -116,21 +114,23 @@ class Problem764:
                 for m in range(d, max_val, d):
                     self.divs[m].append((d, mu[d]))
 
-    def _sum_poly_coprime(self, m: int, c0: int, c1: int, c2: int, c3: int, c4: int, a: int) -> int:
+    def _sum_poly_coprime(self, m: int, c0: int, c1: int, c2: int, c3: int, c4: int, a: int, mod: int) -> int:
         total = 0
         for d, m_val in self.divs[a]:
             j = m // d
             if j <= 0:
                 continue
-            s0, s1, s2, s3, s4 = pow_sum(j)
-            d2 = (d * d) % MOD
-            d3 = (d2 * d) % MOD
-            d4 = (d3 * d) % MOD
-            term = (c0 * s0 + c1 * d * s1 + c2 * d2 * s2 + c3 * d3 * s3 + c4 * d4 * s4) % MOD
+            s0, s1, s2, s3, s4 = pow_sum(j, mod)
+            d2 = (d * d) % mod
+            d3 = (d2 * d) % mod
+            d4 = (d3 * d) % mod
+            term = (c0 * s0 + c1 * d * s1 + c2 * d2 * s2 + c3 * d3 * s3 + c4 * d4 * s4) % mod
             total += m_val * term
-        return total % MOD
+        return total % mod
 
-    def compute_S(self, n: int) -> int:
+    def compute_S(self, n: int, mod: int | None = None) -> int:
+        if mod is None:
+            mod = self.mod
         total = 0
 
         # Family 1: y odd
@@ -145,25 +145,25 @@ class Problem764:
             if max_b <= 0:
                 continue
 
-            c0 = (a4 + a2) % MOD
-            c1 = (a * a2) % MOD
-            c2 = (6 * a2 - 1) % MOD
-            c3 = a % MOD
+            c0 = (a4 + a2) % mod
+            c1 = (a * a2) % mod
+            c2 = (6 * a2 - 1) % mod
+            c3 = a % mod
             c4 = 1
 
             if a % 2 == 0:
-                term = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a)
-                total = (total + term) % MOD
+                term = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a, mod)
+                total = (total + term) % mod
             else:
                 m = max_b // 2
                 if m > 0:
                     k0 = c0
-                    k1 = (2 * c1) % MOD
-                    k2 = (4 * c2) % MOD
-                    k3 = (8 * c3) % MOD
-                    k4 = (16 * c4) % MOD
-                    term = self._sum_poly_coprime(m, k0, k1, k2, k3, k4, a)
-                    total = (total + term) % MOD
+                    k1 = (2 * c1) % mod
+                    k2 = (4 * c2) % mod
+                    k3 = (8 * c3) % mod
+                    k4 = (16 * c4) % mod
+                    term = self._sum_poly_coprime(m, k0, k1, k2, k3, k4, a, mod)
+                    total = (total + term) % mod
 
         # Family 2A: y even, u even
         max_a = int((n / 16)**0.25)
@@ -177,28 +177,28 @@ class Problem764:
             if max_b <= 0:
                 continue
 
-            c0 = (20 * a4) % MOD
-            c1 = (4 * a) % MOD
+            c0 = (20 * a4) % mod
+            c1 = (4 * a) % mod
             c2 = 0
             c3 = 0
             c4 = 3
 
             if a % 2 == 0:
-                term = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a)
-                total = (total + term) % MOD
+                term = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a, mod)
+                total = (total + term) % mod
             else:
-                term_all = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a)
+                term_all = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a, mod)
                 m = max_b // 2
                 if m > 0:
                     k0 = c0
-                    k1 = (2 * c1) % MOD
+                    k1 = (2 * c1) % mod
                     k2 = 0
                     k3 = 0
-                    k4 = (16 * c4) % MOD
-                    term_even = self._sum_poly_coprime(m, k0, k1, k2, k3, k4, a)
+                    k4 = (16 * c4) % mod
+                    term_even = self._sum_poly_coprime(m, k0, k1, k2, k3, k4, a, mod)
                 else:
                     term_even = 0
-                total = (total + term_all - term_even) % MOD
+                total = (total + term_all - term_even) % mod
 
         # Family 2B: y even, v even
         max_a = int((n / 4)**0.25)
@@ -212,19 +212,19 @@ class Problem764:
             if max_b <= 0:
                 continue
 
-            c0 = (5 * a4) % MOD
-            c1 = (4 * a) % MOD
+            c0 = (5 * a4) % mod
+            c1 = (4 * a) % mod
             c2 = 0
             c3 = 0
             c4 = 12
-            term = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a)
-            total = (total + term) % MOD
+            term = self._sum_poly_coprime(max_b, c0, c1, c2, c3, c4, a, mod)
+            total = (total + term) % mod
 
-        return total % MOD
+        return total % mod
 
     @timeit
     def solve(self) -> int:
-        return self.compute_S(self.limit)
+        return self.compute_S(self.limit, self.mod)
 
 
 class Solution764(unittest.TestCase):

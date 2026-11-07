@@ -87,11 +87,10 @@ import unittest
 from util.utils import timeit
 
 
-# Euler-Mascheroni constant
-GAMMA = Decimal('0.577215664901532860606512090082402431042159335939923598805767234884867726777664670936947063')
-
-
 class Problem567:
+    # Euler-Mascheroni constant
+    GAMMA_STR = "0.577215664901532860606512090082402431042159335939923598805767234884867726777664670936947063"
+
     def __init__(self, m: int = 123456789):
         self.m = m
 
@@ -102,7 +101,7 @@ class Problem567:
         dec_n = Decimal(n)
         return (
             dec_n.ln()
-            + GAMMA
+            + Decimal(Problem567.GAMMA_STR)
             + Decimal(1) / (2 * dec_n)
             - Decimal(1) / (12 * dec_n**2)
             + Decimal(1) / (120 * dec_n**4)

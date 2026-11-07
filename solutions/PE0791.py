@@ -70,8 +70,6 @@ import tempfile
 import unittest
 from util.utils import timeit
 
-MOD = 433494437
-
 C_SOURCE = """
 #include <stdint.h>
 #include <math.h>
@@ -161,12 +159,14 @@ def _load_c_solver():
 
 
 class Problem791:
-    def __init__(self, limit: int = 10**8, mod: int = MOD):
+    def __init__(self, limit: int = 10**8, mod: int = 433494437):
         self.limit = limit
         self.mod = mod
         self._c_solver = _load_c_solver()
 
-    def compute_S(self, n: int, mod: int = MOD) -> int:
+    def compute_S(self, n: int, mod: int | None = None) -> int:
+        if mod is None:
+            mod = self.mod
         if self._c_solver is not None:
             ans = self._c_solver(int(n), int(mod))
             if ans >= 0:
@@ -223,8 +223,8 @@ class Solution791(unittest.TestCase):
         self.problem = Problem791()
 
     def test_sample(self):
-        self.assertEqual(48, self.problem.compute_S(5, MOD))
-        self.assertEqual(37048340, self.problem.compute_S(1000, MOD))
+        self.assertEqual(48, self.problem.compute_S(5))
+        self.assertEqual(37048340, self.problem.compute_S(1000))
 
     def test_solution(self):
         self.assertEqual(404890862, self.problem.solve())

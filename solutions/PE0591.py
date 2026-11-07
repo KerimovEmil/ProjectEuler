@@ -59,10 +59,9 @@ from typing import List, Tuple
 import unittest
 from util.utils import timeit
 
-PI = Decimal('3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679')
-
-
 class Problem591:
+    PI_STR = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
+
     def __init__(self, n: int = 10**13, max_d: int = 100):
         self.n = n
         self.max_d = max_d
@@ -95,7 +94,7 @@ class Problem591:
             p0, p1 = 0, 1
             q0, q1 = 1, 0
             best_a, best_b = 3, 0
-            best_err = abs(Decimal(3) - PI)
+            best_err = abs(Decimal(3) - Decimal(Problem591.PI_STR))
 
             for a_t in terms:
                 for c in range(1, a_t + 1):
@@ -104,11 +103,11 @@ class Problem591:
                     if q == 0:
                         continue
 
-                    N_val = int(round(PI * q))
+                    N_val = int(round(Decimal(Problem591.PI_STR) * q))
                     x, y, g = self._egcd(p, q)
                     if g != 1:
                         p_g, q_g = p // g, q // g
-                        N_val_g = int(round(PI * q_g))
+                        N_val_g = int(round(Decimal(Problem591.PI_STR) * q_g))
                         x_g, y_g, _ = self._egcd(p_g, q_g)
                         v0 = N_val_g * x_g
                         u0 = -N_val_g * y_g
@@ -125,7 +124,7 @@ class Problem591:
                         cand_a = -u
                         cand_b = v
                         if abs(cand_a) <= n_max and abs(cand_b) <= n_max:
-                            err = abs(cand_a + cand_b * sqrt_d - PI)
+                            err = abs(cand_a + cand_b * sqrt_d - Decimal(Problem591.PI_STR))
                             if err < best_err:
                                 best_err = err
                                 best_a, best_b = cand_a, cand_b

@@ -83,7 +83,6 @@ def max_int(a: int, b: int, c: int) -> int:
     return g
 
 
-M = max_int
 
 
 def build_transition_matrix() -> List[List[int]]:
