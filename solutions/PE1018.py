@@ -17,7 +17,9 @@ The game cannot end in a draw.
 
 Let $H(N)$ be the number of different games that can be played on a $N \times N$ sized board. In other words, $H(N)$ is the number of possible sequences of moves until a player wins the game.
 
-For example, $H(2)=24$, $H(3)=257760$, $H(4)=10663950528000$.
+For example, $H(2)=24$, $H(3)=257760$, $H(4)=10663950528000$,
+$H(5) = 5834112837767702970854400$,
+$H(6) = 108665251059877521027015661242967432396800$.
 
 Find $H(11)$ and give your answer modulo $1\,000\,000\,007$.
 
@@ -284,6 +286,12 @@ class Solution1018(unittest.TestCase):
 
     def test_sample_4(self):
         self.assertEqual(10663950528000 % 1_000_000_007, Problem1018(n=4).solve())
+
+    def test_sample_5(self):
+        self.assertEqual(5834112837767702970854400 % 1_000_000_007, Problem1018(n=5).solve())
+
+    def test_sample_6(self):
+        self.assertEqual(108665251059877521027015661242967432396800 % 1_000_000_007, Problem1018(n=6).solve())
 
     def test_solution(self):
         self.assertEqual(838306569, self.problem.solve())
