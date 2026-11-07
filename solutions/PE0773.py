@@ -72,8 +72,6 @@ import unittest
 
 from util.utils import timeit
 
-MOD = 1000000007
-
 
 def get_first_k_primes_ending_in_7(k: int) -> list[int]:
     """Generates the first k primes whose decimal representation ends in 7."""
@@ -88,11 +86,13 @@ def get_first_k_primes_ending_in_7(k: int) -> list[int]:
 
 
 class Problem773:
-    def __init__(self, k: int = 97, mod: int = MOD):
+    def __init__(self, k: int = 97, mod: int = 1000000007):
         self.k = k
         self.mod = mod
 
-    def compute_F(self, k: int, mod: int = MOD) -> int:
+    def compute_F(self, k: int, mod: int | None = None) -> int:
+        if mod is None:
+            mod = self.mod
         primes = get_first_k_primes_ending_in_7(k)
 
         p_prod = 1
