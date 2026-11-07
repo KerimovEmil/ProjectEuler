@@ -231,6 +231,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0764 | [PE0764.py](../solutions/PE0764.py) | Asymmetric Diophantine Equation 16x^2 + y^4 = z^2: Find S(10^16) mod 10^9. | 0.25 seconds |
 | PE0765 | [PE0765.py](../solutions/PE0765.py) | Trillionaire: Maximize probability of reaching 10^12 gold in 1000 rounds. | ~0.03 seconds |
 | PE0769 | [PE0769.py](../solutions/PE0769.py) | Binary Quadratic Form II: Count primitive representations of z^2 <= 10^14 for x^2 + 5xy + 3y^2. | ~1.4 seconds |
+| PE0772 | [PE0772.py](../solutions/PE0772.py) | Balanceable k-bounded Partitions: Smallest N such that all k-bounded partitions are balanceable mod 10^9+7. | ~0.05 seconds |
 | PE0785 | [PE0785.py](../solutions/PE0785.py) | Consider the following Diophantine equation: | 0.15 seconds |
 | PE0791 | [PE0791.py](../solutions/PE0791.py) | Average and Variance: Sum of quadruples where mean equals twice variance for n <= 10^8 mod 433494437. | ~0.035 seconds |
 | PE0836 | [PE0836.py](../solutions/PE0836.py) | Let A be an affine plane over a radically integral local field F wi... | 0.0 seconds |
