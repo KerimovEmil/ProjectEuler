@@ -18,62 +18,83 @@ Solve time: ~50 seconds
 MATHEMATICAL DERIVATION:
 
 1. Problem Definition:
-   The Gauss Factorial $g(n)$ is defined by:
-     $$g(n) = \prod_{\substack{1 \le k \le n \\ \gcd(k, n) = 1}} k.$$
-   We seek the cumulative product:
-     $$G(N) = \prod_{n=1}^N g(n) = \prod_{n=1}^N \prod_{\substack{1 \le k \le n \\ \gcd(k, n) = 1}} k \pmod{10^9 + 7}.$$
+   The Gauss Factorial g(n) is defined as:
+     g(n) = prod_{1 <= k <= n, gcd(k, n) == 1} k
+
+   We want to compute the cumulative product G(N):
+     G(N) = prod_{n = 1..N} g(n)  (mod 10^9 + 7)
+          = prod_{n = 1..N} prod_{1 <= k <= n, gcd(k, n) == 1} k  (mod 10^9 + 7)
 
 2. Inverting the Order of Multiplication (Base-Centric Perspective):
-   Instead of computing each $g(n)$ and multiplying them together, we track how many times each integer
-   $k \in \{1, 2, \dots, N\}$ appears as a factor across the entire product $G(N)$.
-   A number $k$ is included in the factor list of $g(n)$ if and only if $k \le n$ and $\gcd(k, n) = 1$.
-   Therefore, the exponent of $k$ in $G(N)$ is simply the number of integers $n \in [k, N]$ coprime to $k$:
-     $$E(k) = \#\{n \in [k, N] : \gcd(k, n) = 1\}.$$
-   Writing $n = k + j$ where $0 \le j \le N - k$:
-     $$\gcd(k, k + j) = \gcd(k, j).$$
-   For $k > 1$, $j = 0$ is not coprime ($\gcd(k, 0) = k > 1$), so $j$ ranges over $1 \le j \le N - k$.
-   (For $k = 1$, the base is 1, which contributes $1^{E(1)} = 1$).
-   By inclusion-exclusion via the Möbius function $\mu$:
-     $$E(k) = \sum_{d \mid k} \mu(d) \left\lfloor \frac{N - k}{d} \right\rfloor.$$
+   Instead of computing each g(n) separately and multiplying them, we determine
+   how many times each integer k in {1, 2, ..., N} appears as a factor in G(N).
+
+   An integer k is included in g(n) if and only if k <= n and gcd(k, n) == 1.
+   Therefore, the exponent of k in G(N) is the count of integers n in [k, N]
+   that are coprime to k:
+     E(k) = count(n in [k, N] such that gcd(k, n) == 1)
+
+   Writing n = k + j with 0 <= j <= N - k:
+     gcd(k, k + j) = gcd(k, j)
+
+   For k > 1, j = 0 gives gcd(k, 0) = k > 1, so j ranges over 1 <= j <= N - k.
+   (For k = 1, base 1 contributes 1^E(1) = 1 regardless).
+
+   By inclusion-exclusion using the Mobius function mu:
+     E(k) = sum_{d | k} mu(d) * floor((N - k) / d)
 
 3. Divisor Expansion and Factoring the Product:
-   Expressing $G(N)$ with these exponents:
-     $$G(N) = \prod_{k=1}^N k^{E(k)} = \prod_{k=1}^N \prod_{d \mid k} k^{\mu(d) \lfloor \frac{N - k}{d} \rfloor}.$$
-   Let $k = d \cdot m$. As $d$ ranges from $1$ to $N$, $m$ ranges from $1$ to $L = \lfloor N / d \rfloor$:
-     $$\left\lfloor \frac{N - dm}{d} \right\rfloor = \left\lfloor \frac{N}{d} \right\rfloor - m = L - m.$$
-   Substituting $k = d \cdot m$ into the product:
-     $$G(N) = \prod_{d=1}^N \prod_{m=1}^L (d \cdot m)^{\mu(d)(L - m)}.$$
-   We can cleanly separate $(d \cdot m)^{L - m} = d^{L - m} \cdot m^{L - m}$ into two parts:
-     - Part 1 (Base $d$):
-       $$\sum_{m=1}^L (L - m) = \frac{L(L - 1)}{2} \implies P_1 = \prod_{d=1}^N d^{\mu(d) \frac{L(L - 1)}{2}}.$$
-     - Part 2 (Base $m$):
-       $$\prod_{m=1}^L m^{L - m} = \prod_{j=1}^{L - 1} j! = \operatorname{sf}(L - 1) \implies P_2 = \prod_{d=1}^N \operatorname{sf}(L - 1)^{\mu(d)},$$
-       where $\operatorname{sf}(k) = \prod_{j=1}^k j!$ is the superfactorial (OEIS A000178).
+   Expressing G(N) in terms of these exponents:
+     G(N) = prod_{k = 1..N} k^E(k)
+          = prod_{k = 1..N} prod_{d | k} k^(mu(d) * floor((N - k) / d))
+
+   Let k = d * m. As d ranges from 1 to N, m ranges from 1 to L = floor(N / d):
+     floor((N - d * m) / d) = floor(N / d) - m = L - m
+
+   Substituting k = d * m:
+     G(N) = prod_{d = 1..N} prod_{m = 1..L} (d * m)^(mu(d) * (L - m))
+
+   Separating the base into d and m:
+     - Part 1 (Base d):
+       sum_{m = 1..L} (L - m) = L * (L - 1) / 2
+       P1 = prod_{d = 1..N} d^(mu(d) * L * (L - 1) / 2)
+
+     - Part 2 (Base m):
+       prod_{m = 1..L} m^(L - m) = 1^(L-1) * 2^(L-2) * ... * (L-1)^1
+                                 = prod_{j = 1..L-1} j!
+                                 = sf(L - 1)
+       P2 = prod_{d = 1..N} sf(L - 1)^mu(d)
+
+       where sf(k) = prod_{j = 1..k} j! is the superfactorial (OEIS A000178).
+
    Combining both parts yields:
-     $$G(N) = \prod_{d=1}^N \left[ d^{\frac{L(L - 1)}{2}} \cdot \operatorname{sf}(L - 1) \right]^{\mu(d)} \quad \text{where } L = \left\lfloor \frac{N}{d} \right\rfloor.$$
+     G(N) = prod_{d = 1..N} [ d^(L * (L - 1) / 2) * sf(L - 1) ]^mu(d)
+   where L = floor(N / d).
 
 4. Hyperbola / Quotient-Block Grouping:
-   - For $d > \lfloor N / 2 \rfloor$:
-     $L = \lfloor N / d \rfloor = 1$, which gives $\frac{L(L - 1)}{2} = 0$ and $\operatorname{sf}(0) = 1$.
-     Thus, every $d > \lfloor N / 2 \rfloor$ contributes $d^0 \cdot 1^{\mu(d)} = 1$.
-     We only need to evaluate $d$ up to $\lfloor N / 2 \rfloor$!
-   - For $d = 1$:
-     $L = N$, giving $1^{\mu(1) N(N - 1)/2} \cdot \operatorname{sf}(N - 1)^{\mu(1)} = \operatorname{sf}(N - 1)$.
-   - For $2 \le d \le \lfloor N / 2 \rfloor$:
-     The quotient $q = \lfloor N / d \rfloor$ is constant over contiguous intervals of $d$.
-     Across each interval where $q$ is constant:
-       * The base product factors into numbers with $\mu(d) = +1$ and $\mu(d) = -1$:
-         $$(\text{pos\_product})^{\frac{q(q - 1)}{2}} \times (\text{neg\_product})^{-\frac{q(q - 1)}{2}}.$$
-       * The superfactorial term $\operatorname{sf}(q - 1)$ is raised to the sum of $\mu(d)$ over that interval:
-         $$\operatorname{sf}(q - 1)^{\sum \mu(d)}.$$
+   - For d > floor(N / 2):
+     L = floor(N / d) = 1, so L * (L - 1) / 2 = 0 and sf(0) = 1.
+     Thus, every d > floor(N / 2) contributes d^0 * 1^mu(d) = 1.
+     We only need to evaluate d up to floor(N / 2)!
+
+   - For d = 1:
+     L = N, which contributes 1^(mu(1) * N * (N - 1) / 2) * sf(N - 1)^mu(1) = sf(N - 1).
+
+   - For 2 <= d <= floor(N / 2):
+     The quotient q = floor(N / d) is constant over contiguous intervals of d.
+     Within each interval where q is constant:
+       * The base product factors into numbers with mu(d) = +1 and mu(d) = -1:
+           (pos_product)^(q * (q - 1) / 2) * (neg_product)^(-q * (q - 1) / 2)
+       * The superfactorial term sf(q - 1) is raised to the sum of mu(d) over that interval:
+           sf(q - 1)^(sum mu(d))
 
 5. Efficient Implementation:
-   - Sieve & Aggregation: A linear sieve up to $N / 2 = 5 \times 10^7$ finds primes and accumulates interval
-     products in $O(N)$ operations.
-   - Superfactorial Evaluation: A single running pass computes the factorials and superfactorials, saving values
-     only at the required $O(\sqrt{N}) \approx 20\,000$ block boundaries.
-   - Modular Exponentiation: Performed only once per quotient block ($O(\sqrt{N})$ calls in total), entirely
-     avoiding $10^8$ separate exponentiations.
+   - Sieve & Aggregation: A linear sieve up to N / 2 = 5 * 10^7 finds primes and
+     accumulates interval products in O(N) operations.
+   - Superfactorial Evaluation: A single running pass computes the factorials and
+     superfactorials, saving values only at the required O(sqrt(N)) ~ 20,000 block boundaries.
+   - Modular Exponentiation: Performed only once per quotient block (O(sqrt(N)) calls total),
+     entirely avoiding 10^8 separate exponentiations.
    - Total runtime is ~50 seconds in pure Python.
 """
 
