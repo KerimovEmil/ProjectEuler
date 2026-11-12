@@ -30,22 +30,22 @@ Solve time: ~0.001 seconds
 ---
 MATHEMATICAL DERIVATION:
 
-1. Witt Design $W_{24} = S(5, 8, 24)$ and the Extended Binary Golay Code $\mathcal{G}_{24}$:
-   - A family of $8$-element subsets (octads) of a $24$-element set such that every $5$-element
-     subset is contained in a unique octad is the Steiner system $S(5, 8, 24)$, which is unique
+1. Witt Design W_24 = S(5, 8, 24) and the Extended Binary Golay Code G_24:
+   - A family of 8-element subsets (octads) of a 24-element set such that every 5-element
+     subset is contained in a unique octad is the Steiner system S(5, 8, 24), which is unique
      up to isomorphism.
-   - Its $759$ blocks are precisely the weight-$8$ codewords (octads) of the extended binary
-     Golay code $\mathcal{G}_{24}$, a $[24, 12, 8]$ linear code over $\mathbb{F}_2$.
-   - The $11$ given blocks are linearly independent over $\mathbb{F}_2$ and, together with the
-     all-ones vector $\mathbf{1}_{24}$ (or strictly within the $11$-dimensional span), generate
-     all codewords of $\mathcal{G}_{24}$.
+   - Its 759 blocks are precisely the weight-8 codewords (octads) of the extended binary
+     Golay code G_24, a [24, 12, 8] linear code over F_2.
+   - The 11 given blocks are linearly independent over F_2 and, together with the
+     all-ones vector 1_{24} (or strictly within the 11-dimensional span), generate
+     all codewords of G_24.
 
-2. Sample Case $S(2, 3, 7)$ and the Dual Hamming Code:
-   - In $S(2, 3, 7)$ (the Fano plane), the complements of the $7$ blocks of size $3$ form the
-     non-zero codewords of the $[7, 3, 4]$ simplex code (dual of the $[7, 4, 3]$ Hamming code).
-   - Equivalently, for any two distinct blocks $B_1, B_2 \in S(2, 3, 7)$, $|B_1 \cap B_2| = 1$,
-     and the complement $(B_1 \cup B_2)^c$ is the unique block disjoint from $B_1 \triangle B_2$,
-     sharing $B_1 \cap B_2$.
+2. Sample Case S(2, 3, 7) and the Dual Hamming Code:
+   - In S(2, 3, 7) (the Fano plane), the complements of the 7 blocks of size 3 form the
+     non-zero codewords of the [7, 3, 4] simplex code (dual of the [7, 4, 3] Hamming code).
+   - Equivalently, for any two distinct blocks B_1, B_2 in S(2, 3, 7), |B_1 intersect B_2| = 1,
+     and the complement (B_1 union B_2)^c is the unique block disjoint from B_1 Delta B_2,
+     sharing B_1 intersect B_2.
 """
 
 import unittest

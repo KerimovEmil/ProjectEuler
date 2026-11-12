@@ -34,28 +34,28 @@ MATHEMATICAL DERIVATION:
 
 2. Variable Substitution:
    Let u = 2x + y.
-   Since u \equiv y (mod 2), any integer pair (u, y) with the same parity uniquely determines
+   Since u == y (mod 2), any integer pair (u, y) with the same parity uniquely determines
    an integer x = (u - y) / 2.
    The condition 1 <= Q(x, y) <= N is equivalent to:
-     1 <= u^2 + 163y^2 <= 4N   subject to   u \equiv y (mod 2).
+     1 <= u^2 + 163y^2 <= 4N   subject to   u == y (mod 2).
    The condition Q(x, y) >= 1 simply excludes the origin (u, y) = (0, 0).
 
 3. Counting Lattice Points:
    For a given y:
-     u^2 <= 4N - 163y^2 \implies |u| <= \lfloor \sqrt{4N - 163y^2} \rfloor =: u_{max}.
-   The number of valid integers u in [-u_{max}, u_{max}] with u \equiv y (mod 2) is:
-     - If y is even: u \in {0, \pm 2, \pm 4, ...} \implies 2 \lfloor u_{max} / 2 \rfloor + 1
-     - If y is odd:  u \in {\pm 1, \pm 3, ...}     \implies 2 \lfloor (u_{max} + 1) / 2 \rfloor
+     u^2 <= 4N - 163y^2 ==> |u| <= floor(sqrt(4N - 163y^2)) =: u_max.
+   The number of valid integers u in [-u_max, u_max] with u == y (mod 2) is:
+     - If y is even: u in {0, +-2, +-4, ...} ==> 2 * floor(u_max / 2) + 1
+     - If y is odd:  u in {+-1, +-3, ...}     ==> 2 * floor((u_max + 1) / 2)
 
    Both cases can be expressed compactly:
-     count(u) = u_{max} + 1 if (u_{max} \equiv y \pmod 2) else u_{max}.
+     count(u) = u_max + 1 if (u_max % 2 == y % 2) else u_max.
 
-   By symmetry between y and -y, we sum count(u) over positive y up to y_{max} = \lfloor \sqrt{4N / 163} \rfloor,
+   By symmetry between y and -y, we sum count(u) over positive y up to y_max = floor(sqrt(4N / 163)),
    multiply by 2, and add the count for y = 0:
-     y = 0 \implies u is even, u != 0, |u| <= \lfloor \sqrt{4N} \rfloor \implies 2 \lfloor \lfloor \sqrt{4N} \rfloor / 2 \rfloor.
+     y = 0 ==> u is even, u != 0, |u| <= floor(sqrt(4N)) ==> 2 * floor(floor(sqrt(4N)) / 2).
 
 4. Complexity:
-   For N = 10^16, y_{max} = \lfloor \sqrt{4 \times 10^{16} / 163} \rfloor = 15,665,208.
+   For N = 10^16, y_max = floor(sqrt(4 * 10^16 / 163)) = 15,665,208.
    Evaluating the square roots takes ~2.8 seconds in Python.
 """
 

@@ -30,36 +30,36 @@ MATHEMATICAL DERIVATION:
 
 1. Special Sum Set Properties & Reductions:
    - Condition 1 (Subset Sum Uniqueness):
-     No two non-empty disjoint subsets have equal sums. Equivalently, all $2^n$ subset sums must be distinct:
-     if $S(X) = S(Y)$, then $X \setminus Y$ and $Y \setminus X$ are disjoint subsets with equal sum.
+     No two non-empty disjoint subsets have equal sums. Equivalently, all 2^n subset sums must be distinct:
+     if S(X) == S(Y), then X \ Y and Y \ X are disjoint subsets with equal sum.
    - Condition 2 (Cardinality Dominance):
-     If $|B| > |C|$, then $S(B) > S(C)$. For a sorted set $a_1 < a_2 < \dots < a_n$, it is necessary and sufficient
-     that for all $k \in [1, \lfloor (n-1)/2 \rfloor]$, the sum of the smallest $k+1$ elements exceeds the sum
-     of the largest $k$ elements:
-     $$\sum_{i=1}^{k+1} a_i > \sum_{j=0}^{k-1} a_{n-j}$$
-     By transitivity, this guarantees $S(B) > S(C)$ for any $B, C$ with $|B| > |C|$.
+     If |B| > |C|, then S(B) > S(C). For a sorted set a_1 < a_2 < ... < a_n, it is necessary and sufficient
+     that for all k in [1, floor((n-1)/2)], the sum of the smallest k+1 elements exceeds the sum
+     of the largest k elements:
+       sum_{i=1}^{k+1} a_i > sum_{j=0}^{k-1} a_{n-j}
+     By transitivity, this guarantees S(B) > S(C) for any B, C with |B| > |C|.
 
 2. Branch-and-Bound Search:
    - Near-Optimum Upper Bound:
-     Starting from the optimum set for $n-1$, we construct the near-optimum heuristic set:
-     $B = \{b, a_1+b, \dots, a_{n-1}+b\}$ where $b = A_{n-1}[\lfloor (n-1)/2 \rfloor]$.
-     Its sum provides a tight initial upper bound $S_{\max}$ on the search space.
+     Starting from the optimum set for n - 1, we construct the near-optimum heuristic set:
+     B = {b, a_1 + b, ..., a_{n-1} + b} where b = A_{n-1}[floor((n-1)/2)].
+     Its sum provides a tight initial upper bound S_max on the search space.
    - Bitmask Subset Sum Collision Detection:
-     We maintain an integer bitmask `mask` where bit $s$ is 1 iff subset sum $s$ is generated.
-     Adding candidate element $v$ introduces new subset sums `mask << v`.
-     If `mask & (mask << v) != 0`, a collision occurs and the branch is pruned in $O(1)$.
+     We maintain an integer bitmask `mask` where bit s is 1 iff subset sum s is generated.
+     Adding candidate element v introduces new subset sums `mask << v`.
+     If `mask & (mask << v) != 0`, a collision occurs and the branch is pruned in O(1).
    - Pruning & Bounds:
-     - Minimal remaining sum: with $rem = n - idx$ elements left, the minimal sum addition is
-       $rem \cdot (a_{idx} + 1) + rem(rem - 1)/2$.
-     - Upper bound on candidate $v$: $v \le \lfloor (S_{\max} - 1 - cur\_sum - rem(rem-1)/2) / rem \rfloor$.
+     - Minimal remaining sum: with rem = n - idx elements left, the minimal sum addition is
+       rem * (a_{idx} + 1) + rem * (rem - 1) / 2.
+     - Upper bound on candidate v: v <= floor((S_max - 1 - cur_sum - rem * (rem - 1) / 2) / rem).
      - Condition 2 upper bounds:
-       $a_n < a_1 + a_2 \implies v \le a_1 + a_2 - rem$.
-       When choosing the final element ($idx = n-1$), $v \le \sum_{i=1}^{k+1} a_i - 1 - \sum_{j=1}^{k-1} a_{n-j}$ for each $k$.
+       a_n < a_1 + a_2 ==> v <= a_1 + a_2 - rem.
+       When choosing the final element (idx = n - 1), v <= sum_{i=1}^{k+1} a_i - 1 - sum_{j=1}^{k-1} a_{n-j} for each k.
 
 3. Complexity Analysis:
-   - Time Complexity: The branch-and-bound tree with bitmask collision pruning explores < 5,000 nodes for $n=7$,
+   - Time Complexity: The branch-and-bound tree with bitmask collision pruning explores < 5,000 nodes for n = 7,
      executing in under 0.20 seconds in pure Python.
-   - Space Complexity: $O(n)$ recursion stack and $O(1)$ bitmask storage (since sums are $\le 255$).
+   - Space Complexity: O(n) recursion stack and O(1) bitmask storage (since sums are <= 255).
 """
 
 import unittest

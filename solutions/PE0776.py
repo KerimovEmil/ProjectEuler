@@ -24,7 +24,7 @@ MATHEMATICAL DERIVATION:
 
 1. Grouping by Digit Sum:
    Instead of iterating over individual numbers n <= N, we group terms by their sum of digits s = d(n):
-     F(N) = \sum_{s=1}^{9K} \frac{1}{s} \sum_{\substack{1 \le n \le N \\ d(n) = s}} n.
+     F(N) = sum_{s=1..9K} (1 / s) * sum_{1 <= n <= N, d(n) = s} n.
    For N = 1234567890123456789, K = 19 digits, so the maximum possible digit sum is 9 * 19 = 171.
 
 2. Simultaneous Digit DP:
@@ -43,13 +43,13 @@ MATHEMATICAL DERIVATION:
      nxt_cnt = cnt
      nxt_val = 10 * sum_val + d * cnt
    Because appending digit d transforms each prefix value v into 10*v + d:
-     \sum_{v} (10*v + d) = 10 \sum v + d \sum 1 = 10 * sum_val + d * cnt.
+     sum_v (10*v + d) = 10 * sum v + d * sum 1 = 10 * sum_val + d * cnt.
 
 4. Aggregation with High Precision:
    After all K digits are placed, for each digit sum s > 0:
-     T(s) = \sum_{is\_less} sum_val(is_less, s)
+     T(s) = sum_{is_less} sum_val(is_less, s)
    The total is:
-     F(N) = \sum_{s=1}^{171} \frac{T(s)}{s}.
+     F(N) = sum_{s=1..171} (T(s) / s).
    Using `decimal.localcontext()` with 60 digits of precision prevents floating point roundoff errors
    without modifying global decimal context.
    Finally, format the result in scientific notation with 12 decimal places after the decimal point:

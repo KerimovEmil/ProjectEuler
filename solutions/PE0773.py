@@ -21,40 +21,40 @@ Solve time: ~0.001 seconds
 MATHEMATICAL DERIVATION:
 
 1. Reduction:
-   Let p_1, ..., p_k be the first k primes ending in 7, and P = \prod_{i=1}^k p_i.
+   Let p_1, ..., p_k be the first k primes ending in 7, and P = prod_{i=1}^k p_i.
    Then M_k = 10 P.
-   Any integer x ending in 7 (i.e. x = 7 mod 10) is automatically coprime to 2 and 5.
-   Thus x is not divisible by any element in S_k if and only if gcd(x, P) = 1.
+   Any integer x ending in 7 (i.e. x == 7 mod 10) is automatically coprime to 2 and 5.
+   Thus x is not divisible by any element in S_k if and only if gcd(x, P) == 1.
    We seek:
-     F(k) = \sum_{0 < x < 10P, \, x \equiv 7 \pmod{10}, \, \gcd(x, P) = 1} x.
+     F(k) = sum_{0 < x < 10P, x == 7 (mod 10), gcd(x, P) == 1} x.
 
-2. Inclusion-Exclusion via Möbius Inversion:
-   Using \sum_{d | \gcd(x, P)} \mu(d) = [\gcd(x, P) = 1]:
-     F(k) = \sum_{d | P} \mu(d) \sum_{\substack{0 < x < 10P \\ x \equiv 7 \pmod{10} \\ d | x}} x.
+2. Inclusion-Exclusion via Mobius Inversion:
+   Using sum_{d | gcd(x, P)} mu(d) = [gcd(x, P) == 1]:
+     F(k) = sum_{d | P} mu(d) * sum_{0 < x < 10P, x == 7 (mod 10), d | x} x.
 
 3. Chinese Remainder Theorem:
-   For any squarefree divisor d | P, all prime factors of d end in 7, so gcd(d, 10) = 1.
-   Since d \equiv 7^{\omega(d)} \pmod{10}, the inverse modulo 10 is d^{-1} \equiv 3^{\omega(d)} \pmod{10}.
-   The system x \equiv 0 \pmod d and x \equiv 7 \pmod{10} has a unique solution modulo 10d:
-     r_d = q * d, where q = (7 * 3^{\omega(d)}) mod 10 in {1, 3, 7, 9}.
+   For any squarefree divisor d | P, all prime factors of d end in 7, so gcd(d, 10) == 1.
+   Since d == 7^omega(d) (mod 10), the inverse modulo 10 is d^(-1) == 3^omega(d) (mod 10).
+   The system x == 0 (mod d) and x == 7 (mod 10) has a unique solution modulo 10d:
+     r_d = q * d, where q = (7 * 3^omega(d)) mod 10 in {1, 3, 7, 9}.
    The multiples of d ending in 7 in the range (0, 10P) are:
      x = r_d + 10d * j   for j = 0, 1, ..., L - 1, where L = P / d.
    Summing this arithmetic progression:
-     \sum_{j=0}^{L-1} (r_d + 10d * j) = L * r_d + 10d * L(L-1)/2
-                                      = (P/d) * (q * d) + 5P(L - 1)
-                                      = P * q + 5P(P/d - 1)
-                                      = P(q - 5) + 5P^2 / d.
+     sum_{j=0}^{L-1} (r_d + 10d * j) = L * r_d + 10d * L * (L - 1) / 2
+                                     = (P / d) * (q * d) + 5P * (L - 1)
+                                     = P * q + 5P * (P / d - 1)
+                                     = P * (q - 5) + 5P^2 / d.
 
 4. Closed-form Summation:
    Summing over all divisors d | P:
-     F(k) = 5P^2 \sum_{d | P} \frac{\mu(d)}{d} + P \sum_{d | P} \mu(d)(q(\omega(d)) - 5).
+     F(k) = 5P^2 * sum_{d | P} (mu(d) / d) + P * sum_{d | P} mu(d) * (q(omega(d)) - 5).
 
    - First term:
-       5P^2 \frac{\phi(P)}{P} = 5P \prod_{i=1}^k (p_i - 1).
+       5P^2 * (phi(P) / P) = 5P * prod_{i=1}^k (p_i - 1).
 
    - Second term:
-       Notice that \mu(d)(q(\omega(d)) - 5) depends solely on m = \omega(d):
-         c(m) = (-1)^m (q(m) - 5).
+       Notice that mu(d) * (q(omega(d)) - 5) depends solely on m = omega(d):
+         c(m) = (-1)^m * (q(m) - 5).
        Evaluating c(m) for m mod 4:
          m = 0: (+1) * (7 - 5) = 2
          m = 1: (-1) * (1 - 5) = 4
@@ -62,7 +62,7 @@ MATHEMATICAL DERIVATION:
          m = 3: (-1) * (9 - 5) = -4
        Thus c(m) is 4-periodic: [2, 4, -2, -4].
        The second term is:
-         P \sum_{m=0}^k \binom{k}{m} c(m \bmod 4).
+         P * sum_{m=0}^k C(k, m) * c(m mod 4).
 
    Both terms evaluate in O(k) time modulo 1,000,000,007!
 """

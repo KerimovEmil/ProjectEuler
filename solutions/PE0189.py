@@ -20,33 +20,33 @@ Solve time: ~0.05 seconds
 MATHEMATICAL DERIVATION:
 
 1. Geometric Graph Decomposition & Bipartiteness:
-   - A grid of side length $N$ contains $N^2$ unit equilateral triangles arranged into $N$ horizontal rows.
-   - Row $r$ ($1 \le r \le N$) contains $2r - 1$ triangles:
-     - $r$ upward-pointing triangles $U_{r, 0}, U_{r, 1}, \dots, U_{r, r-1}$.
-     - $r-1$ downward-pointing triangles $D_{r, 0}, D_{r, 1}, \dots, D_{r, r-2}$.
+   - A grid of side length N contains N^2 unit equilateral triangles arranged into N horizontal rows.
+   - Row r (1 <= r <= N) contains 2r - 1 triangles:
+     - r upward-pointing triangles U_{r, 0}, U_{r, 1}, ..., U_{r, r-1}.
+     - r - 1 downward-pointing triangles D_{r, 0}, D_{r, 1}, ..., D_{r, r-2}.
    - Up-triangles only share edges with down-triangles, and down-triangles only share edges with up-triangles.
      Thus, the dual adjacency graph is bipartite.
-   - Each down-triangle $D_{r, j}$ is adjacent to exactly three up-triangles:
-     $U_{r-1, j}$ (above), $U_{r, j}$ (bottom-left), and $U_{r, j+1}$ (bottom-right).
+   - Each down-triangle D_{r, j} is adjacent to exactly three up-triangles:
+     U_{r-1, j} (above), U_{r, j} (bottom-left), and U_{r, j+1} (bottom-right).
    - Crucially, no two down-triangles share an edge.
 
 2. Dynamic Programming with Broken Profile / Frontier:
-   - Given an assignment of colours to the up-triangles of row $r-1$, $u \in \{0, 1, 2\}^{r-1}$, and row $r$,
-     $v \in \{0, 1, 2\}^r$, each down-triangle $D_{r, j}$ ($0 \le j \le r-2$) can be coloured independently:
-     $$w(u_j, v_j, v_{j+1}) = 3 - |\{u_j, v_j, v_{j+1}\}|$$
-     where $w \in \{0, 1, 2\}$ is the number of valid colour choices.
-   - The total number of ways to colour row $r$ given row $r-1$ factorizes as:
-     $$W(u, v) = \prod_{j=0}^{r-2} w(u_j, v_j, v_{j+1})$$
-   - To transition from row $r-1$ to row $r$ efficiently, we advance element-by-element along a sliding frontier:
-     - Step 0: Choose $v_0 \in \{0, 1, 2\}$.
-     - Step $j$ ($1 \le j \le r-1$): Choose $v_j \in \{0, 1, 2\}$, multiply by $w(u_{j-1}, v_{j-1}, v_j)$, and slide the frontier.
-   - Color Symmetry: We fix the top triangle $U_{1, 0} = 0$ and multiply the final result by 3.
+   - Given an assignment of colours to the up-triangles of row r - 1, u in {0, 1, 2}^(r-1), and row r,
+     v in {0, 1, 2}^r, each down-triangle D_{r, j} (0 <= j <= r - 2) can be coloured independently:
+       w(u_j, v_j, v_{j+1}) = 3 - |{u_j, v_j, v_{j+1}}|
+     where w in {0, 1, 2} is the number of valid colour choices.
+   - The total number of ways to colour row r given row r - 1 factorizes as:
+       W(u, v) = prod_{j=0}^{r-2} w(u_j, v_j, v_{j+1})
+   - To transition from row r - 1 to row r efficiently, we advance element-by-element along a sliding frontier:
+     - Step 0: Choose v_0 in {0, 1, 2}.
+     - Step j (1 <= j <= r - 1): Choose v_j in {0, 1, 2}, multiply by w(u_{j-1}, v_{j-1}, v_j), and slide the frontier.
+   - Color Symmetry: We fix the top triangle U_{1, 0} = 0 and multiply the final result by 3.
 
 3. Complexity Analysis:
-   - Time Complexity: At row $r$, advancing the frontier requires $r$ sub-steps over $3^r$ states.
-     Total time is $\sum_{r=1}^N O(r \cdot 3^N) = O(N \cdot 3^N)$.
-     For $N = 8$, this requires $\sim 5 \times 10^4$ state updates, completing in $\sim 0.05$ seconds.
-   - Space Complexity: $O(3^N)$ to store the DP state count array of size $3^8 = 6561$.
+   - Time Complexity: At row r, advancing the frontier requires r sub-steps over 3^r states.
+     Total time is sum_{r=1..N} O(r * 3^N) = O(N * 3^N).
+     For N = 8, this requires ~5 * 10^4 state updates, completing in ~0.05 seconds.
+   - Space Complexity: O(3^N) to store the DP state count array of size 3^8 = 6561.
 """
 
 import unittest

@@ -29,42 +29,42 @@ MATHEMATICAL DERIVATION:
 
 1. Game Reduction to Combinatorial Game Theory (Sprague-Grundy Theorem):
    This game is an impartial game played under normal play convention (last player to move wins).
-   A game state consists of independent disjoint white strips of lengths $(s_1, s_2, \\dots, s_k)$.
-   By the Sprague-Grundy theorem, each strip of length $n$ is equivalent to a Nim-pile of size $G(n)$,
-   where $G(n)$ is the Grundy value (or nim-value) of a single strip of length $n$.
+   A game state consists of independent disjoint white strips of lengths (s_1, s_2, ..., s_k).
+   By the Sprague-Grundy theorem, each strip of length n is equivalent to a Nim-pile of size G(n),
+   where G(n) is the Grundy value (or nim-value) of a single strip of length n.
 
 2. Sprague-Grundy Recurrence:
-   - For $n = 0$ or $n = 1$, no valid moves are possible:
-       $G(0) = 0, \\quad G(1) = 0$
-   - For $n \\ge 2$, painting two adjacent squares at offset $i$ (where $0 \\le i \\le n - 2$) splits the
-     strip into two independent sub-strips of lengths $i$ and $n - 2 - i$.
-   - The nim-sum of the resulting position is $G(i) \\oplus G(n - 2 - i)$, where $\\oplus$ is bitwise XOR.
-   - The Grundy value $G(n)$ is the minimum excluded non-negative integer (mex):
-       $$G(n) = \\text{mex}\\{ G(i) \\oplus G(n - 2 - i) : 0 \\le i \\le \\lfloor (n - 2)/2 \\rfloor \\}$$
+   - For n = 0 or n = 1, no valid moves are possible:
+       G(0) = 0,  G(1) = 0
+   - For n >= 2, painting two adjacent squares at offset i (where 0 <= i <= n - 2) splits the
+     strip into two independent sub-strips of lengths i and n - 2 - i.
+   - The nim-sum of the resulting position is G(i) ^ G(n - 2 - i), where ^ is bitwise XOR.
+   - The Grundy value G(n) is the minimum excluded non-negative integer (mex):
+       G(n) = mex({ G(i) ^ G(n - 2 - i) : 0 <= i <= floor((n - 2)/2) })
 
 3. Relation to Dawson's Chess (Octal Game 0.07) & Ultimate Periodicity:
    In the classification of octal games by Guy and Smith (1956) and Conway (Winning Ways, Vol. 1),
    this game is mathematically isomorphic to Dawson's Chess (octal game .07, or Dawson's Bowling).
    The recurrence exhibits ultimate periodicity:
-   - For all $n \\ge 87$, $G(n) = G(n - 34)$ with period $p = 34$.
-   - The pre-period consists of values $n < 87$.
-   - Because $87 + 2 \\times 34 + 2 \\ll 200$, the periodicity extends indefinitely to all $n \\to \\infty$
+   - For all n >= 87, G(n) = G(n - 34) with period p = 34.
+   - The pre-period consists of values n < 87.
+   - Because 87 + 2 * 34 + 2 << 200, the periodicity extends indefinitely to all n -> inf
      by mathematical induction on the finite-memory nim-sum transition set.
 
 4. Fast Counting of Winning Positions:
-   A starting position $n$ is a first-player win (N-position) if and only if $G(n) > 0$.
-   Conversely, the second player wins (P-position) if and only if $G(n) = 0$.
-   - We compute the base Grundy values $G(n)$ for $n \\le 150$ via DP.
-   - For any query $N$:
-     - Count zeros in the pre-period $n \\in [1, \\min(N, 86)]$.
-     - If $N \\ge 87$, count full periods $q = (N - 86) // 34$ and the remainder $r = (N - 86) \\% 34$.
-     - Total zeros for $n \\ge 87$ is $q \\times (\\text{zeros in one period}) + (\\text{zeros in first } r \\text{ elements of period})$.
-     - The number of winning $n$ is simply $N - (\\text{total zeros})$.
+   A starting position n is a first-player win (N-position) if and only if G(n) > 0.
+   Conversely, the second player wins (P-position) if and only if G(n) == 0.
+   - We compute the base Grundy values G(n) for n <= 150 via DP.
+   - For any query N:
+     - Count zeros in the pre-period n in [1, min(N, 86)].
+     - If N >= 87, count full periods q = (N - 86) // 34 and the remainder r = (N - 86) % 34.
+     - Total zeros for n >= 87 is q * (zeros in one period) + (zeros in first r elements of period).
+     - The number of winning n is simply N - (total zeros).
 
 5. Complexity Analysis:
-   - Base DP computation: $O(K^2)$ where $K = 150$, taking $< 0.1$ ms.
-   - Evaluation for $N = 10^6$: $O(1)$ arithmetic operations.
-   - Space Complexity: $O(1)$ auxiliary storage for the first 150 Grundy values.
+   - Base DP computation: O(K^2) where K = 150, taking < 0.1 ms.
+   - Evaluation for N = 10^6: O(1) arithmetic operations.
+   - Space Complexity: O(1) auxiliary storage for the first 150 Grundy values.
 """
 
 import unittest

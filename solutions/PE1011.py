@@ -21,26 +21,26 @@ Solve time: ~0.85 seconds
 MATHEMATICAL DERIVATION:
 
 1. Symmetry and Quotient Partitioning:
-   - By symmetry, $f(a, b) = f(b, a)$ and $f(a, a) = a$. Thus:
-     $$E(N) = \sum_{a=1}^{N-1} a + 2 \sum_{1 \le a < b < N} f(a, b) = \frac{(N-1)N}{2} + 2 S(N)$$
-   - For a fixed $a$ and $b > a$, let $q = \lfloor b/a \rfloor \ge 1$. Then $(a, b) \to (a, q)$, so $f(a, b) = f(a, q)$.
-   - For each quotient $q \in [1, \lfloor (N-1)/a \rfloor]$, $b$ ranges in $[\max(a+1, q a), \min(N-1, (q+1)a - 1)]$.
-   - For $q = 1$: $f(a, 1) = a$. Evaluated in $O(1)$ via closed-form quadratic and linear sum identities.
-   - For $a = 1, q \ge 2$: $c(1, q) = 1$ and $f(1, q) = q$, contributing $\sum_{q=2}^{N-1} q = \frac{(N-1)N}{2} - 1$.
+   - By symmetry, f(a, b) = f(b, a) and f(a, a) = a. Thus:
+       E(N) = sum_{a=1..N-1} a + 2 * sum_{1 <= a < b < N} f(a, b) = (N - 1) * N / 2 + 2 * S(N)
+   - For a fixed a and b > a, let q = floor(b/a) >= 1. Then (a, b) -> (a, q), so f(a, b) = f(a, q).
+   - For each quotient q in [1, floor((N-1)/a)], b ranges in [max(a+1, q * a), min(N-1, (q+1) * a - 1)].
+   - For q = 1: f(a, 1) = a. Evaluated in O(1) via closed-form quadratic and linear sum identities.
+   - For a = 1, q >= 2: c(1, q) = 1 and f(1, q) = q, contributing sum_{q=2..N-1} q = (N - 1) * N / 2 - 1.
 
-2. Constant Invariant $f(2, b) = 2$ and $O(1)$ Closed Forms for $d = 2$:
-   - For any $b \ge 2$, $(2, b) \to (2, \lfloor b/2 \rfloor) \to \dots \to (2, 2 \text{ or } 3) \to (2, 1) \mapsto 2$.
-     Thus, $f(2, b) = 2$ identically for all $b \ge 2$.
-   - The divisor $d = 2$ accounts for $N/4 = 750,000$ intervals ($\approx 38.8\%$ of all intervals across all $d$).
-   - We replace all $d = 2$ computations with exact $O(1)$ closed forms:
-     1. $a = 2, b \ge 4$: $\sum_{b=4}^{N-1} f(2, b) = 2(N - 4)$.
-     2. $q = 2, a \ge 3$: $\sum_{a=3}^{\lfloor (N-1)/2 \rfloor} c(a, 2) \cdot 2 = 2 \left( \sum_{a=3}^{\lfloor N/3 \rfloor} a + \sum_{a=\lfloor N/3 \rfloor + 1}^{\lfloor (N-1)/2 \rfloor} (N - 2a) \right)$.
+2. Constant Invariant f(2, b) = 2 and O(1) Closed Forms for d = 2:
+   - For any b >= 2, (2, b) -> (2, floor(b/2)) -> ... -> (2, 2 or 3) -> (2, 1) -> 2.
+     Thus, f(2, b) = 2 identically for all b >= 2.
+   - The divisor d = 2 accounts for N/4 = 750,000 intervals (~38.8% of all intervals across all d).
+   - We replace all d = 2 computations with exact O(1) closed forms:
+     1. a = 2, b >= 4: sum_{b=4..N-1} f(2, b) = 2 * (N - 4).
+     2. q = 2, a >= 3: sum_{a=3..floor((N-1)/2)} c(a, 2) * 2 = 2 * (sum_{a=3..floor(N/3)} a + sum_{a=floor(N/3)+1..floor((N-1)/2)} (N - 2*a)).
 
-3. Hyperbolic Interval Aggregation for $d \ge 3$:
-   - For $a \ge 3, q \ge 3$ with $a \cdot q < N$, let $d = \min(a, q) \le \sqrt{N-1}$.
-   - Setting $k = \lfloor \max(a, q) / d \rfloor$, $f(a, q) = f(d, k)$ is constant over contiguous intervals of length $d$.
-   - The coefficient sum over each interval is an arithmetic progression evaluated in $O(1)$ time.
-   - Values of $f(d, k)$ for $3 \le d \le \sqrt{N}$ and $k \le (N-1)/d^2$ are precomputed in $O(N)$ via memoized DAG traversal over integer array buffers.
+3. Hyperbolic Interval Aggregation for d >= 3:
+   - For a >= 3, q >= 3 with a * q < N, let d = min(a, q) <= sqrt(N - 1).
+   - Setting k = floor(max(a, q) / d), f(a, q) = f(d, k) is constant over contiguous intervals of length d.
+   - The coefficient sum over each interval is an arithmetic progression evaluated in O(1) time.
+   - Values of f(d, k) for 3 <= d <= sqrt(N) and k <= (N-1)/d^2 are precomputed in O(N) via memoized DAG traversal over integer array buffers.
 """
 
 import unittest

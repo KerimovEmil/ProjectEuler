@@ -30,66 +30,66 @@ Solve time: ~31.5 seconds
 MATHEMATICAL DERIVATION:
 
 1. Game Sequences and Terminal Board Positions:
-   Let $M = N^2$ be the total number of cells on the $N \times N$ Hex board.
-   A valid game is a sequence of moves $(c_1, c_2, \dots, c_k)$ such that:
-   - White plays on odd turns $1, 3, 5, \dots$ and Black plays on even turns $2, 4, 6, \dots$.
-   - The game terminates at turn $k$ when the player who just moved forms a winning
+   Let M = N^2 be the total number of cells on the N x N Hex board.
+   A valid game is a sequence of moves (c_1, c_2, ..., c_k) such that:
+   - White plays on odd turns 1, 3, 5, ... and Black plays on even turns 2, 4, 6, ...
+   - The game terminates at turn k when the player who just moved forms a winning
      connection across their respective boundaries.
-   - Neither player had formed a winning connection prior to turn $k$.
+   - Neither player had formed a winning connection prior to turn k.
 
-   Suppose White wins at turn $k = 2w - 1$. White has placed a set of $w$ stones $W$,
-   and Black has placed a set of $b = w - 1$ stones $B$, with $W \cap B = \emptyset$.
-   The final move was some stone $x \in W$ such that $W$ is winning, but $W \setminus \{x\}$
-   is not winning (i.e. $x$ is an essential stone for $W$).
+   Suppose White wins at turn k = 2w - 1. White has placed a set of w stones W,
+   and Black has placed a set of b = w - 1 stones B, with W intersect B = empty.
+   The final move was some stone x in W such that W is winning, but W \ {x}
+   is not winning (i.e. x is an essential stone for W).
 
    By the fundamental Hex theorem (Jordan curve theorem on the planar hex lattice):
-   For any subset $S \subseteq V$, exactly one of $S$ (for White) or $V \setminus S$ (for Black)
+   For any subset S subseteq V, exactly one of S (for White) or V \ S (for Black)
    contains a winning connection.
-   Because $W$ contains a White winning path, the complement $V \setminus W$ cannot contain
-   a Black winning path. Since $B \subseteq V \setminus W$, Black never has a winning connection
-   for any subset $B \subseteq V \setminus W$.
-   Furthermore, by monotonicity of connectivity, since $W \setminus \{x\}$ contains no White
-   winning path, no subset of $W \setminus \{x\}$ can contain a White winning path.
-   Therefore, for any fixed pair $(W, B)$ and essential move $x \in W$, the preceding $k - 1$
-   moves can be played in *any* of the $(w - 1)!$ orderings for White and $b! = (w - 1)!$
+   Because W contains a White winning path, the complement V \ W cannot contain
+   a Black winning path. Since B subseteq V \ W, Black never has a winning connection
+   for any subset B subseteq V \ W.
+   Furthermore, by monotonicity of connectivity, since W \ {x} contains no White
+   winning path, no subset of W \ {x} can contain a White winning path.
+   Therefore, for any fixed pair (W, B) and essential move x in W, the preceding k - 1
+   moves can be played in *any* of the (w - 1)! orderings for White and b! = (w - 1)!
    orderings for Black without either player winning early!
 
-   The number of valid Black subsets of size $b = w - 1$ disjoint from $W$ is $\binom{M - w}{w - 1}$.
-   Hence, the number of games ending with terminal White configuration $(W, x)$ is:
-     $(w - 1)! \cdot (w - 1)! \cdot \binom{M - w}{w - 1} = (w - 1)! \frac{(M - w)!}{(M - 2w + 1)!}$
-   An identical argument applies by symmetry for Black wins with $|B| = b$ and $|W| = b$,
-   yielding $(b - 1)! \frac{(M - b)!}{(M - 2b)!}$.
+   The number of valid Black subsets of size b = w - 1 disjoint from W is C(M - w, w - 1).
+   Hence, the number of games ending with terminal White configuration (W, x) is:
+     (w - 1)! * (w - 1)! * C(M - w, w - 1) = (w - 1)! * (M - w)! / (M - 2w + 1)!
+   An identical argument applies by symmetry for Black wins with |B| = b and |W| = b,
+   yielding (b - 1)! * (M - b)! / (M - 2b)!.
 
-2. Reduction from Essential Edge Counts $E[s]$ to Spanning Subsets $a_s$:
-   Let $a_s$ be the number of subsets $W \subseteq V$ of size $s$ that contain a White
+2. Reduction from Essential Edge Counts E[s] to Spanning Subsets a_s:
+   Let a_s be the number of subsets W subseteq V of size s that contain a White
    winning path connecting the top and bottom board boundaries.
-   Let $E[s]$ be the number of pairs $(W, x)$ such that $|W| = s$, $x \in W$, $W$ is winning,
-   and $W \setminus \{x\}$ is not winning.
-   In the Boolean hypercube $\{0, 1\}^M$, $E[s]$ counts the boundary edges between level
-   $s - 1$ and level $s$. Since every winning subset at level $s - 1$ has all $M - (s - 1)$
-   supersets winning at level $s$, double-counting edges gives:
-     $E[s] = s \cdot a_s - (M - s + 1) \cdot a_{s-1}$
+   Let E[s] be the number of pairs (W, x) such that |W| = s, x in W, W is winning,
+   and W \ {x} is not winning.
+   In the Boolean hypercube {0, 1}^M, E[s] counts the boundary edges between level
+   s - 1 and level s. Since every winning subset at level s - 1 has all M - (s - 1)
+   supersets winning at level s, double-counting edges gives:
+     E[s] = s * a_s - (M - s + 1) * a_{s-1}
 
-   Substituting $E[s]$ into the total game sum $H(N) = \sum_s E[s] K[s]$ expresses $H(N)$
-   as a direct linear combination of $a_s$:
-     $H(N) = \sum_{s=N}^{\lfloor (M+1)/2 \rfloor} W[s] \cdot a_s \pmod{10^9+7}$
-   where the weights $W[s] = s K[s] - (M - s) K[s + 1]$ vanish for all $s > \lfloor (M+1)/2 \rfloor$.
-   For $N = 11$, $M = 121$, so we only need $a_s$ for $s \le 61$.
+   Substituting E[s] into the total game sum H(N) = sum_s E[s] * K[s] expresses H(N)
+   as a direct linear combination of a_s:
+     H(N) = sum_{s=N}^{floor((M+1)/2)} W[s] * a_s (mod 10^9 + 7)
+   where the weights W[s] = s * K[s] - (M - s) * K[s + 1] vanish for all s > floor((M+1)/2).
+   For N = 11, M = 121, so we only need a_s for s <= 61.
 
 3. Frontier Transfer-Matrix Dynamic Programming:
-   To count $a_s$, we sweep across the $M = N^2$ cells $(r, c)$ in row-major order.
+   To count a_s, we sweep across the M = N^2 cells (r, c) in row-major order.
    At any point, the active boundary separating processed and unprocessed cells consists of
-   exactly $N$ cells. By planarity, the connected components along the frontier form
+   exactly N cells. By planarity, the connected components along the frontier form
    non-crossing partitions, with at most one component connected to the top boundary (label 1).
    
    - If placing an empty cell leaves TOP disconnected with no remaining TOP cells on the frontier,
      the state is pruned (White can never connect top to bottom).
-   - If placing a White stone in row $N - 1$ connects to TOP, the subset is winning: its
-     polynomial contribution is accumulated directly into $a_s$ convolved with $(1 + z)^{\text{remaining}}$,
+   - If placing a White stone in row N - 1 connects to TOP, the subset is winning: its
+     polynomial contribution is accumulated directly into a_s convolved with (1 + z)^remaining,
      and the branch terminates early without needing further frontier tracking.
-   - For $N = 11$, there are ~45,000 distinct frontier states. We precompute transition
+   - For N = 11, there are ~45,000 distinct frontier states. We precompute transition
      mappings into integer index arrays and vectorize state updates using NumPy `add.at`,
-     computing $H(11) \pmod{10^9+7}$ in ~31 seconds in pure Python.
+     computing H(11) (mod 10^9 + 7) in ~31 seconds in pure Python.
 """
 
 import functools
