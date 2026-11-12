@@ -40,29 +40,29 @@ MATHEMATICAL DERIVATION:
 
 3. Exact Integral on Farey Intervals:
    The integral of f_N(x) over [a_1/b_1, a_2/b_2] evaluates to:
-       \int_{a_1/b_1}^{a_2/b_2} f_N(x) dx = \int_0^{1/(b_1 b_2)} b_1 t dt
+       integral_{a_1/b_1}^{a_2/b_2} f_N(x) dx = integral_0^{1/(b_1 b_2)} b_1 t dt
                                            = b_1 [t^2 / 2]_0^{1/(b_1 b_2)}
-                                           = 1 / (2 b_1 b_2^2).
+                                           = 1 / (2 * b_1 * b_2^2).
 
 4. Denominator Pairing & Reflection Symmetry:
    A fundamental property of Farey sequences states that two integers b_1, b_2 <= N appear as
    denominators of adjacent fractions in F_N if and only if gcd(b_1, b_2) = 1 and b_1 + b_2 > N.
    By symmetry (reflecting x <-> 1 - x), every pair (b_1, b_2) with b_1 < b_2 pairs with (b_2, b_1):
-       \frac{1}{2 b_1 b_2^2} + \frac{1}{2 b_2 b_1^2} = \frac{b_1 + b_2}{2 b_1^2 b_2^2}.
+       1 / (2 * b_1 * b_2^2) + 1 / (2 * b_2 * b_1^2) = (b_1 + b_2) / (2 * b_1^2 * b_2^2).
    Thus, for N >= 2:
-       F(N) = \sum_{\substack{1 \le b_1 < b_2 \le N \\ \gcd(b_1, b_2) = 1 \\ b_1 + b_2 > N}} \frac{b_1 + b_2}{2 b_1^2 b_2^2}.
+       F(N) = sum_{1 <= b_1 < b_2 <= N, gcd(b_1, b_2) == 1, b_1 + b_2 > N} (b_1 + b_2) / (2 * b_1^2 * b_2^2).
 
-5. Möbius Inversion & O(N log N) Evaluation:
-   We eliminate the coprimality condition gcd(b_1, b_2) = 1 using the Möbius identity
-   \sum_{d | \gcd(b_1, b_2)} \mu(d) = [\gcd(b_1, b_2) = 1].
+5. Mobius Inversion & O(N log N) Evaluation:
+   We eliminate the coprimality condition gcd(b_1, b_2) = 1 using the Mobius identity
+   sum_{d | gcd(b_1, b_2)} mu(d) = [gcd(b_1, b_2) == 1].
    Substituting b_1 = dx, b_2 = dy with 1 <= x < y <= N/d and d(x + y) > N (i.e. x + y > N/d):
-       F(N) = \sum_{d=1}^N \frac{\mu(d)}{2 d^3} \sum_{\substack{1 \le x < y \le N/d \\ x + y > N/d}} \frac{x + y}{x^2 y^2}
-            = \sum_{d=1}^N \frac{\mu(d)}{2 d^3} \sum_{y=2}^{\lfloor N/d \rfloor} \sum_{x = x_{\min}}^{y - 1} \left( \frac{1}{y x^2} + \frac{1}{y^2 x} \right)
-   where x_{\min} = \max(1, \lfloor N/d \rfloor + 1 - y).
+       F(N) = sum_{d=1..N} (mu(d) / (2 * d^3)) * sum_{1 <= x < y <= N/d, x + y > N/d} (x + y) / (x^2 * y^2)
+            = sum_{d=1..N} (mu(d) / (2 * d^3)) * sum_{y=2..floor(N/d)} sum_{x = x_min..y - 1} (1 / (y * x^2) + 1 / (y^2 * x))
+   where x_min = max(1, floor(N/d) + 1 - y).
 
    The inner sum over x is evaluated in O(1) time using precomputed prefix harmonic sums:
-       H_1(k) = \sum_{x=1}^k \frac{1}{x}, \quad H_2(k) = \sum_{x=1}^k \frac{1}{x^2}.
-   The total number of (d, y) pairs is \sum_{d=1}^N \lfloor N/d \rfloor \approx N \ln N.
+       H_1(k) = sum_{x=1..k} (1 / x),  H_2(k) = sum_{x=1..k} (1 / x^2).
+   The total number of (d, y) pairs is sum_{d=1..N} floor(N/d) ~= N ln N.
    For N = 10^4, this requires only ~92,100 operations instead of ~30.4 million Farey intervals,
    reducing the runtime from ~15 seconds to ~0.02 seconds with exact precision via math.fsum.
 """

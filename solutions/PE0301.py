@@ -29,53 +29,53 @@ Solve time: ~0.000001 seconds
 MATHEMATICAL DERIVATION:
 
 1. Nim-Sum and Winning/Losing Positions:
-   In normal-play Nim with heap sizes $(n_1, n_2, n_3)$, Bouton's Theorem (1901) establishes that a position
+   In normal-play Nim with heap sizes (n_1, n_2, n_3), Bouton's Theorem (1901) establishes that a position
    is a losing position (P-position) if and only if the bitwise XOR sum (nim-sum) across all heap sizes is zero:
-       $$X(n_1, n_2, n_3) = n_1 \oplus n_2 \oplus n_3 = 0$$
+       X(n_1, n_2, n_3) = n_1 ^ n_2 ^ n_3 = 0
 
-2. Algebraic Reduction for $X(n, 2n, 3n) = 0$:
-   Here $n_1 = n$, $n_2 = 2n$, and $n_3 = 3n = n + 2n$.
-   Since bitwise XOR is associative, commutative, and self-inverting ($a \oplus a = 0$):
-       $$n \oplus 2n \oplus 3n = 0 \iff n \oplus 2n = 3n$$
-   For any non-negative integers $a$ and $b$, arithmetic addition and XOR addition are related by:
-       $$a + b = (a \oplus b) + 2(a \ \& \ b)$$
-   where $\&$ denotes bitwise AND.
+2. Algebraic Reduction for X(n, 2n, 3n) = 0:
+   Here n_1 = n, n_2 = 2n, and n_3 = 3n = n + 2n.
+   Since bitwise XOR is associative, commutative, and self-inverting (a ^ a = 0):
+       n ^ 2n ^ 3n = 0 <=> n ^ 2n = 3n
+   For any non-negative integers a and b, arithmetic addition and XOR addition are related by:
+       a + b = (a ^ b) + 2 * (a & b)
+   where & denotes bitwise AND.
    Therefore:
-       $$a \oplus b = a + b \iff a \ \& \ b = 0$$
-   Substituting $a = n$ and $b = 2n$:
-       $$n \oplus 2n = 3n \iff n \ \& \ (2n) = 0$$
+       a ^ b = a + b <=> a & b == 0
+   Substituting a = n and b = 2n:
+       n ^ 2n = 3n <=> n & (2n) == 0
 
 3. Binary Representation Condition:
-   Because $2n = n \ll 1$ (shifting $n$ left by 1 bit in binary), the condition $n \ \& \ (2n) = 0$ holds
-   if and only if there is no bit index $i$ where both the $i$-th and $(i+1)$-th bits of $n$ are 1.
-   Thus, $X(n, 2n, 3n) = 0$ is equivalent to:
-       "The binary representation of $n$ contains no adjacent ones (no consecutive `11` substrings)."
+   Because 2n = n << 1 (shifting n left by 1 bit in binary), the condition n & (2n) == 0 holds
+   if and only if there is no bit index i where both the i-th and (i+1)-th bits of n are 1.
+   Thus, X(n, 2n, 3n) = 0 is equivalent to:
+       "The binary representation of n contains no adjacent ones (no consecutive `11` substrings)."
 
 4. Counting via Fibonacci Numbers:
-   - For any integer $0 \le n < 2^k$, its binary representation consists of at most $k$ bits.
-   - Let $a_k$ be the number of binary strings of length $k$ containing no adjacent 1s.
-   - Any valid string of length $k$ either:
-     - Ends in `0`: preceded by any valid string of length $k-1$ ($a_{k-1}$ possibilities).
-     - Ends in `1`: must be preceded by `0` (for $k \ge 2$), hence preceded by any valid string of length $k-2$ ($a_{k-2}$ possibilities).
+   - For any integer 0 <= n < 2^k, its binary representation consists of at most k bits.
+   - Let a_k be the number of binary strings of length k containing no adjacent 1s.
+   - Any valid string of length k either:
+     - Ends in `0`: preceded by any valid string of length k - 1 (a_{k-1} possibilities).
+     - Ends in `1`: must be preceded by `0` (for k >= 2), hence preceded by any valid string of length k - 2 (a_{k-2} possibilities).
    - This yields the standard Fibonacci recurrence:
-       $$a_k = a_{k-1} + a_{k-2}, \quad a_0 = 1, \; a_1 = 2, \; a_2 = 3, \; a_3 = 5, \dots$$
-   - In terms of the standard Fibonacci sequence ($F_1 = 1, F_2 = 1, F_3 = 2, F_4 = 3, \dots$):
-       $$a_k = F_{k+2}$$
-   - The range $0 \le n < 2^k$ contains $F_{k+2}$ valid integers.
-   - Excluding $n = 0$, there are $F_{k+2} - 1$ valid positive integers strictly less than $2^k$.
-   - The upper bound $n = 2^k$ has binary form $100\dots0_2$ ($1$ followed by $k$ zeros), which contains no adjacent 1s,
-     and indeed $2^k \ \& \ 2^{k+1} = 0$. Thus $n = 2^k$ is always valid.
-   - Total valid positive integers $1 \le n \le 2^k$:
-       $$\text{Count}(2^k) = (F_{k+2} - 1) + 1 = F_{k+2}$$
+       a_k = a_{k-1} + a_{k-2},  a_0 = 1, a_1 = 2, a_2 = 3, a_3 = 5, ...
+   - In terms of the standard Fibonacci sequence (F_1 = 1, F_2 = 1, F_3 = 2, F_4 = 3, ...):
+       a_k = F_{k+2}
+   - The range 0 <= n < 2^k contains F_{k+2} valid integers.
+   - Excluding n = 0, there are F_{k+2} - 1 valid positive integers strictly less than 2^k.
+   - The upper bound n = 2^k has binary form 100...0_2 (1 followed by k zeros), which contains no adjacent 1s,
+     and indeed 2^k & 2^{k+1} == 0. Thus n = 2^k is always valid.
+   - Total valid positive integers 1 <= n <= 2^k:
+       Count(2^k) = (F_{k+2} - 1) + 1 = F_{k+2}
 
-5. Final Calculation for $n \le 2^{30}$:
-   Setting $k = 30$:
-       $$\text{Count}(2^{30}) = F_{30+2} = F_{32} = 2\,178\,309$$
+5. Final Calculation for n <= 2^30:
+   Setting k = 30:
+       Count(2^30) = F_{30+2} = F_{32} = 2,178,309
 
 6. Complexity Analysis:
-   - Time Complexity: $O(k)$ to compute the $(k+2)$-th Fibonacci term (or $O(\log k)$ via matrix exponentiation).
-     For $k = 30$, execution time is $< 1\,\mu\text{s}$.
-   - Space Complexity: $O(1)$ auxiliary memory.
+   - Time Complexity: O(k) to compute the (k+2)-th Fibonacci term (or O(log k) via matrix exponentiation).
+     For k = 30, execution time is < 1 microsecond.
+   - Space Complexity: O(1) auxiliary memory.
 """
 
 import unittest

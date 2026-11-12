@@ -22,8 +22,8 @@ MATHEMATICAL DERIVATION:
 
 1. Condition on Average and Variance:
    For k = 4, let s = a + b + c + d.
-   The condition \bar{x} = 2\sigma^2 expands to:
-     4(a^2 + b^2 + c^2 + d^2) = s(s + 2)
+   The condition mean(x) = 2 * sigma^2 expands to:
+     4 * (a^2 + b^2 + c^2 + d^2) = s * (s + 2)
 
 2. Walsh-Hadamard Transform H_2:
    Transform the quadruple (a, b, c, d) using the orthogonal Walsh-Hadamard basis:
@@ -32,9 +32,9 @@ MATHEMATICAL DERIVATION:
      z = ( a - b - c + d) / 2
    along with the sum s = a + b + c + d.
    By Parseval's identity on H_2:
-     4(a^2 + b^2 + c^2 + d^2) = s^2 + 4(x^2 + y^2 + z^2)
-   Substituting into 4\sum x_i^2 = s(s + 2) = s^2 + 2s gives:
-     s^2 + 4(x^2 + y^2 + z^2) = s^2 + 2s  ==>  s = 2(x^2 + y^2 + z^2).
+     4 * (a^2 + b^2 + c^2 + d^2) = s^2 + 4 * (x^2 + y^2 + z^2)
+   Substituting into 4 * sum x_i^2 = s * (s + 2) = s^2 + 2s gives:
+     s^2 + 4 * (x^2 + y^2 + z^2) = s^2 + 2s  ==>  s = 2 * (x^2 + y^2 + z^2).
    The quadratic coupling on s cancels out completely!
 
 3. Domain Constraints:
@@ -46,14 +46,14 @@ MATHEMATICAL DERIVATION:
 
 4. Ehrhart Polynomial on the Unconstrained Interior Chamber:
    Since x >= y >= |z|, the maximum of d(x, y, z) for a fixed x occurs at y = x, z = x:
-     d_max(x) = (3/2) x(x + 1)
+     d_max(x) = (3/2) * x * (x + 1)
    When x <= x_3 = floor(sqrt(2n/3 + 1/4) - 1/2), d_max(x) <= n is ALWAYS satisfied!
    In this region, the boundary condition is flat and linear, defining a dilated Weyl chamber.
    By Ehrhart's theory, the sum of terms over the entire interior cone evaluates to a degree-5 polynomial:
-     \sum_{x=1}^{x_3} \left[ (x(x+1))^2 + (2x+3) \frac{x(x+1)(2x+1)}{6} \right] = \frac{x_3(x_3+1)(2x_3+1)(x_3+2)^2}{6}.
+     sum_{x=1..x_3} [ (x * (x + 1))^2 + (2x + 3) * x * (x + 1) * (2x + 1) / 6 ] = x_3 * (x_3 + 1) * (2x_3 + 1) * (x_3 + 2)^2 / 6.
    Subtracting 9 (for x = 1) and adding the initial tot = 3 evaluates the entire interior region
    (over 60% of the domain) in O(1) time:
-     tot_interior = \frac{x_3(x_3+1)(2x_3+1)(x_3+2)^2}{6} - 6.
+     tot_interior = x_3 * (x_3 + 1) * (2x_3 + 1) * (x_3 + 2)^2 / 6 - 6.
 
 5. Active Boundary Strip:
    For x > x_3, when y <= y_2(x) = floor((sqrt(4n - 2x(x + 1) + 1) - 1) / 2), the z-sum is still unconstrained

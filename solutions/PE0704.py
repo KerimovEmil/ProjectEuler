@@ -16,24 +16,24 @@ Solve time: ~0.0001 seconds
 MATHEMATICAL DERIVATION:
 
 1. Kummer's Theorem and Maximal Carry Analysis:
-   - By Kummer's theorem, $g(n, m) = v_2\left(\binom{n}{m}\right)$ equals the number of carries when adding
-     $m$ and $n - m$ in binary base 2.
-   - Let $k = v_2(n+1)$, which represents the number of trailing 1s in the binary representation of $n$.
-   - In any binary addition $m + (n - m) = n$, if bit $i$ of $n$ is 1, then $m_i + (n-m)_i + c_i = 1 + 2 c_{i+1}$,
-     which forces $c_{i+1} = c_i$. Since $c_0 = 0$, no carries can occur at the first $k$ bit positions $0, \dots, k-1$.
-   - At bit position $k$ (where $n_k = 0$), setting $m_k = 1$ and $(n-m)_k = 1$ produces carry $c_{k+1} = 1$.
-   - This carry can be propagated across all remaining higher bit positions up to $\lfloor \log_2(n+1) \rfloor$.
+   - By Kummer's theorem, g(n, m) = v_2(binom(n, m)) equals the number of carries when adding
+     m and n - m in binary base 2.
+   - Let k = v_2(n+1), which represents the number of trailing 1s in the binary representation of n.
+   - In any binary addition m + (n - m) = n, if bit i of n is 1, then m_i + (n-m)_i + c_i = 1 + 2 * c_{i+1},
+     which forces c_{i+1} = c_i. Since c_0 = 0, no carries can occur at the first k bit positions 0, ..., k - 1.
+   - At bit position k (where n_k = 0), setting m_k = 1 and (n-m)_k = 1 produces carry c_{k+1} = 1.
+   - This carry can be propagated across all remaining higher bit positions up to floor(log2(n+1)).
    - Therefore, the maximal number of carries is:
-     $$F(n) = \lfloor \log_2(n+1) \rfloor - v_2(n+1)$$
+       F(n) = floor(log2(n+1)) - v_2(n+1)
 
 2. Closed-Form Summation via Legendre's Formula:
-   - Setting $M = N + 1$, the prefix sum $S(N) = \sum_{n=1}^N F(n)$ transforms by shifting the index $m = n + 1$:
-     $$S(N) = \sum_{m=2}^M (\lfloor \log_2(m) \rfloor - v_2(m)) = \sum_{m=1}^M \lfloor \log_2(m) \rfloor - \sum_{m=1}^M v_2(m)$$
-   - The first term sums $\lfloor \log_2(m) \rfloor = j$ over intervals $[2^j, \min(M, 2^{j+1}-1)]$ in $O(\log M)$ steps.
-   - By Legendre's formula, the total exponent of 2 in $M!$ is:
-     $$\sum_{m=1}^M v_2(m) = v_2(M!) = M - s(M)$$
-     where $s(M)$ is the popcount (number of set 1-bits) in the binary representation of $M$.
-   - Thus, $S(N) = \left(\sum_{m=1}^{N+1} \lfloor \log_2(m) \rfloor\right) - (N + 1 - s(N + 1))$, computable in $O(\log N)$ time.
+   - Setting M = N + 1, the prefix sum S(N) = sum_{n=1..N} F(n) transforms by shifting the index m = n + 1:
+       S(N) = sum_{m=2..M} (floor(log2(m)) - v_2(m)) = sum_{m=1..M} floor(log2(m)) - sum_{m=1..M} v_2(m)
+   - The first term sums floor(log2(m)) = j over intervals [2^j, min(M, 2^(j+1) - 1)] in O(log M) steps.
+   - By Legendre's formula, the total exponent of 2 in M! is:
+       sum_{m=1..M} v_2(m) = v_2(M!) = M - s(M)
+     where s(M) is the popcount (number of set 1-bits) in the binary representation of M.
+   - Thus, S(N) = (sum_{m=1..N+1} floor(log2(m))) - (N + 1 - s(N + 1)), computable in O(log N) time.
 """
 
 import unittest

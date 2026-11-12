@@ -55,26 +55,27 @@ Solve time: ~0.08 seconds
 MATHEMATICAL DERIVATION:
 
 1. Digital Transition Cost Difference:
-   - Let a sequence of intermediate values for number $p$ be $X_1 \to X_2 \to \dots \to X_k$, where $X_1 = p$
-     and $X_k$ is a single-digit root.
-   - In Sam's clock, every number $X_i$ is turned on and then turned off completely:
-     $$\text{Cost}_{\text{Sam}} = 2 \sum_{i=1}^k |X_i|$$
-     where $|X_i|$ is the number of lit segments in $X_i$.
-   - In Max's clock, transitions between consecutive numbers $X_i$ and $X_{i+1}$ preserve overlapping segments:
-     - Turning off unneeded segments: $|X_i| - |X_i \cap X_{i+1}|$.
-     - Turning on newly required segments: $|X_{i+1}| - |X_i \cap X_{i+1}|$.
-     - Combined with initial turn-on of $X_1$ and final turn-off of $X_k$:
-       $$\text{Cost}_{\text{Max}} = |X_1| + \sum_{i=1}^{k-1} (|X_i| + |X_{i+1}| - 2 |X_i \cap X_{i+1}|) + |X_k| = 2 \sum_{i=1}^k |X_i| - 2 \sum_{i=1}^{k-1} |X_i \cap X_{i+1}|$$
-   - Subtracting the two costs yields the exact transition savings for each prime $p$:
-     $$\Delta(p) = \text{Cost}_{\text{Sam}} - \text{Cost}_{\text{Max}} = 2 \sum_{i=1}^{k-1} |X_i \cap X_{i+1}|$$
+   - Let a sequence of intermediate values for number p be X_1 -> X_2 -> ... -> X_k, where X_1 = p
+     and X_k is a single-digit root.
+   - In Sam's clock, every number X_i is turned on and then turned off completely:
+       Cost_Sam = 2 * sum_{i=1..k} |X_i|
+     where |X_i| is the number of lit segments in X_i.
+   - In Max's clock, transitions between consecutive numbers X_i and X_{i+1} preserve overlapping segments:
+     - Turning off unneeded segments: |X_i| - |X_i intersect X_{i+1}|.
+     - Turning on newly required segments: |X_{i+1}| - |X_i intersect X_{i+1}|.
+     - Combined with initial turn-on of X_1 and final turn-off of X_k:
+       Cost_Max = |X_1| + sum_{i=1..k-1} (|X_i| + |X_{i+1}| - 2 * |X_i intersect X_{i+1}|) + |X_k|
+                = 2 * sum_{i=1..k} |X_i| - 2 * sum_{i=1..k-1} |X_i intersect X_{i+1}|
+   - Subtracting the two costs yields the exact transition savings for each prime p:
+       Delta(p) = Cost_Sam - Cost_Max = 2 * sum_{i=1..k-1} |X_i intersect X_{i+1}|
 
 2. Path Invariance & Precomputed Lookups:
-   - For any prime $p \in [10^7, 2 \times 10^7]$, the first digit sum $S_1 = \text{digit\_sum}(p) \le 1 + 7 \times 9 = 64$.
-   - The tail sequence $S_1 \to S_2 \to \dots \to S_k$ and its associated savings $\text{sub\_saving}(S_1) = 2 \sum_{i \ge 1} |S_i \cap S_{i+1}|$
-     depend solely on $S_1$ and are precomputed in $O(1)$ for all $S_1 \in [1, 64]$.
-   - The first transition savings $2 |p \cap S_1|$ depends exclusively on the lowest two digits of $p$ ($p \pmod{100}$)
-     and $S_1$, because $S_1 \le 64$ occupies at most two digit positions.
-   - We construct a lookup table $T[\text{last2}][S_1] = 2 |\text{last2} \cap S_1| + \text{sub\_saving}(S_1)$ and vectorize
+   - For any prime p in [10^7, 2 * 10^7], the first digit sum S_1 = digit_sum(p) <= 1 + 7 * 9 = 64.
+   - The tail sequence S_1 -> S_2 -> ... -> S_k and its associated savings sub_saving(S_1) = 2 * sum_{i >= 1} |S_i intersect S_{i+1}|
+     depend solely on S_1 and are precomputed in O(1) for all S_1 in [1, 64].
+   - The first transition savings 2 * |p intersect S_1| depends exclusively on the lowest two digits of p (p mod 100)
+     and S_1, because S_1 <= 64 occupies at most two digit positions.
+   - We construct a lookup table T[last2][S_1] = 2 * |last2 intersect S_1| + sub_saving(S_1) and vectorize
      the evaluation across all primes using NumPy.
 """
 

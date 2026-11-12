@@ -38,9 +38,9 @@ MATHEMATICAL DERIVATION:
 
 3. Computation for k = 10^8 modulo 10^9 + 7:
    The prime factorization of lcm(1, 2, ..., k) is:
-     lcm(1, 2, ..., k) = \prod_{p <= k} p^{\lfloor \log_p k \rfloor}.
-   For primes p > sqrt(k) = 10^4, the exponent \lfloor \log_p k \rfloor is exactly 1.
-   For primes p <= 10^4, the exponent is \lfloor \log_p k \rfloor.
+     lcm(1, 2, ..., k) = prod_{p <= k} p^(floor(log_p(k))).
+   For primes p > sqrt(k) = 10^4, the exponent floor(log_p(k)) is exactly 1.
+   For primes p <= 10^4, the exponent is floor(log_p(k)).
    We sieve primes up to 10^8 via NumPy, compute prime powers for small primes p <= 10^4,
    and multiply large primes p > 10^4 with exponent 1 directly modulo 1,000,000,007 in ~0.9 seconds.
 """
