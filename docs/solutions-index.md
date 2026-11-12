@@ -227,6 +227,7 @@ This table catalogs solved Project Euler problems in this repository.
 | PE0744 | [PE0744.py](../solutions/PE0744.py) | What? Where? When? Normal game end probability f(10^11, 0.4999). | ~0.0001 seconds |
 | PE0752 | [PE0752.py](../solutions/PE0752.py) | When (1+sqrt(7)) is raised to an integral power, n, we always get a... | 4.1 seconds |
 | PE0753 | [PE0753.py](../solutions/PE0753.py) | Problem 753 | 2.5 seconds |
+| PE0754 | [PE0754.py](../solutions/PE0754.py) | Product of Gauss Factorials: Find G(10^8) mod 1,000,000,007 via divisor grouping and superfactorials. | ~50 seconds |
 | PE0759 | [PE0759.py](../solutions/PE0759.py) | A squared recurrence: Find S(10^16) mod 1,000,000,007 where S(n) = sum f(i)^2. | ~0.002 seconds |
 | PE0764 | [PE0764.py](../solutions/PE0764.py) | Asymmetric Diophantine Equation 16x^2 + y^4 = z^2: Find S(10^16) mod 10^9. | 0.25 seconds |
 | PE0765 | [PE0765.py](../solutions/PE0765.py) | Trillionaire: Maximize probability of reaching 10^12 gold in 1000 rounds. | ~0.03 seconds |
